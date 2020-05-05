@@ -52,6 +52,7 @@ public class InventoryUI : MonoBehaviour
             var tmp = g.transform.GetComponentInChildren<ItemDragHandler>();
             tmp.canvas = canvas;
             tmp.invUI = this;
+            g.name = i.ToString();
             gb.Add(g);
         }
         slots = gb.ToArray();

@@ -1806,6 +1806,13 @@ MonoBehaviour:
   hideInventory: 1
   toggleKey: 101
   togglableObject: {fileID: 747462573}
+  inv:
+    slots: []
+    slotAmounts: 0
+    id: 0
+    areItemsUsable: 0
+    areItemsDroppable: 0
+    interactiable: 0
 --- !u!114 &645887496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1847,9 +1854,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa9a145d8d783b44cbc75d59b8417aee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testItem: {fileID: 0}
-  slotAmount: 0
-  invUI: {fileID: 0}
+  testItem: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+  slotAmount: 12
+  invUI: {fileID: 645887495}
 --- !u!1 &657415023 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4676626297327902047, guid: 190af5ce39ca9824191677bd7d614e99,
@@ -2936,6 +2943,13 @@ MonoBehaviour:
   hideInventory: 1
   toggleKey: 105
   togglableObject: {fileID: 1459554219}
+  inv:
+    slots: []
+    slotAmounts: 0
+    id: 0
+    areItemsUsable: 0
+    areItemsDroppable: 0
+    interactiable: 0
 --- !u!4 &1140438007
 Transform:
   m_ObjectHideFlags: 0
@@ -2962,6 +2976,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ac0707fd66611846838e9c9b6a98c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inventory2: {fileID: 645887494}
   testItem: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
   slotAmount: 24
   invUI: {fileID: 1140438006}

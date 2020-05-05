@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class ExampleScript : MonoBehaviour
 {
     Inventory inventory;
+    public GameObject inventory2;
     public Item testItem;
     public int slotAmount;
     public InventoryUI invUI;
@@ -25,5 +26,9 @@ public class ExampleScript : MonoBehaviour
             inventory.AddItem(testItem, 2);
         if (Input.GetKeyDown(KeyCode.S))
             inventory.SwapItemsInCertainAmountInSlots(0, 10, amountToTake);
+        if (Input.GetKeyDown(KeyCode.O))
+            inventory.SwapItemThruInventoriesSlotToSlot(inventory2.GetComponent<InventoryUI>().GetInventory(), 0, 1, amountToTake);
+        if (Input.GetKeyDown(KeyCode.L))
+            inventory.SwapItemThruInventories(inventory2.GetComponent<InventoryUI>().GetInventory(), testItem, amountToTake);
     }
 }

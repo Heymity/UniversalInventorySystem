@@ -195,6 +195,7 @@ public static class InventoryController
                     int prevAmount = inv.slots[i].amount;
                     Slot slot = inv.slots[i];
                     slot.amount -= amount;
+                    inv.slots[i] = slot;
                     if (slot.amount <= 0)
                         inv.slots[i] = new Slot(null, 0, false);
                     else break;
@@ -280,7 +281,6 @@ public static class InventoryController
     public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int amount)
     {
         if (amount > inv.slots[nativeSlot].amount) return amount;
-        //if (amount == inv.slots[nativeSlot].amount && inv.slots[nativeSlot].amount != 1) SwapItemsInSlots(inv, nativeSlot, targetSlot);
         else if (inv.slots[targetSlot].item == null)
         {
             inv.slots[targetSlot] = new Slot(inv.slots[nativeSlot].item, amount, true);
@@ -300,35 +300,63 @@ public static class InventoryController
         return 0;
     }
 
+    /// <summary>
+    /// This function takes out items from a slot A from the inventory A and places it in the slot B of the inventory B. If the slot B gets full and slot A has still items to be swaped, it will only return the remaing items to be swaped
+    /// </summary>
+    /// <param name="nativeInv">The inventory in witch the items are</param>
+    /// <param name="targetInv">The inventory in witch the items will go</param>
+    /// <param name="nativeSlotNumber">The slot index witch will give items</param>
+    /// <param name="targetSlotNumber">The slot index witch will receive items </param>
+    /// <param name="amount">The amount of items to be swaped</param>
+    /// <returns>Returns the number of items that worent transfered</returns>
     public static int SwapItemThruInventoriesSlotToSlot(this Inventory nativeInv, Inventory targetInv, int nativeSlotNumber, int targetSlotNumber, int amount)
     {
-        Item item = nativeInv.slots[nativeSlotNumber].item;
-        Slot slot = targetInv.slots[targetSlotNumber];
-        if (slot.item == item)
+        if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
+        else if (targetInv.slots[targetSlotNumber].item == null)
         {
-            if (RemoveItemInSlot(nativeInv, nativeSlotNumber, amount))
-            {
-                int remaning = AddItemToSlot(targetInv, item, targetSlotNumber, amount);
-                if (slot.hasItem)
-                {
-
-                }
-                if (remaning > 0) AddItemToSlot(nativeInv, item, nativeSlotNumber, remaning);
-            }
+            targetInv.slots[targetSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, amount, true);
+            nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount, true);
+            if (nativeInv.slots[nativeSlotNumber].amount <= 0) nativeInv.slots[nativeSlotNumber] = new Slot(null, 0, false);
         }
-               
+        else if (nativeInv.slots[nativeSlotNumber].item == targetInv.slots[targetSlotNumber].item)
+        {
+            int remaning = AddItemToSlot(targetInv, nativeInv.slots[nativeSlotNumber].item, amount, targetSlotNumber);
+            nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount + remaning, true);
+            if (nativeInv.slots[nativeSlotNumber].amount <= 0)
+                nativeInv.slots[nativeSlotNumber] = new Slot(null, 0, false);
+            return remaning;
+        }
+        else
+        {
+            Slot tmpSlot = targetInv.slots[targetSlotNumber];
+            targetInv.slots[targetSlotNumber] = nativeInv.slots[nativeSlotNumber];
+            nativeInv.slots[nativeSlotNumber] = tmpSlot;
+        }
+
         return 0;
     }
 
-    public static int SwapItemThruInventories(this Inventory nativeInv, Inventory targetInv, Item item, int amount)
-    {       
+    /// <summary>
+    /// This function takes the item I from inventory A and puts into inventory B. If B get full and there are still items to be transfered, the remaing items go back to inventory A
+    /// </summary>
+    /// <param name="nativeInv">The inventory in witch the items are</param>
+    /// <param name="targetInv">The inventory in witch the items will go</param>
+    /// <param name="item">The item that will be swaped</param>
+    /// <param name="amount">The amount of items to be swaped</param>
+    /// <returns>
+    /// True => Basicly, every time it is not false
+    /// False => When it was not able to remove the item from the nativeInv, that means the RemoveItem function returned false, that usually means there were not enought items in the inventory to take out (it is also false when it is not true btw)
+    /// </returns>
+    public static bool SwapItemThruInventories(this Inventory nativeInv, Inventory targetInv, Item item, int amount)
+    {
         if (RemoveItem(nativeInv, item, amount))
         {
             int remaning = AddItem(targetInv, item, amount);
             if (remaning > 0) AddItem(nativeInv, item, remaning);
         }
+        else return false;
 
-        return 0;
+        return true;
     }
 
     /// <summary>
