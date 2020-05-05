@@ -258,7 +258,7 @@ public static class InventoryController
     }
 
     /// <summary>
-    /// Swap the items in two slots
+    /// Swap the items in two slots. this function will NOT stack the items for that use SwapItemsInCertainAmountInSlots with amount = null
     /// </summary>
     /// <param name="inv">The inventary to have items swapped</param>
     /// <param name="nativeSlot">The slot to lose items</param>
@@ -271,15 +271,16 @@ public static class InventoryController
     }
 
     /// <summary>
-    ///Swap a certain amount of items in two slots
+    ///Swap a certain amount of items in two slots. This function will stack items.
     /// </summary>
     /// <param name="inv">The inventary to have items swapped</param>
     /// <param name="nativeSlot">The slot to lose items</param>
     /// <param name="targetSlot">The slot to gain items</param>
     /// <param name="amount">The amount of items to be swaped</param>
     /// <returns>Returns the number of items that dind fit in the other slot</returns>
-    public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int amount)
+    public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount)
     {
+        int amount = (_amount ?? inv.slots[nativeSlot].amount);
         if (amount > inv.slots[nativeSlot].amount) return amount;
         else if (inv.slots[targetSlot].item == null)
         {

@@ -36,4 +36,5 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler
         invUI.inv.SwapItemsInSlots(int.Parse(transform.parent.name), index);
         transform.localPosition = Vector3.zero;
     }
+
 }
