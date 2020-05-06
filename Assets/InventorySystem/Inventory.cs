@@ -1,11 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Unity.Collections.LowLevel.Unsafe;
 
 [Serializable]
 public static class InventoryController 
 {
+    public static List<InventoryUI> inventoriesUI = new List<InventoryUI>();
+
     public static List<Inventory> inventories = new List<Inventory>();
+
+    public static readonly Slot nullSlot = new Slot(null, 0, false);
 
     public static List<Inventory> GetInventories() => inventories;
 
@@ -114,7 +119,7 @@ public static class InventoryController
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
     public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem)
     {
-        if (!item.stackable) return AddItemToNewSlot(inv, item, amount);
+        if (!item.stackable) return AddItemToNewSlot(inv, item, amount, e);
         for (int i = 0; i < inv.slots.Count; i++)
         {
             if (inv.slots[i].item != item) continue;
@@ -136,7 +141,7 @@ public static class InventoryController
                 if (amount > 0) continue;
             }       
         }
-        if (amount > 0) return AddItemToNewSlot(inv, item, amount);
+        if (amount > 0) return AddItemToNewSlot(inv, item, amount, e);
         InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(false, false, item, amount, null);
         InventoryEventHandler.current.Broadcast(e, aea);
         return 0;
@@ -213,7 +218,7 @@ public static class InventoryController
                     slot.amount -= amount;
                     inv.slots[i] = slot;
                     if (slot.amount <= 0)
-                        inv.slots[i] = new Slot(null, 0, false);
+                        inv.slots[i] = nullSlot;
                     else break;
                     amount -= prevAmount;
                 }
@@ -234,16 +239,28 @@ public static class InventoryController
     /// <param name="slot">The slot that will have item removed</param>
     /// <param name="amount">The amount of items to be removed</param>
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
-    public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount)
+    public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem)
     {
+
+        InventoryEventHandler.RemoveItemEventArgs rea = new InventoryEventHandler.RemoveItemEventArgs();
+        InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs();
+        //if (e == BroadcastEventType.RemoveItem) rea = new InventoryEventHandler.RemoveItemEventArgs();
+       // else if (e == BroadcastEventType.DropItem) dea = new InventoryEventHandler.DropItemEventArgs();
+
         if (inv.slots[slot].amount == amount)
         {
-            inv.slots[slot] = new Slot(null, 0, false);
+            inv.slots[slot] = nullSlot;
+            if (e == BroadcastEventType.RemoveItem) InventoryEventHandler.current.Broadcast(e, null, rea);
+            else if (e == BroadcastEventType.DropItem) InventoryEventHandler.current.Broadcast(e, null, null, null, null, null, dea);
+
             return true;
         }
         else if (inv.slots[slot].amount > amount)
         {
             inv.slots[slot] = new Slot(inv.slots[slot].item, inv.slots[slot].amount - amount, true);
+            if (e == BroadcastEventType.RemoveItem) InventoryEventHandler.current.Broadcast(e, null, rea);
+            else if (e == BroadcastEventType.DropItem) InventoryEventHandler.current.Broadcast(e, null, null, null, null, null, dea);
+
             return true;
         }
         else
@@ -302,14 +319,14 @@ public static class InventoryController
         {
             inv.slots[targetSlot] = new Slot(inv.slots[nativeSlot].item, amount, true);
             inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount, true);
-            if (inv.slots[nativeSlot].amount <= 0) inv.slots[nativeSlot] = new Slot(null, 0, false);
+            if (inv.slots[nativeSlot].amount <= 0) inv.slots[nativeSlot] = nullSlot;
         }
         else if (inv.slots[nativeSlot].item == inv.slots[targetSlot].item)
         {
             int remaning = AddItemToSlot(inv, inv.slots[nativeSlot].item, amount, targetSlot);
             inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount + remaning, true);
             if (inv.slots[nativeSlot].amount <= 0) 
-                inv.slots[nativeSlot] = new Slot(null, 0, false);
+                inv.slots[nativeSlot] = nullSlot;
             return remaning;
         }
         else SwapItemsInSlots(inv, nativeSlot, targetSlot);
@@ -333,14 +350,14 @@ public static class InventoryController
         {
             targetInv.slots[targetSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, amount, true);
             nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount, true);
-            if (nativeInv.slots[nativeSlotNumber].amount <= 0) nativeInv.slots[nativeSlotNumber] = new Slot(null, 0, false);
+            if (nativeInv.slots[nativeSlotNumber].amount <= 0) nativeInv.slots[nativeSlotNumber] = nullSlot;
         }
         else if (nativeInv.slots[nativeSlotNumber].item == targetInv.slots[targetSlotNumber].item)
         {
             int remaning = AddItemToSlot(targetInv, nativeInv.slots[nativeSlotNumber].item, amount, targetSlotNumber);
             nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount + remaning, true);
             if (nativeInv.slots[nativeSlotNumber].amount <= 0)
-                nativeInv.slots[nativeSlotNumber] = new Slot(null, 0, false);
+                nativeInv.slots[nativeSlotNumber] = nullSlot;
             return remaning;
         }
         else

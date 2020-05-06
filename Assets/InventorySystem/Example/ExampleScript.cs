@@ -19,6 +19,23 @@ public class ExampleScript : MonoBehaviour
         invUI.SetInventory(inventory);
         InventoryEventHandler invEvent = InventoryEventHandler.current;
         invEvent.OnAddItem += OnAddItem;
+        invEvent.OnRemoveItem += OnRemoveItem;
+        invEvent.OnDropItem += OnDropItem;
+    }
+
+    private void OnDropItem(object sender, InventoryEventHandler.DropItemEventArgs e)
+    {
+        Debug.Log("Drop");
+    }
+
+    private void OnRemoveItem(object sender, InventoryEventHandler.RemoveItemEventArgs e)
+    {
+        Debug.Log("Remove");
+    }
+
+    private void OnDestroy()
+    {
+        InventoryEventHandler.current.OnAddItem -= OnAddItem;
     }
 
     private void OnAddItem(object sender, InventoryEventHandler.AddItemEventArgs e)

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
+using System;
 
-public class InventoryUI : MonoBehaviour
+public class InventoryUI : MonoBehaviour, IDropHandler
 {
     [Header("Slots config")]
     public bool generateUIFromSlotPrefab;
@@ -13,21 +15,30 @@ public class InventoryUI : MonoBehaviour
     public GameObject slotPrefab;
     [Space]
     public Canvas canvas;
+    [Space, Tooltip("The rect where the item wont be dropped when released")]
+    public GameObject DontDropItemRect;
     [Space]
     public GameObject[] slots;
-    [Space] [Header("Toggle inventory")]
+    [Space, Header("Toggle inventory")]
     public bool hideInventory;
     [Tooltip("There is no need to assign this varible if hideInventory is set to False")]
     public KeyCode toggleKey;
     public GameObject togglableObject;
-    [Space] [Header("Inventory")]
+    [Space, Header("Inventory")]
     public Inventory inv;
 
+    [HideInInspector]
+    public bool isDraging;
+    [HideInInspector]
+    public int? dragSlotNumber = null;
+    [HideInInspector]
+    public bool shouldSwap;
     public void SetInventory(Inventory _inv) => inv = _inv;
     public Inventory GetInventory() => inv;
 
     public void Start()
     {
+        InventoryController.inventoriesUI.Add(this);
         if (!generateUIFromSlotPrefab)
         {
             for (int i = 0; i < slots.Length; i++)
@@ -38,6 +49,7 @@ public class InventoryUI : MonoBehaviour
                 tmp.invUI = this;
             }
         }
+        DontDropItemRect.AddComponent<ItemDropHandler>();
 
     }
 
@@ -100,4 +112,12 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+    public void OnDrop(PointerEventData eventData)
+    {
+       /* if(!RectTransformUtility.RectangleContainsScreenPoint(DontDropItemRect, Input.mousePosition))
+        {
+            Debug.Log("Item to be dropped!");
+        }*/
+        Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+    }
 }
