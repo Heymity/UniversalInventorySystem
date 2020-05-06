@@ -17,8 +17,14 @@ public class ExampleScript : MonoBehaviour
         inventory = new Inventory(slotAmount, true, IteractiableTypes.Any, true);
         inventory.InitializeInventory();
         invUI.SetInventory(inventory);
+        InventoryEventHandler invEvent = InventoryEventHandler.current;
+        invEvent.OnAddItem += OnAddItem;
     }
 
+    private void OnAddItem(object sender, InventoryEventHandler.AddItemEventArgs e)
+    {
+        Debug.Log($"The item {e.itemAdded.name} was added");
+    }
 
     private void Update()
     {

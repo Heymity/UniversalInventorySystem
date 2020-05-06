@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-[System.Serializable]
+[Serializable]
 public static class InventoryController 
 {
     public static List<Inventory> inventories = new List<Inventory>();
@@ -30,8 +31,9 @@ public static class InventoryController
     /// <param name="item">The item that will be stored in the inventory</param>
     /// <param name="amount">The amount of items to be stored</param>
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-    public static int AddItemToNewSlot(this Inventory inv, Item item, int amount)
-    {   
+    public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem)
+    {
+        
         if (!item.stackable)
         {
             for (int i = 0; i < inv.slots.Count; i++)
@@ -53,6 +55,8 @@ public static class InventoryController
                     if (amount > 0)
                     {
                         Debug.Log($"Not enougth room for {amount} items");
+                        InventoryEventHandler.AddItemEventArgs aea1 = new InventoryEventHandler.AddItemEventArgs(true, false, item, amount, null);
+                        InventoryEventHandler.current.Broadcast(e, aea1);
                         return amount;
                     }
                 }
@@ -62,6 +66,8 @@ public static class InventoryController
                     return amount;
                 }
             }
+            InventoryEventHandler.AddItemEventArgs aea2 = new InventoryEventHandler.AddItemEventArgs(true, false, item, amount, null);
+            InventoryEventHandler.current.Broadcast(e, aea2);
             return 0;
         }
         for (int i = 0; i < inv.slots.Count; i++)
@@ -94,6 +100,8 @@ public static class InventoryController
                 return amount;
             }
         }
+        InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(true, false, item, amount, null);
+        InventoryEventHandler.current.Broadcast(e, aea);
         return 0;
     }
 
@@ -104,7 +112,7 @@ public static class InventoryController
     /// <param name="item">The item that will be stored in the inventory</param>
     /// <param name="amount">The amount of items to be stored</param>
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-    public static int AddItem(this Inventory inv, Item item, int amount)
+    public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem)
     {
         if (!item.stackable) return AddItemToNewSlot(inv, item, amount);
         for (int i = 0; i < inv.slots.Count; i++)
@@ -129,6 +137,8 @@ public static class InventoryController
             }       
         }
         if (amount > 0) return AddItemToNewSlot(inv, item, amount);
+        InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(false, false, item, amount, null);
+        InventoryEventHandler.current.Broadcast(e, aea);
         return 0;
     }
 
@@ -140,7 +150,7 @@ public static class InventoryController
     /// <param name="amount">The amount of items to be stored</param>
     /// <param name="slotNumber">The index of the slot to store the items</param>
     /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-    public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber)
+    public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem)
     {
         if (!inv.slots[slotNumber].hasItem)
         {
@@ -151,6 +161,8 @@ public static class InventoryController
                 inv.slots[slotNumber] = new Slot(item, item.maxAmount, true);
                 return amount - item.maxAmount;
             }
+            InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(false, true, item, amount, slotNumber);
+            InventoryEventHandler.current.Broadcast(e, aea);
             return 0;
         }
         else if (inv.slots[slotNumber].item == item)
@@ -163,9 +175,13 @@ public static class InventoryController
                 inv.slots[slotNumber] = new Slot(item, item.maxAmount, true);
                 return valueToReeturn;
             }
+            InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(false, true, item, amount, slotNumber);
+            InventoryEventHandler.current.Broadcast(e, aea);
             return 0;
         }
         else Debug.Log($"Slot {slotNumber} is already occupied with a different item");
+        InventoryEventHandler.AddItemEventArgs aeaNull = new InventoryEventHandler.AddItemEventArgs(false, false, null, 0, slotNumber);
+        InventoryEventHandler.current.Broadcast(e, aeaNull);
         return -1;
     }
 
@@ -370,10 +386,10 @@ public static class InventoryController
         inv.slots = new List<Slot>();
         for (int i = 0; i < inv.slotAmounts; i++)
         {
-            Debug.Log(inv.slots.Count);
+            //Debug.Log(inv.slots.Count);
             inv.slots.Add(new Slot(null, 0, false));
         }
-        Debug.Log(inv.slots.Count);
+        //Debug.Log(inv.slots.Count);
         inv.id = inventories.Count;
         inventories.Add(inv);
         return inv.slots;
@@ -395,7 +411,7 @@ public static class InventoryController
 
 }
 
-[System.Serializable]
+[Serializable]
 public class Inventory
 {
     public List<Slot> slots;
@@ -462,7 +478,7 @@ public class Inventory
 
 }
 
-[System.Serializable]
+[Serializable]
 public struct Slot
 {
     public int amount;
@@ -495,11 +511,25 @@ public struct Slot
 
 public enum IteractiableTypes
 {
-    InventoryToInventory,
-    SlotToSlot,
-    Any,
-    InvToSpecificInv,
-    SpecificInvSlot,
-    Locked
+    InventoryToInventory = 0,
+    SlotToSlot = 1,
+    Any = 2,
+    InvToSpecificInv = 3,
+    SpecificInvSlot = 4,
+    Locked = 5
 }
+
+public enum BroadcastEventType
+{
+    None = 0,
+    AddItem = 1,
+    RemoveItem = 2,
+    SwapItem = 3,
+    SwapTrhuInventory = 4,
+    DropItem = 5,
+    PickUpItem = 6,
+    UseItem = 7,
+    InitializeInventory = 8,
+}
+
 
