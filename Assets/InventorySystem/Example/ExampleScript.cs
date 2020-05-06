@@ -26,6 +26,7 @@ public class ExampleScript : MonoBehaviour
     private void OnDropItem(object sender, InventoryEventHandler.DropItemEventArgs e)
     {
         Debug.Log("Drop");
+        e.inv.RemoveItemInSlot(e.slot.GetValueOrDefault(), e.amount);
     }
 
     private void OnRemoveItem(object sender, InventoryEventHandler.RemoveItemEventArgs e)

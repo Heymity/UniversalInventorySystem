@@ -19,14 +19,16 @@ public class InventoryEventHandler : MonoBehaviour
 
     public class AddItemEventArgs : EventArgs
     {
+        public Inventory inv;
         public bool addedToNewSlot;
         public bool addedToSlot;
         public Item itemAdded;
         public int amount;
         public int? slotNumber;
 
-        public AddItemEventArgs (bool _addedToNewSlot, bool _addedToSlot, Item _itemAdded, int _amount, int? _slotNumber)
+        public AddItemEventArgs (Inventory _inv, bool _addedToNewSlot, bool _addedToSlot, Item _itemAdded, int _amount, int? _slotNumber)
         {
+            inv = _inv;
             addedToNewSlot = _addedToNewSlot;
             addedToSlot = _addedToSlot;
             itemAdded = _itemAdded;
@@ -51,8 +53,23 @@ public class InventoryEventHandler : MonoBehaviour
 
     }
     public class DropItemEventArgs 
-    { 
+    {
+        public Inventory inv;
+        public bool takenFromSpecificSlot;
+        public int? slot;
+        public Item item;
+        public int amount;
+        public bool droppedByUI;
 
+        public DropItemEventArgs(Inventory _inv, bool _takenFromSpecificSlot, int? _slot, Item _item, int _amount, bool _droppedByUI)
+        {
+            inv = _inv;
+            takenFromSpecificSlot = _takenFromSpecificSlot;
+            slot = _slot;
+            item = _item;
+            amount = _amount;
+            droppedByUI = _droppedByUI;
+        }
     }
     public class PickUpItemEventArgs 
     {

@@ -60,7 +60,7 @@ public static class InventoryController
                     if (amount > 0)
                     {
                         Debug.Log($"Not enougth room for {amount} items");
-                        InventoryEventHandler.AddItemEventArgs aea1 = new InventoryEventHandler.AddItemEventArgs(true, false, item, amount, null);
+                        InventoryEventHandler.AddItemEventArgs aea1 = new InventoryEventHandler.AddItemEventArgs(inv, true, false, item, amount, null);
                         InventoryEventHandler.current.Broadcast(e, aea1);
                         return amount;
                     }
@@ -71,7 +71,7 @@ public static class InventoryController
                     return amount;
                 }
             }
-            InventoryEventHandler.AddItemEventArgs aea2 = new InventoryEventHandler.AddItemEventArgs(true, false, item, amount, null);
+            InventoryEventHandler.AddItemEventArgs aea2 = new InventoryEventHandler.AddItemEventArgs(inv, true, false, item, amount, null);
             InventoryEventHandler.current.Broadcast(e, aea2);
             return 0;
         }
@@ -105,7 +105,7 @@ public static class InventoryController
                 return amount;
             }
         }
-        InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(true, false, item, amount, null);
+        InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(inv, true, false, item, amount, null);
         InventoryEventHandler.current.Broadcast(e, aea);
         return 0;
     }
@@ -142,7 +142,7 @@ public static class InventoryController
             }       
         }
         if (amount > 0) return AddItemToNewSlot(inv, item, amount, e);
-        InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(false, false, item, amount, null);
+        InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(inv, false, false, item, amount, null);
         InventoryEventHandler.current.Broadcast(e, aea);
         return 0;
     }
@@ -166,7 +166,7 @@ public static class InventoryController
                 inv.slots[slotNumber] = new Slot(item, item.maxAmount, true);
                 return amount - item.maxAmount;
             }
-            InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(false, true, item, amount, slotNumber);
+            InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
             InventoryEventHandler.current.Broadcast(e, aea);
             return 0;
         }
@@ -180,12 +180,12 @@ public static class InventoryController
                 inv.slots[slotNumber] = new Slot(item, item.maxAmount, true);
                 return valueToReeturn;
             }
-            InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(false, true, item, amount, slotNumber);
+            InventoryEventHandler.AddItemEventArgs aea = new InventoryEventHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
             InventoryEventHandler.current.Broadcast(e, aea);
             return 0;
         }
         else Debug.Log($"Slot {slotNumber} is already occupied with a different item");
-        InventoryEventHandler.AddItemEventArgs aeaNull = new InventoryEventHandler.AddItemEventArgs(false, false, null, 0, slotNumber);
+        InventoryEventHandler.AddItemEventArgs aeaNull = new InventoryEventHandler.AddItemEventArgs(inv, false, false, null, 0, slotNumber);
         InventoryEventHandler.current.Broadcast(e, aeaNull);
         return -1;
     }
@@ -243,7 +243,7 @@ public static class InventoryController
     {
 
         InventoryEventHandler.RemoveItemEventArgs rea = new InventoryEventHandler.RemoveItemEventArgs();
-        InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs();
+        InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(inv, true, slot, inv.slots[slot].item, amount, false);
         //if (e == BroadcastEventType.RemoveItem) rea = new InventoryEventHandler.RemoveItemEventArgs();
        // else if (e == BroadcastEventType.DropItem) dea = new InventoryEventHandler.DropItemEventArgs();
 
@@ -343,7 +343,7 @@ public static class InventoryController
     /// <param name="targetSlotNumber">The slot index witch will receive items </param>
     /// <param name="amount">The amount of items to be swaped</param>
     /// <returns>Returns the number of items that worent transfered</returns>
-    public static int SwapItemThruInventoriesSlotToSlot(this Inventory nativeInv, Inventory targetInv, int nativeSlotNumber, int targetSlotNumber, int amount)
+    public static int SwapItemThruInventoriesSlotToSlot(this Inventory nativeInv, Inventory targetInv, int nativeSlotNumber, int targetSlotNumber, int amount, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
     {
         if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
         else if (targetInv.slots[targetSlotNumber].item == null)

@@ -45,7 +45,9 @@ public class ItemDropHandler : MonoBehaviour, IDropHandler
                     return;
                 }
             }
-            InventoryEventHandler.current.Broadcast(BroadcastEventType.DropItem);
+            Slot s = nativeInvUI.inv.slots[nativeInvUI.dragSlotNumber.GetValueOrDefault()];
+            InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(nativeInvUI.inv, true, nativeInvUI.dragSlotNumber, s.item, s.amount, true);
+            InventoryEventHandler.current.Broadcast(BroadcastEventType.DropItem, null, null, null, null, null, dea);
             Debug.Log("Droping Item");
         }
         else nativeInvUI.shouldSwap = true;
