@@ -197,7 +197,7 @@ public static class InventoryController
     /// <param name="item">The item that will be removed in the inventory</param>
     /// <param name="amount">The amount of items to be removed</param>
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
-    public static bool RemoveItem(this Inventory inv, Item item, int amount)
+    public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
     {
         int total = 0;
         for(int i = 0; i < inv.slots.Count; i++)
@@ -229,6 +229,10 @@ public static class InventoryController
             Debug.Log("There arent enought items to take out!");
             return false;
         }
+        dropPosition ??= new Vector3(0, 0, 0);
+        InventoryEventHandler.RemoveItemEventArgs rea = new InventoryEventHandler.RemoveItemEventArgs(inv, false, amount, item, null);
+        InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(inv, false, null, item, amount, false, dropPosition.GetValueOrDefault());
+        InventoryEventHandler.current.Broadcast(e, rea: rea, dea: dea);
         return true;
     }
 
@@ -239,28 +243,24 @@ public static class InventoryController
     /// <param name="slot">The slot that will have item removed</param>
     /// <param name="amount">The amount of items to be removed</param>
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
-    public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem)
+    public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
     {
-
-        InventoryEventHandler.RemoveItemEventArgs rea = new InventoryEventHandler.RemoveItemEventArgs();
-        InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(inv, true, slot, inv.slots[slot].item, amount, false);
+        dropPosition ??= new Vector3(0, 0, 0);
+        InventoryEventHandler.RemoveItemEventArgs rea = new InventoryEventHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
+        InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(inv, true, slot, inv.slots[slot].item, amount, false, dropPosition);
         //if (e == BroadcastEventType.RemoveItem) rea = new InventoryEventHandler.RemoveItemEventArgs();
        // else if (e == BroadcastEventType.DropItem) dea = new InventoryEventHandler.DropItemEventArgs();
 
         if (inv.slots[slot].amount == amount)
         {
             inv.slots[slot] = nullSlot;
-            if (e == BroadcastEventType.RemoveItem) InventoryEventHandler.current.Broadcast(e, null, rea);
-            else if (e == BroadcastEventType.DropItem) InventoryEventHandler.current.Broadcast(e, null, null, null, null, null, dea);
-
+            InventoryEventHandler.current.Broadcast(e, rea: rea, dea: dea);
             return true;
         }
         else if (inv.slots[slot].amount > amount)
         {
             inv.slots[slot] = new Slot(inv.slots[slot].item, inv.slots[slot].amount - amount, true);
-            if (e == BroadcastEventType.RemoveItem) InventoryEventHandler.current.Broadcast(e, null, rea);
-            else if (e == BroadcastEventType.DropItem) InventoryEventHandler.current.Broadcast(e, null, null, null, null, null, dea);
-
+            InventoryEventHandler.current.Broadcast(e, rea: rea, dea: dea);
             return true;
         }
         else
@@ -275,7 +275,7 @@ public static class InventoryController
     /// </summary>
     /// <param name="inv">The inventory in witch the item will be used</param>
     /// <param name="slot">The slot that will have item used</param>
-    public static void UseItemInSlot(this Inventory inv, int slot)
+    public static void UseItemInSlot(this Inventory inv, int slot, BroadcastEventType e = BroadcastEventType.UseItem)
     {
         if (inv.slots[slot].hasItem && inv.areItemsUsable)
         {
@@ -283,7 +283,11 @@ public static class InventoryController
             {
                 Item it = inv.slots[slot].item;
                 if (RemoveItemInSlot(inv, slot, inv.slots[slot].item.useHowManyWhenUsed))
+                {
                     it.OnUse();
+                    InventoryEventHandler.UseItemEventArgs uea = new InventoryEventHandler.UseItemEventArgs(inv, it, slot);
+                    InventoryEventHandler.current.Broadcast(e, uea: uea);
+                }
                 return;
             }
             else if (!inv.slots[slot].item.destroyOnUse) inv.slots[slot].item.OnUse();
@@ -296,11 +300,13 @@ public static class InventoryController
     /// <param name="inv">The inventary to have items swapped</param>
     /// <param name="nativeSlot">The slot to lose items</param>
     /// <param name="targetSlot">The slot to gain items</param>
-    public static void SwapItemsInSlots(this Inventory inv, int nativeSlot, int targetSlot)
+    public static void SwapItemsInSlots(this Inventory inv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
     {
         Slot tmpSlot = inv.slots[targetSlot];
         inv.slots[targetSlot] = inv.slots[nativeSlot];
         inv.slots[nativeSlot] = tmpSlot;
+        InventoryEventHandler.SwapItemsEventArgs sea = new InventoryEventHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
+        InventoryEventHandler.current.Broadcast(e, sea: sea);
     }
 
     /// <summary>
@@ -311,9 +317,10 @@ public static class InventoryController
     /// <param name="targetSlot">The slot to gain items</param>
     /// <param name="amount">The amount of items to be swaped</param>
     /// <returns>Returns the number of items that dind fit in the other slot</returns>
-    public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount)
+    public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem)
     {
         int amount = (_amount ?? inv.slots[nativeSlot].amount);
+        InventoryEventHandler.SwapItemsEventArgs sea;
         if (amount > inv.slots[nativeSlot].amount) return amount;
         else if (inv.slots[targetSlot].item == null)
         {
@@ -327,10 +334,14 @@ public static class InventoryController
             inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount + remaning, true);
             if (inv.slots[nativeSlot].amount <= 0) 
                 inv.slots[nativeSlot] = nullSlot;
+            sea = new InventoryEventHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount - remaning);
+            InventoryEventHandler.current.Broadcast(e, sea: sea);
             return remaning;
         }
         else SwapItemsInSlots(inv, nativeSlot, targetSlot);
 
+        sea = new InventoryEventHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount);
+        InventoryEventHandler.current.Broadcast(e, sea: sea);
         return 0;
     }
 
@@ -345,6 +356,7 @@ public static class InventoryController
     /// <returns>Returns the number of items that worent transfered</returns>
     public static int SwapItemThruInventoriesSlotToSlot(this Inventory nativeInv, Inventory targetInv, int nativeSlotNumber, int targetSlotNumber, int amount, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
     {
+        InventoryEventHandler.SwapItemsTrhuInvEventArgs siea;
         if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
         else if (targetInv.slots[targetSlotNumber].item == null)
         {
@@ -358,6 +370,8 @@ public static class InventoryController
             nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount + remaning, true);
             if (nativeInv.slots[nativeSlotNumber].amount <= 0)
                 nativeInv.slots[nativeSlotNumber] = nullSlot;
+            siea = new InventoryEventHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount - remaning);
+            InventoryEventHandler.current.Broadcast(e, siea: siea);
             return remaning;
         }
         else
@@ -367,6 +381,8 @@ public static class InventoryController
             nativeInv.slots[nativeSlotNumber] = tmpSlot;
         }
 
+        siea = new InventoryEventHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount);
+        InventoryEventHandler.current.Broadcast(e, siea: siea);
         return 0;
     }
 
@@ -381,7 +397,7 @@ public static class InventoryController
     /// True => Basicly, every time it is not false
     /// False => When it was not able to remove the item from the nativeInv, that means the RemoveItem function returned false, that usually means there were not enought items in the inventory to take out (it is also false when it is not true btw)
     /// </returns>
-    public static bool SwapItemThruInventories(this Inventory nativeInv, Inventory targetInv, Item item, int amount)
+    public static bool SwapItemThruInventories(this Inventory nativeInv, Inventory targetInv, Item item, int amount, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
     {
         if (RemoveItem(nativeInv, item, amount))
         {
@@ -390,6 +406,8 @@ public static class InventoryController
         }
         else return false;
 
+        InventoryEventHandler.SwapItemsTrhuInvEventArgs siea = new InventoryEventHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, null, null, item, null, amount);
+        InventoryEventHandler.current.Broadcast(e, siea: siea);
         return true;
     }
 
@@ -398,7 +416,7 @@ public static class InventoryController
     /// </summary>
     /// <param name="inv">The inventory to be initialized</param>
     /// <returns>The list of slots of the inventory</returns>
-    public static List<Slot> InitializeInventory(this Inventory inv)
+    public static List<Slot> InitializeInventory(this Inventory inv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
     {
         inv.slots = new List<Slot>();
         for (int i = 0; i < inv.slotAmounts; i++)
@@ -409,6 +427,8 @@ public static class InventoryController
         //Debug.Log(inv.slots.Count);
         inv.id = inventories.Count;
         inventories.Add(inv);
+        InventoryEventHandler.InitializeInventoryEventArgs iea = new InventoryEventHandler.InitializeInventoryEventArgs(inv);
+        InventoryEventHandler.current.Broadcast(e, iea: iea);
         return inv.slots;
     }
 
@@ -417,12 +437,14 @@ public static class InventoryController
     /// </summary>
     /// <param name="inv">The inventory to be initialized</param>
     /// <returns>The list of slots of the inventory</returns>
-    public static List<Slot> InitializeInventoryFromAnotherInventory(this Inventory inv, Inventory modelInv)
+    public static List<Slot> InitializeInventoryFromAnotherInventory(this Inventory inv, Inventory modelInv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
     {
         inv = modelInv;
         Debug.Log(inv.slots.Count);
         inv.id = inventories.Count;
         inventories.Add(inv);
+        InventoryEventHandler.InitializeInventoryEventArgs iea = new InventoryEventHandler.InitializeInventoryEventArgs(inv);
+        InventoryEventHandler.current.Broadcast(e, iea: iea);
         return inv.slots;
     }
 

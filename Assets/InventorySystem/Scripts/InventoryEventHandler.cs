@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Numerics;
 using UnityEngine;
 
 /// <summary>
@@ -14,7 +16,7 @@ public class InventoryEventHandler : MonoBehaviour
     public event EventHandler<SwapItemsTrhuInvEventArgs> OnSwapTrhuInventory;
     public event EventHandler<UseItemEventArgs> OnUseItem;
     public event EventHandler<DropItemEventArgs> OnDropItem;
-    public event EventHandler<PickUpItemEventArgs> OnPickUpItem;
+    public event EventHandler<AddItemEventArgs> OnPickUpItem;
     public event EventHandler<InitializeInventoryEventArgs> OnInitializeInventory;
 
     public class AddItemEventArgs : EventArgs
@@ -38,19 +40,73 @@ public class InventoryEventHandler : MonoBehaviour
     }
     public class RemoveItemEventArgs
     {
+        public Inventory inv;
+        public bool removedByUI;
+        public int amount;
+        public Item item;
+        public int? slot;
 
+        public RemoveItemEventArgs(Inventory _inv, bool _removedByUI, int _amount, Item _item, int? _slot)
+        {
+            inv = _inv;
+            removedByUI = _removedByUI;
+            amount = _amount;
+            item = _item;
+            slot = _slot;
+        }
     }
     public class SwapItemsEventArgs
     {
+        public Inventory inv;
+        public int nativeSlot;
+        public int targetSlot;
+        public Item nativeItem;
+        public Item targetItem;
+        public int? amount;
 
+        public SwapItemsEventArgs (Inventory _inv, int _nativeSlot, int _targetSlot, Item _nativeItem, Item _targetItem, int? _amount)
+        {
+            inv = _inv;
+            nativeItem = _nativeItem;
+            targetItem = _targetItem;
+            nativeSlot = _nativeSlot;
+            targetSlot = _targetSlot;
+            amount = _amount;
+        }
     }
     public class SwapItemsTrhuInvEventArgs
     {
+        public Inventory nativeInv;
+        public Inventory targetInv;
+        public int? nativeSlot;
+        public int? targetSlot;
+        public Item nativeItem;
+        public Item targetItem;
+        public int? amount;
 
+        public SwapItemsTrhuInvEventArgs(Inventory _nativeInv, Inventory _targetInv, int? _nativeSlot, int? _targetSlot, Item _nativeItem, Item _targetItem, int? _amount)
+        {
+            nativeInv = _nativeInv;
+            targetInv = _targetInv;
+            nativeItem = _nativeItem;
+            targetItem = _targetItem;
+            nativeSlot = _nativeSlot;
+            targetSlot = _targetSlot;
+            amount = _amount;
+        }
     }
     public class UseItemEventArgs
     {
+        public Inventory inv;
+        public Item item;
+        public int slot;
 
+        public UseItemEventArgs(Inventory _inv, Item _item, int _slot)
+        {
+            inv = _inv;
+            item = _item;
+            slot = _slot;
+        }
     }
     public class DropItemEventArgs 
     {
@@ -60,8 +116,9 @@ public class InventoryEventHandler : MonoBehaviour
         public Item item;
         public int amount;
         public bool droppedByUI;
+        public UnityEngine.Vector3 positionDropped;
 
-        public DropItemEventArgs(Inventory _inv, bool _takenFromSpecificSlot, int? _slot, Item _item, int _amount, bool _droppedByUI)
+        public DropItemEventArgs(Inventory _inv, bool _takenFromSpecificSlot, int? _slot, Item _item, int _amount, bool _droppedByUI, UnityEngine.Vector3 _positionDropped)
         {
             inv = _inv;
             takenFromSpecificSlot = _takenFromSpecificSlot;
@@ -69,15 +126,17 @@ public class InventoryEventHandler : MonoBehaviour
             item = _item;
             amount = _amount;
             droppedByUI = _droppedByUI;
+            positionDropped = _positionDropped;
         }
     }
-    public class PickUpItemEventArgs 
-    {
-
-    }
     public class InitializeInventoryEventArgs 
-    { 
+    {
+        public Inventory inventory;
 
+        public InitializeInventoryEventArgs(Inventory _inv)
+        {
+            inventory = _inv;
+        }
     }
 
     private void Awake()
@@ -92,7 +151,6 @@ public class InventoryEventHandler : MonoBehaviour
                           SwapItemsTrhuInvEventArgs siea = null,
                           UseItemEventArgs uea = null,
                           DropItemEventArgs dea = null,
-                          PickUpItemEventArgs pea = null,
                           InitializeInventoryEventArgs iea = null)
     {
         Debug.Log($"Broadcasting event {e}");
@@ -117,7 +175,7 @@ public class InventoryEventHandler : MonoBehaviour
                 OnDropItem?.Invoke(this, dea);
                 break;
             case BroadcastEventType.PickUpItem:
-                OnPickUpItem?.Invoke(this, pea);
+                OnPickUpItem?.Invoke(this, aea);
                 break;
             case BroadcastEventType.InitializeInventory:
                 OnInitializeInventory?.Invoke(this, iea);

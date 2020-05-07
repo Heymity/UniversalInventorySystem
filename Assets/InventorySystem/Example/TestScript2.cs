@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestScript2 : MonoBehaviour, IDroppable
+public class TestScript2 : MonoBehaviour
 {
     Inventory inventory;
     public Item testItem;
@@ -15,16 +15,11 @@ public class TestScript2 : MonoBehaviour, IDroppable
         inventory.InitializeInventory();
         invUI.SetInventory(inventory);
     }
-    
-
+   
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.B))
             inventory.AddItem(testItem, 12);
     }
 
-    public void OnDrop()
-    {
-        Debug.Log("Teste");
-    }
 }
