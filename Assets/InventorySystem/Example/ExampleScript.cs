@@ -6,46 +6,47 @@ using UnityEngine.EventSystems;
 public class ExampleScript : MonoBehaviour
 {
     Inventory inventory;
-    public GameObject inventory2;
     public Item testItem;
     public int slotAmount;
     public InventoryUI invUI;
-    public int amountToTake;
 
     private void Start()
     {
+        //Inventory initialization
         inventory = new Inventory(slotAmount, true, IteractiableTypes.Any, true);
         inventory.InitializeInventory();
+
+        //InventoryUI initialization
         invUI.SetInventory(inventory);
+
+        //Events
         InventoryEventHandler invEvent = InventoryEventHandler.current;
         invEvent.OnAddItem += OnAddItem;
         invEvent.OnRemoveItem += OnRemoveItem;
     }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+            inventory.AddItem(testItem, 2);
+    }
 
+    //Callback function for when an item is removed from any inventory
     private void OnRemoveItem(object sender, InventoryEventHandler.RemoveItemEventArgs e)
     {
         Debug.Log("Remove");
     }
 
-    private void OnDestroy()
-    {
-        InventoryEventHandler.current.OnAddItem -= OnAddItem;
-    }
-
+    //Callback function for when an item is added from any inventory
     private void OnAddItem(object sender, InventoryEventHandler.AddItemEventArgs e)
     {
         Debug.Log($"The item {e.itemAdded.name} was added");
     }
 
-    private void Update()
+    //Unsubscribing the events if this object gets destoyed (better use the OnDisable func if your gameobj can be set inactive in hireachy)
+    private void OnDestroy()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-            inventory.AddItem(testItem, 2);
-        if (Input.GetKeyDown(KeyCode.S))
-            inventory.SwapItemsInCertainAmountInSlots(0, 10, amountToTake);
-        if (Input.GetKeyDown(KeyCode.O))
-            inventory.SwapItemThruInventoriesSlotToSlot(inventory2.GetComponent<InventoryUI>().GetInventory(), 0, 1, amountToTake);
-        if (Input.GetKeyDown(KeyCode.L))
-            inventory.SwapItemThruInventories(inventory2.GetComponent<InventoryUI>().GetInventory(), testItem, amountToTake);
+        InventoryEventHandler.current.OnAddItem -= OnAddItem;
+        InventoryEventHandler.current.OnRemoveItem -= OnRemoveItem;
     }
+
 }

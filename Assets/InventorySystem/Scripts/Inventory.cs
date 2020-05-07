@@ -4,11 +4,13 @@ using System;
 using Unity.Collections.LowLevel.Unsafe;
 
 [Serializable]
-public static class InventoryController 
+public static class InventoryController
 {
     public static List<InventoryUI> inventoriesUI = new List<InventoryUI>();
 
     public static List<Inventory> inventories = new List<Inventory>();
+
+    public static List<Item> items = new List<Item>();
 
     public static readonly Slot nullSlot = new Slot(null, 0, false);
 
@@ -16,7 +18,7 @@ public static class InventoryController
 
     public static Inventory GetInventoryById(int id)
     {
-        foreach(Inventory inv in inventories)
+        foreach (Inventory inv in inventories)
         {
             if (inv.id != id) continue;
             return inv;
@@ -28,6 +30,13 @@ public static class InventoryController
     {
         return inventories[index];
     }
+
+    public static List<Item> GetItems() 
+    { 
+        return items;
+    }
+
+    public static void SetItems(List<Item> _items) => items = _items; 
 
     /// <summary>
     /// Adds a certain amount of an item to the first empty slot even if there are slots of the same item that can still hold more items. If the specified amount is grater than the maxAmount for that item it will fill the next slot
