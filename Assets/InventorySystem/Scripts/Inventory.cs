@@ -229,7 +229,7 @@ public static class InventoryController
             Debug.Log("There arent enought items to take out!");
             return false;
         }
-        dropPosition ??= new Vector3(0, 0, 0);
+        dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
         InventoryEventHandler.RemoveItemEventArgs rea = new InventoryEventHandler.RemoveItemEventArgs(inv, false, amount, item, null);
         InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(inv, false, null, item, amount, false, dropPosition.GetValueOrDefault());
         InventoryEventHandler.current.Broadcast(e, rea: rea, dea: dea);
@@ -245,9 +245,9 @@ public static class InventoryController
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
     public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
     {
-        dropPosition ??= new Vector3(0, 0, 0);
+        dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
         InventoryEventHandler.RemoveItemEventArgs rea = new InventoryEventHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
-        InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(inv, true, slot, inv.slots[slot].item, amount, false, dropPosition);
+        InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(inv, true, slot, inv.slots[slot].item, amount, false, dropPosition.GetValueOrDefault());
         //if (e == BroadcastEventType.RemoveItem) rea = new InventoryEventHandler.RemoveItemEventArgs();
        // else if (e == BroadcastEventType.DropItem) dea = new InventoryEventHandler.DropItemEventArgs();
 
