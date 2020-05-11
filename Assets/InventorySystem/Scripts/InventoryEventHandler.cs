@@ -198,17 +198,44 @@ public class InventoryEventHandler : MonoBehaviour
 
     public class OnToggleInventoryEventArgs
     {
-
+        public Inventory inv;
+        public bool isActive;
+        
+        public OnToggleInventoryEventArgs(Inventory _inv, bool _isActive)
+        {
+            inv = _inv;
+            isActive = _isActive;
+        }
     }
 
     public class OnDragItemEventArgs
     {
+        public Inventory inv;
+        public UnityEngine.Vector3 pos;
+        public Item item;
 
+        public OnDragItemEventArgs(Inventory _inv, UnityEngine.Vector3 _pos, Item _item)
+        {
+            inv = _inv;
+            pos = _pos;
+            item = _item;
+        }
     }
 
     public class OnDropItemUIEventArgs
     {
+        public Inventory inv;
+        public int amount;
+        public UnityEngine.Vector3 pos;
+        public Item item;
 
+        public OnDropItemUIEventArgs(Inventory _inv, int _amount, UnityEngine.Vector3 _pos, Item _item)
+        {
+            inv = _inv;
+            amount = _amount;
+            pos = _pos;
+            item = _item;
+        }
     }
 
     public void BroadcastUIEvent(BroadcastEventType e, 
