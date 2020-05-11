@@ -192,15 +192,60 @@ public class InventoryEventHandler : MonoBehaviour
 
     //-------UI--------//
 
-    public Action<bool> OnToggleInventory;
+    public EventHandler<OnToggleInventoryEventArgs> OnToggleInventory;
+    public EventHandler<OnDragItemEventArgs> OnDragItem;
+    public EventHandler<OnDropItemUIEventArgs> OnDropItemUI;
 
-    public void BroadcastUIEvent(BroadcastEventType e, bool? isActive = null) { 
+    public class OnToggleInventoryEventArgs
+    {
+
+    }
+
+    public class OnDragItemEventArgs
+    {
+
+    }
+
+    public class OnDropItemUIEventArgs
+    {
+
+    }
+
+    public void BroadcastUIEvent(BroadcastEventType e, 
+                                 OnToggleInventoryEventArgs oti = null, 
+                                 OnDragItemEventArgs odi = null,
+                                 OnDropItemUIEventArgs drop = null)
+    {
         switch(e)
         {
             case BroadcastEventType.UIToggled:
-                OnToggleInventory?.Invoke(isActive.GetValueOrDefault());
+                OnToggleInventory?.Invoke(this, oti);
+                break;
+            case BroadcastEventType.ItemDragged:
+                OnDragItem?.Invoke(this, odi);
+                break;
+            case BroadcastEventType.DropItem:
+                OnDropItemUI?.Invoke(this, drop);
+                break;
+            default:
                 break;
         }
     }
     #endregion
+}
+
+public enum BroadcastEventType
+{
+    None = 0,
+    AddItem = 1,
+    RemoveItem = 2,
+    SwapItem = 3,
+    SwapTrhuInventory = 4,
+    DropItem = 5,
+    PickUpItem = 6,
+    UseItem = 7,
+    InitializeInventory = 8,
+    UIToggled = 9,
+    ItemDragged = 10,
+    ItemDropped = 11
 }
