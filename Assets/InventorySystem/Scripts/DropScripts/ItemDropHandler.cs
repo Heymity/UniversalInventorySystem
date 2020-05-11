@@ -27,6 +27,7 @@ public class ItemDropHandler : MonoBehaviour, IDropHandler
             //Debug.Log($"Item out of inventory!{this.name}");
             foreach (InventoryUI invUI in invsUI)
             {
+                if (!invUI.togglableObject.activeInHierarchy) continue;
                 if (invUI.DontDropItemRect.activeInHierarchy && RectTransformUtility.RectangleContainsScreenPoint(invUI.DontDropItemRect.GetComponent<RectTransform>(), Camera.main.ScreenToWorldPoint(Input.mousePosition)))
                 {
                     Debug.Log("Placinng Item into another inventory");
@@ -47,7 +48,7 @@ public class ItemDropHandler : MonoBehaviour, IDropHandler
             }
             Slot s = nativeInvUI.inv.slots[nativeInvUI.dragSlotNumber.GetValueOrDefault()];
             InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(nativeInvUI.inv, true, nativeInvUI.dragSlotNumber, s.item, s.amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            InventoryEventHandler.current.Broadcast(BroadcastEventType.DropItem, null, null, null, null, null, dea);
+            InventoryEventHandler.current.Broadcast(BroadcastEventType.DropItem, dea: dea);
             Debug.Log("Droping Item");
         }
         else nativeInvUI.shouldSwap = true;

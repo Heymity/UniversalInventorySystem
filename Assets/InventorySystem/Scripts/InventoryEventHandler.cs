@@ -155,7 +155,7 @@ public class InventoryEventHandler : MonoBehaviour
                           DropItemEventArgs dea = null,
                           InitializeInventoryEventArgs iea = null)
     {
-        Debug.Log($"Broadcasting event {e}");
+        //Debug.Log($"Broadcasting event {e}");
         switch (e)
         {
             case BroadcastEventType.AddItem:
@@ -212,13 +212,13 @@ public class InventoryEventHandler : MonoBehaviour
     {
         public Inventory inv;
         public UnityEngine.Vector3 pos;
-        public Item item;
+        public GameObject slot;
 
-        public OnDragItemEventArgs(Inventory _inv, UnityEngine.Vector3 _pos, Item _item)
+        public OnDragItemEventArgs(Inventory _inv, UnityEngine.Vector3 _pos, GameObject _slot)
         {
             inv = _inv;
             pos = _pos;
-            item = _item;
+            slot = _slot;
         }
     }
 

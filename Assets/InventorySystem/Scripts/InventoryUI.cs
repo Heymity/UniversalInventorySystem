@@ -6,7 +6,10 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System;
 
-public class InventoryUI : MonoBehaviour, IDropHandler
+//Todo
+//Transparent slots when dragging
+
+public class InventoryUI : MonoBehaviour
 {
     [Header("Slots config")]
     public bool generateUIFromSlotPrefab;
@@ -19,6 +22,8 @@ public class InventoryUI : MonoBehaviour, IDropHandler
     public GameObject DontDropItemRect;
     [Space]
     public GameObject[] slots;
+    [Space, Tooltip("Use the default one")]
+    public GameObject dragObj;
     [Space, Header("Toggle inventory")]
     public bool hideInventory;
     [Tooltip("There is no need to assign this varible if hideInventory is set to False")]
@@ -38,6 +43,15 @@ public class InventoryUI : MonoBehaviour, IDropHandler
 
     public void Start()
     {
+        InventoryEventHandler.current.OnDragItem += OnDragItem;
+
+        if(inv.interactiable != IteractiableTypes.Locked)
+        {
+            var b = Instantiate(dragObj, canvas.transform);
+            b.name = $"DRAGITEMOBJ{name}{UnityEngine.Random.Range(int.MinValue, int.MaxValue)}";
+            dragObj = b;
+        }
+
         InventoryController.inventoriesUI.Add(this);
         if (!generateUIFromSlotPrefab)
         {
@@ -112,12 +126,8 @@ public class InventoryUI : MonoBehaviour, IDropHandler
         }
     }
 
-    public void OnDrop(PointerEventData eventData)
+    public void OnDragItem(object sender, InventoryEventHandler.OnDragItemEventArgs e)
     {
-       /* if(!RectTransformUtility.RectangleContainsScreenPoint(DontDropItemRect, Input.mousePosition))
-        {
-            Debug.Log("Item to be dropped!");
-        }*/
-        Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+       
     }
 }

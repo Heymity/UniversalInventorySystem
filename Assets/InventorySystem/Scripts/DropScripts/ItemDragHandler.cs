@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
 {
@@ -19,7 +21,10 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
     {
         if (invUI.inv.interactiable != IteractiableTypes.Locked)
         {
-            rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+            invUI.dragObj.GetComponent<RectTransform>().anchoredPosition += eventData.delta / canvas.scaleFactor;
+            //rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+            InventoryEventHandler.OnDragItemEventArgs odi = new InventoryEventHandler.OnDragItemEventArgs(invUI.inv, rectTransform.anchoredPosition, invUI.slots[int.Parse(transform.parent.name)]);
+            InventoryEventHandler.current.BroadcastUIEvent(BroadcastEventType.ItemDragged, odi: odi);
             invUI.isDraging = true;
         }
     }
@@ -58,5 +63,12 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
             }
         }
         invUI.dragSlotNumber = index;
+
+        var o = invUI.dragObj;
+        o.GetComponent<RectTransform>().position = rectTransform.position;
+        var image = o.GetComponentInChildren<Image>();
+        image.color = new Color(1, 1, 1, 1);
+        image.sprite = invUI.inv.slots[index].item.sprite;
+        o.GetComponentInChildren<TextMeshProUGUI>().text = invUI.inv.slots[index].amount.ToString();
     }
 }
