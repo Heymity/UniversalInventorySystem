@@ -578,6 +578,7 @@ public enum BroadcastEventType
     PickUpItem = 6,
     UseItem = 7,
     InitializeInventory = 8,
+    UIToggled = 9
 }
 
 

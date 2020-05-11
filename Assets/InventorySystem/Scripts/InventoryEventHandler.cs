@@ -8,6 +8,8 @@ using UnityEngine;
 /// </summary>
 public class InventoryEventHandler : MonoBehaviour
 {
+    #region Controller
+    //------CONTROLLER------//
     public static InventoryEventHandler current;
  
     public event EventHandler<AddItemEventArgs> OnAddItem;
@@ -184,4 +186,21 @@ public class InventoryEventHandler : MonoBehaviour
                 break;
         }
     }
+    #endregion
+
+    #region UI
+
+    //-------UI--------//
+
+    public Action<bool> OnToggleInventory;
+
+    public void BroadcastUIEvent(BroadcastEventType e, bool? isActive = null) { 
+        switch(e)
+        {
+            case BroadcastEventType.UIToggled:
+                OnToggleInventory?.Invoke(isActive.GetValueOrDefault());
+                break;
+        }
+    }
+    #endregion
 }
