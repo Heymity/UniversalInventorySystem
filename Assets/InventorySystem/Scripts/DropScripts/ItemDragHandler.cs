@@ -37,7 +37,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
             int index = 0;
             for (int i = 0; i < invUI.slots.Length; i++)
             {
-                var tmp = Vector3.Distance(rectTransform.position, invUI.slots[i].GetComponent<RectTransform>().position);
+                var tmp = Vector3.Distance(invUI.dragObj.transform.position, invUI.slots[i].GetComponent<RectTransform>().position);
                 if (tmp <= min)
                 {
                     min = tmp;
@@ -46,7 +46,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
             }
             invUI.inv.SwapItemsInSlots(int.Parse(transform.parent.name), index);
         }
-        transform.localPosition = Vector3.zero;
+        invUI.dragObj.SetActive(false);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -64,11 +64,49 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
         }
         invUI.dragSlotNumber = index;
 
+        invUI.dragObj.SetActive(true);
+
         var o = invUI.dragObj;
-        o.GetComponent<RectTransform>().position = rectTransform.position;
+        var r = o.GetComponent<RectTransform>();
+        r.position = rectTransform.position;
+        var sd = invUI.slots[index].GetComponent<RectTransform>().sizeDelta;
+        r.sizeDelta = sd;
+        for(int i = 0;i < o.transform.childCount; i++)
+        {
+            var c = o.transform.GetChild(i);
+
+            Image ig;
+            TextMeshProUGUI text;
+            if (c.TryGetComponent(out ig))
+            {
+                for (int j = 0; j < invUI.slots[index].transform.childCount; j++)
+                {
+                    if (invUI.slots[index].transform.GetChild(i).TryGetComponent(out ig))
+                    {
+                        c.GetComponent<RectTransform>().sizeDelta = invUI.slots[index].transform.GetChild(i).GetComponent<RectTransform>().sizeDelta;
+                    }
+                    break;
+                }
+            } else if (c.TryGetComponent(out text)) 
+            {
+                for (int j = 0; j < invUI.slots[index].transform.childCount; j++)
+                {
+                    if (invUI.slots[index].transform.GetChild(i).TryGetComponent(out text))
+                    {
+                        c.GetComponent<RectTransform>().sizeDelta = invUI.slots[index].transform.GetChild(i).GetComponent<RectTransform>().sizeDelta;
+                        var t = c.GetComponent<TextMeshProUGUI>();
+                        t.fontSize = text.fontSize;
+                        t.color = text.color;
+                        t.alignment = text.alignment;
+                    }
+                    break;
+                }
+            } 
+        }
         var image = o.GetComponentInChildren<Image>();
         image.color = new Color(1, 1, 1, 1);
         image.sprite = invUI.inv.slots[index].item.sprite;
         o.GetComponentInChildren<TextMeshProUGUI>().text = invUI.inv.slots[index].amount.ToString();
+        
     }
 }

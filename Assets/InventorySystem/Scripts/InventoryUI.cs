@@ -63,7 +63,8 @@ public class InventoryUI : MonoBehaviour
                 tmp.invUI = this;
             }
         }
-        DontDropItemRect.AddComponent<ItemDropHandler>();
+        ItemDropHandler idh;
+        if(!canvas.TryGetComponent(out idh)) canvas.gameObject.AddComponent<ItemDropHandler>();
 
     }
 

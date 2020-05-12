@@ -1839,7 +1839,7 @@ MonoBehaviour:
   canvas: {fileID: 1427843708}
   DontDropItemRect: {fileID: 747462573}
   slots: []
-  dragObj: {fileID: 4676626297327902047, guid: 190af5ce39ca9824191677bd7d614e99, type: 3}
+  dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideInventory: 1
   toggleKey: 101
   togglableObject: {fileID: 747462573}
@@ -2965,7 +2965,7 @@ MonoBehaviour:
   - {fileID: 1083940538}
   - {fileID: 456733546}
   - {fileID: 158878597}
-  dragObj: {fileID: 4676626297327902047, guid: 190af5ce39ca9824191677bd7d614e99, type: 3}
+  dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideInventory: 1
   toggleKey: 105
   togglableObject: {fileID: 1459554219}
