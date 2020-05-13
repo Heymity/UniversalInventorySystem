@@ -77,14 +77,17 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
         {
             var c = o.transform.GetChild(i);
 
+            Image igUI;
             Image ig;
             TextMeshProUGUI text;
-            if (c.TryGetComponent(out ig))
+            if (c.TryGetComponent(out igUI))
             {
                 for (int j = 0; j < invUI.slots[index].transform.childCount; j++)
                 {
                     if (invUI.slots[index].transform.GetChild(i).TryGetComponent(out ig))
                     {
+                        igUI.material.SetFloat("_Size", invUI.outlineSize);
+                        igUI.material.SetColor("_Color", invUI.outlineColor);
                         c.GetComponent<RectTransform>().sizeDelta = invUI.slots[index].transform.GetChild(i).GetComponent<RectTransform>().sizeDelta;
                     }
                     break;
@@ -107,7 +110,21 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
         }
         Debug.Log(eventData.button);
         var dragSlot = o.GetComponent<DragSlot>();
-        dragSlot.SetAmount(invUI.inv.slots[index].amount);
+        int amountToTransfer;
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            amountToTransfer = invUI.inv.slots[index].amount;
+            dragSlot.SetAmount(amountToTransfer);
+        }
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            amountToTransfer = Mathf.RoundToInt(invUI.inv.slots[index].amount / 2f);
+            dragSlot.SetAmount(amountToTransfer);
+        } else
+        {
+            amountToTransfer = invUI.inv.slots[index].amount;
+            dragSlot.SetAmount(amountToTransfer);
+        }
         dragSlot.SetInventory(invUI.GetInventory());
         dragSlot.SetInventoryUI(invUI);
         dragSlot.SetItem(null);
@@ -115,7 +132,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
         var image = o.GetComponentInChildren<Image>();
         image.color = new Color(1, 1, 1, 1);
         image.sprite = invUI.inv.slots[index].item.sprite;
-        o.GetComponentInChildren<TextMeshProUGUI>().text = invUI.inv.slots[index].amount.ToString();
+        o.GetComponentInChildren<TextMeshProUGUI>().text = amountToTransfer.ToString();
         
     }
 }

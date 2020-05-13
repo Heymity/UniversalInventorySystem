@@ -1822,6 +1822,8 @@ MonoBehaviour:
   DontDropItemRect: {fileID: 747462573}
   slots: []
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
+  outlineColor: {r: 0.5686275, g: 0.3529412, b: 0.27450982, a: 1}
+  outlineSize: 2.3
   hideInventory: 1
   toggleKey: 101
   togglableObject: {fileID: 747462573}
@@ -2948,6 +2950,8 @@ MonoBehaviour:
   - {fileID: 456733546}
   - {fileID: 158878597}
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
+  outlineColor: {r: 0.3647059, g: 0.54509807, b: 0.6431373, a: 1}
+  outlineSize: 2.3
   hideInventory: 1
   toggleKey: 105
   togglableObject: {fileID: 1459554219}

@@ -24,6 +24,10 @@ public class InventoryUI : MonoBehaviour
     public GameObject[] slots;
     [Space, Tooltip("Use the default one")]
     public GameObject dragObj;
+    [Space, Header("Shader Config")]
+    public Color outlineColor;
+    [Range(0,10), Tooltip("Even though the slider goes to 10, the outline may stop working in more complex shapes before reaching 10")]
+    public float outlineSize;
     [Space, Header("Toggle inventory")]
     public bool hideInventory;
     [Tooltip("There is no need to assign this varible if hideInventory is set to False")]
@@ -48,7 +52,7 @@ public class InventoryUI : MonoBehaviour
         if(inv.interactiable != IteractiableTypes.Locked)
         {
             var b = Instantiate(dragObj, canvas.transform);
-            b.name = $"DRAGITEMOBJ{name}{UnityEngine.Random.Range(int.MinValue, int.MaxValue)}";
+            b.name = $"DRAGITEMOBJ_{name}_{UnityEngine.Random.Range(int.MinValue, int.MaxValue)}";
             b.AddComponent<DragSlot>();
             b.SetActive(false);
             dragObj = b;
@@ -70,7 +74,7 @@ public class InventoryUI : MonoBehaviour
 
     }
 
-    public List<GameObject> GenerateUI(int slotAmount)
+    List<GameObject> GenerateUI(int slotAmount)
     {
         List<GameObject> gb = new List<GameObject>();
         for(int i = 0;i < slotAmount; i++)
