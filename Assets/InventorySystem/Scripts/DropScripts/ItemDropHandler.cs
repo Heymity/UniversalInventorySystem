@@ -42,7 +42,7 @@ public class ItemDropHandler : MonoBehaviour, IDropHandler
                             index = i;
                         }
                     }
-                    InventoryController.SwapItemThruInventoriesSlotToSlot(nativeInvUI.inv, invUI.inv, nativeInvUI.dragSlotNumber ?? -1, index, 1);
+                    InventoryController.SwapItemThruInventoriesSlotToSlot(nativeInvUI.inv, invUI.inv, nativeInvUI.dragSlotNumber ?? -1, index, nativeInvUI.dragObj.GetComponent<DragSlot>().GetAmount());
                     return;
                 }
             }

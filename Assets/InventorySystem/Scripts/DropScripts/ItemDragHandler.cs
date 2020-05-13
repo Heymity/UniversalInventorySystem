@@ -45,7 +45,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
                     index = i;
                 }
             }
-            invUI.inv.SwapItemsInSlots(int.Parse(transform.parent.name), index);
+            invUI.inv.SwapItemsInCertainAmountInSlots(int.Parse(transform.parent.name), index, invUI.dragObj.GetComponent<DragSlot>().GetAmount());
         }
         invUI.dragObj.SetActive(false);
         Debug.Log(eventData.button);
@@ -106,6 +106,12 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
             } 
         }
         Debug.Log(eventData.button);
+        var dragSlot = o.GetComponent<DragSlot>();
+        dragSlot.SetAmount(invUI.inv.slots[index].amount);
+        dragSlot.SetInventory(invUI.GetInventory());
+        dragSlot.SetInventoryUI(invUI);
+        dragSlot.SetItem(null);
+        dragSlot.SetSlotNumber(index);
         var image = o.GetComponentInChildren<Image>();
         image.color = new Color(1, 1, 1, 1);
         image.sprite = invUI.inv.slots[index].item.sprite;
