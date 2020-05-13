@@ -8,8 +8,10 @@ using UnityEngine.UI;
 
 public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
 {
+    [HideInInspector]
     public Canvas canvas;
     RectTransform rectTransform;
+    [HideInInspector]
     public InventoryUI invUI;
 
     public void Awake()
@@ -22,7 +24,6 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
         if (invUI.inv.interactiable != IteractiableTypes.Locked)
         {
             invUI.dragObj.GetComponent<RectTransform>().anchoredPosition += eventData.delta / canvas.scaleFactor;
-            //rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
             InventoryEventHandler.OnDragItemEventArgs odi = new InventoryEventHandler.OnDragItemEventArgs(invUI.inv, rectTransform.anchoredPosition, invUI.slots[int.Parse(transform.parent.name)]);
             InventoryEventHandler.current.BroadcastUIEvent(BroadcastEventType.ItemDragged, odi: odi);
             invUI.isDraging = true;
@@ -47,6 +48,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
             invUI.inv.SwapItemsInSlots(int.Parse(transform.parent.name), index);
         }
         invUI.dragObj.SetActive(false);
+        Debug.Log(eventData.button);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -103,6 +105,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
                 }
             } 
         }
+        Debug.Log(eventData.button);
         var image = o.GetComponentInChildren<Image>();
         image.color = new Color(1, 1, 1, 1);
         image.sprite = invUI.inv.slots[index].item.sprite;

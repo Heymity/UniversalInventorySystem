@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 3832996660845256210}
   - component: {fileID: 7472980766113094454}
   - component: {fileID: 8081305516057854100}
-  - component: {fileID: 1162377893}
+  - component: {fileID: 267223057}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -178,7 +178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -193,7 +193,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1162377893
+--- !u!114 &267223057
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

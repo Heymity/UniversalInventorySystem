@@ -49,6 +49,8 @@ public class InventoryUI : MonoBehaviour
         {
             var b = Instantiate(dragObj, canvas.transform);
             b.name = $"DRAGITEMOBJ{name}{UnityEngine.Random.Range(int.MinValue, int.MaxValue)}";
+            b.AddComponent<DragSlot>();
+            b.SetActive(false);
             dragObj = b;
         }
 
