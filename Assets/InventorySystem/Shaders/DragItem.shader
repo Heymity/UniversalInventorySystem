@@ -62,7 +62,12 @@
 
                 fixed4 cola = colOutLineLeft + colOutLineRight + colOutLineUp + colOutLineDown;
 
-                cola.rgb = _Color;
+                float prevA = cola.a;
+                cola.a = 1;
+
+                cola.rgb = _Color.rgb;
+
+                cola.a = clamp(prevA,0,1);
 
                 cola.rgb *= cola.a;
 

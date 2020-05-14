@@ -2920,8 +2920,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   generateUIFromSlotPrefab: 0
   generatedUIParent: {fileID: 0}
-  slotPrefab: {fileID: 4676626297327902047, guid: 190af5ce39ca9824191677bd7d614e99,
-    type: 3}
+  slotPrefab: {fileID: 0}
   canvas: {fileID: 1427843708}
   DontDropItemRect: {fileID: 1459554219}
   slots:
@@ -2951,7 +2950,7 @@ MonoBehaviour:
   - {fileID: 158878597}
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   outlineColor: {r: 0.3647059, g: 0.54509807, b: 0.6431373, a: 1}
-  outlineSize: 4
+  outlineSize: 5
   hideInventory: 1
   toggleKey: 105
   togglableObject: {fileID: 1459554219}
@@ -2990,9 +2989,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ac0707fd66611846838e9c9b6a98c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  invUI: {fileID: 1140438006}
   testItem: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
   slotAmount: 24
-  invUI: {fileID: 1140438006}
 --- !u!1 &1198337620
 GameObject:
   m_ObjectHideFlags: 0
@@ -4865,6 +4864,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 64049618944348773, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
+        type: 3}
+      propertyPath: allItemsInGame.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 64049618944348773, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
+        type: 3}
+      propertyPath: allItemsInGame.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c,
+        type: 2}
     - target: {fileID: 64049618944348774, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
         type: 3}
       propertyPath: m_LocalPosition.x

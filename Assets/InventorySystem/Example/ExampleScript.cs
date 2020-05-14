@@ -6,9 +6,10 @@ using UnityEngine.EventSystems;
 public class ExampleScript : MonoBehaviour
 {
     Inventory inventory;
+    public InventoryUI invUI;
+
     public Item testItem;
     public int slotAmount;
-    public InventoryUI invUI;
 
     private void Start()
     {
@@ -19,6 +20,7 @@ public class ExampleScript : MonoBehaviour
         //InventoryUI initialization
         invUI.SetInventory(inventory);
 
+
         //Events
         InventoryEventHandler invEvent = InventoryEventHandler.current;
         invEvent.OnAddItem += OnAddItem;
@@ -27,7 +29,7 @@ public class ExampleScript : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.A))
-            inventory.AddItem(testItem, 2);
+            inventory.AddItem(ItemHandler.current.allItemsInGame[0], 2);
     }
 
     //Callback function for when an item is removed from any inventory

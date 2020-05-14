@@ -16,3 +16,8 @@ public interface IPickUpBehaviour
 {
     void OnPickUp(object sender, InventoryEventHandler.AddItemEventArgs e);
 }
+
+public interface IUsable
+{
+    void OnUse();
+}

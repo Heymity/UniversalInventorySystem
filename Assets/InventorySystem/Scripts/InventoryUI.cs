@@ -22,7 +22,7 @@ public class InventoryUI : MonoBehaviour
     public GameObject DontDropItemRect;
     [Space]
     public GameObject[] slots;
-    [Space, Tooltip("Use the default one")]
+    [Space, Tooltip("We recomend to use the default one")]
     public GameObject dragObj;
     [Space, Header("Shader Config")]
     public Color outlineColor;
