@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Numerics;
 using UnityEngine;
-using UnityEditor;
 
 /// <summary>
 /// Put this script on a always active GameObject.
@@ -10,7 +9,6 @@ using UnityEditor;
 public class InventoryEventHandler : MonoBehaviour
 {
     #region Controller
-
     //------CONTROLLER------//
     public static InventoryEventHandler current;
  

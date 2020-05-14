@@ -22,7 +22,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (invUI.inv.interactiable != IteractiableTypes.Locked && invUI.GetInventory().slots[index].hasItem)
+        if (invUI.inv.interactiable != IteractiableTypes.Locked && invUI.GetInventory().slots[index].hasItem && invUI.GetInventory().slots[index].amount > 0 && !(Mathf.RoundToInt(invUI.GetInventory().slots[index].amount / 2) <= 0 && eventData.button == PointerEventData.InputButton.Right))
         {
             invUI.dragObj.GetComponent<RectTransform>().anchoredPosition += eventData.delta / canvas.scaleFactor;
             InventoryEventHandler.OnDragItemEventArgs odi = new InventoryEventHandler.OnDragItemEventArgs(invUI.inv, rectTransform.anchoredPosition, invUI.slots[int.Parse(transform.parent.name)]);
@@ -33,6 +33,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        invUI.canvas.GetComponent<ItemDropHandler>().OnDrop(eventData);
         if (invUI.shouldSwap)
         {
             var min = float.MaxValue;
@@ -46,7 +47,8 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
                     index = i;
                 }
             }
-            invUI.inv.SwapItemsInCertainAmountInSlots(int.Parse(transform.parent.name), index, invUI.dragObj.GetComponent<DragSlot>().GetAmount());
+            if(invUI.dragObj.GetComponent<DragSlot>().GetAmount() >= 0)
+                invUI.inv.SwapItemsInCertainAmountInSlots(int.Parse(transform.parent.name), index, invUI.dragObj.GetComponent<DragSlot>().GetAmount());
         }
         invUI.dragObj.SetActive(false);
         Debug.Log(eventData.button);
@@ -65,9 +67,9 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
                 index = i;
             }
         }
-        if (invUI.GetInventory().slots[index].hasItem)
+        invUI.dragSlotNumber = index;
+        if (invUI.GetInventory().slots[index].hasItem && !(Mathf.RoundToInt(invUI.GetInventory().slots[index].amount / 2) <= 0 && eventData.button == PointerEventData.InputButton.Right))
         {
-            invUI.dragSlotNumber = index;
 
 
             invUI.dragObj.SetActive(true);

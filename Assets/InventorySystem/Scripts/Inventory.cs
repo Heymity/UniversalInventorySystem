@@ -329,6 +329,7 @@ public static class InventoryController
     public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem)
     {
         int amount = (_amount ?? inv.slots[nativeSlot].amount);
+        if (amount <= 0) return amount;
         InventoryEventHandler.SwapItemsEventArgs sea;
         if (amount > inv.slots[nativeSlot].amount) return amount;
         else if (inv.slots[targetSlot].item == null)
