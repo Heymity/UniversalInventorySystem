@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Item1
   id: 0
-  sprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6, type: 3}
   maxAmount: 10
   destroyOnUse: 1
   useHowManyWhenUsed: 1
