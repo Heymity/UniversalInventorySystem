@@ -127,6 +127,15 @@ public class InventoryUI : MonoBehaviour
             slots[i].transform.GetChild(0).GetComponent<Image>().sprite = inv.slots[i].item.sprite;
             slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(1, 1, 1, 1);
             slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = inv.slots[i].amount.ToString();
+            if (dragObj.GetComponent<DragSlot>().GetSlotNumber() == i && isDraging)
+            {
+                if(inv.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount() == 0)
+                {
+                    slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
+                    slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(0, 0, 0, 0);
+                    slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+                } else slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = (inv.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount()).ToString();
+            }
 
             slots[i].GetComponent<Button>().onClick.RemoveAllListeners();
             var index = i;
