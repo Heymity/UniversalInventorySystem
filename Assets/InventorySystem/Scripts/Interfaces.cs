@@ -21,3 +21,20 @@ public interface IUsable
 {
     void OnUse();
 }
+
+
+
+public abstract class DropBehaviour : MonoBehaviour, IDropBehaviour
+{
+    public virtual void OnEnable()
+    {
+        InventoryEventHandler.current.OnDropItem += OnDropItem;
+    }
+
+    public virtual void OnDestroy()
+    {
+        InventoryEventHandler.current.OnDropItem -= OnDropItem;
+    }
+
+    public abstract void OnDropItem(object sender, InventoryEventHandler.DropItemEventArgs e);
+}

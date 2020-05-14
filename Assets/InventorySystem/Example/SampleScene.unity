@@ -1822,8 +1822,8 @@ MonoBehaviour:
   DontDropItemRect: {fileID: 747462573}
   slots: []
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
-  outlineColor: {r: 0.5686275, g: 0.3529412, b: 0.27450982, a: 1}
-  outlineSize: 4
+  outlineColor: {r: 0.764151, g: 0.37030083, b: 0.2270826, a: 1}
+  outlineSize: 5
   hideInventory: 1
   toggleKey: 101
   togglableObject: {fileID: 747462573}
@@ -1925,7 +1925,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -264.3, y: 12}
+  m_AnchoredPosition: {x: -280.75, y: 12}
   m_SizeDelta: {x: -561.5, y: -81.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &747462575
@@ -2949,7 +2949,7 @@ MonoBehaviour:
   - {fileID: 456733546}
   - {fileID: 158878597}
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
-  outlineColor: {r: 0.3647059, g: 0.54509807, b: 0.6431373, a: 1}
+  outlineColor: {r: 0.14960839, g: 0.55387497, b: 0.7735849, a: 1}
   outlineSize: 5
   hideInventory: 1
   toggleKey: 105
@@ -3382,7 +3382,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 161, y: 12}
+  m_AnchoredPosition: {x: 166.65, y: 12}
   m_SizeDelta: {x: -333.3, y: -81.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1459554221

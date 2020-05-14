@@ -68,12 +68,12 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Scale: -0.88
-    - _Size: 4
+    - _Size: 5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.3647059, g: 0.54509807, b: 0.6431373, a: 1}
+    - _Color: {r: 0.14960839, g: 0.55387497, b: 0.7735849, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

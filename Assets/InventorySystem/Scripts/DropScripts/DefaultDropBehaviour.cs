@@ -2,21 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DefaultDropBehaviour : MonoBehaviour, IDropBehaviour
+public class DefaultDropBehaviour : DropBehaviour
 {
     public GameObject droppedItemObj;
 
-    void Start()
-    {
-        InventoryEventHandler.current.OnDropItem += OnDropItem;   
-    }
-
-    private void OnDestroy()
-    {
-        InventoryEventHandler.current.OnDropItem -= OnDropItem;
-    }
-
-    public void OnDropItem(object sender, InventoryEventHandler.DropItemEventArgs e)
+    public override void OnDropItem(object sender, InventoryEventHandler.DropItemEventArgs e)
     {
         Debug.Log("Drop");
         e.inv.RemoveItemInSlot(e.slot.GetValueOrDefault(), e.amount);

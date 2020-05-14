@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.EventSystems;
-using System;
+using UnityEditor;
 
 //Todo
 //Transparent slots when dragging
@@ -45,6 +43,13 @@ public class InventoryUI : MonoBehaviour
     public void SetInventory(Inventory _inv) => inv = _inv;
     public Inventory GetInventory() => inv;
 
+
+    /*[MenuItem("GameObject/InventorySystem/InventorySystemManager", false, 10)]
+    static void DoSomething()
+    {
+        Debug.Log("Hi");
+    }*/
+    
     public void Start()
     {
         InventoryEventHandler.current.OnDragItem += OnDragItem;
