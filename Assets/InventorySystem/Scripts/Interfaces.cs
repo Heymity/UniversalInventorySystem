@@ -38,20 +38,3 @@ public abstract class DropBehaviour : MonoBehaviour, IDropBehaviour
 
     public abstract void OnDropItem(object sender, InventoryEventHandler.DropItemEventArgs e);
 }
-
-public abstract class UseBehaviour : MonoBehaviour, IUsable
-{
-    public UseBehaviour () { }
-
-    public virtual void OnEnable()
-    {
-        InventoryEventHandler.current.OnUseItem += OnUse;
-    }
-
-    public virtual void OnDestroy()
-    {
-        InventoryEventHandler.current.OnUseItem -= OnUse;
-    }
-
-    public abstract void OnUse(object sender, InventoryEventHandler.UseItemEventArgs e);
-}

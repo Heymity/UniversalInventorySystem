@@ -119,8 +119,9 @@ public class InventoryEventHandler : MonoBehaviour
         public int amount;
         public bool droppedByUI;
         public UnityEngine.Vector3 positionDropped;
+        public bool useGeralDropBehaviour;
 
-        public DropItemEventArgs(Inventory _inv, bool _takenFromSpecificSlot, int? _slot, Item _item, int _amount, bool _droppedByUI, UnityEngine.Vector3 _positionDropped)
+        public DropItemEventArgs(Inventory _inv, bool _takenFromSpecificSlot, int? _slot, Item _item, int _amount, bool _droppedByUI, UnityEngine.Vector3 _positionDropped, bool _useGeralDropBehaviour)
         {
             inv = _inv;
             takenFromSpecificSlot = _takenFromSpecificSlot;
@@ -129,6 +130,7 @@ public class InventoryEventHandler : MonoBehaviour
             amount = _amount;
             droppedByUI = _droppedByUI;
             positionDropped = _positionDropped;
+            useGeralDropBehaviour = _useGeralDropBehaviour;
         }
     }
     public class InitializeInventoryEventArgs 
@@ -274,5 +276,4 @@ public enum BroadcastEventType
     InitializeInventory = 8,
     UIToggled = 9,
     ItemDragged = 10,
-    ItemDropped = 11
 }

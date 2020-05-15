@@ -240,8 +240,10 @@ public static class InventoryController
         }
         dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
         InventoryEventHandler.RemoveItemEventArgs rea = new InventoryEventHandler.RemoveItemEventArgs(inv, false, amount, item, null);
-        InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(inv, false, null, item, amount, false, dropPosition.GetValueOrDefault());
-        InventoryEventHandler.current.Broadcast(e, rea: rea, dea: dea);
+
+        if(e == BroadcastEventType.DropItem)
+            item.OnDrop(inv, false, null, amount, false, dropPosition);
+        else InventoryEventHandler.current.Broadcast(e, rea: rea);
         return true;
     }
 
@@ -256,20 +258,23 @@ public static class InventoryController
     {
         dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
         InventoryEventHandler.RemoveItemEventArgs rea = new InventoryEventHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
-        InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(inv, true, slot, inv.slots[slot].item, amount, false, dropPosition.GetValueOrDefault());
-        //if (e == BroadcastEventType.RemoveItem) rea = new InventoryEventHandler.RemoveItemEventArgs();
-       // else if (e == BroadcastEventType.DropItem) dea = new InventoryEventHandler.DropItemEventArgs();
 
         if (inv.slots[slot].amount == amount)
         {
+            Item tmp = inv.slots[slot].item;
             inv.slots[slot] = nullSlot;
-            InventoryEventHandler.current.Broadcast(e, rea: rea, dea: dea);
+            if (e == BroadcastEventType.DropItem)
+                tmp.OnDrop(inv, true, slot, amount, false, dropPosition);
+            else InventoryEventHandler.current.Broadcast(e, rea: rea);
             return true;
         }
         else if (inv.slots[slot].amount > amount)
         {
+            Item tmp = inv.slots[slot].item;
             inv.slots[slot] = new Slot(inv.slots[slot].item, inv.slots[slot].amount - amount, true);
-            InventoryEventHandler.current.Broadcast(e, rea: rea, dea: dea);
+            if (e == BroadcastEventType.DropItem)
+                tmp.OnDrop(inv, true, slot, amount, false, dropPosition);
+            else InventoryEventHandler.current.Broadcast(e, rea: rea);
             return true;
         }
         else
