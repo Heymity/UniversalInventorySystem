@@ -293,13 +293,13 @@ public static class InventoryController
                 Item it = inv.slots[slot].item;
                 if (RemoveItemInSlot(inv, slot, inv.slots[slot].item.useHowManyWhenUsed))
                 {
-                    it.OnUse();
+                    it.OnUse(inv, slot);
                     InventoryEventHandler.UseItemEventArgs uea = new InventoryEventHandler.UseItemEventArgs(inv, it, slot);
                     InventoryEventHandler.current.Broadcast(e, uea: uea);
                 }
                 return;
             }
-            else if (!inv.slots[slot].item.destroyOnUse) inv.slots[slot].item.OnUse();
+            else if (!inv.slots[slot].item.destroyOnUse) inv.slots[slot].item.OnUse(inv, slot);
         }
     }
 

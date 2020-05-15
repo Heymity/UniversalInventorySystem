@@ -1,5 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 
 [AddComponentMenu("UniversalInventorySystem/Item")]
@@ -13,9 +14,19 @@ public class Item : ScriptableObject
     public bool destroyOnUse;
     public int useHowManyWhenUsed;
     public bool stackable;
+    public MonoScript OnUseFunc;
 
-    public void OnUse()
+    public void OnUse(Inventory inv, int slot)
     {
         Debug.Log("UsingItem");
+        InventoryEventHandler.UseItemEventArgs uea = new InventoryEventHandler.UseItemEventArgs(inv, this, slot);
+        object[] tmp = new object[2] { this, uea };
+
+        BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+        MethodInfo[] monoMethods = OnUseFunc.GetClass().GetMethods(flags);
+
+        monoMethods[0].Invoke(Activator.CreateInstance(OnUseFunc.GetClass()), tmp);
+
     }
 }

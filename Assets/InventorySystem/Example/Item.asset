@@ -19,3 +19,4 @@ MonoBehaviour:
   destroyOnUse: 1
   useHowManyWhenUsed: 1
   stackable: 1
+  OnUseFunc: {fileID: 11500000, guid: fbc6a140bc2ae644788371b67a162054, type: 3}
