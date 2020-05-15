@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DefaultUseBehaviour : IUsable
+public class DefaultUseBehaviour
 {
     public void OnUse(object sender, InventoryEventHandler.UseItemEventArgs e)
     {

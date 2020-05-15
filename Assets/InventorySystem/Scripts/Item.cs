@@ -26,7 +26,7 @@ public class Item : ScriptableObject
         BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
         MethodInfo monoMethod = OnUseFunc.GetClass().GetMethod("OnUse", flags);
-        if (monoMethod == null) Debug.LogError($"The script provided ({OnUseFunc.name}) on item {itemName} does not contain, or its not accesible, the expected function OnUse.\n Check if this function exists and if the provided script derives from UseBehaviour");
+        if (monoMethod == null) Debug.LogError($"The script provided ({OnUseFunc.name}) on item {itemName} does not contain, or its not accesible, the expected function OnUse.\n Check if this function exists and if the provided script derives from IUsable");
         else monoMethod.Invoke(Activator.CreateInstance(OnUseFunc.GetClass()), tmp);
 
     }

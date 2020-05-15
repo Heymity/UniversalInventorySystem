@@ -7,6 +7,7 @@ public class ExampleScript : MonoBehaviour
 {
     Inventory inventory;
     public InventoryUI invUI;
+    public InventoryUI invUI2;
 
     public Item testItem;
     public int slotAmount;
@@ -19,7 +20,7 @@ public class ExampleScript : MonoBehaviour
 
         //InventoryUI initialization
         invUI.SetInventory(inventory);
-
+        invUI2.SetInventory(inventory);
 
         //Events
         InventoryEventHandler invEvent = InventoryEventHandler.current;

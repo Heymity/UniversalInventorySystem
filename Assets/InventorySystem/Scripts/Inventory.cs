@@ -86,7 +86,7 @@ public static class InventoryController
         }
         for (int i = 0; i < inv.slots.Count; i++)
         {
-            if (inv.slots[i].hasItem && i < inv.slots.Count - 1) continue;
+            if (inv.slots[i].hasItem) continue;
             else if (i < inv.slots.Count - 1)
             {
                 var maxAmount = item.maxAmount;
@@ -101,13 +101,26 @@ public static class InventoryController
                     if (amount > 0) continue;
                     else break;
                 }
-                
+
 
                 Debug.Log(i);
                 Debug.Log(inv.slots[i].amount);
                 break;
             }
-            else if (!inv.slots[i].hasItem) inv.slots[i] = new Slot(item, amount, true);
+            else if (!inv.slots[i].hasItem)
+            {
+                InventoryEventHandler.AddItemEventArgs aea2 = new InventoryEventHandler.AddItemEventArgs(inv, true, false, item, amount, null);
+                var newSlot = inv.slots[i].amount;
+                amount -= item.maxAmount - newSlot;
+                newSlot = item.maxAmount;
+                inv.slots[i] = new Slot(item, newSlot, true);
+                if (amount > 0)
+                {
+                    InventoryEventHandler.current.Broadcast(e, aea2);
+                    Debug.Log("Not Enought Room");
+                    return amount;
+                }
+            }
             else
             {
                 Debug.Log("Not Enought Room");
