@@ -7,31 +7,32 @@ using UnityEditor;
 //Todo
 //Transparent slots when dragging
 
+[System.Serializable]
 public class InventoryUI : MonoBehaviour
 {
-    [Header("Slots config")]
+
     public bool generateUIFromSlotPrefab;
     public GameObject generatedUIParent;
-    [Tooltip("Make sure that the first child is a image and the second a text")]
+
     public GameObject slotPrefab;
-    [Space]
+
     public Canvas canvas;
-    [Space, Tooltip("The rect where the item wont be dropped when released")]
+
     public GameObject DontDropItemRect;
-    [Space]
+
     public GameObject[] slots;
-    [Space, Tooltip("We recomend to use the default one")]
+
     public GameObject dragObj;
-    [Space, Header("Shader Config")]
+
     public Color outlineColor;
-    [Range(0,10), Tooltip("Even though the slider goes to 10, the outline may stop working in more complex shapes before reaching 10")]
+
     public float outlineSize;
-    [Space, Header("Toggle inventory")]
+
     public bool hideInventory;
-    [Tooltip("There is no need to assign this varible if hideInventory is set to False")]
+
     public KeyCode toggleKey;
     public GameObject togglableObject;
-    [Space, Header("Inventory")]
+
     public Inventory inv;
 
     [HideInInspector]

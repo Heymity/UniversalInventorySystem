@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Unity.Collections.LowLevel.Unsafe;
 
 [Serializable]
 public static class InventoryController

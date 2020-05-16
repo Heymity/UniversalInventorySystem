@@ -3333,7 +3333,7 @@ MonoBehaviour:
   - {fileID: 1940933016}
   - {fileID: 363206676}
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
-  outlineColor: {r: 0.14960839, g: 0.55387497, b: 0.7735849, a: 1}
+  outlineColor: {r: 0.1490196, g: 0.5592764, b: 0.77254903, a: 1}
   outlineSize: 5
   hideInventory: 1
   toggleKey: 105
@@ -3343,10 +3343,43 @@ MonoBehaviour:
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
-    slotAmounts: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    slotAmounts: 12
     id: 0
-    areItemsUsable: 0
-    areItemsDroppable: 0
+    areItemsUsable: 1
+    areItemsDroppable: 1
     interactiable: 0
   isDraging: 0
   shouldSwap: 0
