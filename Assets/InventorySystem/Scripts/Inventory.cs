@@ -211,6 +211,21 @@ public static class InventoryController
         return -1;
     }
 
+    public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, Item item = null, int? slot = null, BroadcastEventType e = BroadcastEventType.DropItem)
+    {
+        if(slot != null)
+        {
+            return RemoveItemInSlot(inv, slot.GetValueOrDefault(), amount, e);
+        } else if(item != null)
+        {
+            return RemoveItem(inv, item, amount, e);
+        } else
+        {
+            Debug.LogError($"No slot number or item provided; item: {item}, slot number: {slot}");
+            return false;
+        }
+    }
+
     /// <summary>
     /// Removes a certain item in a certain amount from the first apearence in certain inventory. When a slot runs out of items it goes to the next one with that item
     /// </summary>
@@ -454,6 +469,7 @@ public static class InventoryController
         //Debug.Log(inv.slots.Count);
         inv.id = inventories.Count;
         inventories.Add(inv);
+        inv.hasInitializated = true;
         InventoryEventHandler.InitializeInventoryEventArgs iea = new InventoryEventHandler.InitializeInventoryEventArgs(inv);
         InventoryEventHandler.current.Broadcast(e, iea: iea);
         return inv.slots;
@@ -470,6 +486,7 @@ public static class InventoryController
         Debug.Log(inv.slots.Count);
         inv.id = inventories.Count;
         inventories.Add(inv);
+        inv.hasInitializated = true;
         InventoryEventHandler.InitializeInventoryEventArgs iea = new InventoryEventHandler.InitializeInventoryEventArgs(inv);
         InventoryEventHandler.current.Broadcast(e, iea: iea);
         return inv.slots;
@@ -489,6 +506,8 @@ public class Inventory
     /// Defines the type of interaractions you can have with the inventory
     /// </summary>
     public IteractiableTypes interactiable;
+
+    public bool hasInitializated;
 
     public Inventory(List<Slot> _slots, int _slotAmounts, IteractiableTypes _interactiable, bool _areItemsUsable = true, bool _areItemsDroppable = true)
     {
