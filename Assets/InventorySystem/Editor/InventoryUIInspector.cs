@@ -33,7 +33,7 @@ public class InventoryUIInspector : Editor
     [MenuItem("GameObject/InventorySystem/InventorySystemManager", false, 10)]
     static void DoSomething()
     {
-        Debug.Log("Hi");
+        Debug.Log("Not implemented yet, add manualy the prefab InventorySystemManager");
     }
 
     private void OnEnable()

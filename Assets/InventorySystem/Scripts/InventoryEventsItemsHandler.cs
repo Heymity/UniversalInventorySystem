@@ -13,13 +13,13 @@ public class InventoryEventsItemsHandler : MonoBehaviour
     //--------ITEM HANDLER--------//
 
     [Header("Items Handler")]
-    public List<ItemData> itemAssets;
+    public List<ItemAsset> itemAssets;
 
-    public ItemData GetItemAssetAtIndex(int index) { return itemAssets[index]; }
+    public ItemAsset GetItemAssetAtIndex(int index) { return itemAssets[index]; }
 
-    public ItemData GetItemAssetWithName(string _strId)
+    public ItemAsset GetItemAssetWithName(string _strId)
     {
-        foreach (ItemData i in itemAssets)
+        foreach (ItemAsset i in itemAssets)
         {
             if (i.strId == _strId) return i;
         }
@@ -27,9 +27,9 @@ public class InventoryEventsItemsHandler : MonoBehaviour
         return null;
     }
 
-    public ItemData GetItemAssetWithID(int id)
+    public ItemAsset GetItemAssetWithID(int id)
     {
-        foreach (ItemData i in itemAssets)
+        foreach (ItemAsset i in itemAssets)
         {
             if (i.id == id) return i;
         }
@@ -37,12 +37,12 @@ public class InventoryEventsItemsHandler : MonoBehaviour
         return null;
     }
 
-    public List<ItemData> OrderItemsAssetById()
+    public List<ItemAsset> OrderItemsAssetById()
     {
         return InsertionSort(itemAssets);
     }
 
-    static List<ItemData> InsertionSort(List<ItemData> inputArray)
+    static List<ItemAsset> InsertionSort(List<ItemAsset> inputArray)
     {
         for (int i = 0; i < inputArray.Count - 1; i++)
         {

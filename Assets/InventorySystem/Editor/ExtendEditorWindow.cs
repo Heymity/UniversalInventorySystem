@@ -54,3 +54,15 @@ public class ExtendEditorWindow : EditorWindow
         }
     }
 }
+
+public class CreateItemAsset
+{
+    public static void CreateMyAsset(string path)
+    {
+        Item asset = ScriptableObject.CreateInstance<Item>();
+
+        AssetDatabase.CreateAsset(asset, path);
+        EditorPrefs.SetString("newItemPath", path);
+        AssetDatabase.SaveAssets();
+    }
+}

@@ -41,7 +41,8 @@ public class InventoryDrawer : PropertyDrawer
 
         position.y += position.height;
 
-        unfold = EditorGUI.Foldout(position, unfold, new GUIContent("Slots"), true);
+        var foldRect = new Rect(position.x, position.y, 50, position.height);
+        unfold = EditorGUI.Foldout(foldRect, unfold, new GUIContent("Slots"), true);
 
         var slotAmountsRect = new Rect(position.x + 50, position.y, position.width - 150, position.height);
         slotAmounts.intValue = EditorGUI.IntField(slotAmountsRect, new GUIContent("Amount of slots"), slotAmounts.intValue);

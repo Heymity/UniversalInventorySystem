@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ItemDataEditorWindow : ExtendEditorWindow
 {
-    public static void Open(ItemData dataObject)
+    public static void Open(ItemAsset dataObject)
     {
         ItemDataEditorWindow window = GetWindow<ItemDataEditorWindow>("Item Data Editor");
         window.serializedObject = new SerializedObject(dataObject);

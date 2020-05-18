@@ -133,7 +133,7 @@ public class ItemDrawer : PropertyDrawer
                         position.x += 20;
                         position.width -= 40;
                         EditorGUIUtility.labelWidth -= 20;
-                        total += 4;
+                        total += 5;
                         EditorGUI.indentLevel++;
                         EditorGUILayout.Separator();
                         EditorGUI.HelpBox(position, "The field below accepts any script, but it will only work if the provided script has the OnUse function", MessageType.None);

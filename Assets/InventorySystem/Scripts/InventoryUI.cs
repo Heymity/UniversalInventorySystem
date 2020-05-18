@@ -43,16 +43,10 @@ public class InventoryUI : MonoBehaviour
     public bool shouldSwap;
     public void SetInventory(Inventory _inv) => inv = _inv;
     public Inventory GetInventory() => inv;
-
-
-    /*[MenuItem("GameObject/InventorySystem/InventorySystemManager", false, 10)]
-    static void DoSomething()
-    {
-        Debug.Log("Hi");
-    }*/
     
     public void Start()
     {
+        if (!inv.hasInitializated) inv.InitializeInventory();
         InventoryEventsItemsHandler.current.OnDragItem += OnDragItem;
 
         if(inv.interactiable != IteractiableTypes.Locked)

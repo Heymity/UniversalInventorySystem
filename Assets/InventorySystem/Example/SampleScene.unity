@@ -2495,7 +2495,40 @@ MonoBehaviour:
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
-    slotAmounts: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+    slotAmounts: 12
     id: 0
     areItemsUsable: 1
     areItemsDroppable: 1
@@ -2529,8 +2562,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa9a145d8d783b44cbc75d59b8417aee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testItem: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
-  slotAmount: 12
   invUI: {fileID: 645887495}
 --- !u!1 &657415023 stripped
 GameObject:
@@ -5406,7 +5437,7 @@ PrefabInstance:
         type: 3}
       propertyPath: itemAssets.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 43ef083caa394574bbe008bdff56cadf,
+      objectReference: {fileID: 11400000, guid: 57c447cc307026949829e61220432bc0,
         type: 2}
     - target: {fileID: 64049618944348777, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
         type: 3}

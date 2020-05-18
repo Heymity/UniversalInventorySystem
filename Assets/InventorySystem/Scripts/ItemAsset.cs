@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ItemData", menuName = "UniversalInventorySystem/ItemData", order = 1), System.Serializable]
-public class ItemData : ScriptableObject
+[CreateAssetMenu(fileName = "ItemAsset", menuName = "UniversalInventorySystem/ItemAsset", order = 1), System.Serializable]
+public class ItemAsset : ScriptableObject
 {
     public List<Item> itemsList = new List<Item>();
     public string strId;

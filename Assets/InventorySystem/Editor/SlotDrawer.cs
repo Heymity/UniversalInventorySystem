@@ -24,7 +24,7 @@ public class SlotDrawer : PropertyDrawer
 
         EditorGUI.PropertyField(hasItemRect, property.FindPropertyRelative("hasItem"), GUIContent.none);
         EditorGUI.LabelField(labelHIRect, new GUIContent("Has item"));
-        EditorGUI.PropertyField(nameRect, property.FindPropertyRelative("item"), GUIContent.none);
+        EditorGUI.ObjectField(nameRect, property.FindPropertyRelative("item"), GUIContent.none);
         EditorGUI.LabelField(labelAmRect, new GUIContent("In Amount"));
         EditorGUI.PropertyField(amountRect, property.FindPropertyRelative("amount"), GUIContent.none);
 
