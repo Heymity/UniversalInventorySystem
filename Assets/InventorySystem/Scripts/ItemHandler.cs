@@ -2,22 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemHandler : MonoBehaviour
+[CreateAssetMenu(fileName = "ItemData", menuName = "UniversalInventorySystem/ItemData", order = 1), System.Serializable]
+public class ItemData : ScriptableObject
 {
-    public static ItemHandler current;
-    public List<Item> allItemsInGame = new List<Item>();
+    public List<Item> itemsList = new List<Item>();
+    public string strId;
+    public int id;
 
-    private void Start()
-    {
-        current = this;
-        InventoryController.SetItems(allItemsInGame);
-    }
-
-    public Item GetItemAtIndex(int index) { return allItemsInGame[index]; }
+    public Item GetItemAtIndex(int index) { return itemsList[index]; }
 
     public Item GetItemWithName(string name)
     {
-        foreach(Item i in allItemsInGame)
+        foreach(Item i in itemsList)
         {
             if (i.name == name) return i;
         }
@@ -27,7 +23,7 @@ public class ItemHandler : MonoBehaviour
 
     public Item GetItemWithID(int id)
     {
-        foreach (Item i in allItemsInGame)
+        foreach (Item i in itemsList)
         {
             if (i.id == id) return i;
         }
@@ -37,7 +33,7 @@ public class ItemHandler : MonoBehaviour
 
     public List<Item> OrderItemsById()
     {
-        return InsertionSort(allItemsInGame);
+        return InsertionSort(itemsList);
     }
 
     static List<Item> InsertionSort(List<Item> inputArray)

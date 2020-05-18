@@ -53,7 +53,7 @@ public class InventoryUI : MonoBehaviour
     
     public void Start()
     {
-        InventoryEventHandler.current.OnDragItem += OnDragItem;
+        InventoryEventsItemsHandler.current.OnDragItem += OnDragItem;
 
         if(inv.interactiable != IteractiableTypes.Locked)
         {
@@ -77,7 +77,6 @@ public class InventoryUI : MonoBehaviour
         }
         ItemDropHandler idh;
         if(!canvas.TryGetComponent(out idh)) canvas.gameObject.AddComponent<ItemDropHandler>();
-
     }
 
     List<GameObject> GenerateUI(int slotAmount)
@@ -148,7 +147,7 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    public void OnDragItem(object sender, InventoryEventHandler.OnDragItemEventArgs e)
+    public void OnDragItem(object sender, InventoryEventsItemsHandler.OnDragItemEventArgs e)
     {
        
     }

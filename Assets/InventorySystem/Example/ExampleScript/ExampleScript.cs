@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
+
 public class ExampleScript : MonoBehaviour
 {
     Inventory inventory;
@@ -23,24 +20,29 @@ public class ExampleScript : MonoBehaviour
         invUI2.SetInventory(inventory);
 
         //Events
-        InventoryEventHandler invEvent = InventoryEventHandler.current;
+        InventoryEventsItemsHandler invEvent = InventoryEventsItemsHandler.current;
         invEvent.OnAddItem += OnAddItem;
         invEvent.OnRemoveItem += OnRemoveItem;
     }
     private void Update()
     {
+        //Adds a item
         if (Input.GetKeyDown(KeyCode.A))
-            inventory.AddItem(ItemHandler.current.allItemsInGame[0], 2);
+            inventory.AddItem(InventoryEventsItemsHandler.current.GetItem(0, 0), 2);
+
+        //Adds another type of item
+        if (Input.GetKeyDown(KeyCode.D))
+            inventory.AddItem(InventoryEventsItemsHandler.current.GetItem(0, 1), 2);
     }
 
     //Callback function for when an item is removed from any inventory
-    private void OnRemoveItem(object sender, InventoryEventHandler.RemoveItemEventArgs e)
+    private void OnRemoveItem(object sender, InventoryEventsItemsHandler.RemoveItemEventArgs e)
     {
         Debug.Log("Remove");
     }
 
     //Callback function for when an item is added from any inventory
-    private void OnAddItem(object sender, InventoryEventHandler.AddItemEventArgs e)
+    private void OnAddItem(object sender, InventoryEventsItemsHandler.AddItemEventArgs e)
     {
         Debug.Log($"The item {e.itemAdded.name} was added");
     }
@@ -48,8 +50,8 @@ public class ExampleScript : MonoBehaviour
     //Unsubscribing the events if this object gets destoyed (better use the OnDisable func if your gameobj can be set inactive in hireachy)
     private void OnDestroy()
     {
-        InventoryEventHandler.current.OnAddItem -= OnAddItem;
-        InventoryEventHandler.current.OnRemoveItem -= OnRemoveItem;
+        InventoryEventsItemsHandler.current.OnAddItem -= OnAddItem;
+        InventoryEventsItemsHandler.current.OnRemoveItem -= OnRemoveItem;
     }
 
 }

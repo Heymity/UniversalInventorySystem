@@ -30,6 +30,12 @@ public class InventoryUIInspector : Editor
     bool toggleFold;
     bool invFold;
 
+    [MenuItem("GameObject/InventorySystem/InventorySystemManager", false, 10)]
+    static void DoSomething()
+    {
+        Debug.Log("Hi");
+    }
+
     private void OnEnable()
     {
         autoGenerateUI = serializedObject.FindProperty("generateUIFromSlotPrefab");
@@ -51,9 +57,9 @@ public class InventoryUIInspector : Editor
     {
         serializedObject.Update();
 
-        if(!slotsHeader && !shaderFold && !toggleFold && !invFold) EditorGUILayout.HelpBox("Click on a header to open the configurations!", MessageType.Info);
+        //if(!slotsHeader && !shaderFold && !toggleFold && !invFold) EditorGUILayout.HelpBox("Click on a header to open the configurations!", MessageType.Info);
         //EditorGUILayout.Knob(new Vector2(50, 50), 1, 0, 3, "m", Color.red, Color.green, true);
-        slotsHeader = EditorGUILayout.Foldout(slotsHeader, "Slots Configuration", true, EditorStyles.boldLabel);
+        slotsHeader = EditorGUILayout.Foldout(slotsHeader, "Slots Configuration", true, EditorStyles.foldoutHeader);
 
         if (slotsHeader)
         {
@@ -110,7 +116,7 @@ public class InventoryUIInspector : Editor
 
         EditorGUILayout.Separator();
 
-        shaderFold = EditorGUILayout.Foldout(shaderFold, "Shader Configuration", true, EditorStyles.boldLabel);
+        shaderFold = EditorGUILayout.Foldout(shaderFold, "Shader Configuration", true, EditorStyles.foldoutHeader);
 
         if (shaderFold)
         {
@@ -122,7 +128,7 @@ public class InventoryUIInspector : Editor
 
         EditorGUILayout.Separator();
 
-        toggleFold = EditorGUILayout.Foldout(toggleFold, "Toggle Inventory Configuration", true, EditorStyles.boldLabel);
+        toggleFold = EditorGUILayout.Foldout(toggleFold, "Toggle Inventory Configuration", true, EditorStyles.foldoutHeader);
 
         if (toggleFold)
         {
@@ -141,13 +147,15 @@ public class InventoryUIInspector : Editor
         
         EditorGUILayout.Separator();
 
-        invFold = EditorGUILayout.Foldout(invFold, "Inventory Configuration", true, EditorStyles.boldLabel);
+        invFold = EditorGUILayout.Foldout(invFold, "Inventory Configuration", true, EditorStyles.foldoutHeader);
 
 
         if(invFold)
         {
             EditorGUILayout.PropertyField(invProp);
         }
+
+        if (!slotsHeader && !shaderFold && !toggleFold && !invFold) EditorGUILayout.HelpBox("Click on a header to open the configurations!", MessageType.Info);
 
         serializedObject.ApplyModifiedProperties();
     }

@@ -6,7 +6,7 @@ public class DefaultDropBehaviour : DropBehaviour
 {
     public GameObject droppedItemObj;
 
-    public override void OnDropItem(object sender, InventoryEventHandler.DropItemEventArgs e)
+    public override void OnDropItem(object sender, InventoryEventsItemsHandler.DropItemEventArgs e)
     {
         Debug.Log("Drop");
         e.inv.RemoveItemInSlot(e.slot.GetValueOrDefault(), e.amount);

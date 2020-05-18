@@ -1,16 +1,75 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Numerics;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// Put this script on a always active GameObject.
 /// </summary>
-public class InventoryEventHandler : MonoBehaviour
+[Serializable]
+public class InventoryEventsItemsHandler : MonoBehaviour
 {
+    #region Item Handler
+
+    //--------ITEM HANDLER--------//
+
+    [Header("Items Handler")]
+    public List<ItemData> itemAssets;
+
+    public ItemData GetItemAssetAtIndex(int index) { return itemAssets[index]; }
+
+    public ItemData GetItemAssetWithName(string _strId)
+    {
+        foreach (ItemData i in itemAssets)
+        {
+            if (i.strId == _strId) return i;
+        }
+
+        return null;
+    }
+
+    public ItemData GetItemAssetWithID(int id)
+    {
+        foreach (ItemData i in itemAssets)
+        {
+            if (i.id == id) return i;
+        }
+
+        return null;
+    }
+
+    public List<ItemData> OrderItemsAssetById()
+    {
+        return InsertionSort(itemAssets);
+    }
+
+    static List<ItemData> InsertionSort(List<ItemData> inputArray)
+    {
+        for (int i = 0; i < inputArray.Count - 1; i++)
+        {
+            for (int j = i + 1; j > 0; j--)
+            {
+                if (inputArray[j - 1].id > inputArray[j].id)
+                {
+                    int temp = inputArray[j - 1].id;
+                    inputArray[j - 1].id = inputArray[j].id;
+                    inputArray[j].id = temp;
+                }
+            }
+        }
+        return inputArray;
+    }
+
+    public Item GetItem(int iAssetIndex, int itemIndex) { return GetItemAssetWithID(iAssetIndex).GetItemWithID(itemIndex); }
+
+    public Item GetItemWithName(int index, string itemName) { return GetItemAssetWithID(index).GetItemWithName(itemName); }
+
+    public Item GetItemWithName(string itemAssetStrId, string itemName) { return GetItemAssetWithName(itemAssetStrId).GetItemWithName(itemName); }
+
+    #endregion
+
     #region Controller
     //------CONTROLLER------//
-    public static InventoryEventHandler current;
+    public static InventoryEventsItemsHandler current;
  
     public event EventHandler<AddItemEventArgs> OnAddItem;
     public event EventHandler<RemoveItemEventArgs> OnRemoveItem;
@@ -277,3 +336,4 @@ public enum BroadcastEventType
     UIToggled = 9,
     ItemDragged = 10,
 }
+

@@ -16,7 +16,8 @@ public class InventoryDrawer : PropertyDrawer
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
         var id = property.FindPropertyRelative("id");
-        position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), new GUIContent("Inventory " + id.intValue.ToString()));
+        EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), new GUIContent("Inventory (id: " + id.intValue.ToString() + ")"));
+        position.y += 18;
         var areItemsUsable = property.FindPropertyRelative("areItemsUsable");
         var areItemsDroppable = property.FindPropertyRelative("areItemsDroppable");
         var slotAmounts = property.FindPropertyRelative("slotAmounts");
@@ -29,13 +30,14 @@ public class InventoryDrawer : PropertyDrawer
 
         //position.y += position.height;
 
-        areItemsUsable.boolValue = EditorGUI.Toggle(position, "Can use items", areItemsUsable.boolValue);
-        var dropItemRect = new Rect(position.x + 150, position.y, position.width, position.height);
+        var usableRect = new Rect(position.x, position.y, 120, position.height);
+        areItemsUsable.boolValue = EditorGUI.Toggle(usableRect, "Can use items", areItemsUsable.boolValue);
+        var dropItemRect = new Rect(position.x + 150, position.y, 120, position.height);
         areItemsDroppable.boolValue = EditorGUI.Toggle(dropItemRect, "Can drop items", areItemsDroppable.boolValue);
 
-        position.y += position.height;
-
-        EditorGUI.PropertyField(position, inte);
+        //position.y += position.height;
+        var inteRect = new Rect(position.x + 300, position.y, position.width - 300, position.height);
+        EditorGUI.PropertyField(inteRect, inte);
 
         position.y += position.height;
 
