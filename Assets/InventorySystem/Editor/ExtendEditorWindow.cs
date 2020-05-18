@@ -11,6 +11,8 @@ public class ExtendEditorWindow : EditorWindow
     private string selectedPropertyPath;
     protected SerializedProperty selectedProperty;
 
+    protected bool showItemAssets;
+
     protected void DrawProperties(SerializedProperty prop, bool drawChildren)
     {
         string lastPropPath = string.Empty;
@@ -40,10 +42,17 @@ public class ExtendEditorWindow : EditorWindow
 
     protected void DrawSidebar(SerializedProperty prop)
     {
+        if (GUILayout.Button("Item Asset"))
+        {
+            selectedPropertyPath = prop.propertyPath;
+            showItemAssets = true;
+        }
+
         foreach (SerializedProperty p in prop)
         {
             if (GUILayout.Button("Item " + p.displayName.TrimStart('E', 'l', 'e', 'm', 'e', 'n', 't')))
             {
+                showItemAssets = false;
                 selectedPropertyPath = p.propertyPath;
             }           
         }

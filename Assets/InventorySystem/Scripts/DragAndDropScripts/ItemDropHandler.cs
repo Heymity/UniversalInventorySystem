@@ -31,7 +31,6 @@ public class ItemDropHandler : MonoBehaviour, IDropHandler
                     if (!invUI.togglableObject.activeInHierarchy) continue;
                     if (invUI.DontDropItemRect.activeInHierarchy && RectTransformUtility.RectangleContainsScreenPoint(invUI.DontDropItemRect.GetComponent<RectTransform>(), Camera.main.ScreenToWorldPoint(Input.mousePosition)))
                     {
-                        Debug.Log("Placinng Item into another inventory");
                         var min = float.MaxValue;
                         int index = 0;
                         for (int i = 0; i < invUI.slots.Length; i++)
@@ -52,7 +51,7 @@ public class ItemDropHandler : MonoBehaviour, IDropHandler
 
                 s.item.OnDrop(nativeInvUI.inv, true, nativeInvUI.dragSlotNumber, s.amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition));
                 //InventoryEventHandler.current.Broadcast(BroadcastEventType.DropItem, dea: dea);
-                Debug.Log("Droping Item");
+
             }
             else nativeInvUI.shouldSwap = true;
         }

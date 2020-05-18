@@ -8,7 +8,6 @@ public class DefaultDropBehaviour : DropBehaviour
 
     public override void OnDropItem(object sender, InventoryEventsItemsHandler.DropItemEventArgs e)
     {
-        Debug.Log("Drop");
         e.inv.RemoveItemInSlot(e.slot.GetValueOrDefault(), e.amount);
         var b = Instantiate(droppedItemObj, new Vector3(e.positionDropped.x, e.positionDropped.y, 0), Quaternion.identity);
         DroppedItem droppedItem = b.GetComponent<DroppedItem>();
