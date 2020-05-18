@@ -9,8 +9,6 @@ public static class InventoryController
 
     public static List<Inventory> inventories = new List<Inventory>();
 
-    //public static List<Item> items = new List<Item>();
-
     public static readonly Slot nullSlot = new Slot(null, 0, false);
 
     public static List<Inventory> GetInventories() => inventories;
@@ -30,13 +28,6 @@ public static class InventoryController
         return inventories[index];
     }
 
-    //public static List<Item> GetItems() 
-    //{ 
-    //   return items;
-    //}
-
-    //public static void SetItems(List<Item> _items) => items = _items; 
-
     /// <summary>
     /// Adds a certain amount of an item to the first empty slot even if there are slots of the same item that can still hold more items. If the specified amount is grater than the maxAmount for that item it will fill the next slot
     /// </summary>
@@ -46,7 +37,17 @@ public static class InventoryController
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
     public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem)
     {
-        
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for AddItemToNewSlot");
+            return -1;
+        }
+        if (item == null)
+        {
+            Debug.LogError("Null item provided for AddItemToNewSlot");
+            return -1;
+        }
+
         if (!item.stackable)
         {
             for (int i = 0; i < inv.slots.Count; i++)
@@ -101,9 +102,6 @@ public static class InventoryController
                     else break;
                 }
 
-
-                Debug.Log(i);
-                Debug.Log(inv.slots[i].amount);
                 break;
             }
             else if (!inv.slots[i].hasItem)
@@ -140,6 +138,17 @@ public static class InventoryController
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
     public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem)
     {
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for AddItem");
+            return -1;
+        }
+        if (item == null)
+        {
+            Debug.LogError("Null item provided for AddItem");
+            return -1;
+        }
+
         if (!item.stackable) return AddItemToNewSlot(inv, item, amount, e);
         for (int i = 0; i < inv.slots.Count; i++)
         {
@@ -178,6 +187,17 @@ public static class InventoryController
     /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
     public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem)
     {
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for AddItemToSlot");
+            return -1;
+        }
+        if (item == null)
+        {
+            Debug.LogError("Null item provided for AddItemToSlot");
+            return -1;
+        }
+
         if (!inv.slots[slotNumber].hasItem)
         {
             if (amount < item.maxAmount)
@@ -221,7 +241,13 @@ public static class InventoryController
     /// <returns>The RemoveItem or RemoveItemInSlot function return value</returns>
     public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, Item item = null, int? slot = null, BroadcastEventType e = BroadcastEventType.DropItem)
     {
-        if(slot != null)
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for DropItem");
+            return false;
+        }
+
+        if (slot != null)
         {
             return RemoveItemInSlot(inv, slot.GetValueOrDefault(), amount, e);
         } else if(item != null)
@@ -243,6 +269,17 @@ public static class InventoryController
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
     public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
     {
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for RemoveItem");
+            return false;
+        }
+        if (item == null)
+        {
+            Debug.LogError("Null item provided for RemoveItem");
+            return false;
+        }
+
         int total = 0;
         for(int i = 0; i < inv.slots.Count; i++)
         {
@@ -291,6 +328,12 @@ public static class InventoryController
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
     public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
     {
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for RemoveItemInSlot");
+            return false;
+        }
+
         dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
         InventoryEventsItemsHandler.RemoveItemEventArgs rea = new InventoryEventsItemsHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
 
@@ -326,6 +369,12 @@ public static class InventoryController
     /// <param name="slot">The slot that will have item used</param>
     public static void UseItemInSlot(this Inventory inv, int slot, BroadcastEventType e = BroadcastEventType.UseItem)
     {
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for UseItemInSlot");
+            return;
+        }
+
         if (inv.slots[slot].hasItem && inv.areItemsUsable)
         {
             if (inv.slots[slot].item.destroyOnUse)
@@ -351,6 +400,12 @@ public static class InventoryController
     /// <param name="targetSlot">The slot to gain items</param>
     public static void SwapItemsInSlots(this Inventory inv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
     {
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for SwapItemsInSlots");
+            return;
+        }
+
         Slot tmpSlot = inv.slots[targetSlot];
         inv.slots[targetSlot] = inv.slots[nativeSlot];
         inv.slots[nativeSlot] = tmpSlot;
@@ -368,6 +423,12 @@ public static class InventoryController
     /// <returns>Returns the number of items that dind fit in the other slot</returns>
     public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem)
     {
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for SwapItemsInCertainAmountInSlots");
+            return -1;
+        }
+
         int amount = (_amount ?? inv.slots[nativeSlot].amount);
         if (amount <= 0) return amount;
         InventoryEventsItemsHandler.SwapItemsEventArgs sea;
@@ -406,6 +467,17 @@ public static class InventoryController
     /// <returns>Returns the number of items that worent transfered</returns>
     public static int SwapItemThruInventoriesSlotToSlot(this Inventory nativeInv, Inventory targetInv, int nativeSlotNumber, int targetSlotNumber, int amount, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
     {
+        if (nativeInv == null)
+        {
+            Debug.LogError("Null native inventory provided for SwapItemThruInventoriesSlotToSlot");
+            return -1;
+        }
+        if (targetInv == null)
+        {
+            Debug.LogError("Null target inventory provided for SwapItemThruInventoriesSlotToSlot");
+            return -1;
+        }
+
         InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs siea;
         if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
         else if (targetInv.slots[targetSlotNumber].item == null)
@@ -449,6 +521,18 @@ public static class InventoryController
     /// </returns>
     public static bool SwapItemThruInventories(this Inventory nativeInv, Inventory targetInv, Item item, int amount, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
     {
+        if (nativeInv == null)
+        {
+            Debug.LogError("Null native inventory provided for SwapItemThruInventories");
+            return false;
+        }
+        if (targetInv == null)
+        {
+            Debug.LogError("Null target inventory provided for SwapItemThruInventories");
+            return false;
+        }
+
+
         if (RemoveItem(nativeInv, item, amount))
         {
             int remaning = AddItem(targetInv, item, amount);
@@ -468,6 +552,12 @@ public static class InventoryController
     /// <returns>The list of slots of the inventory</returns>
     public static List<Slot> InitializeInventory(this Inventory inv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
     {
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for InitializeInventory");
+            return null;
+        }
+
         inv.slots = new List<Slot>();
         for (int i = 0; i < inv.slotAmounts; i++)
         {
@@ -490,6 +580,17 @@ public static class InventoryController
     /// <returns>The list of slots of the inventory</returns>
     public static List<Slot> InitializeInventoryFromAnotherInventory(this Inventory inv, Inventory modelInv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
     {
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for InitializeInventory");
+            return null;
+        }
+        if (modelInv == null)
+        {
+            Debug.LogError("Null model inventory provided for InitializeInventory");
+            return null;
+        }
+
         inv = modelInv;
         Debug.Log(inv.slots.Count);
         inv.id = inventories.Count;
@@ -610,6 +711,3 @@ public enum IteractiableTypes
     Any = 3,
     Locked = 4
 }
-
-
-
