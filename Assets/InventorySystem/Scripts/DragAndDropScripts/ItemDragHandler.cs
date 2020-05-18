@@ -22,13 +22,20 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (invUI.inv.interactiable != IteractiableTypes.Locked && invUI.GetInventory().slots[index].hasItem && invUI.GetInventory().slots[index].amount > 0 && !(Mathf.RoundToInt(invUI.GetInventory().slots[index].amount / 2) <= 0 && eventData.button == PointerEventData.InputButton.Right))
+        if (invUI.togglableObject.activeInHierarchy)
+        { 
+            if (invUI.inv.interactiable != IteractiableTypes.Locked && invUI.GetInventory().slots[index].hasItem && invUI.GetInventory().slots[index].amount > 0 && !(Mathf.RoundToInt(invUI.GetInventory().slots[index].amount / 2) <= 0 && eventData.button == PointerEventData.InputButton.Right))
+            {
+                invUI.dragObj.GetComponent<RectTransform>().anchoredPosition += eventData.delta / canvas.scaleFactor;
+                InventoryEventsItemsHandler.OnDragItemEventArgs odi = new InventoryEventsItemsHandler.OnDragItemEventArgs(invUI.inv, rectTransform.anchoredPosition, invUI.slots[int.Parse(transform.parent.name)]);
+                InventoryEventsItemsHandler.current.BroadcastUIEvent(BroadcastEventType.ItemDragged, odi: odi);
+                invUI.isDraging = true;
+            }
+        } else
         {
-            invUI.dragObj.GetComponent<RectTransform>().anchoredPosition += eventData.delta / canvas.scaleFactor;
-            InventoryEventsItemsHandler.OnDragItemEventArgs odi = new InventoryEventsItemsHandler.OnDragItemEventArgs(invUI.inv, rectTransform.anchoredPosition, invUI.slots[int.Parse(transform.parent.name)]);
-            InventoryEventsItemsHandler.current.BroadcastUIEvent(BroadcastEventType.ItemDragged, odi: odi);
-            invUI.isDraging = true;
+            invUI.dragObj.SetActive(false);
         }
+
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -51,7 +58,6 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
                 invUI.inv.SwapItemsInCertainAmountInSlots(int.Parse(transform.parent.name), index, invUI.dragObj.GetComponent<DragSlot>().GetAmount());
         }
         invUI.dragObj.SetActive(false);
-        Debug.Log(eventData.button);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -115,7 +121,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
                     }
                 }
             }
-            Debug.Log(eventData.button);
+
             var dragSlot = o.GetComponent<DragSlot>();
             int amountToTransfer;
             if (eventData.button == PointerEventData.InputButton.Left)

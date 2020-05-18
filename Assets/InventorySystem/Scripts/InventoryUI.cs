@@ -47,16 +47,12 @@ public class InventoryUI : MonoBehaviour
     public void Start()
     {
         if (!inv.hasInitializated) inv.InitializeInventory();
-        InventoryEventsItemsHandler.current.OnDragItem += OnDragItem;
 
-        if(inv.interactiable != IteractiableTypes.Locked)
-        {
-            var b = Instantiate(dragObj, canvas.transform);
-            b.name = $"DRAGITEMOBJ_{name}_{UnityEngine.Random.Range(int.MinValue, int.MaxValue)}";
-            b.AddComponent<DragSlot>();
-            b.SetActive(false);
-            dragObj = b;
-        }
+        var b = Instantiate(dragObj, canvas.transform);
+        b.name = $"DRAGITEMOBJ_{name}_{UnityEngine.Random.Range(int.MinValue, int.MaxValue)}";
+        b.AddComponent<DragSlot>();
+        b.SetActive(false);
+        dragObj = b;
 
         InventoryController.inventoriesUI.Add(this);
         if (!generateUIFromSlotPrefab)
@@ -102,7 +98,7 @@ public class InventoryUI : MonoBehaviour
 
         if (hideInventory)
         {
-            if (Input.GetKeyDown(toggleKey))
+            if (Input.GetKeyDown(toggleKey) && !isDraging)
             {
                 togglableObject.SetActive(!togglableObject.activeInHierarchy);
             }
@@ -139,10 +135,5 @@ public class InventoryUI : MonoBehaviour
                 inv.UseItemInSlot(index);             
             });
         }
-    }
-
-    public void OnDragItem(object sender, InventoryEventsItemsHandler.OnDragItemEventArgs e)
-    {
-       
     }
 }
