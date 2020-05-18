@@ -606,10 +606,9 @@ public enum IteractiableTypes
 {
     InventoryToInventory = 0,
     SlotToSlot = 1,
-    Any = 2,
-    InvToSpecificInv = 3,
-    SpecificInvSlot = 4,
-    Locked = 5
+    InvToSpecificInv = 2,
+    Any = 3,
+    Locked = 4
 }
 
 

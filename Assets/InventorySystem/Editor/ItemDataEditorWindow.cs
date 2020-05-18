@@ -36,6 +36,8 @@ public class ItemDataEditorWindow : ExtendEditorWindow
         }
         EditorGUILayout.EndVertical();
         EditorGUILayout.EndHorizontal();
-        
+
+        serializedObject.ApplyModifiedProperties();
+
     }
 }

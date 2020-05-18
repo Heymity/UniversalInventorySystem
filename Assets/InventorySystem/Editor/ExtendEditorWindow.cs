@@ -48,6 +48,13 @@ public class ExtendEditorWindow : EditorWindow
             }           
         }
 
+        if(GUILayout.Button("Add new item"))
+        {
+            CreateScriptableObjectAsset window = GetWindow<CreateScriptableObjectAsset>("Create Item");
+            window.property = prop;
+
+        }
+
         if (!string.IsNullOrEmpty(selectedPropertyPath))
         {
             selectedProperty = serializedObject.FindProperty(selectedPropertyPath);
@@ -55,14 +62,42 @@ public class ExtendEditorWindow : EditorWindow
     }
 }
 
-public class CreateItemAsset
+public class CreateScriptableObjectAsset : EditorWindow
 {
-    public static void CreateMyAsset(string path)
+    public SerializedProperty property;
+    public static Item CreateItemAsset(string path, string iname, SerializedProperty prop)
     {
         Item asset = ScriptableObject.CreateInstance<Item>();
 
+        path += $"/{iname}.asset";
+
         AssetDatabase.CreateAsset(asset, path);
-        EditorPrefs.SetString("newItemPath", path);
+   
         AssetDatabase.SaveAssets();
+
+        prop.arraySize++;
+        prop.GetArrayElementAtIndex(prop.arraySize - 1).objectReferenceValue = asset;
+
+        return asset;
+    }
+
+    string itemName;
+    private void OnGUI()
+    {
+        EditorGUILayout.BeginVertical("box", GUILayout.ExpandHeight(true));
+
+        string path = EditorPrefs.GetString("newItemPath", "Assets");
+        path = EditorGUILayout.TextField("Path to save", path);
+        EditorPrefs.SetString("newItemPath", path);
+
+        if (string.IsNullOrEmpty(itemName)) itemName = "Untitled";
+        itemName = EditorGUILayout.TextField("Name of the item", itemName);
+
+        if(GUILayout.Button("Create Item Asset"))
+        {
+            CreateItemAsset(path, itemName, property);
+        }
+
+        EditorGUILayout.EndVertical();
     }
 }
