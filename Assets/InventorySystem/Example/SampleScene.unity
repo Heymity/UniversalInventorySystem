@@ -2532,7 +2532,7 @@ MonoBehaviour:
     id: 0
     areItemsUsable: 1
     areItemsDroppable: 1
-    interactiable: 3
+    interactiable: 4
     hasInitializated: 0
   isDraging: 0
   shouldSwap: 0
@@ -3021,7 +3021,7 @@ MonoBehaviour:
     id: 0
     areItemsUsable: 0
     areItemsDroppable: 0
-    interactiable: 2
+    interactiable: 1
     hasInitializated: 0
   isDraging: 0
   shouldSwap: 0
@@ -3413,7 +3413,7 @@ MonoBehaviour:
     id: 0
     areItemsUsable: 1
     areItemsDroppable: 1
-    interactiable: 0
+    interactiable: 4
     hasInitializated: 0
   isDraging: 0
   shouldSwap: 0

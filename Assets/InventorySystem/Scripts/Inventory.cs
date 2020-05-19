@@ -37,6 +37,8 @@ public static class InventoryController
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
     public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem)
     {
+        if (inv.interactiable == IteractiableTypes.Locked) return amount;
+
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for AddItemToNewSlot");
@@ -138,6 +140,8 @@ public static class InventoryController
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
     public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem)
     {
+        if (inv.interactiable == IteractiableTypes.Locked) return amount;
+
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for AddItem");
@@ -187,6 +191,8 @@ public static class InventoryController
     /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
     public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem)
     {
+        if (inv.interactiable == IteractiableTypes.Locked) return amount;
+
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for AddItemToSlot");
@@ -241,6 +247,8 @@ public static class InventoryController
     /// <returns>The RemoveItem or RemoveItemInSlot function return value</returns>
     public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, Item item = null, int? slot = null, BroadcastEventType e = BroadcastEventType.DropItem)
     {
+        if (inv.interactiable == IteractiableTypes.Locked) return false;
+
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for DropItem");
@@ -269,6 +277,8 @@ public static class InventoryController
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
     public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
     {
+        if (inv.interactiable == IteractiableTypes.Locked) return false;
+
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for RemoveItem");
@@ -328,6 +338,8 @@ public static class InventoryController
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
     public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
     {
+        if (inv.interactiable == IteractiableTypes.Locked) return false;
+
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for RemoveItemInSlot");
@@ -369,6 +381,8 @@ public static class InventoryController
     /// <param name="slot">The slot that will have item used</param>
     public static void UseItemInSlot(this Inventory inv, int slot, BroadcastEventType e = BroadcastEventType.UseItem)
     {
+        if (inv.interactiable == IteractiableTypes.Locked) return;
+
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for UseItemInSlot");
@@ -400,17 +414,22 @@ public static class InventoryController
     /// <param name="targetSlot">The slot to gain items</param>
     public static void SwapItemsInSlots(this Inventory inv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
     {
+        if (inv.interactiable == IteractiableTypes.Locked || inv.interactiable == IteractiableTypes.LockSlots) return;
+
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for SwapItemsInSlots");
             return;
         }
 
-        Slot tmpSlot = inv.slots[targetSlot];
-        inv.slots[targetSlot] = inv.slots[nativeSlot];
-        inv.slots[nativeSlot] = tmpSlot;
-        InventoryEventsItemsHandler.SwapItemsEventArgs sea = new InventoryEventsItemsHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
-        InventoryEventsItemsHandler.current.Broadcast(e, sea: sea);
+        if (inv.interactiable == IteractiableTypes.SlotToSlot || inv.interactiable == IteractiableTypes.Any)
+        {
+            Slot tmpSlot = inv.slots[targetSlot];
+            inv.slots[targetSlot] = inv.slots[nativeSlot];
+            inv.slots[nativeSlot] = tmpSlot;
+            InventoryEventsItemsHandler.SwapItemsEventArgs sea = new InventoryEventsItemsHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
+            InventoryEventsItemsHandler.current.Broadcast(e, sea: sea);
+        }
     }
 
     /// <summary>
@@ -423,6 +442,8 @@ public static class InventoryController
     /// <returns>Returns the number of items that dind fit in the other slot</returns>
     public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem)
     {
+        if (inv.interactiable == IteractiableTypes.Locked || inv.interactiable == IteractiableTypes.LockSlots) return (_amount ?? inv.slots[nativeSlot].amount);
+
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for SwapItemsInCertainAmountInSlots");
@@ -430,30 +451,34 @@ public static class InventoryController
         }
 
         int amount = (_amount ?? inv.slots[nativeSlot].amount);
-        if (amount <= 0) return amount;
-        InventoryEventsItemsHandler.SwapItemsEventArgs sea;
-        if (amount > inv.slots[nativeSlot].amount) return amount;
-        else if (inv.slots[targetSlot].item == null)
+        if (inv.interactiable == IteractiableTypes.SlotToSlot || inv.interactiable == IteractiableTypes.Any)
         {
-            inv.slots[targetSlot] = new Slot(inv.slots[nativeSlot].item, amount, true);
-            inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount, true);
-            if (inv.slots[nativeSlot].amount <= 0) inv.slots[nativeSlot] = nullSlot;
-        }
-        else if (inv.slots[nativeSlot].item == inv.slots[targetSlot].item)
-        {
-            int remaning = AddItemToSlot(inv, inv.slots[nativeSlot].item, amount, targetSlot);
-            inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount + remaning, true);
-            if (inv.slots[nativeSlot].amount <= 0) 
-                inv.slots[nativeSlot] = nullSlot;
-            sea = new InventoryEventsItemsHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount - remaning);
-            InventoryEventsItemsHandler.current.Broadcast(e, sea: sea);
-            return remaning;
-        }
-        else SwapItemsInSlots(inv, nativeSlot, targetSlot);
+            if (amount <= 0) return amount;
+            InventoryEventsItemsHandler.SwapItemsEventArgs sea;
+            if (amount > inv.slots[nativeSlot].amount) return amount;
+            else if (inv.slots[targetSlot].item == null)
+            {
+                inv.slots[targetSlot] = new Slot(inv.slots[nativeSlot].item, amount, true);
+                inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount, true);
+                if (inv.slots[nativeSlot].amount <= 0) inv.slots[nativeSlot] = nullSlot;
+            }
+            else if (inv.slots[nativeSlot].item == inv.slots[targetSlot].item)
+            {
+                int remaning = AddItemToSlot(inv, inv.slots[nativeSlot].item, amount, targetSlot);
+                inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount + remaning, true);
+                if (inv.slots[nativeSlot].amount <= 0)
+                    inv.slots[nativeSlot] = nullSlot;
+                sea = new InventoryEventsItemsHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount - remaning);
+                InventoryEventsItemsHandler.current.Broadcast(e, sea: sea);
+                return remaning;
+            }
+            else SwapItemsInSlots(inv, nativeSlot, targetSlot);
 
-        sea = new InventoryEventsItemsHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount);
-        InventoryEventsItemsHandler.current.Broadcast(e, sea: sea);
-        return 0;
+            sea = new InventoryEventsItemsHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount);
+            InventoryEventsItemsHandler.current.Broadcast(e, sea: sea);
+            return 0;
+        }
+        return amount;
     }
 
     /// <summary>
@@ -478,34 +503,39 @@ public static class InventoryController
             return -1;
         }
 
-        InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs siea;
-        if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
-        else if (targetInv.slots[targetSlotNumber].item == null)
+        if (nativeInv.interactiable == IteractiableTypes.Locked || targetInv.interactiable == IteractiableTypes.Locked || nativeInv.interactiable == IteractiableTypes.LockThruInventory || targetInv.interactiable == IteractiableTypes.LockThruInventory) return amount;
+        if ((nativeInv.interactiable == IteractiableTypes.InventoryToInventory || nativeInv.interactiable == IteractiableTypes.Any ) && (targetInv.interactiable == IteractiableTypes.InventoryToInventory || targetInv.interactiable == IteractiableTypes.Any)) 
         {
-            targetInv.slots[targetSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, amount, true);
-            nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount, true);
-            if (nativeInv.slots[nativeSlotNumber].amount <= 0) nativeInv.slots[nativeSlotNumber] = nullSlot;
-        }
-        else if (nativeInv.slots[nativeSlotNumber].item == targetInv.slots[targetSlotNumber].item)
-        {
-            int remaning = AddItemToSlot(targetInv, nativeInv.slots[nativeSlotNumber].item, amount, targetSlotNumber);
-            nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount + remaning, true);
-            if (nativeInv.slots[nativeSlotNumber].amount <= 0)
-                nativeInv.slots[nativeSlotNumber] = nullSlot;
-            siea = new InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount - remaning);
-            InventoryEventsItemsHandler.current.Broadcast(e, siea: siea);
-            return remaning;
-        }
-        else
-        {
-            Slot tmpSlot = targetInv.slots[targetSlotNumber];
-            targetInv.slots[targetSlotNumber] = nativeInv.slots[nativeSlotNumber];
-            nativeInv.slots[nativeSlotNumber] = tmpSlot;
-        }
+            InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs siea;
+            if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
+            else if (targetInv.slots[targetSlotNumber].item == null)
+            {
+                targetInv.slots[targetSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, amount, true);
+                nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount, true);
+                if (nativeInv.slots[nativeSlotNumber].amount <= 0) nativeInv.slots[nativeSlotNumber] = nullSlot;
+            }
+            else if (nativeInv.slots[nativeSlotNumber].item == targetInv.slots[targetSlotNumber].item)
+            {
+                int remaning = AddItemToSlot(targetInv, nativeInv.slots[nativeSlotNumber].item, amount, targetSlotNumber);
+                nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount + remaning, true);
+                if (nativeInv.slots[nativeSlotNumber].amount <= 0)
+                    nativeInv.slots[nativeSlotNumber] = nullSlot;
+                siea = new InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount - remaning);
+                InventoryEventsItemsHandler.current.Broadcast(e, siea: siea);
+                return remaning;
+            }
+            else
+            {
+                Slot tmpSlot = targetInv.slots[targetSlotNumber];
+                targetInv.slots[targetSlotNumber] = nativeInv.slots[nativeSlotNumber];
+                nativeInv.slots[nativeSlotNumber] = tmpSlot;
+            }
 
-        siea = new InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount);
-        InventoryEventsItemsHandler.current.Broadcast(e, siea: siea);
-        return 0;
+            siea = new InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount);
+            InventoryEventsItemsHandler.current.Broadcast(e, siea: siea);
+            return 0;
+        }
+        return amount;   
     }
 
     /// <summary>
@@ -532,17 +562,23 @@ public static class InventoryController
             return false;
         }
 
+        if (nativeInv.interactiable == IteractiableTypes.Locked || targetInv.interactiable == IteractiableTypes.Locked || nativeInv.interactiable == IteractiableTypes.LockThruInventory || targetInv.interactiable == IteractiableTypes.LockThruInventory) return false;
+        if ((nativeInv.interactiable == IteractiableTypes.InventoryToInventory || nativeInv.interactiable == IteractiableTypes.Any) && (targetInv.interactiable == IteractiableTypes.InventoryToInventory || targetInv.interactiable == IteractiableTypes.Any))
+            {
+                {
+                if (RemoveItem(nativeInv, item, amount))
+                {
+                    int remaning = AddItem(targetInv, item, amount);
+                    if (remaning > 0) AddItem(nativeInv, item, remaning);
+                }
+                else return false;
 
-        if (RemoveItem(nativeInv, item, amount))
-        {
-            int remaning = AddItem(targetInv, item, amount);
-            if (remaning > 0) AddItem(nativeInv, item, remaning);
+                InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs siea = new InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, null, null, item, null, amount);
+                InventoryEventsItemsHandler.current.Broadcast(e, siea: siea);
+                return true;
+            }
         }
-        else return false;
-
-        InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs siea = new InventoryEventsItemsHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, null, null, item, null, amount);
-        InventoryEventsItemsHandler.current.Broadcast(e, siea: siea);
-        return true;
+        return false;
     }
 
     /// <summary>
@@ -550,13 +586,15 @@ public static class InventoryController
     /// </summary>
     /// <param name="inv">The inventory to be initialized</param>
     /// <returns>The list of slots of the inventory</returns>
-    public static List<Slot> InitializeInventory(this Inventory inv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
+    public static Inventory InitializeInventory(this Inventory inv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
     {
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for InitializeInventory");
             return null;
         }
+
+        if (inv.hasInitializated) return inv;
 
         inv.slots = new List<Slot>();
         for (int i = 0; i < inv.slotAmounts; i++)
@@ -570,7 +608,7 @@ public static class InventoryController
         inv.hasInitializated = true;
         InventoryEventsItemsHandler.InitializeInventoryEventArgs iea = new InventoryEventsItemsHandler.InitializeInventoryEventArgs(inv);
         InventoryEventsItemsHandler.current.Broadcast(e, iea: iea);
-        return inv.slots;
+        return inv;
     }
 
     /// <summary>
@@ -578,7 +616,7 @@ public static class InventoryController
     /// </summary>
     /// <param name="inv">The inventory to be initialized</param>
     /// <returns>The list of slots of the inventory</returns>
-    public static List<Slot> InitializeInventoryFromAnotherInventory(this Inventory inv, Inventory modelInv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
+    public static Inventory InitializeInventoryFromAnotherInventory(this Inventory inv, Inventory modelInv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
     {
         if (inv == null)
         {
@@ -591,6 +629,8 @@ public static class InventoryController
             return null;
         }
 
+        if (inv.hasInitializated) return inv;
+
         inv = modelInv;
         Debug.Log(inv.slots.Count);
         inv.id = inventories.Count;
@@ -598,7 +638,7 @@ public static class InventoryController
         inv.hasInitializated = true;
         InventoryEventsItemsHandler.InitializeInventoryEventArgs iea = new InventoryEventsItemsHandler.InitializeInventoryEventArgs(inv);
         InventoryEventsItemsHandler.current.Broadcast(e, iea: iea);
-        return inv.slots;
+        return inv;
     }
 
 }
@@ -705,9 +745,10 @@ public struct Slot
 
 public enum IteractiableTypes
 {
-    InventoryToInventory = 0,
-    SlotToSlot = 1,
-    InvToSpecificInv = 2,
-    Any = 3,
-    Locked = 4
+    Any = 1,
+    InventoryToInventory = 2,
+    SlotToSlot = 4,
+    LockSlots = 8,
+    LockThruInventory = 16,
+    Locked = 32
 }
