@@ -27,8 +27,8 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
             if (invUI.inv.interactiable != IteractiableTypes.Locked && invUI.GetInventory().slots[index].hasItem && invUI.GetInventory().slots[index].amount > 0 && !(Mathf.RoundToInt(invUI.GetInventory().slots[index].amount / 2) <= 0 && eventData.button == PointerEventData.InputButton.Right))
             {
                 invUI.dragObj.GetComponent<RectTransform>().anchoredPosition += eventData.delta / canvas.scaleFactor;
-                InventoryEventsItemsHandler.OnDragItemEventArgs odi = new InventoryEventsItemsHandler.OnDragItemEventArgs(invUI.inv, rectTransform.anchoredPosition, invUI.slots[int.Parse(transform.parent.name)]);
-                InventoryEventsItemsHandler.current.BroadcastUIEvent(BroadcastEventType.ItemDragged, odi: odi);
+                InventoryHandler.OnDragItemEventArgs odi = new InventoryHandler.OnDragItemEventArgs(invUI.inv, rectTransform.anchoredPosition, invUI.slots[int.Parse(transform.parent.name)]);
+                InventoryHandler.current.BroadcastUIEvent(BroadcastEventType.ItemDragged, odi: odi);
                 invUI.isDraging = true;
             }
         } else

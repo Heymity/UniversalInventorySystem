@@ -6,7 +6,7 @@ using UnityEngine;
 /// Put this script on a always active GameObject.
 /// </summary>
 [Serializable]
-public class InventoryEventsItemsHandler : MonoBehaviour
+public class InventoryHandler : MonoBehaviour
 {
     #region Item Handler
 
@@ -69,7 +69,7 @@ public class InventoryEventsItemsHandler : MonoBehaviour
 
     #region Controller
     //------CONTROLLER------//
-    public static InventoryEventsItemsHandler current;
+    public static InventoryHandler current;
  
     public event EventHandler<AddItemEventArgs> OnAddItem;
     public event EventHandler<RemoveItemEventArgs> OnRemoveItem;

@@ -20,7 +20,7 @@ public class ExampleScript : MonoBehaviour
         invUI2.SetInventory(inventory);
 
         //Events
-        InventoryEventsItemsHandler invEvent = InventoryEventsItemsHandler.current;
+        InventoryHandler invEvent = InventoryHandler.current;
         invEvent.OnAddItem += OnAddItem;
         invEvent.OnRemoveItem += OnRemoveItem;
     }
@@ -28,21 +28,21 @@ public class ExampleScript : MonoBehaviour
     {
         //Adds a item
         if (Input.GetKeyDown(KeyCode.A))
-            inventory.AddItem(InventoryEventsItemsHandler.current.GetItem(0, 0), 2);
+            inventory.AddItem(InventoryHandler.current.GetItem(0, 0), 2);
 
         //Adds another type of item
         if (Input.GetKeyDown(KeyCode.D))
-            inventory.AddItem(InventoryEventsItemsHandler.current.GetItem(0, 1), 2);
+            inventory.AddItem(InventoryHandler.current.GetItem(0, 1), 2);
     }
 
     //Callback function for when an item is removed from any inventory
-    private void OnRemoveItem(object sender, InventoryEventsItemsHandler.RemoveItemEventArgs e)
+    private void OnRemoveItem(object sender, InventoryHandler.RemoveItemEventArgs e)
     {
         Debug.Log("Remove");
     }
 
     //Callback function for when an item is added from any inventory
-    private void OnAddItem(object sender, InventoryEventsItemsHandler.AddItemEventArgs e)
+    private void OnAddItem(object sender, InventoryHandler.AddItemEventArgs e)
     {
         Debug.Log($"The item {e.itemAdded.name} was added");
     }
@@ -50,8 +50,8 @@ public class ExampleScript : MonoBehaviour
     //Unsubscribing the events if this object gets destoyed (better use the OnDisable func if your gameobj can be set inactive in hireachy)
     private void OnDestroy()
     {
-        InventoryEventsItemsHandler.current.OnAddItem -= OnAddItem;
-        InventoryEventsItemsHandler.current.OnRemoveItem -= OnRemoveItem;
+        InventoryHandler.current.OnAddItem -= OnAddItem;
+        InventoryHandler.current.OnRemoveItem -= OnRemoveItem;
     }
 
 }

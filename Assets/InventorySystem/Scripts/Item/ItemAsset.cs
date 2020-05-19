@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ItemAsset", menuName = "UniversalInventorySystem/ItemAsset", order = 1), System.Serializable]
+[AddComponentMenu("UniversalInventorySystem/ItemAsset"), CreateAssetMenu(fileName = "ItemAsset", menuName = "UniversalInventorySystem/ItemAsset", order = 1), System.Serializable]
 public class ItemAsset : ScriptableObject
 {
     public List<Item> itemsList = new List<Item>();

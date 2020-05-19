@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 /// </summary>
 public interface IDropBehaviour
 {
-    void OnDropItem(object sender, InventoryEventsItemsHandler.DropItemEventArgs e);
+    void OnDropItem(object sender, InventoryHandler.DropItemEventArgs e);
 }
 
 /// <summary>
@@ -14,12 +14,12 @@ public interface IDropBehaviour
 /// </summary>
 public interface IPickUpBehaviour
 {
-    void OnPickUp(object sender, InventoryEventsItemsHandler.AddItemEventArgs e);
+    void OnPickUp(object sender, InventoryHandler.AddItemEventArgs e);
 }
 
 public interface IUsable
 {
-    void OnUse(object sender, InventoryEventsItemsHandler.UseItemEventArgs e);
+    void OnUse(object sender, InventoryHandler.UseItemEventArgs e);
 }
 
 
@@ -28,13 +28,13 @@ public abstract class DropBehaviour : MonoBehaviour, IDropBehaviour
 {
     public virtual void OnEnable()
     {
-        InventoryEventsItemsHandler.current.OnDropItem += OnDropItem;
+        InventoryHandler.current.OnDropItem += OnDropItem;
     }
 
     public virtual void OnDestroy()
     {
-        InventoryEventsItemsHandler.current.OnDropItem -= OnDropItem;
+        InventoryHandler.current.OnDropItem -= OnDropItem;
     }
 
-    public abstract void OnDropItem(object sender, InventoryEventsItemsHandler.DropItemEventArgs e);
+    public abstract void OnDropItem(object sender, InventoryHandler.DropItemEventArgs e);
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DefaultUseBehaviour
 {
-    public void OnUse(object sender, InventoryEventsItemsHandler.UseItemEventArgs e)
+    public void OnUse(object sender, InventoryHandler.UseItemEventArgs e)
     {
         Debug.Log("Use Item Behaviour");
     }

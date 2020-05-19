@@ -19,7 +19,7 @@ public class Item : ScriptableObject
     public void OnUse(Inventory inv, int slot)
     {
         Debug.Log("UsingItem");
-        InventoryEventsItemsHandler.UseItemEventArgs uea = new InventoryEventsItemsHandler.UseItemEventArgs(inv, this, slot);
+        InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, this, slot);
         object[] tmp = new object[2] { this, uea };
 
         BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -34,11 +34,11 @@ public class Item : ScriptableObject
     {
         if (optionalOnDropBehaviour == null)
         {
-            InventoryEventsItemsHandler.DropItemEventArgs dea = new InventoryEventsItemsHandler.DropItemEventArgs(inv, tss, slot, this, amount, dbui, pos.GetValueOrDefault(), true);
-            InventoryEventsItemsHandler.current.Broadcast(BroadcastEventType.DropItem, dea: dea);
+            InventoryHandler.DropItemEventArgs dea = new InventoryHandler.DropItemEventArgs(inv, tss, slot, this, amount, dbui, pos.GetValueOrDefault(), true);
+            InventoryHandler.current.Broadcast(BroadcastEventType.DropItem, dea: dea);
         } else
         {
-            InventoryEventsItemsHandler.DropItemEventArgs dea = new InventoryEventsItemsHandler.DropItemEventArgs(inv, tss, slot, this, amount, dbui, pos.GetValueOrDefault(), false);
+            InventoryHandler.DropItemEventArgs dea = new InventoryHandler.DropItemEventArgs(inv, tss, slot, this, amount, dbui, pos.GetValueOrDefault(), false);
             object[] tmp = new object[2] { this, dea };
 
             BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;

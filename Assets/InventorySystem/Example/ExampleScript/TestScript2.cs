@@ -13,6 +13,6 @@ public class TestScript2 : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.B))
-            inventory.AddItem(InventoryEventsItemsHandler.current.GetItem(0, 0), 12);
+            inventory.AddItem(InventoryHandler.current.GetItem(0, 0), 12);
     }
 }
