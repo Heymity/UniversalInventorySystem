@@ -13,7 +13,7 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
     Vector2 creationPos;
     Vector2 slectablesItem;
 
-    Vector2 gridSize;
+    Vector2Int gridSize;
 
     int selectedIndex;
 
@@ -103,10 +103,10 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
         if (patternCreation)
         {
             EditorGUILayout.BeginHorizontal();
-
+            //----SELECTION-------//
             #region SelectItem
 
-            EditorGUILayout.BeginVertical("box", GUILayout.MaxWidth(225));
+            EditorGUILayout.BeginVertical("box", GUILayout.MaxWidth(230));
             slectablesItem = EditorGUILayout.BeginScrollView(slectablesItem);
 
             List<Item> items = new List<Item>();
@@ -126,8 +126,9 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
                 Texture2D texture = item.sprite.texture;
                 possibleItems.Add(new GUIContent(item.name, texture));
             }
+            possibleItems.Add(new GUIContent("Erase item"));
 
-            selectedIndex = GUILayout.SelectionGrid(selectedIndex, possibleItems.ToArray(), 1, GUILayout.MaxHeight(75));
+            selectedIndex = GUILayout.SelectionGrid(selectedIndex, possibleItems.ToArray(), 1, GUILayout.MaxHeight(possibleItems.Count * 40));
 
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
@@ -139,30 +140,50 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
             EditorGUILayout.BeginVertical();
 
             creationPos = EditorGUILayout.BeginScrollView(creationPos);
+
             serializedObject.FindProperty("gridSize").vector2IntValue = EditorGUILayout.Vector2IntField("Grid size", serializedObject.FindProperty("gridSize").vector2IntValue);
+            gridSize = serializedObject.FindProperty("gridSize").vector2IntValue;
+
+            serializedObject.FindProperty("pattern").arraySize = gridSize.x * gridSize.y;
 
             var gridRect = EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true));
             
-            gridSize = serializedObject.FindProperty("gridSize").vector2IntValue;
             for(int i = 0;i < gridSize.y; i++)
             {
                 EditorGUILayout.BeginHorizontal();
                 for(int j = 0;j < gridSize.x; j++)
                 {
+                    var sizeOffset = 30 / gridSize.y;
+
                     var xOffsetValue = j * (gridRect.width / gridSize.x);
                     var yOffsetValue = i * (gridRect.width / gridSize.x);
-                    var sideValue = (gridRect.width / gridSize.x) - 10;
+                    var sideValue = (gridRect.width / gridSize.x) - sizeOffset;
 
-                    if((sideValue + 10) * gridSize.y > gridRect.height)
+                    if((sideValue + sizeOffset) * gridSize.y > gridRect.height)
                     {
-                        Debug.Log(sideValue * gridSize.y + " " + gridRect.height);
-                        sideValue = (gridRect.height / gridSize.y) - 10;
                         xOffsetValue = j * (gridRect.height / gridSize.y);
                         yOffsetValue = i * (gridRect.height / gridSize.y);
+                        sideValue = (gridRect.height / gridSize.y) - sizeOffset;
+                    }
+
+                    GUIContent btnContent = new GUIContent();
+                    var slot = serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue;
+                    if (slot as Item != null)
+                    {
+                        btnContent.image = (slot as Item).sprite.texture;
+                        btnContent.text = (slot as Item).name;
+                    } else
+                    {
+                        btnContent.text = "Place Item";
                     }
 
                     Rect btnRect = new Rect(gridRect.x + xOffsetValue, gridRect.y + yOffsetValue, sideValue, sideValue);
-                    GUI.Button(btnRect, new GUIContent("Place Item"));
+                    if(GUI.Button(btnRect, btnContent))
+                    {
+                        //i * gridsize.x + j
+                        if(selectedIndex >= items.Count) serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue = null;
+                        else serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue = items[selectedIndex];
+                    }
                 }
                 EditorGUILayout.EndHorizontal();
             }

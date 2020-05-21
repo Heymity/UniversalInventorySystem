@@ -13,6 +13,8 @@ public class PatternRecipe : ScriptableObject
 
     public Vector2Int gridSize;
 
+    public Item[] pattern;
+
     public int id;
     public string key;
 }
