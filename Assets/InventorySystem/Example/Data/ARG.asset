@@ -9,12 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: AIG
-  m_EditorClassIdentifier: Assembly-CSharp::ItemAsset
-  itemsList:
-  - {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
-  - {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
-  - {fileID: 0}
-  strId: AIG
+  m_Script: {fileID: 11500000, guid: faad10f79b4953d49973d7a25f71b390, type: 3}
+  m_Name: ARG
+  m_EditorClassIdentifier: 
+  recipesList: []
+  receipePatternsList: []
+  strId: 
   id: 0

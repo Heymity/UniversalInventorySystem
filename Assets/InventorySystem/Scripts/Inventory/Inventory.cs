@@ -641,6 +641,10 @@ public static class InventoryController
         return inv;
     }
 
+    public static void CraftItem(params Inventory[] inv)
+    {
+
+    }
 }
 
 [Serializable]

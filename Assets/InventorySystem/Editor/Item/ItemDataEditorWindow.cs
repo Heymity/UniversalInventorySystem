@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class ItemDataEditorWindow : ExtendEditorWindow
 {
+    Vector2 sideBar;
+    Vector2 content;
+
     public static void Open(ItemAsset dataObject)
     {
         ItemDataEditorWindow window = GetWindow<ItemDataEditorWindow>("Item Data Editor");
@@ -20,13 +23,16 @@ public class ItemDataEditorWindow : ExtendEditorWindow
 
         EditorGUILayout.BeginVertical("box", GUILayout.MaxWidth(150), GUILayout.ExpandHeight(true));
 
+        sideBar = EditorGUILayout.BeginScrollView(sideBar);
         DrawSidebar(currentProperty);
+        EditorGUILayout.EndScrollView();
 
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical("box", GUILayout.ExpandHeight(true));
         if (selectedProperty != null)
         {
+            content = EditorGUILayout.BeginScrollView(content);
             if(!showItemAssets) EditorGUILayout.PropertyField(selectedProperty, true);
             else
             {
@@ -67,6 +73,7 @@ public class ItemDataEditorWindow : ExtendEditorWindow
                 }
             }
             //DrawProperties(selectedProperty, true);*/
+            EditorGUILayout.EndScrollView();
         }
         else
         {

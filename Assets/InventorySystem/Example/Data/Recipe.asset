@@ -19,3 +19,5 @@ MonoBehaviour:
   numberOfProducts: 1
   products:
   - {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+  id: 0
+  key: Receipe1

@@ -11,4 +11,7 @@ public class Recipe : ScriptableObject
 
     public int numberOfProducts;
     public Item[] products;
+
+    public int id;
+    public string key;
 }

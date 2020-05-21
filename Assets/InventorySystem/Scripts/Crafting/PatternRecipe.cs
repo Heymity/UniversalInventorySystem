@@ -5,5 +5,14 @@ using UnityEngine;
 [AddComponentMenu("UniversalInventorySystem/PatternRecipe"), CreateAssetMenu(fileName = "PatternRecipe", menuName = "UniversalInventorySystem/PatternRecipe", order = 1), System.Serializable]
 public class PatternRecipe : ScriptableObject
 {
-    
+    public int numberOfFactors;
+    public Item[] factors;
+
+    public int numberOfProducts;
+    public Item[] products;
+
+    public Vector2Int gridSize;
+
+    public int id;
+    public string key;
 }

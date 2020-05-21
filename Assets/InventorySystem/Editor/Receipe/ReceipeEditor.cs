@@ -68,6 +68,11 @@ public class ReceipeEditor : Editor
             EditorGUI.indentLevel--;
         }
 
+        EditorGUILayout.Separator();
+
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("id"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("key"));
+
         serializedObject.ApplyModifiedProperties();
     }
 }

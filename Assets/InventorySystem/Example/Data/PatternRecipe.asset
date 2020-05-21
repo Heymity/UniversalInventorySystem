@@ -12,3 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5afc92ce3fb2334093b8df8186a07ff, type: 3}
   m_Name: PatternRecipe
   m_EditorClassIdentifier: 
+  numberOfFactors: 2
+  factors:
+  - {fileID: 0}
+  - {fileID: 0}
+  numberOfProducts: 1
+  products:
+  - {fileID: 0}
+  craftSize: {x: 0, y: 0}
+  id: 0
+  key: PatternReceipe
