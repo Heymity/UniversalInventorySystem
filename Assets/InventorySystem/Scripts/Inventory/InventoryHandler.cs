@@ -61,9 +61,74 @@ public class InventoryHandler : MonoBehaviour
 
     public Item GetItem(int iAssetIndex, int itemIndex) { return GetItemAssetWithID(iAssetIndex).GetItemWithID(itemIndex); }
 
-    public Item GetItemWithName(int index, string itemName) { return GetItemAssetWithID(index).GetItemWithName(itemName); }
+    public Item GetItemWithName(int id, string itemName) { return GetItemAssetWithID(id).GetItemWithName(itemName); }
 
     public Item GetItemWithName(string itemAssetStrId, string itemName) { return GetItemAssetWithName(itemAssetStrId).GetItemWithName(itemName); }
+
+    #endregion
+
+    #region RecipeHandler
+
+    //--------RECIPE-HANDLER--------//
+
+    [Header("Recipe Handler")]
+    public List<RecipeAsset> recipeAssets = new List<RecipeAsset>();
+
+    public RecipeAsset GetRecipeAssetAtIndex(int index) { return recipeAssets[index]; }
+
+    public RecipeAsset GetRecipeAssetWithName(string _strId)
+    {
+        foreach (RecipeAsset i in recipeAssets)
+        {
+            if (i.strId == _strId) return i;
+        }
+
+        return null;
+    }
+
+    public RecipeAsset GetRecipeAssetWithID(int id)
+    {
+        foreach (RecipeAsset i in recipeAssets)
+        {
+            if (i.id == id) return i;
+        }
+
+        return null;
+    }
+
+    public List<RecipeAsset> OrderRecipeAssetById()
+    {
+        return InsertionSort(recipeAssets);
+    }
+
+    static List<RecipeAsset> InsertionSort(List<RecipeAsset> inputArray)
+    {
+        for (int i = 0; i < inputArray.Count - 1; i++)
+        {
+            for (int j = i + 1; j > 0; j--)
+            {
+                if (inputArray[j - 1].id > inputArray[j].id)
+                {
+                    int temp = inputArray[j - 1].id;
+                    inputArray[j - 1].id = inputArray[j].id;
+                    inputArray[j].id = temp;
+                }
+            }
+        }
+        return inputArray;
+    }
+
+    public Recipe GetRecipeWithName(int id, string recipeName) { return GetRecipeAssetWithID(id).GetRecipeWithName(recipeName); }
+
+    public Recipe GetRecipeWithName(string recipeAssetStrId, string recipeName) { return GetRecipeAssetWithName(recipeAssetStrId).GetRecipeWithName(recipeName); }
+
+    public Recipe GetRecipeAtIndex(int recipeAssetIndex, int recipeIndex) { return recipeAssets[recipeAssetIndex].recipesList[recipeIndex]; }
+
+    public PatternRecipe GetPatternRecipeWithName(int id, string recipeName) { return GetRecipeAssetWithID(id).GetRecipePatternWithKey(recipeName); }
+
+    PatternRecipe GetPatternRecipeWithName(string recipeAssetStrId, string recipeName) { return GetRecipeAssetWithName(recipeAssetStrId).GetRecipePatternWithKey(recipeName); }
+
+    public PatternRecipe GetPatternRecipeAtIndex(int recipeAssetIndex, int recipeIndex) { return recipeAssets[recipeAssetIndex].receipePatternsList[recipeIndex]; }
 
     #endregion
 

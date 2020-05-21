@@ -8,7 +8,7 @@ public class RecipeAsset : ScriptableObject
 {
     public List<Recipe> recipesList = new List<Recipe>();
     public List<PatternRecipe> receipePatternsList = new List<PatternRecipe>();
-
+    [Space]
     public string strId;
     public int id;
 
