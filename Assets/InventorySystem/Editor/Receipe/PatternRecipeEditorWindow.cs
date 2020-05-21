@@ -106,7 +106,7 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
 
             #region SelectItem
 
-            EditorGUILayout.BeginVertical("box", GUILayout.MaxWidth(175));
+            EditorGUILayout.BeginVertical("box", GUILayout.MaxWidth(225));
             slectablesItem = EditorGUILayout.BeginScrollView(slectablesItem);
 
             List<Item> items = new List<Item>();
@@ -136,20 +136,33 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
             //-----GRID-----//
             #region Grid
 
-            creationPos = EditorGUILayout.BeginScrollView(creationPos);
             EditorGUILayout.BeginVertical();
 
+            creationPos = EditorGUILayout.BeginScrollView(creationPos);
             serializedObject.FindProperty("gridSize").vector2IntValue = EditorGUILayout.Vector2IntField("Grid size", serializedObject.FindProperty("gridSize").vector2IntValue);
 
-            Rect gridRect = EditorGUILayout.BeginVertical();
+            var gridRect = EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true));
+            
             gridSize = serializedObject.FindProperty("gridSize").vector2IntValue;
             for(int i = 0;i < gridSize.y; i++)
             {
                 EditorGUILayout.BeginHorizontal();
                 for(int j = 0;j < gridSize.x; j++)
                 {
-                    Debug.Log(gridRect.width / gridSize.x);
-                    GUILayout.Button("place item", GUILayout.Height(gridRect.width / gridSize.x));
+                    var xOffsetValue = j * (gridRect.width / gridSize.x);
+                    var yOffsetValue = i * (gridRect.width / gridSize.x);
+                    var sideValue = (gridRect.width / gridSize.x) - 10;
+
+                    if((sideValue + 10) * gridSize.y > gridRect.height)
+                    {
+                        Debug.Log(sideValue * gridSize.y + " " + gridRect.height);
+                        sideValue = (gridRect.height / gridSize.y) - 10;
+                        xOffsetValue = j * (gridRect.height / gridSize.y);
+                        yOffsetValue = i * (gridRect.height / gridSize.y);
+                    }
+
+                    Rect btnRect = new Rect(gridRect.x + xOffsetValue, gridRect.y + yOffsetValue, sideValue, sideValue);
+                    GUI.Button(btnRect, new GUIContent("Place Item"));
                 }
                 EditorGUILayout.EndHorizontal();
             }

@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numberOfFactors: 2
   factors:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+  - {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
   numberOfProducts: 1
   products:
-  - {fileID: 0}
-  craftSize: {x: 0, y: 0}
+  - {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+  gridSize: {x: 3, y: 3}
   id: 0
   key: PatternReceipe
