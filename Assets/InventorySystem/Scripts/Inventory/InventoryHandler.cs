@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Put this script on a always active GameObject.
 /// </summary>
-[Serializable, ExecuteAlways]
+[Serializable]
 public class InventoryHandler : MonoBehaviour
 {
     private void Awake()
