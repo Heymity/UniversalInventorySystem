@@ -5413,9 +5413,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2706381649648841959, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
         type: 3}
+      propertyPath: recipeAssets.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2706381649648841959, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
+        type: 3}
       propertyPath: itemAssets.Array.data[0]
       value: 
       objectReference: {fileID: 11400000, guid: 57c447cc307026949829e61220432bc0,
+        type: 2}
+    - target: {fileID: 2706381649648841959, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
+        type: 3}
+      propertyPath: recipeAssets.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 19f220b7f19eb1045a7ece16afe420f6,
         type: 2}
     - target: {fileID: 4230058761226221454, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
         type: 3}

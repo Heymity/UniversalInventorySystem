@@ -141,8 +141,13 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
 
             creationPos = EditorGUILayout.BeginScrollView(creationPos);
 
-            serializedObject.FindProperty("gridSize").vector2IntValue = EditorGUILayout.Vector2IntField("Grid size", serializedObject.FindProperty("gridSize").vector2IntValue);
+            var tmp = EditorGUILayout.Vector2IntField("Grid size", serializedObject.FindProperty("gridSize").vector2IntValue);
             gridSize = serializedObject.FindProperty("gridSize").vector2IntValue;
+
+            if(tmp.x >= 0 && tmp.y >= 0)
+            {
+                serializedObject.FindProperty("gridSize").vector2IntValue = tmp;
+            }
 
             serializedObject.FindProperty("pattern").arraySize = gridSize.x * gridSize.y;
 

@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faad10f79b4953d49973d7a25f71b390, type: 3}
   m_Name: ARG
   m_EditorClassIdentifier: 
-  recipesList: []
-  receipePatternsList: []
-  strId: 
+  recipesList:
+  - {fileID: 11400000, guid: 7ae2d45741065f84f86934fe16c407cc, type: 2}
+  receipePatternsList:
+  - {fileID: 11400000, guid: be503088244441f459fcf3419b31c006, type: 2}
+  strId: ARG
   id: 0
