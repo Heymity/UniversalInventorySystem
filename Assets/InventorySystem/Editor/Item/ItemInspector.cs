@@ -43,14 +43,18 @@ public class ItemInspector : Editor
 
     public override void OnInspectorGUI()
     {
-       
+        serializedObject.Update();
+
         itemFoldout = EditorGUILayout.Foldout(itemFoldout, new GUIContent("Item Configuration"), true, EditorStyles.foldoutHeader);
         if(itemFoldout)
         {
             EditorGUI.indentLevel++;
-            EditorGUILayout.TextField(new GUIContent("Item name"), itemNameProp.stringValue);
-            EditorGUILayout.IntField(new GUIContent("Id"), idProp.intValue);
-            EditorGUILayout.ObjectField(spriteProp, new GUIContent("Ïtem sprite"));
+            itemNameProp.stringValue = EditorGUILayout.TextField(new GUIContent("Item name"), itemNameProp.stringValue);
+            idProp.intValue = EditorGUILayout.IntField(new GUIContent("Id"), idProp.intValue);
+            EditorGUILayout.ObjectField(spriteProp, new GUIContent("Item sprite"));
+            var item = spriteProp.objectReferenceValue as Sprite;
+            if (item != null)
+                EditorGUILayout.LabelField(new GUIContent(item.texture), GUILayout.Height(54));
             EditorGUI.indentLevel--;
         }
 
@@ -59,8 +63,8 @@ public class ItemInspector : Editor
         if(storageFoldout)
         {
             EditorGUI.indentLevel++;
-            EditorGUILayout.IntField(new GUIContent("Max amount per slot"), maxAmountProp.intValue);
-            EditorGUILayout.Toggle(new GUIContent("Stackable"), stackableProp.boolValue);
+            maxAmountProp.intValue = EditorGUILayout.IntField(new GUIContent("Max amount per slot"), maxAmountProp.intValue);
+            stackableProp.boolValue = EditorGUILayout.Toggle(new GUIContent("Stackable"), stackableProp.boolValue);
             EditorGUI.indentLevel--;
         }
 
@@ -69,8 +73,8 @@ public class ItemInspector : Editor
         if(usingFoldout)
         {
             EditorGUI.indentLevel++;
-            EditorGUILayout.Toggle(new GUIContent("Remove item when used"), destroyOnUseProp.boolValue);
-            EditorGUILayout.IntField(new GUIContent("The amount of item to remove"), useHowManyWhenUsedProp.intValue);
+            destroyOnUseProp.boolValue = EditorGUILayout.Toggle(new GUIContent("Remove item when used"), destroyOnUseProp.boolValue);
+            useHowManyWhenUsedProp.intValue = EditorGUILayout.IntField(new GUIContent("The amount of item to remove"), useHowManyWhenUsedProp.intValue);
             EditorGUI.indentLevel--;
         }
 
@@ -88,5 +92,7 @@ public class ItemInspector : Editor
             EditorGUILayout.ObjectField(optionalOnDropBehaviour, new GUIContent("On drop item optional Behaviour"));
             EditorGUI.indentLevel--;
         }
+
+        serializedObject.ApplyModifiedProperties();
     }
 }

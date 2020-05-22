@@ -73,7 +73,7 @@ public class ItemDrawer : PropertyDrawer
                         idProp.intValue = EditorGUI.IntField(position, new GUIContent("Id"), idProp.intValue);
                         position.y += position.height;
 
-                        EditorGUI.ObjectField(position, spriteProp, new GUIContent("Ïtem sprite"));
+                        EditorGUI.ObjectField(position, spriteProp, new GUIContent("Item sprite"));
                         position.y += position.height;
 
                         EditorGUI.indentLevel--;
