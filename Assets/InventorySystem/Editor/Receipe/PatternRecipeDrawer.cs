@@ -48,13 +48,12 @@ public class PatternRecipeDrawer : PropertyDrawer
                     amount = (serializedObject.FindProperty("gridSize").vector2IntValue.y * 2) + 1;
                     SerializedProperty pattern = serializedObject.FindProperty("pattern");
                     Vector2Int gridSize = serializedObject.FindProperty("gridSize").vector2IntValue;
+                    position.y += position.height;
                     Rect patternPos = new Rect(position.x, position.y, position.width, position.height + 18);
                     for (int i = 0;i < gridSize.y; i++)
                     {
-                        patternPos.y += patternPos.height;
                         for (int j = 0; j < gridSize.x; j++)
                         {
-                            patternPos.x += 36;
                             //(pattern.GetArrayElementAtIndex(i * gridSize.y + j).objectReferenceValue as Item).sprite.texture
                             GUIContent content = new GUIContent();
                             var item = pattern.GetArrayElementAtIndex(i * gridSize.y + j).objectReferenceValue as Item;
@@ -69,7 +68,9 @@ public class PatternRecipeDrawer : PropertyDrawer
                             }
 
                             EditorGUI.LabelField(patternPos, content);
+                            patternPos.x += 36;
                         }
+                        patternPos.y += patternPos.height;
                         patternPos.x -= gridSize.x * 36;
                     }
                 }
