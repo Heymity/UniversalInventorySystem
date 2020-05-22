@@ -81,7 +81,15 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
                 EditorGUI.indentLevel++;
                 for(int i = 0;i < serializedObject.FindProperty("factors").arraySize; i++)
                 {
-                    EditorGUILayout.ObjectField(serializedObject.FindProperty("factors").GetArrayElementAtIndex(i));
+                    var item = serializedObject.FindProperty("factors").GetArrayElementAtIndex(i).objectReferenceValue as Item;
+                    GUIContent content = new GUIContent();
+                    if(item != null)
+                    {
+                        content.image = item.sprite.texture;
+                        content.text = item.name + $" (Element {i})";
+                    }
+                    
+                    EditorGUILayout.ObjectField(serializedObject.FindProperty("factors").GetArrayElementAtIndex(i), content);
                 }
                 EditorGUI.indentLevel--;
             }
@@ -99,7 +107,15 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
                 EditorGUI.indentLevel++;
                 for (int i = 0; i < serializedObject.FindProperty("products").arraySize; i++)
                 {
-                    EditorGUILayout.ObjectField(serializedObject.FindProperty("products").GetArrayElementAtIndex(i));
+                    var item = serializedObject.FindProperty("products").GetArrayElementAtIndex(i).objectReferenceValue as Item;
+                    GUIContent content = new GUIContent();
+                    if (item != null)
+                    {
+                        content.image = item.sprite.texture;
+                        content.text = item.name + $" (Element {i})";
+                    }
+                    
+                    EditorGUILayout.ObjectField(serializedObject.FindProperty("products").GetArrayElementAtIndex(i), content);
                 }
                 EditorGUI.indentLevel--;
             }
