@@ -64,6 +64,10 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
         if (patternRecipe)
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("id"));
+            if(InventoryHandler.current != null)
+            {
+                Debug.Log("not null");
+            }
             EditorGUILayout.PropertyField(serializedObject.FindProperty("key"));
         }
 

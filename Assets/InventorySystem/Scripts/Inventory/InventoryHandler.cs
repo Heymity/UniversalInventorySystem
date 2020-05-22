@@ -5,9 +5,22 @@ using UnityEngine;
 /// <summary>
 /// Put this script on a always active GameObject.
 /// </summary>
-[Serializable]
+[Serializable, ExecuteAlways]
 public class InventoryHandler : MonoBehaviour
 {
+    private void Awake()
+    {
+        if (current == null) current = this;
+    }
+    private void Start()
+    {
+        if (current == null) current = this;
+    }
+    private void OnEnable()
+    {
+        if (current == null) current = this;
+    }
+
     #region Item Handler
 
     //--------ITEM HANDLER--------//
@@ -129,6 +142,20 @@ public class InventoryHandler : MonoBehaviour
     PatternRecipe GetPatternRecipeWithName(string recipeAssetStrId, string recipeName) { return GetRecipeAssetWithName(recipeAssetStrId).GetRecipePatternWithKey(recipeName); }
 
     public PatternRecipe GetPatternRecipeAtIndex(int recipeAssetIndex, int recipeIndex) { return recipeAssets[recipeAssetIndex].receipePatternsList[recipeIndex]; }
+
+    public PatternRecipe GetPatternRecipeWithID(int recipeAssetID, int patternRecipeID)
+    {
+        RecipeAsset asset = GetRecipeAssetWithID(recipeAssetID);
+
+        if (asset != null)
+        {
+            foreach (PatternRecipe i in asset.receipePatternsList)
+            {
+                if (i.id == patternRecipeID) return i;
+            }
+        }
+        return null;
+    }
 
     #endregion
 
@@ -267,10 +294,7 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        current = this;
-    }
+
 
     public void Broadcast(BroadcastEventType e,
                           AddItemEventArgs aea = null,
