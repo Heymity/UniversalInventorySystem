@@ -8,6 +8,7 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
     bool patternRecipe = true;
     bool patternConfg = false;
     bool patternCreation = false;
+    bool allowBigValues;
 
     Vector2 scrollPos;
     Vector2 creationPos;
@@ -25,6 +26,12 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
 
     private void OnGUI()
     {
+        if(serializedObject == null)
+        {
+            EditorGUILayout.LabelField("Open a recipe pattern");
+            return;
+        }
+
         serializedObject.Update();
 
         EditorGUILayout.BeginHorizontal();
@@ -142,12 +149,27 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
             creationPos = EditorGUILayout.BeginScrollView(creationPos);
 
             var tmp = EditorGUILayout.Vector2IntField("Grid size", serializedObject.FindProperty("gridSize").vector2IntValue);
-            gridSize = serializedObject.FindProperty("gridSize").vector2IntValue;
 
             if(tmp.x >= 0 && tmp.y >= 0)
             {
-                serializedObject.FindProperty("gridSize").vector2IntValue = tmp;
+                if(tmp.x * tmp.y == 900) serializedObject.FindProperty("gridSize").vector2IntValue = tmp;
+                if (tmp.x * tmp.y >= 900)
+                {
+                    EditorGUILayout.BeginHorizontal("box");
+                    EditorGUILayout.HelpBox($"You`re inserting more than 900 slots ({tmp.x * tmp.y}), with more than this amount, depending on your setup, unity may crash, and you may need to delete this recipe. Also in game performace might be affected with a recipe of this size", MessageType.Warning);
+                    if (GUILayout.Button($"Allow big values {allowBigValues}"))
+                    {
+                        allowBigValues = !allowBigValues;
+                    }
+                    if (allowBigValues)
+                    {
+                        serializedObject.FindProperty("gridSize").vector2IntValue = tmp;
+                    }
+                    EditorGUILayout.EndHorizontal();
+
+                }else serializedObject.FindProperty("gridSize").vector2IntValue = tmp;
             }
+            gridSize = serializedObject.FindProperty("gridSize").vector2IntValue;
 
             serializedObject.FindProperty("pattern").arraySize = gridSize.x * gridSize.y;
 
