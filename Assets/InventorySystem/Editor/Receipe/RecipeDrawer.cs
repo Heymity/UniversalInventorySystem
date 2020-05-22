@@ -87,6 +87,8 @@ public class RecipeDrawer : PropertyDrawer
                                 EditorGUI.LabelField(patternPos, content);
                                 patternPos.x += 36;
                             }
+                            patternPos.x += 36;
+                            EditorGUI.SelectableLabel(patternPos, $"id: {serializedObject.FindProperty("id").intValue}, key: {serializedObject.FindProperty("key").stringValue}");
                         }
                     }                  
                 }

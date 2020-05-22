@@ -11,6 +11,7 @@ public class PatternRecipeDrawer : PropertyDrawer
     bool showRecipe = false;
     int baseAmount = 1;
     int amount = 1;
+    float basey;
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
@@ -51,6 +52,7 @@ public class PatternRecipeDrawer : PropertyDrawer
                     position.y += position.height;
                     Rect patternPos = new Rect(position.x, position.y, position.width, position.height + 18);
                     GUIContent content = new GUIContent();
+                    basey = position.y;
                     for (int i = 0;i < gridSize.y; i++)
                     {
                         for (int j = 0; j < gridSize.x; j++)
@@ -97,6 +99,8 @@ public class PatternRecipeDrawer : PropertyDrawer
                         EditorGUI.LabelField(patternPos, content);
                         patternPos.x += 36;
                     }
+                    patternPos.y = basey;
+                    EditorGUI.SelectableLabel(patternPos, $"id: {serializedObject.FindProperty("id").intValue}, key: {serializedObject.FindProperty("key").stringValue}");
                 }
                 else amount = baseAmount;
             }
