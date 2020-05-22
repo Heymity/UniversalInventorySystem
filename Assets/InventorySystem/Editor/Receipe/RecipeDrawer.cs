@@ -74,7 +74,7 @@ public class RecipeDrawer : PropertyDrawer
                             for (int j = 0;j < product.arraySize; j++)
                             {
                                 var productItem = product.GetArrayElementAtIndex(j).objectReferenceValue as Item;
-                                if (item == null)
+                                if (productItem == null)
                                 {
                                     content.text = "null";
                                     content.image = null;
@@ -85,6 +85,7 @@ public class RecipeDrawer : PropertyDrawer
                                     content.image = productItem.sprite.texture;
                                 }
                                 EditorGUI.LabelField(patternPos, content);
+                                patternPos.x += 36;
                             }
                         }
                     }                  

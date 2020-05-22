@@ -50,13 +50,13 @@ public class PatternRecipeDrawer : PropertyDrawer
                     Vector2Int gridSize = serializedObject.FindProperty("gridSize").vector2IntValue;
                     position.y += position.height;
                     Rect patternPos = new Rect(position.x, position.y, position.width, position.height + 18);
+                    GUIContent content = new GUIContent();
                     for (int i = 0;i < gridSize.y; i++)
                     {
                         for (int j = 0; j < gridSize.x; j++)
                         {
                             //(pattern.GetArrayElementAtIndex(i * gridSize.y + j).objectReferenceValue as Item).sprite.texture
-                            GUIContent content = new GUIContent();
-                            var item = pattern.GetArrayElementAtIndex(i * gridSize.y + j).objectReferenceValue as Item;
+                            var item = pattern.GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue as Item;
                             if (item == null) 
                             {
                                 content.text = "null";
@@ -72,6 +72,30 @@ public class PatternRecipeDrawer : PropertyDrawer
                         }
                         patternPos.y += patternPos.height;
                         patternPos.x -= gridSize.x * 36;
+                    }
+                    
+
+                    SerializedProperty products = serializedObject.FindProperty("products");
+                    patternPos.y -= patternPos.height * ((float)gridSize.y / 2f);
+                    patternPos.y -= 18;
+                    patternPos.x += (gridSize.x * 36) + 18;
+                    EditorGUI.LabelField(patternPos, "=");
+                    patternPos.x += 18;
+                    for (int i = 0;i < products.arraySize; i++)
+                    {
+                        var productItem = products.GetArrayElementAtIndex(i).objectReferenceValue as Item;
+                        if (productItem == null)
+                        {
+                            content.text = "null";
+                            content.image = null;
+                        }
+                        else
+                        {
+                            content.text = "";
+                            content.image = productItem.sprite.texture;
+                        }
+                        EditorGUI.LabelField(patternPos, content);
+                        patternPos.x += 36;
                     }
                 }
                 else amount = baseAmount;
