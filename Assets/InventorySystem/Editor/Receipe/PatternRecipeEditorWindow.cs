@@ -198,10 +198,17 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
                     if (slot as Item != null)
                     {
                         btnContent.image = (slot as Item).sprite.texture;
-                        btnContent.text = (slot as Item).name;
-                    } else
+                        if(sideValue > 80)
+                            btnContent.text = (slot as Item).name;
+                        else
+                            btnContent.text = "";
+                    } 
+                    else
                     {
-                        btnContent.text = "Place Item";
+                        if (sideValue > 70)
+                            btnContent.text = "Place Item";
+                        else
+                            btnContent.text = "Null";
                     }
 
                     Rect btnRect = new Rect(gridRect.x + xOffsetValue, gridRect.y + yOffsetValue, sideValue, sideValue);
