@@ -30,6 +30,8 @@ public static class InventoryController
         return inventories[index];
     }
 
+    #region Add
+
     /// <summary>
     /// Adds a certain amount of an item to the first empty slot even if there are slots of the same item that can still hold more items. If the specified amount is grater than the maxAmount for that item it will fill the next slot
     /// </summary>
@@ -239,6 +241,10 @@ public static class InventoryController
         return -1;
     }
 
+    #endregion
+
+    #region Remove
+
     /// <summary>
     /// Drops a item. Its a cover function that calls either the RemoveItem or the RemoveItemInSlot
     /// </summary>
@@ -376,6 +382,8 @@ public static class InventoryController
         }
     }
 
+    #endregion
+
     /// <summary>
     /// To be Implemented by the proper way
     /// </summary>
@@ -407,6 +415,8 @@ public static class InventoryController
             else if (!inv.slots[slot].item.destroyOnUse) inv.slots[slot].item.OnUse(inv, slot);
         }
     }
+
+    #region Swap
 
     /// <summary>
     /// Swap the items in two slots. this function will NOT stack the items for that use SwapItemsInCertainAmountInSlots with amount = null
@@ -583,6 +593,8 @@ public static class InventoryController
         return false;
     }
 
+    #endregion
+
     /// <summary>
     /// This function must be called when a inventory is being created. It fills the inventory if null Slots, give an id to the inventory and add it to the list of inventories in the InventoryController. This function dont need to be called if you are using an loading system;
     /// </summary>
@@ -643,86 +655,87 @@ public static class InventoryController
         return inv;
     }
 
-    public static Item[] CraftItem(Item[] grid, Vector2Int gridSize, bool craftItem)
-    {
-        if(InventoryHandler.current != null)
-        {
-            InventoryHandler handler = InventoryHandler.current;
+    #region Craft 
 
-            foreach(RecipeAsset asset in handler.recipeAssets)
+    public static Item[] CraftItem(Item[] grid, Vector2Int gridSize, bool craftItem, bool allowPatternRecipe)
+    {
+        if (InventoryHandler.current == null) return null;
+        
+        InventoryHandler handler = InventoryHandler.current;
+
+        foreach (RecipeAsset asset in handler.recipeAssets)
+        {
+            if (allowPatternRecipe)
             {
-                foreach(PatternRecipe pattern in asset.receipePatternsList)
+                //--PATTERN-//
+                foreach (PatternRecipe pattern in asset.receipePatternsList)
                 {
                     if (pattern.pattern.Length > grid.Length) continue;
                     else if (pattern.pattern.Length == grid.Length)
                     {
-                        if(Enumerable.SequenceEqual(pattern.pattern, grid))
+                        if (Enumerable.SequenceEqual(pattern.pattern, grid))
                         {
                             return pattern.products;
                         }
-                    } else if(pattern.pattern.Length < grid.Length)
+                    }
+                    else if (pattern.pattern.Length < grid.Length)
                     {
                         int fit = (gridSize.y - pattern.gridSize.y + 1) * (gridSize.x - pattern.gridSize.x + 1);
 
-                        //Item[] newGrid = new Item[pattern.gridSize.y * pattern.gridSize.x];
-                        //Vector2Int newGridSize = pattern.gridSize;
-                        // if fit = 9 maxI = 8
-                        // execute 9 times
                         List<int> indexes;
-                        for (int i = 0;i < fit; i++)
+                        for (int i = 0; i < fit; i++)
                         {
                             var result = CraftItem(GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern);
                             if (result != null)
                             {
                                 bool canReturn = true;
-                                for(int j = 0;j < grid.Length; j++)
+                                for (int j = 0; j < grid.Length; j++)
                                 {
                                     if (indexes.Contains(j)) continue;
-                                    if (grid[j] != null) canReturn = false; 
+                                    if (grid[j] != null) canReturn = false;
                                 }
-                                if(canReturn) return result;
+                                if (canReturn) return result;
                             }
                         }
                     }
                 }
             }
-        }
+        }       
         return null;
     }
 
-    public static Item[] CraftItem(Item[] grid, Vector2Int gridSize, bool craftItem, RecipeAsset asset)
+    public static Item[] CraftItem(Item[] grid, Vector2Int gridSize, bool craftItem, RecipeAsset asset, bool allowPatternRecipe)
     {
-        foreach (PatternRecipe pattern in asset.receipePatternsList)
+        if(allowPatternRecipe)
         {
-            if (pattern.pattern.Length > grid.Length) continue;
-            else if (pattern.pattern.Length == grid.Length)
+            foreach (PatternRecipe pattern in asset.receipePatternsList)
             {
-                if (Enumerable.SequenceEqual(pattern.pattern, grid))
+                if (pattern.pattern.Length > grid.Length) continue;
+                else if (pattern.pattern.Length == grid.Length)
                 {
-                    return pattern.products;
-                }
-            }
-            else if (pattern.pattern.Length < grid.Length)
-            {
-                int fit = (gridSize.y - pattern.gridSize.y + 1) * (gridSize.x - pattern.gridSize.x + 1);
-
-                //Item[] newGrid = new Item[pattern.gridSize.y * pattern.gridSize.x];
-                //Vector2Int newGridSize = pattern.gridSize;
-                // if fit = 9 maxI = 8
-                // execute 9 times
-                List<int> indexes;
-                for (int i = 0; i < fit; i++)
-                {
-                    var result = CraftItem(GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern);
-                    if (result != null)
+                    if (Enumerable.SequenceEqual(pattern.pattern, grid))
                     {
-                        bool canReturn = true;
-                        for (int j = 0; j < grid.Length; j++)
+                        return pattern.products;
+                    }
+                }
+                else if (pattern.pattern.Length < grid.Length)
+                {
+                    int fit = (gridSize.y - pattern.gridSize.y + 1) * (gridSize.x - pattern.gridSize.x + 1);
+
+                    List<int> indexes;
+                    for (int i = 0; i < fit; i++)
+                    {
+                        var result = CraftItem(GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern);
+                        if (result != null)
                         {
-                            if (indexes.Contains(j)) continue;
-                            if (grid[j] != null) canReturn = false;
+                            bool canReturn = true;
+                            for (int j = 0; j < grid.Length; j++)
+                            {
+                                if (indexes.Contains(j)) continue;
+                                if (grid[j] != null) canReturn = false;
+                            }
+                            if (canReturn) return result;
                         }
-                        if (canReturn) return result;
                     }
                 }
             }
@@ -745,10 +758,6 @@ public static class InventoryController
         {
             int fit = (gridSize.y - pattern.gridSize.y + 1) * (gridSize.x - pattern.gridSize.x + 1);
 
-            //Item[] newGrid = new Item[pattern.gridSize.y * pattern.gridSize.x];
-            //Vector2Int newGridSize = pattern.gridSize;
-            // if fit = 9 maxI = 8
-            // execute 9 times
             List<int> indexes;
             for (int i = 0; i < fit; i++)
             {
@@ -786,6 +795,8 @@ public static class InventoryController
         }
         return returnGrid;
     }
+
+    #endregion
 }
 
 [Serializable]

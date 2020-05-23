@@ -217,7 +217,7 @@ public class InventoryUI : MonoBehaviour
 
         if (isCraftInventory)
         {
-            Item[] products = InventoryController.CraftItem(pattern.ToArray(), gridSize, false);
+            Item[] products = InventoryController.CraftItem(pattern.ToArray(), gridSize, false, true);
             
             if(products != null)
             {
