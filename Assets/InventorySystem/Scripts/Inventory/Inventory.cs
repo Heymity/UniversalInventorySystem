@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.ComponentModel.Design;
 
 [Serializable]
 public static class InventoryController
@@ -641,7 +642,7 @@ public static class InventoryController
         return inv;
     }
 
-    public static Item[] CraftItem(Item[] grid, bool craftItem)
+    public static Item[] CraftItem(Item[] grid, Vector2Int gridSize, bool craftItem)
     {
         if(InventoryHandler.current != null)
         {
@@ -652,11 +653,34 @@ public static class InventoryController
                 foreach(PatternRecipe pattern in asset.receipePatternsList)
                 {
                     if (pattern.pattern.Length > grid.Length) continue;
-                    if (pattern.pattern.Length == grid.Length)
+                    else if (pattern.pattern.Length == grid.Length)
                     {
                         if(pattern.pattern == grid)
                         {
                             return pattern.products;
+                        }
+                    } else if(pattern.pattern.Length < grid.Length)
+                    {
+                        int fit = (gridSize.y - pattern.gridSize.y + 1) * (gridSize.x - pattern.gridSize.x + 1);
+
+                        //Item[] newGrid = new Item[pattern.gridSize.y * pattern.gridSize.x];
+                        //Vector2Int newGridSize = pattern.gridSize;
+                        // if fit = 9 maxI = 8
+                        // execute 9 times
+                        List<int> indexes;
+                        for (int i = 0;i < fit; i++)
+                        {
+                            var result = CraftItem(GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern);
+                            if (result != null)
+                            {
+                                bool canReturn = true;
+                                for(int j = 0;j < grid.Length; j++)
+                                {
+                                    if (indexes.Contains(j)) continue;
+                                    if (grid[j] != null) canReturn = false; 
+                                }
+                                if(canReturn) return result;
+                            }
                         }
                     }
                 }
@@ -665,35 +689,101 @@ public static class InventoryController
         return null;
     }
 
-    public static Item[] CraftItem(Item[] grid, bool craftItem, RecipeAsset asset)
+    public static Item[] CraftItem(Item[] grid, Vector2Int gridSize, bool craftItem, RecipeAsset asset)
     {
         foreach (PatternRecipe pattern in asset.receipePatternsList)
         {
             if (pattern.pattern.Length > grid.Length) continue;
-            if (pattern.pattern.Length == grid.Length)
+            else if (pattern.pattern.Length == grid.Length)
             {
                 if (pattern.pattern == grid)
                 {
                     return pattern.products;
                 }
             }
+            else if (pattern.pattern.Length < grid.Length)
+            {
+                int fit = (gridSize.y - pattern.gridSize.y + 1) * (gridSize.x - pattern.gridSize.x + 1);
+
+                //Item[] newGrid = new Item[pattern.gridSize.y * pattern.gridSize.x];
+                //Vector2Int newGridSize = pattern.gridSize;
+                // if fit = 9 maxI = 8
+                // execute 9 times
+                List<int> indexes;
+                for (int i = 0; i < fit; i++)
+                {
+                    var result = CraftItem(GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern);
+                    if (result != null)
+                    {
+                        bool canReturn = true;
+                        for (int j = 0; j < grid.Length; j++)
+                        {
+                            if (indexes.Contains(j)) continue;
+                            if (grid[j] != null) canReturn = false;
+                        }
+                        if (canReturn) return result;
+                    }
+                }
+            }
         }
         return null;
     }
 
-    public static Item[] CraftItem(Item[] grid, bool craftItem, PatternRecipe pattern)
+    public static Item[] CraftItem(Item[] grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern)
     {
 
         if (pattern.pattern.Length > grid.Length) return null;
-        if (pattern.pattern.Length == grid.Length)
+        else if (pattern.pattern.Length == grid.Length)
         {
             if (pattern.pattern == grid)
             {
                 return pattern.products;
             }
         }
-        
+        else if (pattern.pattern.Length < grid.Length)
+        {
+            int fit = (gridSize.y - pattern.gridSize.y + 1) * (gridSize.x - pattern.gridSize.x + 1);
+
+            //Item[] newGrid = new Item[pattern.gridSize.y * pattern.gridSize.x];
+            //Vector2Int newGridSize = pattern.gridSize;
+            // if fit = 9 maxI = 8
+            // execute 9 times
+            List<int> indexes;
+            for (int i = 0; i < fit; i++)
+            {
+                var result = CraftItem(GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern);
+                if (result != null)
+                {
+                    bool canReturn = true;
+                    for (int j = 0; j < grid.Length; j++)
+                    {
+                        if (indexes.Contains(j)) continue;
+                        if (grid[j] != null) canReturn = false;
+                    }
+                    if (canReturn) return result;
+                }
+            }
+        }
         return null;
+    }
+
+    public static Item[] GetSectionFromGrid(Item[] originalGrid, Vector2Int originalGridSize, Vector2Int sectionSize, int offsetIndex, out List<int> usedIndexes)
+    {
+        Item[] returnGrid = new Item[sectionSize.x * sectionSize.y];
+        usedIndexes = new List<int>();
+
+        int fitx = originalGridSize.x - sectionSize.x + 1;
+        int offsety = Mathf.FloorToInt(offsetIndex / fitx);
+        int offsetx = offsetIndex - (offsety * fitx);
+        for(int i = offsety;i < sectionSize.y; i++)
+        {
+            for (int j = 0; j < sectionSize.x; j++)
+            {
+                returnGrid[i * sectionSize.x + j + offsetx] = originalGrid[i * originalGridSize.x + j + offsetx];
+                usedIndexes.Add(i * originalGridSize.x + j + offsetx);
+            }
+        }
+        return returnGrid;
     }
 }
 
