@@ -641,9 +641,59 @@ public static class InventoryController
         return inv;
     }
 
-    public static void CraftItem(params Inventory[] inv)
+    public static Item[] CraftItem(Item[] grid, bool craftItem)
+    {
+        if(InventoryHandler.current != null)
+        {
+            InventoryHandler handler = InventoryHandler.current;
+
+            foreach(RecipeAsset asset in handler.recipeAssets)
+            {
+                foreach(PatternRecipe pattern in asset.receipePatternsList)
+                {
+                    if (pattern.pattern.Length > grid.Length) continue;
+                    if (pattern.pattern.Length == grid.Length)
+                    {
+                        if(pattern.pattern == grid)
+                        {
+                            return pattern.products;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Item[] CraftItem(Item[] grid, bool craftItem, RecipeAsset asset)
+    {
+        foreach (PatternRecipe pattern in asset.receipePatternsList)
+        {
+            if (pattern.pattern.Length > grid.Length) continue;
+            if (pattern.pattern.Length == grid.Length)
+            {
+                if (pattern.pattern == grid)
+                {
+                    return pattern.products;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Item[] CraftItem(Item[] grid, bool craftItem, PatternRecipe pattern)
     {
 
+        if (pattern.pattern.Length > grid.Length) return null;
+        if (pattern.pattern.Length == grid.Length)
+        {
+            if (pattern.pattern == grid)
+            {
+                return pattern.products;
+            }
+        }
+        
+        return null;
     }
 }
 
