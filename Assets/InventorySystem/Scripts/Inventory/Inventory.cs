@@ -2,6 +2,7 @@
 using UnityEngine;
 using System;
 using System.ComponentModel.Design;
+using System.Linq;
 
 [Serializable]
 public static class InventoryController
@@ -655,7 +656,7 @@ public static class InventoryController
                     if (pattern.pattern.Length > grid.Length) continue;
                     else if (pattern.pattern.Length == grid.Length)
                     {
-                        if(pattern.pattern == grid)
+                        if(Enumerable.SequenceEqual(pattern.pattern, grid))
                         {
                             return pattern.products;
                         }
@@ -696,7 +697,7 @@ public static class InventoryController
             if (pattern.pattern.Length > grid.Length) continue;
             else if (pattern.pattern.Length == grid.Length)
             {
-                if (pattern.pattern == grid)
+                if (Enumerable.SequenceEqual(pattern.pattern, grid))
                 {
                     return pattern.products;
                 }
@@ -735,7 +736,7 @@ public static class InventoryController
         if (pattern.pattern.Length > grid.Length) return null;
         else if (pattern.pattern.Length == grid.Length)
         {
-            if (pattern.pattern == grid)
+            if (Enumerable.SequenceEqual(pattern.pattern, grid))
             {
                 return pattern.products;
             }
@@ -775,12 +776,12 @@ public static class InventoryController
         int fitx = originalGridSize.x - sectionSize.x + 1;
         int offsety = Mathf.FloorToInt(offsetIndex / fitx);
         int offsetx = offsetIndex - (offsety * fitx);
-        for(int i = offsety;i < sectionSize.y; i++)
+        for(int i = 0;i < sectionSize.y; i++)
         {
             for (int j = 0; j < sectionSize.x; j++)
             {
-                returnGrid[i * sectionSize.x + j + offsetx] = originalGrid[i * originalGridSize.x + j + offsetx];
-                usedIndexes.Add(i * originalGridSize.x + j + offsetx);
+                returnGrid[i * sectionSize.x + j] = originalGrid[(i + offsety) * originalGridSize.x + j + offsetx];
+                usedIndexes.Add((i + offsety) * originalGridSize.x + j + offsetx);
             }
         }
         return returnGrid;

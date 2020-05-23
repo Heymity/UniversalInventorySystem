@@ -52,9 +52,9 @@ public class InventoryDrawer : PropertyDrawer
         if (unfold)
         {
             EditorGUI.indentLevel++;
-            slots.arraySize = EditorGUI.IntField(position, new GUIContent("Size"), slots.arraySize);
-            amountOfFilds = baseAmount + 1;
-            position.y += position.height;
+            slots.arraySize = slotAmounts.intValue;
+            //amountOfFilds = baseAmount + 1;
+            //position.y += position.height;
             if (slots != null)
             {
                 if (slots.arraySize > 0)

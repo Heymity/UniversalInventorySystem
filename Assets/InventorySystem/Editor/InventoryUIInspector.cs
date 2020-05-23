@@ -20,18 +20,23 @@ public class InventoryUIInspector : Editor
     SerializedProperty toggleKeyProp;
     SerializedProperty togglableObjectProp;
     SerializedProperty invProp;
+    SerializedProperty isCraftInventoryProp;
+    SerializedProperty gridSizeProp;
+    SerializedProperty allowsPatternCraftingProp;
+    SerializedProperty productSlotsProp;
 
     bool autoGenUI;
 
     bool slotsHeader;
-
     bool shaderFold;
     bool slotsFold;
     bool toggleFold;
+    bool craftFold;
+
     bool invFold;
 
     [MenuItem("GameObject/InventorySystem/InventorySystemManager", false, 10)]
-    static void DoSomething()
+    static void CreateInventorySystemManager()
     {
         Debug.Log("Not implemented yet, add manualy the prefab InventorySystemManager");
     }
@@ -51,6 +56,10 @@ public class InventoryUIInspector : Editor
         toggleKeyProp = serializedObject.FindProperty("toggleKey");
         togglableObjectProp = serializedObject.FindProperty("togglableObject");
         invProp = serializedObject.FindProperty("inv");
+        isCraftInventoryProp = serializedObject.FindProperty("isCraftInventory");
+        gridSizeProp = serializedObject.FindProperty("gridSize");
+        allowsPatternCraftingProp = serializedObject.FindProperty("allowsPatternCrafting");
+        productSlotsProp = serializedObject.FindProperty("productSlots");
     }
 
     public override void OnInspectorGUI()
@@ -112,6 +121,7 @@ public class InventoryUIInspector : Editor
             EditorGUILayout.Separator();
             EditorGUILayout.HelpBox(new GUIContent("The GameObject that represents a dragged item. We recomend using the default one"));
             EditorGUILayout.ObjectField(dragObjProp, new GUIContent("Drag Object"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("hideDragObj"), new GUIContent("Hide drag object"));
         }
 
         EditorGUILayout.Separator();
@@ -149,13 +159,33 @@ public class InventoryUIInspector : Editor
 
         invFold = EditorGUILayout.Foldout(invFold, "Inventory Configuration", true, EditorStyles.foldoutHeader);
 
-
         if(invFold)
         {
             EditorGUILayout.PropertyField(invProp);
         }
 
-        if (!slotsHeader && !shaderFold && !toggleFold && !invFold) EditorGUILayout.HelpBox("Click on a header to open the configurations!", MessageType.Info);
+        EditorGUILayout.Separator();
+
+        craftFold = EditorGUILayout.Foldout(craftFold, "Crafting Configuration", true, EditorStyles.foldoutHeader);
+
+        if (craftFold)
+        {
+            /*isCraftInventoryProp = serializedObject.FindProperty("isCraftInventory");
+            gridSizeProp = serializedObject.FindProperty("gridSize");
+            allowsPatternCraftingProp = serializedObject.FindProperty("allowsPatternCrafting");
+            productSlotsProp = serializedObject.FindProperty("productSlots");*/
+
+            EditorGUILayout.PropertyField(isCraftInventoryProp, new GUIContent("Is this a crafting inventory"));
+
+            if (isCraftInventoryProp.boolValue)
+            {
+                EditorGUILayout.PropertyField(gridSizeProp, new GUIContent("Crafting grid size"));
+                EditorGUILayout.PropertyField(allowsPatternCraftingProp, new GUIContent("Allows pattern crafting"));
+                EditorGUILayout.PropertyField(productSlotsProp, new GUIContent("Product slots"));
+            }
+        }
+
+        if (!slotsHeader && !shaderFold && !toggleFold && !invFold && !craftFold) EditorGUILayout.HelpBox("Click on a header to open the configurations!", MessageType.Info);
 
         serializedObject.ApplyModifiedProperties();
     }

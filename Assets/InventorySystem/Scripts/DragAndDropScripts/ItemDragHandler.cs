@@ -83,6 +83,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
             var o = invUI.dragObj;
             var r = o.GetComponent<RectTransform>();
             r.position = rectTransform.position;
+
             var sd = invUI.slots[index].GetComponent<RectTransform>().sizeDelta;
             r.sizeDelta = sd;
             for (int i = 0; i < o.transform.childCount; i++)
@@ -96,28 +97,28 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
                 {
                     for (int j = 0; j < invUI.slots[index].transform.childCount; j++)
                     {
-                        if (invUI.slots[index].transform.GetChild(i).TryGetComponent(out ig))
+                        if (invUI.slots[index].transform.GetChild(j).TryGetComponent(out ig))
                         {
                             igUI.material.SetFloat("_Size", invUI.outlineSize);
                             igUI.material.SetColor("_Color", invUI.outlineColor);
-                            c.GetComponent<RectTransform>().sizeDelta = invUI.slots[index].transform.GetChild(i).GetComponent<RectTransform>().sizeDelta;
+                            c.GetComponent<RectTransform>().sizeDelta = invUI.slots[index].transform.GetChild(j).GetComponent<RectTransform>().sizeDelta;
+                            break;
                         }
-                        break;
                     }
                 }
                 else if (c.TryGetComponent(out text))
                 {
                     for (int j = 0; j < invUI.slots[index].transform.childCount; j++)
                     {
-                        if (invUI.slots[index].transform.GetChild(i).TryGetComponent(out text))
+                        if (invUI.slots[index].transform.GetChild(j).TryGetComponent(out text))
                         {
-                            c.GetComponent<RectTransform>().sizeDelta = invUI.slots[index].transform.GetChild(i).GetComponent<RectTransform>().sizeDelta;
+                            c.GetComponent<RectTransform>().sizeDelta = invUI.slots[index].transform.GetChild(j).GetComponent<RectTransform>().sizeDelta;
                             var t = c.GetComponent<TextMeshProUGUI>();
                             t.fontSize = text.fontSize;
                             t.color = text.color;
                             t.alignment = text.alignment;
+                            break;
                         }
-                        break;
                     }
                 }
             }

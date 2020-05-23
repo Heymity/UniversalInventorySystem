@@ -9,8 +9,8 @@ using UnityEditor;
 
 [System.Serializable]
 public class InventoryUI : MonoBehaviour
-{
-
+{ 
+    //Slots
     public bool generateUIFromSlotPrefab;
     public GameObject generatedUIParent;
 
@@ -24,16 +24,30 @@ public class InventoryUI : MonoBehaviour
 
     public GameObject dragObj;
 
+    public bool hideDragObj;
+
+    //Sahder
     public Color outlineColor;
 
     public float outlineSize;
 
+    //Toggle inventory
     public bool hideInventory;
 
     public KeyCode toggleKey;
     public GameObject togglableObject;
 
+    //Inv
     public Inventory inv;
+
+    //Craft
+    public bool isCraftInventory;
+
+    public Vector2Int gridSize;
+
+    public bool allowsPatternCrafting;
+
+    public GameObject[] productSlots;
 
     [HideInInspector]
     public bool isDraging;
@@ -41,6 +55,9 @@ public class InventoryUI : MonoBehaviour
     public int? dragSlotNumber = null;
     [HideInInspector]
     public bool shouldSwap;
+    [HideInInspector]
+    public List<Item> pattern = new List<Item>();
+
     public void SetInventory(Inventory _inv) => inv = _inv;
     public Inventory GetInventory() => inv;
     
@@ -52,6 +69,7 @@ public class InventoryUI : MonoBehaviour
         b.name = $"DRAGITEMOBJ_{name}_{UnityEngine.Random.Range(int.MinValue, int.MaxValue)}";
         b.AddComponent<DragSlot>();
         b.SetActive(false);
+        if(hideDragObj) b.hideFlags = HideFlags.HideInHierarchy;
         dragObj = b;
 
         InventoryController.inventoriesUI.Add(this);
@@ -60,13 +78,34 @@ public class InventoryUI : MonoBehaviour
             for (int i = 0; i < slots.Length; i++)
             {
                 slots[i].name = i.ToString();
-                var tmp = slots[i].transform.GetComponentInChildren<ItemDragHandler>();
-                tmp.canvas = canvas;
-                tmp.invUI = this;
+                for(int j = 0; j < slots[i].transform.childCount; j++)
+                {
+                    Image image;
+                    if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                    {
+                        ItemDragHandler drag;
+                        if(slots[i].transform.GetChild(j).TryGetComponent(out drag))
+                        {
+                            drag.canvas = canvas;
+                            drag.invUI = this;
+                        }else 
+                        {
+                            drag = slots[i].transform.GetChild(j).gameObject.AddComponent<ItemDragHandler>();
+                            drag.canvas = canvas;
+                            drag.invUI = this;
+                        }
+                    }
+                }               
             }
         }
         ItemDropHandler idh;
         if(!canvas.TryGetComponent(out idh)) canvas.gameObject.AddComponent<ItemDropHandler>();
+
+        if (isCraftInventory)
+        {
+            for(int i = 0;i < gridSize.x * gridSize.y;i++)
+                pattern.Add(null);
+        }
     }
 
     List<GameObject> GenerateUI(int slotAmount)
@@ -106,34 +145,115 @@ public class InventoryUI : MonoBehaviour
 
         for (int i = 0;i < inv.slots.Count; i++)
         {
+            if(isCraftInventory) pattern[i] = inv.slots[i].item;
+           
+            Image image;
+            TextMeshProUGUI text;
             if (inv.slots[i].item == null)
             {
-                slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
-                slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(0,0,0,0);
-                slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
-                
+                for (int j = 0; j < slots[i].transform.childCount; j++)
+                {
+                    
+                    if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                    {
+                        image.sprite = null;
+                        image.color = new Color(0, 0, 0, 0);
+                    }
+                    else if (slots[i].transform.GetChild(j).TryGetComponent(out text))
+                        text.text = "";
+                }         
                 continue;
             }
-            slots[i].transform.GetChild(0).GetComponent<Image>().sprite = inv.slots[i].item.sprite;
-            slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(1, 1, 1, 1);
-            slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = inv.slots[i].amount.ToString();
-            if (dragObj.GetComponent<DragSlot>().GetSlotNumber() == i && isDraging)
+
+            for (int j = 0; j < slots[i].transform.childCount; j++)
             {
-                if(inv.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount() == 0)
+
+                if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
                 {
-                    slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
-                    slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(0, 0, 0, 0);
-                    slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
-                } else slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = (inv.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount()).ToString();
+                    image.sprite = inv.slots[i].item.sprite;
+                    image.color = new Color(1, 1, 1, 1);
+                }
+                else if (slots[i].transform.GetChild(j).TryGetComponent(out text))
+                    text.text = inv.slots[i].amount.ToString();
             }
 
-            slots[i].GetComponent<Button>().onClick.RemoveAllListeners();
-            var index = i;
-            slots[i].GetComponent<Button>().onClick.AddListener(() =>
+            if (dragObj.GetComponent<DragSlot>().GetSlotNumber() == i && isDraging)
             {
-                Debug.Log($"Slot {slots[index].name} was clicked");
-                inv.UseItemInSlot(index);             
-            });
+                if (inv.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount() == 0)
+                {
+                    for (int j = 0; j < slots[i].transform.childCount; j++)
+                    {
+
+                        if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                        {
+                            image.sprite = null;
+                            image.color = new Color(0, 0, 0, 0);
+                        }
+                        else if (slots[i].transform.GetChild(j).TryGetComponent(out text))
+                            text.text = "";
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < slots[i].transform.childCount; j++)
+                    {
+                        if (slots[i].transform.GetChild(j).TryGetComponent(out text))
+                            text.text = (inv.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount()).ToString();
+                    }
+                }
+            }
+
+            if (!isCraftInventory)
+            {
+                slots[i].GetComponent<Button>().onClick.RemoveAllListeners();
+                var index = i;
+                slots[i].GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    Debug.Log($"Slot {slots[index].name} was clicked");
+                    inv.UseItemInSlot(index);
+                });
+            } 
+        }
+
+        if (isCraftInventory)
+        {
+            Item[] products = InventoryController.CraftItem(pattern.ToArray(), gridSize, false);
+            
+            if(products != null)
+            {
+                for (int i = 0; i < products.Length; i++)
+                {
+                    for (int j = 0; j < slots[i].transform.childCount; j++)
+                    {
+                        Image image;
+                        TextMeshProUGUI text;
+                        if (productSlots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                        {
+                            image.sprite = products[i].sprite;
+                            image.color = new Color(1, 1, 1, 1);
+                        }
+                        //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
+                        //  text.text = products[i].amount.ToString();
+                    }
+                }
+            }else
+            {
+                for (int i = 0; i < productSlots.Length; i++)
+                {
+                    for (int j = 0; j < slots[i].transform.childCount; j++)
+                    {
+                        Image image;
+                        TextMeshProUGUI text;
+                        if (productSlots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                        {
+                            image.sprite = null;
+                            image.color = new Color(0, 0, 0, 0);
+                        }
+                        //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
+                        //  text.text = products[i].amount.ToString();
+                    }
+                }
+            }
         }
     }
 }

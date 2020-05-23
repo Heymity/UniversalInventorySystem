@@ -16,5 +16,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7ae2d45741065f84f86934fe16c407cc, type: 2}
   receipePatternsList:
   - {fileID: 11400000, guid: be503088244441f459fcf3419b31c006, type: 2}
+  - {fileID: 11400000, guid: 97010626879f9034f84ad21d671de8bc, type: 2}
   strId: ARG
   id: 0
