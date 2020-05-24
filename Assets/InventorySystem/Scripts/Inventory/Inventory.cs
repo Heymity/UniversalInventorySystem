@@ -703,12 +703,22 @@ public static class InventoryController
                         {
                             if (craftItem)
                             {
-                                for (int k = 0; k < inv.slots.Count; k++)
+                                int i = 0;
+                                for (int k = grid.Length; k < inv.slots.Count; k++)
                                 {
-                                    if(k > grid.Length - 1)
+                                    if (k > grid.Length - 1)
                                     {
-                                        inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
-                                    } else if (inv.slots[k].hasItem) inv.RemoveItemInSlot(k, 1);
+                                        i = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k);
+                                        if (i > 0) return null;
+                                        //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
+                                    }
+                                }
+                                if (i > 0) return null;
+
+                                for (int k = 0; k < inv.slots.Count; k++)
+                                {                                
+                                    if (inv.slots[k].hasItem && k <= grid.Length - 1) 
+                                        inv.RemoveItemInSlot(k, 1);
                                 }
                             }
                             return pattern.products;
@@ -734,10 +744,22 @@ public static class InventoryController
                                 {
                                     if (craftItem)
                                     {
-                                        for(int k = 0; k < inv.slots.Count; k++)
+                                        int w = 0;
+                                        for (int k = grid.Length; k < inv.slots.Count; k++)
                                         {
-                                            if (!inv.slots[k].hasItem) continue;
-                                            inv.RemoveItemInSlot(k, 1);
+                                            if (k > grid.Length - 1)
+                                            {
+                                                w = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k);
+                                                if (w > 0) return null;
+                                                //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
+                                            }
+                                        }
+                                        if (w > 0) return null;
+
+                                        for (int k = 0; k < inv.slots.Count; k++)
+                                        {
+                                            if (inv.slots[k].hasItem && k <= grid.Length - 1)
+                                                inv.RemoveItemInSlot(k, 1);
                                         }
                                     }
                                     return result;
@@ -776,10 +798,22 @@ public static class InventoryController
                 }
                 if (craftItem)
                 {
+                    int i = 0;
+                    for (int k = grid.Length; k < inv.slots.Count; k++)
+                    {
+                        if (k > grid.Length - 1)
+                        {
+                            i = inv.AddItemToSlot(recipe.products[k - grid.Length], 1, k);
+                            if (i > 0) return null;
+                            //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
+                        }
+                    }
+                    if (i > 0) return null;
+
                     for (int k = 0; k < inv.slots.Count; k++)
                     {
-                        if (!inv.slots[k].hasItem) continue;
-                        inv.RemoveItemInSlot(k, 1);
+                        if (inv.slots[k].hasItem && k <= grid.Length - 1)
+                            inv.RemoveItemInSlot(k, 1);
                     }
                 }
                 if (canReturn) return recipe.products;
@@ -813,10 +847,22 @@ public static class InventoryController
                     {
                         if (craftItem)
                         {
+                            int i = 0;
+                            for (int k = grid.Length; k < inv.slots.Count; k++)
+                            {
+                                if (k > grid.Length - 1)
+                                {
+                                    i = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k);
+                                    if (i > 0) return null;
+                                    //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
+                                }
+                            }
+                            if (i > 0) return null;
+
                             for (int k = 0; k < inv.slots.Count; k++)
                             {
-                                if (!inv.slots[k].hasItem) continue;
-                                inv.RemoveItemInSlot(k, 1);
+                                if (inv.slots[k].hasItem && k <= grid.Length - 1)
+                                    inv.RemoveItemInSlot(k, 1);
                             }
                         }
                         return pattern.products;
@@ -842,10 +888,22 @@ public static class InventoryController
                             {
                                 if (craftItem)
                                 {
+                                    int w = 0;
+                                    for (int k = grid.Length; k < inv.slots.Count; k++)
+                                    {
+                                        if (k > grid.Length - 1)
+                                        {
+                                            w = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k);
+                                            if (w > 0) return null;
+                                            //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
+                                        }
+                                    }
+                                    if (w > 0) return null;
+
                                     for (int k = 0; k < inv.slots.Count; k++)
                                     {
-                                        if (!inv.slots[k].hasItem) continue;
-                                        inv.RemoveItemInSlot(k, 1);
+                                        if (inv.slots[k].hasItem && k <= grid.Length - 1)
+                                            inv.RemoveItemInSlot(k, 1);
                                     }
                                 }
                                 return result;
@@ -883,10 +941,22 @@ public static class InventoryController
             }
             if (craftItem)
             {
+                int i = 0;
+                for (int k = grid.Length; k < inv.slots.Count; k++)
+                {
+                    if (k > grid.Length - 1)
+                    {
+                        i = inv.AddItemToSlot(recipe.products[k - grid.Length], 1, k);
+                        if (i > 0) return null;
+                        //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
+                    }
+                }
+                if (i > 0) return null;
+
                 for (int k = 0; k < inv.slots.Count; k++)
                 {
-                    if (!inv.slots[k].hasItem) continue;
-                    inv.RemoveItemInSlot(k, 1);
+                    if (inv.slots[k].hasItem && k <= grid.Length - 1)
+                        inv.RemoveItemInSlot(k, 1);
                 }
             }
             if (canReturn) return recipe.products;
@@ -915,10 +985,22 @@ public static class InventoryController
             {
                 if (craftItem)
                 {
+                    int i = 0;
+                    for (int k = grid.Length; k < inv.slots.Count; k++)
+                    {
+                        if (k > grid.Length - 1)
+                        {
+                            i = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k);
+                            if (i > 0) return null;
+                            //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
+                        }
+                    }
+                    if (i > 0) return null;
+
                     for (int k = 0; k < inv.slots.Count; k++)
                     {
-                        if (!inv.slots[k].hasItem) continue;
-                        inv.RemoveItemInSlot(k, 1);
+                        if (inv.slots[k].hasItem && k <= grid.Length - 1)
+                            inv.RemoveItemInSlot(k, 1);
                     }
                 }
                 return pattern.products;
@@ -944,10 +1026,22 @@ public static class InventoryController
                     {
                         if (craftItem)
                         {
+                            int w = 0;
+                            for (int k = grid.Length; k < inv.slots.Count; k++)
+                            {
+                                if (k > grid.Length - 1)
+                                {
+                                    w = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k);
+                                    if (w > 0) return null;
+                                    //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
+                                }
+                            }
+                            if (w > 0) return null;
+
                             for (int k = 0; k < inv.slots.Count; k++)
                             {
-                                if (!inv.slots[k].hasItem) continue;
-                                inv.RemoveItemInSlot(k, 1);
+                                if (inv.slots[k].hasItem && k <= grid.Length - 1)
+                                    inv.RemoveItemInSlot(k, 1);
                             }
                         }
                         return result;
@@ -996,10 +1090,22 @@ public static class InventoryController
         }
         if (craftItem)
         {
+            int i = 0;
+            for (int k = grid.Length; k < inv.slots.Count; k++)
+            {
+                if (k > grid.Length - 1)
+                {
+                    i = inv.AddItemToSlot(recipe.products[k - grid.Length], 1, k);
+                    if (i > 0) return null;
+                    //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
+                }
+            }
+            if (i > 0) return null;
+
             for (int k = 0; k < inv.slots.Count; k++)
             {
-                if (!inv.slots[k].hasItem) continue;
-                inv.RemoveItemInSlot(k, 1);
+                if (inv.slots[k].hasItem && k <= grid.Length - 1)
+                    inv.RemoveItemInSlot(k, 1);
             }
         }
         if (canReturn) return recipe.products;

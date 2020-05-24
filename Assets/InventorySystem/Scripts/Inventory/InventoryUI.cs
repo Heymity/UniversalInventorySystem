@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEditor;
+using System.Linq;
 
 //Todo
 //Transparent slots when dragging
@@ -231,22 +231,32 @@ public class InventoryUI : MonoBehaviour
         if (isCraftInventory)
         {
             Item[] products = inv.CraftItem(pattern.ToArray(), gridSize, false, true, productSlots.Length);
-            
-            if(products != null && products.Length <= productSlots.Length)
+
+            List<Item> productsItem = new List<Item>();
+            if (products != null && products.Length <= productSlots.Length)
             {
-                for (int i = 0; i < products.Length; i++)
+                for (int k = 0; k < products.Length; k++)
                 {
-                    for (int j = 0; j < slots[i].transform.childCount; j++)
+                    productsItem.Add(inv.slots[gridSize.x * gridSize.y + k].item);
+                }
+                
+            }
+
+            for (int i = 0; i < productSlots.Length; i++)
+            {
+                if (inv.slots[(gridSize.x * gridSize.y) + i].hasItem)
+                {
+                    for (int j = 0; j < slots[(gridSize.x * gridSize.y) + i].transform.childCount; j++)
                     {
                         Image image;
                         TextMeshProUGUI text;
-                        if (productSlots[i].transform.GetChild(j).TryGetComponent(out image))
+                        if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent<Image>(out image))
                         {
-                            image.sprite = products[i].sprite;
+                            image.sprite = inv.slots[(gridSize.x * gridSize.y) + i].item.sprite;
                             image.color = new Color(1, 1, 1, 1);
                         }
-                        //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
-                        //  text.text = products[i].amount.ToString();
+                        else if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out text))
+                            text.text = inv.slots[(gridSize.x * gridSize.y) + i].amount.ToString();
                     }
 
                     //For click and drag
@@ -255,37 +265,44 @@ public class InventoryUI : MonoBehaviour
                     productSlots[i].GetComponent<Button>().onClick.AddListener(() =>
                     {
                         Debug.Log($"Product slot {slots[index].name} was clicked");
-                        inv.CraftItem(pattern.ToArray(), gridSize, true, true, productSlots.Length);
+                        if(products != null && products.Length <= productSlots.Length)
+                        {
+                            if(Enumerable.SequenceEqual(products, productsItem.ToArray()))
+                            {
+                                inv.CraftItem(pattern.ToArray(), gridSize, true, true, productSlots.Length);
+                            }
+                        }
                     });
                 }
-            }else
-            {
-                for (int i = 0; i < productSlots.Length; i++)
+                else if (products != null && products.Length <= productSlots.Length)
                 {
-                    if (inv.slots[(gridSize.x * gridSize.y) + i].hasItem)
+                    for (int k = 0; k < products.Length; k++)
                     {
-                        for (int j = 0; j < slots[(gridSize.x * gridSize.y) + i].transform.childCount; j++)
+                        for (int j = 0; j < slots[k].transform.childCount; j++)
                         {
                             Image image;
                             TextMeshProUGUI text;
-                            if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                            if (productSlots[k].transform.GetChild(j).TryGetComponent(out image))
                             {
-                                image.sprite = inv.slots[(gridSize.x * gridSize.y) + i].item.sprite;
+                                image.sprite = products[k].sprite;
                                 image.color = new Color(1, 1, 1, 1);
                             }
-                            else if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out text))
-                                text.text = inv.slots[(gridSize.x * gridSize.y) + i].amount.ToString();
+                            //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
+                            //  text.text = products[i].amount.ToString();
                         }
 
                         //For click and drag
-                        productSlots[i].GetComponent<Button>().onClick.RemoveAllListeners();
-                        var index = i;
-                        productSlots[i].GetComponent<Button>().onClick.AddListener(() =>
+                        productSlots[k].GetComponent<Button>().onClick.RemoveAllListeners();
+                        var index = k;
+                        productSlots[k].GetComponent<Button>().onClick.AddListener(() =>
                         {
                             Debug.Log($"Product slot {slots[index].name} was clicked");
+                            inv.CraftItem(pattern.ToArray(), gridSize, true, true, productSlots.Length);
                         });
                     }
-                    else
+                }else
+                {
+                    if (!inv.slots[(gridSize.x * gridSize.y) + i].hasItem)
                     {
                         for (int j = 0; j < slots[i].transform.childCount; j++)
                         {
@@ -299,7 +316,8 @@ public class InventoryUI : MonoBehaviour
                             //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
                             //  text.text = products[i].amount.ToString();
                         }
-                    }
+
+                    }                    
                 }
             }
         }
