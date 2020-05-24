@@ -217,9 +217,9 @@ public class InventoryUI : MonoBehaviour
 
         if (isCraftInventory)
         {
-            Item[] products = InventoryController.CraftItem(pattern.ToArray(), gridSize, false, true);
+            Item[] products = inv.CraftItem(pattern.ToArray(), gridSize, false, true, productSlots.Length);
             
-            if(products != null)
+            if(products != null && products.Length <= productSlots.Length)
             {
                 for (int i = 0; i < products.Length; i++)
                 {
@@ -227,7 +227,7 @@ public class InventoryUI : MonoBehaviour
                     {
                         Image image;
                         TextMeshProUGUI text;
-                        if (productSlots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                        if (productSlots[i].transform.GetChild(j).TryGetComponent(out image))
                         {
                             image.sprite = products[i].sprite;
                             image.color = new Color(1, 1, 1, 1);
@@ -235,6 +235,14 @@ public class InventoryUI : MonoBehaviour
                         //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
                         //  text.text = products[i].amount.ToString();
                     }
+
+                    //For click and drag
+                    productSlots[i].GetComponent<Button>().onClick.RemoveAllListeners();
+                    var index = i;
+                    productSlots[i].GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        Debug.Log($"Product slot {slots[index].name} was clicked");
+                    });
                 }
             }else
             {

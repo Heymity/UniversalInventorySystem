@@ -657,7 +657,17 @@ public static class InventoryController
 
     #region Craft 
 
-    public static Item[] CraftItem(Item[] grid, Vector2Int gridSize, bool craftItem, bool allowPatternRecipe)
+    /// <summary>
+    /// This function checks every recipe in the InventoryManager and if it finds a match it returns the product. The pattern recipes are checked before the normal ones, and once a match is find it returns
+    /// </summary>
+    /// <param name="inv">The crafting inventory</param>
+    /// <param name="grid">The items grid (the rest of the inventory will be ignored)</param>
+    /// <param name="gridSize">The size of the crafting grid</param>
+    /// <param name="craftItem">Wheter it should remove the items form the grid or not</param>
+    /// <param name="allowPatternRecipe">Wheter it should check for pattern recipes or not (This is useful if you have a big game and dont want to check the patterns, since they are much more time consuming than normal recipes)</param>
+    /// <param name="productSlots">The amount of slot to products</param>
+    /// <returns>The products of the recipe matched</returns>
+    public static Item[] CraftItem(this Inventory inv, Item[] grid, Vector2Int gridSize, bool craftItem, bool allowPatternRecipe, int productSlots)
     {
         if (InventoryHandler.current == null) return null;
         
@@ -671,10 +681,19 @@ public static class InventoryController
                 foreach (PatternRecipe pattern in asset.receipePatternsList)
                 {
                     if (pattern.pattern.Length > grid.Length) continue;
+                    if (pattern.products.Length > productSlots) continue;
                     else if (pattern.pattern.Length == grid.Length)
                     {
                         if (Enumerable.SequenceEqual(pattern.pattern, grid))
                         {
+                            if (craftItem)
+                            {
+                                for (int k = 0; k < inv.slots.Count; k++)
+                                {
+                                    if (!inv.slots[k].hasItem) continue;
+                                    inv.RemoveItemInSlot(k, 1);
+                                }
+                            }
                             return pattern.products;
                         }
                     }
@@ -685,7 +704,7 @@ public static class InventoryController
                         List<int> indexes;
                         for (int i = 0; i < fit; i++)
                         {
-                            var result = CraftItem(GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern);
+                            var result = CraftItem(inv, GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, false, pattern, productSlots);
                             if (result != null)
                             {
                                 bool canReturn = true;
@@ -694,27 +713,95 @@ public static class InventoryController
                                     if (indexes.Contains(j)) continue;
                                     if (grid[j] != null) canReturn = false;
                                 }
-                                if (canReturn) return result;
+                                if (canReturn)
+                                {
+                                    if (craftItem)
+                                    {
+                                        for(int k = 0; k < inv.slots.Count; k++)
+                                        {
+                                            if (!inv.slots[k].hasItem) continue;
+                                            inv.RemoveItemInSlot(k, 1);
+                                        }
+                                    }
+                                    return result;
+                                }
+
                             }
                         }
                     }
                 }
             }
+            foreach (Recipe recipe in asset.recipesList)
+            {
+                List<int> jumpIndexes = new List<int>();
+                for (int i = 0; i < recipe.numberOfFactors; i++)
+                {
+                    for (int j = 0; j < grid.Length; j++)
+                    {
+                        if (grid[j] == recipe.factors[i] && !jumpIndexes.Contains(j))
+                        {
+                            //i++;
+                            jumpIndexes.Add(j);
+                            break;
+                        }
+                    }
+                    if (i >= recipe.numberOfFactors)
+                        break;
+                }
+                bool canReturn = true;
+                if (jumpIndexes.Count != recipe.numberOfFactors) continue;
+                for (int j = 0; j < grid.Length; j++)
+                {
+                    if (grid[j] != null && !jumpIndexes.Contains(j))
+                    {
+                        canReturn = false;
+                    }
+                }
+                if (craftItem)
+                {
+                    for (int k = 0; k < inv.slots.Count; k++)
+                    {
+                        if (!inv.slots[k].hasItem) continue;
+                        inv.RemoveItemInSlot(k, 1);
+                    }
+                }
+                if (canReturn) return recipe.products;
+            }
         }       
         return null;
     }
 
-    public static Item[] CraftItem(Item[] grid, Vector2Int gridSize, bool craftItem, RecipeAsset asset, bool allowPatternRecipe)
+    /// <summary>
+    /// This function checks every recipe in the provided RecipeAsset and if it finds a match it returns the product. The pattern recipes are checked before the normal ones, and once a match is find it returns
+    /// </summary>
+    /// <param name="inv">The crafting inventory</param>
+    /// <param name="grid">The items grid (the rest of the inventory will be ignored)</param>
+    /// <param name="gridSize">The size of the crafting grid</param>
+    /// <param name="craftItem">Wheter it should remove the items form the grid or not</param>
+    /// <param name="asset">The RecipeAsset to be checked</param>
+    /// <param name="allowPatternRecipe">Wheter it should check for pattern recipes or not (This is useful if you have a big game and dont want to check the patterns, since they are much more time consuming than normal recipes)</param>
+    /// <param name="productSlots">The amount of slot to products</param>
+    /// <returns>The products of the recipe matched</returns>
+    public static Item[] CraftItem(this Inventory inv, Item[] grid, Vector2Int gridSize, bool craftItem, RecipeAsset asset, bool allowPatternRecipe, int productSlots)
     {
         if(allowPatternRecipe)
         {
             foreach (PatternRecipe pattern in asset.receipePatternsList)
             {
                 if (pattern.pattern.Length > grid.Length) continue;
+                if (pattern.products.Length > productSlots) continue;
                 else if (pattern.pattern.Length == grid.Length)
                 {
                     if (Enumerable.SequenceEqual(pattern.pattern, grid))
                     {
+                        if (craftItem)
+                        {
+                            for (int k = 0; k < inv.slots.Count; k++)
+                            {
+                                if (!inv.slots[k].hasItem) continue;
+                                inv.RemoveItemInSlot(k, 1);
+                            }
+                        }
                         return pattern.products;
                     }
                 }
@@ -725,7 +812,7 @@ public static class InventoryController
                     List<int> indexes;
                     for (int i = 0; i < fit; i++)
                     {
-                        var result = CraftItem(GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern);
+                        var result = CraftItem(inv, GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern, productSlots);
                         if (result != null)
                         {
                             bool canReturn = true;
@@ -734,23 +821,89 @@ public static class InventoryController
                                 if (indexes.Contains(j)) continue;
                                 if (grid[j] != null) canReturn = false;
                             }
-                            if (canReturn) return result;
+                            if (canReturn)
+                            {
+                                if (craftItem)
+                                {
+                                    for (int k = 0; k < inv.slots.Count; k++)
+                                    {
+                                        if (!inv.slots[k].hasItem) continue;
+                                        inv.RemoveItemInSlot(k, 1);
+                                    }
+                                }
+                                return result;
+                            }
                         }
                     }
                 }
             }
         }
+        foreach (Recipe recipe in asset.recipesList)
+        {
+            List<int> jumpIndexes = new List<int>();
+            for (int i = 0; i < recipe.numberOfFactors; i++)
+            {
+                for (int j = 0; j < grid.Length; j++)
+                {
+                    if (grid[j] == recipe.factors[i] && !jumpIndexes.Contains(j))
+                    {
+                        //i++;
+                        jumpIndexes.Add(j);
+                        break;
+                    }
+                }
+                if (i >= recipe.numberOfFactors)
+                    break;
+            }
+            bool canReturn = true;
+            if (jumpIndexes.Count != recipe.numberOfFactors) continue;
+            for (int j = 0; j < grid.Length; j++)
+            {
+                if (grid[j] != null && !jumpIndexes.Contains(j))
+                {
+                    canReturn = false;
+                }
+            }
+            if (craftItem)
+            {
+                for (int k = 0; k < inv.slots.Count; k++)
+                {
+                    if (!inv.slots[k].hasItem) continue;
+                    inv.RemoveItemInSlot(k, 1);
+                }
+            }
+            if (canReturn) return recipe.products;
+        }
         return null;
     }
 
-    public static Item[] CraftItem(Item[] grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern)
+    /// <summary>
+    /// This function checks a specific Pattern Recipe and if it is a match it returns the product
+    /// </summary>
+    /// <param name="inv">The crafting inventory</param>
+    /// <param name="grid">The items grid (the rest of the inventory will be ignored)</param>
+    /// <param name="gridSize">The size of the crafting grid</param>
+    /// <param name="craftItem">Wheter it should remove the items form the grid or not</param>
+    /// <param name="pattern">The PatternRecipe to be checked</param>
+    /// <param name="productSlots">The amount of slot to products</param>
+    /// <returns>The products of the recipe matched</returns>
+    public static Item[] CraftItem(this Inventory inv, Item[] grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots)
     {
 
         if (pattern.pattern.Length > grid.Length) return null;
+        if (pattern.products.Length > productSlots) return null;
         else if (pattern.pattern.Length == grid.Length)
         {
             if (Enumerable.SequenceEqual(pattern.pattern, grid))
             {
+                if (craftItem)
+                {
+                    for (int k = 0; k < inv.slots.Count; k++)
+                    {
+                        if (!inv.slots[k].hasItem) continue;
+                        inv.RemoveItemInSlot(k, 1);
+                    }
+                }
                 return pattern.products;
             }
         }
@@ -761,7 +914,7 @@ public static class InventoryController
             List<int> indexes;
             for (int i = 0; i < fit; i++)
             {
-                var result = CraftItem(GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern);
+                var result = CraftItem(inv, GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern, productSlots);
                 if (result != null)
                 {
                     bool canReturn = true;
@@ -770,13 +923,82 @@ public static class InventoryController
                         if (indexes.Contains(j)) continue;
                         if (grid[j] != null) canReturn = false;
                     }
-                    if (canReturn) return result;
+                    if (canReturn)
+                    {
+                        if (craftItem)
+                        {
+                            for (int k = 0; k < inv.slots.Count; k++)
+                            {
+                                if (!inv.slots[k].hasItem) continue;
+                                inv.RemoveItemInSlot(k, 1);
+                            }
+                        }
+                        return result;
+                    }
                 }
             }
         }
         return null;
     }
 
+    /// <summary>
+    /// This function checks a specific Recipe and if it is a match it returns the product
+    /// </summary>
+    /// <param name="inv">The crafting inventory</param>
+    /// <param name="grid">The items grid (the rest of the inventory will be ignored)</param>
+    /// <param name="gridSize">The size of the crafting grid</param>
+    /// <param name="craftItem">Wheter it should remove the items form the grid or not</param>
+    /// <param name="recipe">The Recipe to be checked</param>
+    /// <param name="productSlots">The amount of slot to products</param>
+    /// <returns>The products of the recipe matched</returns>
+    public static Item[] CraftItem(this Inventory inv, Item[] grid, Vector2Int gridSize, bool craftItem, Recipe recipe, int productSlots)
+    {
+        List<int> jumpIndexes = new List<int>();
+        for (int i = 0; i < recipe.numberOfFactors; i++)
+        {
+            for (int j = 0; j < grid.Length; j++)
+            {
+                if (grid[j] == recipe.factors[i] && !jumpIndexes.Contains(j))
+                {
+                    //i++;
+                    jumpIndexes.Add(j);
+                    break;
+                }
+            }
+            if (i >= recipe.numberOfFactors)
+                break;
+        }
+        bool canReturn = true;
+        if (jumpIndexes.Count != recipe.numberOfFactors) return null;
+        for (int j = 0; j < grid.Length; j++)
+        {
+            if (grid[j] != null && !jumpIndexes.Contains(j))
+            {
+                canReturn = false;
+            }
+        }
+        if (craftItem)
+        {
+            for (int k = 0; k < inv.slots.Count; k++)
+            {
+                if (!inv.slots[k].hasItem) continue;
+                inv.RemoveItemInSlot(k, 1);
+            }
+        }
+        if (canReturn) return recipe.products;
+       
+        return null;
+    }
+
+    /// <summary>
+    /// This function is used for internal use, but its public in case that for some reason another script needs it. Basicaly it gets a section from a grid based on a section size and a offsetIndex
+    /// </summary>
+    /// <param name="originalGrid">The original grid</param>
+    /// <param name="originalGridSize">The size of the original grid</param>
+    /// <param name="sectionSize">The seize of the desired section</param>
+    /// <param name="offsetIndex">The offset of the section</param>
+    /// <param name="usedIndexes">The index of the original grid that were selected</param>
+    /// <returns>a new grid that is a section from the original one</returns>
     public static Item[] GetSectionFromGrid(Item[] originalGrid, Vector2Int originalGridSize, Vector2Int sectionSize, int offsetIndex, out List<int> usedIndexes)
     {
         Item[] returnGrid = new Item[sectionSize.x * sectionSize.y];
