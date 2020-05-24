@@ -33,7 +33,7 @@ public class ItemDropHandler : MonoBehaviour, IDropHandler
                     {
                         var min = float.MaxValue;
                         int index = 0;
-                        for (int i = 0; i < invUI.slots.Length; i++)
+                        for (int i = 0; i < invUI.slots.Count; i++)
                         {
                             var tmp = Vector3.Distance(Camera.main.ScreenToWorldPoint(Input.mousePosition), invUI.slots[i].GetComponent<RectTransform>().position);
                             if (tmp <= min)

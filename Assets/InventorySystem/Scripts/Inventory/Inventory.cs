@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using System.ComponentModel.Design;
 using System.Linq;
+using UnityEngine.UIElements;
 
 [Serializable]
 public static class InventoryController
@@ -437,6 +438,20 @@ public static class InventoryController
         if (inv.interactiable == IteractiableTypes.SlotToSlot || inv.interactiable == IteractiableTypes.Any)
         {
             Slot tmpSlot = inv.slots[targetSlot];
+
+            if (inv.slots[nativeSlot].isProductSlot)
+            {
+                if (tmpSlot.item == null)
+                {
+                    inv.slots[targetSlot] = inv.slots[nativeSlot];
+                    inv.slots[nativeSlot] = tmpSlot;
+                    InventoryHandler.SwapItemsEventArgs sea2 = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
+                    InventoryHandler.current.Broadcast(e, sea: sea2);
+                    return;
+                }
+                return;
+            }
+
             inv.slots[targetSlot] = inv.slots[nativeSlot];
             inv.slots[nativeSlot] = tmpSlot;
             InventoryHandler.SwapItemsEventArgs sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
@@ -690,8 +705,10 @@ public static class InventoryController
                             {
                                 for (int k = 0; k < inv.slots.Count; k++)
                                 {
-                                    if (!inv.slots[k].hasItem) continue;
-                                    inv.RemoveItemInSlot(k, 1);
+                                    if(k > grid.Length - 1)
+                                    {
+                                        inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
+                                    } else if (inv.slots[k].hasItem) inv.RemoveItemInSlot(k, 1);
                                 }
                             }
                             return pattern.products;
@@ -1096,13 +1113,16 @@ public struct Slot
     public int amount;
     public Item item;
     public bool hasItem;
+    public bool isProductSlot;
+
+    public readonly static Slot nullSlot = new Slot(null, 0, false, false);
 
     public Slot(Item _item)
     {
         item = _item;
         amount = 1;
         hasItem = item != null ? false : true;
-
+        isProductSlot = false;
     }
 
     public Slot(Item _item, int _amount)
@@ -1110,7 +1130,7 @@ public struct Slot
         item = _item;
         amount = _amount;
         hasItem = amount == 0 ? false : true;
-
+        isProductSlot = false;
     }
 
     public Slot(Item _item, int _amount, bool _hasItem)
@@ -1118,6 +1138,15 @@ public struct Slot
         item = _item;
         amount = _amount;
         hasItem = _hasItem;
+        isProductSlot = false;
+    }
+
+    public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot)
+    {
+        item = _item;
+        amount = _amount;
+        hasItem = _hasItem;
+        isProductSlot = _isProductSlot;
     }
 }
 

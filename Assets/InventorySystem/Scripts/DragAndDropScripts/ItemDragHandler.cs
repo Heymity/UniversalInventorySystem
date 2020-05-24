@@ -45,7 +45,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
         {
             var min = float.MaxValue;
             int index = 0;
-            for (int i = 0; i < invUI.slots.Length; i++)
+            for (int i = 0; i < invUI.slots.Count; i++)
             {
                 var tmp = Vector3.Distance(invUI.dragObj.transform.position, invUI.slots[i].GetComponent<RectTransform>().position);
                 if (tmp <= min)
@@ -64,7 +64,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
     {
         var min = float.MaxValue;
         index = 0;
-        for (int i = 0; i < invUI.slots.Length; i++)
+        for (int i = 0; i < invUI.slots.Count; i++)
         {
             var tmp = Vector3.Distance(rectTransform.position, invUI.slots[i].GetComponent<RectTransform>().position);
             if (tmp <= min)
