@@ -73,6 +73,56 @@ public class ReceipeEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("id"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("key"));
 
+        SerializedProperty pattern = serializedObject.FindProperty("factors");
+        SerializedProperty product = serializedObject.FindProperty("products");
+
+        GUIContent content = new GUIContent();
+
+        EditorGUILayout.BeginHorizontal("box", GUILayout.ExpandWidth(true));
+
+        for (int i = 0; i < pattern.arraySize; i++)
+        {
+            //patternPos.x += 36;
+            var item = pattern.GetArrayElementAtIndex(i).objectReferenceValue as Item;
+            if (item == null)
+            {
+                content.text = "null";
+                content.image = null;
+            }
+            else
+            {
+                content.text = "";
+                content.image = item.sprite.texture;
+            }
+            EditorGUILayout.LabelField(content, GUILayout.Height(36), GUILayout.Width(36));
+            if (i < pattern.arraySize - 1)
+                EditorGUILayout.LabelField("+", GUILayout.Height(36), GUILayout.Width(10));
+            else
+            {
+                EditorGUILayout.LabelField("=", GUILayout.Height(36), GUILayout.Width(10));
+                for (int j = 0; j < product.arraySize; j++)
+                {
+                    var productItem = product.GetArrayElementAtIndex(j).objectReferenceValue as Item;
+                    if (productItem == null)
+                    {
+                        content.text = "null";
+                        content.image = null;
+                    }
+                    else
+                    {
+                        content.text = "";
+                        content.image = productItem.sprite.texture;
+                    }
+                    EditorGUILayout.LabelField(content, GUILayout.Height(36), GUILayout.Width(36));
+
+                }
+
+                EditorGUILayout.SelectableLabel($"id: {serializedObject.FindProperty("id").intValue}, key: {serializedObject.FindProperty("key").stringValue}", GUILayout.Height(36));
+            }
+        }
+
+        EditorGUILayout.EndHorizontal();
+
         serializedObject.ApplyModifiedProperties();
     }
 }
