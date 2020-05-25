@@ -237,11 +237,12 @@ public class InventoryUI : MonoBehaviour
             {
                 for (int k = 0; k < products.Length; k++)
                 {
-                    productsItem.Add(inv.slots[gridSize.x * gridSize.y + k].item);
+                    productsItem.Add(inv.slots[gridSize.x * gridSize.y + k].item ?? products[k]);
                 }
                 
             }
 
+            int productIndex = 0;
             for (int i = 0; i < productSlots.Length; i++)
             {
                 if (inv.slots[(gridSize.x * gridSize.y) + i].hasItem)
@@ -254,6 +255,7 @@ public class InventoryUI : MonoBehaviour
                         {
                             image.sprite = inv.slots[(gridSize.x * gridSize.y) + i].item.sprite;
                             image.color = new Color(1, 1, 1, 1);
+                            productIndex++;
                         }
                         else if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out text))
                             text.text = inv.slots[(gridSize.x * gridSize.y) + i].amount.ToString();
@@ -274,32 +276,32 @@ public class InventoryUI : MonoBehaviour
                         }
                     });
                 }
-                else if (products != null && products.Length <= productSlots.Length)
+                else if (products != null && products.Length <= productSlots.Length && productIndex < products.Length)
                 {
-                    for (int k = 0; k < products.Length; k++)
-                    {
-                        for (int j = 0; j < slots[k].transform.childCount; j++)
-                        {
-                            Image image;
-                            TextMeshProUGUI text;
-                            if (productSlots[k].transform.GetChild(j).TryGetComponent(out image))
-                            {
-                                image.sprite = products[k].sprite;
-                                image.color = new Color(1, 1, 1, 1);
-                            }
-                            //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
-                            //  text.text = products[i].amount.ToString();
-                        }
 
-                        //For click and drag
-                        productSlots[k].GetComponent<Button>().onClick.RemoveAllListeners();
-                        var index = k;
-                        productSlots[k].GetComponent<Button>().onClick.AddListener(() =>
+                    for (int j = 0; j < slots[(gridSize.x * gridSize.y) + i].transform.childCount; j++)
+                    {
+                        Image image;
+                        TextMeshProUGUI text;
+                        if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out image))
                         {
-                            Debug.Log($"Product slot {slots[index].name} was clicked");
-                            inv.CraftItem(pattern.ToArray(), gridSize, true, true, productSlots.Length);
-                        });
+                            image.sprite = products[productIndex].sprite;
+                            image.color = new Color(1, 1, 1, 1);
+                            productIndex++;
+                        }
+                        //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
+                        //  text.text = products[i].amount.ToString();
                     }
+
+                    //For click and drag
+                    productSlots[i].GetComponent<Button>().onClick.RemoveAllListeners();
+                    var index = i;
+                    productSlots[i].GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        Debug.Log($"Product slot {slots[index].name} was clicked");
+                        inv.CraftItem(pattern.ToArray(), gridSize, true, true, productSlots.Length);
+                    });
+                    
                 }else
                 {
                     if (!inv.slots[(gridSize.x * gridSize.y) + i].hasItem)
@@ -308,10 +310,11 @@ public class InventoryUI : MonoBehaviour
                         {
                             Image image;
                             TextMeshProUGUI text;
-                            if (productSlots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                            if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent<Image>(out image))
                             {
                                 image.sprite = null;
                                 image.color = new Color(0, 0, 0, 0);
+                                productIndex++;
                             }
                             //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
                             //  text.text = products[i].amount.ToString();
