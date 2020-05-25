@@ -102,6 +102,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
                             igUI.material.SetFloat("_Size", invUI.outlineSize);
                             igUI.material.SetColor("_Color", invUI.outlineColor);
                             c.GetComponent<RectTransform>().sizeDelta = invUI.slots[index].transform.GetChild(j).GetComponent<RectTransform>().sizeDelta;
+                            c.GetComponent<RectTransform>().localPosition = invUI.slots[index].transform.GetChild(j).GetComponent<RectTransform>().localPosition;
                             break;
                         }
                     }
@@ -113,6 +114,7 @@ public class ItemDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBe
                         if (invUI.slots[index].transform.GetChild(j).TryGetComponent(out text))
                         {
                             c.GetComponent<RectTransform>().sizeDelta = invUI.slots[index].transform.GetChild(j).GetComponent<RectTransform>().sizeDelta;
+                            c.GetComponent<RectTransform>().localPosition = invUI.slots[index].transform.GetChild(j).GetComponent<RectTransform>().localPosition;
                             var t = c.GetComponent<TextMeshProUGUI>();
                             t.fontSize = text.fontSize;
                             t.color = text.color;
