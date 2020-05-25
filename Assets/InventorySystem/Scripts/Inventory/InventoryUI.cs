@@ -37,6 +37,8 @@ public class InventoryUI : MonoBehaviour
     public KeyCode toggleKey;
     public GameObject togglableObject;
 
+    public bool dropOnCloseCrafting;
+
     //Inv
     public Inventory inv;
 

@@ -1036,8 +1036,9 @@ public struct Slot
     public Item item;
     public bool hasItem;
     public bool isProductSlot;
+    public SlotInteractive interative;
 
-    public readonly static Slot nullSlot = new Slot(null, 0, false, false);
+    public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotInteractive.Any);
 
     public Slot(Item _item)
     {
@@ -1045,6 +1046,7 @@ public struct Slot
         amount = 1;
         hasItem = item != null ? false : true;
         isProductSlot = false;
+        interative = SlotInteractive.Any;
     }
 
     public Slot(Item _item, int _amount)
@@ -1053,6 +1055,7 @@ public struct Slot
         amount = _amount;
         hasItem = amount == 0 ? false : true;
         isProductSlot = false;
+        interative = SlotInteractive.Any;
     }
 
     public Slot(Item _item, int _amount, bool _hasItem)
@@ -1061,6 +1064,7 @@ public struct Slot
         amount = _amount;
         hasItem = _hasItem;
         isProductSlot = false;
+        interative = SlotInteractive.Any;
     }
 
     public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot)
@@ -1069,6 +1073,16 @@ public struct Slot
         amount = _amount;
         hasItem = _hasItem;
         isProductSlot = _isProductSlot;
+        interative = SlotInteractive.Any;
+    }
+
+    public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotInteractive _interactive)
+    {
+        item = _item;
+        amount = _amount;
+        hasItem = _hasItem;
+        isProductSlot = _isProductSlot;
+        interative = _interactive;
     }
 }
 
@@ -1080,4 +1094,12 @@ public enum IteractiableTypes
     LockSlots = 8,
     LockThruInventory = 16,
     Locked = 32
+}
+
+public enum SlotInteractive
+{
+    Any = 1,
+    Locked = 2,
+    OnlyAdd = 3,
+    OnlyRemove = 4
 }
