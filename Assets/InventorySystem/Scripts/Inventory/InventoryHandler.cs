@@ -172,6 +172,8 @@ public class InventoryHandler : MonoBehaviour
     public event EventHandler<AddItemEventArgs> OnPickUpItem;
     public event EventHandler<InitializeInventoryEventArgs> OnInitializeInventory;
 
+    public event EventHandler<EventArgs> OnChange;
+
     public class AddItemEventArgs : EventArgs
     {
         public Inventory inv;
@@ -191,7 +193,7 @@ public class InventoryHandler : MonoBehaviour
             slotNumber = _slotNumber;
         }
     }
-    public class RemoveItemEventArgs
+    public class RemoveItemEventArgs : EventArgs
     {
         public Inventory inv;
         public bool removedByUI;
@@ -208,7 +210,7 @@ public class InventoryHandler : MonoBehaviour
             slot = _slot;
         }
     }
-    public class SwapItemsEventArgs
+    public class SwapItemsEventArgs : EventArgs
     {
         public Inventory inv;
         public int nativeSlot;
@@ -227,7 +229,7 @@ public class InventoryHandler : MonoBehaviour
             amount = _amount;
         }
     }
-    public class SwapItemsTrhuInvEventArgs
+    public class SwapItemsTrhuInvEventArgs : EventArgs
     {
         public Inventory nativeInv;
         public Inventory targetInv;
@@ -248,7 +250,7 @@ public class InventoryHandler : MonoBehaviour
             amount = _amount;
         }
     }
-    public class UseItemEventArgs
+    public class UseItemEventArgs : EventArgs
     {
         public Inventory inv;
         public Item item;
@@ -261,7 +263,7 @@ public class InventoryHandler : MonoBehaviour
             slot = _slot;
         }
     }
-    public class DropItemEventArgs 
+    public class DropItemEventArgs : EventArgs
     {
         public Inventory inv;
         public bool takenFromSpecificSlot;
@@ -284,7 +286,7 @@ public class InventoryHandler : MonoBehaviour
             useGeralDropBehaviour = _useGeralDropBehaviour;
         }
     }
-    public class InitializeInventoryEventArgs 
+    public class InitializeInventoryEventArgs : EventArgs
     {
         public Inventory inventory;
 
@@ -293,8 +295,6 @@ public class InventoryHandler : MonoBehaviour
             inventory = _inv;
         }
     }
-
-
 
     public void Broadcast(BroadcastEventType e,
                           AddItemEventArgs aea = null,
@@ -310,27 +310,35 @@ public class InventoryHandler : MonoBehaviour
         {
             case BroadcastEventType.AddItem:
                 OnAddItem?.Invoke(this, aea);
+                OnChange?.Invoke(this, aea);
                 break;
             case BroadcastEventType.RemoveItem:
                 OnRemoveItem?.Invoke(this, rea);
+                OnChange?.Invoke(this, rea);
                 break;
             case BroadcastEventType.SwapItem:
                 OnSwapItem?.Invoke(this, sea);
+                OnChange?.Invoke(this, sea);
                 break;
             case BroadcastEventType.SwapTrhuInventory:
                 OnSwapTrhuInventory?.Invoke(this, siea);
+                OnChange?.Invoke(this, siea);
                 break;
             case BroadcastEventType.UseItem:
                 OnUseItem?.Invoke(this, uea);
+                OnChange?.Invoke(this, uea);
                 break;
             case BroadcastEventType.DropItem:
                 OnDropItem?.Invoke(this, dea);
+                OnChange?.Invoke(this, dea);
                 break;
             case BroadcastEventType.PickUpItem:
                 OnPickUpItem?.Invoke(this, aea);
+                OnChange?.Invoke(this, aea);
                 break;
             case BroadcastEventType.InitializeInventory:
                 OnInitializeInventory?.Invoke(this, iea);
+                OnChange?.Invoke(this, iea);
                 break;
             default:
                 break;
@@ -346,7 +354,7 @@ public class InventoryHandler : MonoBehaviour
     public EventHandler<OnDragItemEventArgs> OnDragItem;
     public EventHandler<OnDropItemUIEventArgs> OnDropItemUI;
 
-    public class OnToggleInventoryEventArgs
+    public class OnToggleInventoryEventArgs : EventArgs
     {
         public Inventory inv;
         public bool isActive;
@@ -358,7 +366,7 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
-    public class OnDragItemEventArgs
+    public class OnDragItemEventArgs : EventArgs
     {
         public Inventory inv;
         public UnityEngine.Vector3 pos;
@@ -372,7 +380,7 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
-    public class OnDropItemUIEventArgs
+    public class OnDropItemUIEventArgs : EventArgs
     {
         public Inventory inv;
         public int amount;
@@ -423,6 +431,6 @@ public enum BroadcastEventType
     UseItem = 7,
     InitializeInventory = 8,
     UIToggled = 9,
-    ItemDragged = 10,
+    ItemDragged = 10
 }
 

@@ -314,7 +314,7 @@ public class InventoryUI : MonoBehaviour
                             {
                                 image.sprite = null;
                                 image.color = new Color(0, 0, 0, 0);
-                                productIndex++;
+
                             }
                             //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
                             //  text.text = products[i].amount.ToString();
