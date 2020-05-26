@@ -5,7 +5,6 @@ A Universal open source Inventory System, made to be as customized as possible!
 ## Dependencies
 - Text Mesh Pro
 
--------
 
 ## Getting Started
 
