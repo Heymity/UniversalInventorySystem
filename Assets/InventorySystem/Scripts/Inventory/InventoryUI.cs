@@ -25,6 +25,7 @@ public class InventoryUI : MonoBehaviour
     public GameObject dragObj;
 
     public bool hideDragObj;
+    public bool useOnClick;
 
     //Sahder
     public Color outlineColor;
@@ -231,7 +232,8 @@ public class InventoryUI : MonoBehaviour
                 slots[i].GetComponent<Button>().onClick.AddListener(() =>
                 {
                     Debug.Log($"Slot {slots[index].name} was clicked");
-                    inv.UseItemInSlot(index);
+                    if(useOnClick)
+                        inv.UseItemInSlot(index);
                 });
             } 
         }

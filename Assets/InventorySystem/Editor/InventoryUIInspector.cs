@@ -24,6 +24,7 @@ public class InventoryUIInspector : Editor
     SerializedProperty gridSizeProp;
     SerializedProperty allowsPatternCraftingProp;
     SerializedProperty productSlotsProp;
+    SerializedProperty useOnClickProp;
 
     bool autoGenUI;
 
@@ -34,12 +35,6 @@ public class InventoryUIInspector : Editor
     bool craftFold;
 
     bool invFold;
-
-    [MenuItem("GameObject/InventorySystem/InventorySystemManager", false, 10)]
-    static void CreateInventorySystemManager()
-    {
-        Debug.Log("Not implemented yet, add manualy the prefab InventorySystemManager");
-    }
 
     private void OnEnable()
     {
@@ -60,6 +55,7 @@ public class InventoryUIInspector : Editor
         gridSizeProp = serializedObject.FindProperty("gridSize");
         allowsPatternCraftingProp = serializedObject.FindProperty("allowsPatternCrafting");
         productSlotsProp = serializedObject.FindProperty("productSlots");
+        useOnClickProp = serializedObject.FindProperty("useOnClick");
     }
 
     public override void OnInspectorGUI()
@@ -91,6 +87,8 @@ public class InventoryUIInspector : Editor
             EditorGUILayout.HelpBox(new GUIContent("The Rect in witch the item wont be dropped when stop draging the item"));
             EditorGUILayout.ObjectField(DontDropItemRectProp, new GUIContent("InventoryRect"));
 
+            EditorGUILayout.Separator();
+            EditorGUILayout.PropertyField(useOnClickProp, new GUIContent("Use item on click"));
             EditorGUILayout.Separator();
 
             slotsFold = EditorGUILayout.Foldout(slotsFold, new GUIContent("Slots GameObjects"), true);  

@@ -49,7 +49,7 @@ public class ItemDropHandler : MonoBehaviour, IDropHandler
                 Slot s = nativeInvUI.inv.slots[nativeInvUI.dragSlotNumber.GetValueOrDefault()];
                 //InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(nativeInvUI.inv, true, nativeInvUI.dragSlotNumber, s.item, s.amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition), false);
 
-                s.item.OnDrop(nativeInvUI.inv, true, nativeInvUI.dragSlotNumber, s.amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                s.item.OnDrop(nativeInvUI.inv, true, nativeInvUI.dragSlotNumber, nativeInvUI.dragObj.GetComponent<DragSlot>().amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition));
                 //InventoryEventHandler.current.Broadcast(BroadcastEventType.DropItem, dea: dea);
 
             }
