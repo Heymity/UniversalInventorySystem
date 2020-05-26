@@ -38,7 +38,7 @@ public static class InventoryController
     /// <param name="item">The item that will be stored in the inventory</param>
     /// <param name="amount">The amount of items to be stored</param>
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-    public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem)
+    public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false)
     {
         if (inv.interactiable == IteractiableTypes.Locked) return amount;
 
@@ -60,16 +60,16 @@ public static class InventoryController
                 if (inv.slots[i].hasItem && i < inv.slots.Count - 1) continue;
                 else if (i < inv.slots.Count - 1)
                 {
-                    inv.slots[i] = new Slot(item, 1, true);
+                    if ((inv.slots[i].interative == SlotInteractive.Locked || inv.slots[i].interative == SlotInteractive.OnlyRemove) && !overrideSlotProtection) continue;
+                    inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative);
                     amount--;
-                    Debug.Log(i);
-                    Debug.Log(inv.slots[i].amount);
+
                     if (amount <= 0) break;
                     continue;
                 }
                 else if (!inv.slots[i].hasItem)
                 {
-                    inv.slots[i] = new Slot(item, 1, true);
+                    inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative);
                     if (amount <= 0) break;
                     if (amount > 0)
                     {
@@ -92,16 +92,17 @@ public static class InventoryController
         for (int i = 0; i < inv.slots.Count; i++)
         {
             if (inv.slots[i].hasItem) continue;
+            if ((inv.slots[i].interative == SlotInteractive.Locked || inv.slots[i].interative == SlotInteractive.OnlyRemove) && !overrideSlotProtection) continue;
             else if (i < inv.slots.Count - 1)
             {
                 var maxAmount = item.maxAmount;
-                Slot newSlot = new Slot(item, amount, true);
+                Slot newSlot = new Slot(item, amount, true, inv.slots[i].isProductSlot, inv.slots[i].interative);
 
                 if (amount <= maxAmount)
                     inv.slots[i] = newSlot;
                 else
                 {
-                    inv.slots[i] = new Slot(item, maxAmount, true);
+                    inv.slots[i] = new Slot(item, maxAmount, true, inv.slots[i].isProductSlot, inv.slots[i].interative);
                     amount -= maxAmount;
                     if (amount > 0) continue;
                     else break;
@@ -115,7 +116,7 @@ public static class InventoryController
                 var newSlot = inv.slots[i].amount;
                 amount -= item.maxAmount - newSlot;
                 newSlot = item.maxAmount;
-                inv.slots[i] = new Slot(item, newSlot, true);
+                inv.slots[i] = new Slot(item, newSlot, true, inv.slots[i].isProductSlot, inv.slots[i].interative);
                 if (amount > 0)
                 {
                     InventoryHandler.current.Broadcast(e, aea2);
@@ -141,7 +142,7 @@ public static class InventoryController
     /// <param name="item">The item that will be stored in the inventory</param>
     /// <param name="amount">The amount of items to be stored</param>
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-    public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem)
+    public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false)
     {
         if (inv.interactiable == IteractiableTypes.Locked) return amount;
 
@@ -161,6 +162,7 @@ public static class InventoryController
         {
             if (inv.slots[i].item != item) continue;
             if (inv.slots[i].amount == inv.slots[i].item.maxAmount) continue;
+            if ((inv.slots[i].interative == SlotInteractive.Locked || inv.slots[i].interative == SlotInteractive.OnlyRemove) && !overrideSlotProtection) continue;
             var newSlot = inv.slots[i];
 
             if (newSlot.amount + amount <= item.maxAmount)
@@ -192,9 +194,11 @@ public static class InventoryController
     /// <param name="amount">The amount of items to be stored</param>
     /// <param name="slotNumber">The index of the slot to store the items</param>
     /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-    public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem)
+    public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false)
     {
         if (inv.interactiable == IteractiableTypes.Locked) return amount;
+
+        if ((inv.slots[slotNumber].interative == SlotInteractive.Locked || inv.slots[slotNumber].interative == SlotInteractive.OnlyRemove) && !overrideSlotProtection) return amount;
 
         if (inv == null)
         {
@@ -210,10 +214,10 @@ public static class InventoryController
         if (!inv.slots[slotNumber].hasItem)
         {
             if (amount < item.maxAmount)
-                inv.slots[slotNumber] = new Slot(item, amount, true);
+                inv.slots[slotNumber] = new Slot(item, amount, true, inv.slots[slotNumber].isProductSlot, inv.slots[slotNumber].interative);
             else
             {
-                inv.slots[slotNumber] = new Slot(item, item.maxAmount, true);
+                inv.slots[slotNumber] = new Slot(item, item.maxAmount, true, inv.slots[slotNumber].isProductSlot, inv.slots[slotNumber].interative);
                 return amount - item.maxAmount;
             }
             InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
@@ -223,11 +227,11 @@ public static class InventoryController
         else if (inv.slots[slotNumber].item == item)
         {
             if (inv.slots[slotNumber].amount + amount < item.maxAmount)
-                inv.slots[slotNumber] = new Slot(item, amount + inv.slots[slotNumber].amount, true);
+                inv.slots[slotNumber] = new Slot(item, amount + inv.slots[slotNumber].amount, true, inv.slots[slotNumber].isProductSlot, inv.slots[slotNumber].interative);
             else
             {
                 int valueToReeturn = amount + inv.slots[slotNumber].amount - item.maxAmount;
-                inv.slots[slotNumber] = new Slot(item, item.maxAmount, true);
+                inv.slots[slotNumber] = new Slot(item, item.maxAmount, true, inv.slots[slotNumber].isProductSlot, inv.slots[slotNumber].interative);
                 return valueToReeturn;
             }
             InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
@@ -300,7 +304,7 @@ public static class InventoryController
         int total = 0;
         for(int i = 0; i < inv.slots.Count; i++)
         {
-            if(inv.slots[i].item == item)
+            if(inv.slots[i].item == item && (inv.slots[i].interative == SlotInteractive.OnlyRemove || inv.slots[i].interative == SlotInteractive.Any))
             {
                 total += inv.slots[i].amount;
             }
@@ -309,14 +313,14 @@ public static class InventoryController
         {
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item == item)
+                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotInteractive.OnlyRemove || inv.slots[i].interative == SlotInteractive.Any))
                 {
                     int prevAmount = inv.slots[i].amount;
                     Slot slot = inv.slots[i];
                     slot.amount -= amount;
                     inv.slots[i] = slot;
                     if (slot.amount <= 0)
-                        inv.slots[i] = nullSlot;
+                        inv.slots[i] = new Slot(nullSlot, inv.slots[i].isProductSlot, inv.slots[i].interative);
                     else break;
                     amount -= prevAmount;
                 }
@@ -353,13 +357,15 @@ public static class InventoryController
             return false;
         }
 
+        if (!(inv.slots[slot].interative == SlotInteractive.OnlyRemove || inv.slots[slot].interative == SlotInteractive.Any)) return false;
+
         dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
         InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
 
         if (inv.slots[slot].amount == amount)
         {
             Item tmp = inv.slots[slot].item;
-            inv.slots[slot] = nullSlot;
+            inv.slots[slot] = new Slot(nullSlot, inv.slots[slot].isProductSlot, inv.slots[slot].interative);
             if (e == BroadcastEventType.DropItem)
                 tmp.OnDrop(inv, true, slot, amount, false, dropPosition);
             else InventoryHandler.current.Broadcast(e, rea: rea);
@@ -433,16 +439,18 @@ public static class InventoryController
             return;
         }
 
+        if (inv.slots[targetSlot].interative == SlotInteractive.Locked || inv.slots[nativeSlot].interative == SlotInteractive.Locked || inv.slots[targetSlot].isProductSlot) return;
+
         if (inv.interactiable == IteractiableTypes.SlotToSlot || inv.interactiable == IteractiableTypes.Any)
         {
             Slot tmpSlot = inv.slots[targetSlot];
 
-            if (inv.slots[nativeSlot].isProductSlot)
+            if (inv.slots[nativeSlot].isProductSlot || inv.slots[targetSlot].isProductSlot)
             {
                 if (tmpSlot.item == null)
                 {
-                    inv.slots[targetSlot] = inv.slots[nativeSlot];
-                    inv.slots[nativeSlot] = tmpSlot;
+                    inv.slots[targetSlot] = new Slot(inv.slots[nativeSlot], inv.slots[targetSlot].isProductSlot, inv.slots[targetSlot].interative);
+                    inv.slots[nativeSlot] = new Slot(tmpSlot, inv.slots[nativeSlot].isProductSlot, inv.slots[nativeSlot].interative);
                     InventoryHandler.SwapItemsEventArgs sea2 = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
                     InventoryHandler.current.Broadcast(e, sea: sea2);
                     return;
@@ -450,8 +458,8 @@ public static class InventoryController
                 return;
             }
 
-            inv.slots[targetSlot] = inv.slots[nativeSlot];
-            inv.slots[nativeSlot] = tmpSlot;
+            inv.slots[targetSlot] = new Slot(inv.slots[nativeSlot], inv.slots[targetSlot].isProductSlot, inv.slots[targetSlot].interative);
+            inv.slots[nativeSlot] = new Slot(tmpSlot, inv.slots[nativeSlot].isProductSlot, inv.slots[nativeSlot].interative);
             InventoryHandler.SwapItemsEventArgs sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
             InventoryHandler.current.Broadcast(e, sea: sea);
         }
@@ -469,6 +477,8 @@ public static class InventoryController
     {
         if (inv.interactiable == IteractiableTypes.Locked || inv.interactiable == IteractiableTypes.LockSlots) return (_amount ?? inv.slots[nativeSlot].amount);
 
+        if (inv.slots[targetSlot].interative == SlotInteractive.Locked || inv.slots[nativeSlot].interative == SlotInteractive.Locked || inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
+
         if (inv == null)
         {
             Debug.LogError("Null inventory provided for SwapItemsInCertainAmountInSlots");
@@ -483,16 +493,16 @@ public static class InventoryController
             if (amount > inv.slots[nativeSlot].amount) return amount;
             else if (inv.slots[targetSlot].item == null)
             {
-                inv.slots[targetSlot] = new Slot(inv.slots[nativeSlot].item, amount, true);
-                inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount, true);
-                if (inv.slots[nativeSlot].amount <= 0) inv.slots[nativeSlot] = nullSlot;
+                inv.slots[targetSlot] = new Slot(inv.slots[nativeSlot].item, amount, true, inv.slots[targetSlot].isProductSlot, inv.slots[targetSlot].interative);
+                inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount, true, inv.slots[nativeSlot].isProductSlot, inv.slots[nativeSlot].interative);
+                if (inv.slots[nativeSlot].amount <= 0) inv.slots[nativeSlot] = new Slot(nullSlot, inv.slots[nativeSlot].isProductSlot, inv.slots[nativeSlot].interative);
             }
             else if (inv.slots[nativeSlot].item == inv.slots[targetSlot].item)
             {
                 int remaning = AddItemToSlot(inv, inv.slots[nativeSlot].item, amount, targetSlot);
-                inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount + remaning, true);
+                inv.slots[nativeSlot] = new Slot(inv.slots[nativeSlot].item, inv.slots[nativeSlot].amount - amount + remaning, true, inv.slots[nativeSlot].isProductSlot, inv.slots[nativeSlot].interative);
                 if (inv.slots[nativeSlot].amount <= 0)
-                    inv.slots[nativeSlot] = nullSlot;
+                    inv.slots[nativeSlot] = new Slot(nullSlot, inv.slots[nativeSlot].isProductSlot, inv.slots[nativeSlot].interative);
                 sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount - remaning);
                 InventoryHandler.current.Broadcast(e, sea: sea);
                 return remaning;
@@ -528,6 +538,10 @@ public static class InventoryController
             return -1;
         }
 
+        if (nativeInv.slots[nativeSlotNumber].interative == SlotInteractive.Locked || nativeInv.slots[nativeSlotNumber].interative == SlotInteractive.Locked) return amount;
+
+        if (targetInv.slots[targetSlotNumber].interative == SlotInteractive.Locked || targetInv.slots[targetSlotNumber].interative == SlotInteractive.Locked || targetInv.slots[targetSlotNumber].isProductSlot) return amount;
+
         if (nativeInv.interactiable == IteractiableTypes.Locked || targetInv.interactiable == IteractiableTypes.Locked || nativeInv.interactiable == IteractiableTypes.LockThruInventory || targetInv.interactiable == IteractiableTypes.LockThruInventory) return amount;
         if ((nativeInv.interactiable == IteractiableTypes.InventoryToInventory || nativeInv.interactiable == IteractiableTypes.Any ) && (targetInv.interactiable == IteractiableTypes.InventoryToInventory || targetInv.interactiable == IteractiableTypes.Any)) 
         {
@@ -535,25 +549,33 @@ public static class InventoryController
             if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
             else if (targetInv.slots[targetSlotNumber].item == null)
             {
-                targetInv.slots[targetSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, amount, true);
-                nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount, true);
-                if (nativeInv.slots[nativeSlotNumber].amount <= 0) nativeInv.slots[nativeSlotNumber] = nullSlot;
+                targetInv.slots[targetSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, amount, true, targetInv.slots[targetSlotNumber].isProductSlot, targetInv.slots[targetSlotNumber].interative);
+
+                nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount, true, nativeInv.slots[nativeSlotNumber].isProductSlot, nativeInv.slots[nativeSlotNumber].interative);
+
+                if (nativeInv.slots[nativeSlotNumber].amount <= 0) nativeInv.slots[nativeSlotNumber] = new Slot(nullSlot, nativeInv.slots[nativeSlotNumber].isProductSlot, nativeInv.slots[nativeSlotNumber].interative);
             }
             else if (nativeInv.slots[nativeSlotNumber].item == targetInv.slots[targetSlotNumber].item)
             {
                 int remaning = AddItemToSlot(targetInv, nativeInv.slots[nativeSlotNumber].item, amount, targetSlotNumber);
-                nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount + remaning, true);
+
+                nativeInv.slots[nativeSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber].item, nativeInv.slots[nativeSlotNumber].amount - amount + remaning, true, nativeInv.slots[nativeSlotNumber].isProductSlot, nativeInv.slots[nativeSlotNumber].interative);
+
                 if (nativeInv.slots[nativeSlotNumber].amount <= 0)
-                    nativeInv.slots[nativeSlotNumber] = nullSlot;
+                    nativeInv.slots[nativeSlotNumber] = new Slot(nullSlot, nativeInv.slots[nativeSlotNumber].isProductSlot, nativeInv.slots[nativeSlotNumber].interative);
+
                 siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount - remaning);
                 InventoryHandler.current.Broadcast(e, siea: siea);
+
                 return remaning;
             }
             else
             {
                 Slot tmpSlot = targetInv.slots[targetSlotNumber];
-                targetInv.slots[targetSlotNumber] = nativeInv.slots[nativeSlotNumber];
-                nativeInv.slots[nativeSlotNumber] = tmpSlot;
+
+                targetInv.slots[targetSlotNumber] = new Slot(nativeInv.slots[nativeSlotNumber], targetInv.slots[targetSlotNumber].isProductSlot, targetInv.slots[targetSlotNumber].interative);
+
+                nativeInv.slots[nativeSlotNumber] = new Slot(tmpSlot, nativeInv.slots[nativeSlotNumber].isProductSlot, nativeInv.slots[nativeSlotNumber].interative);
             }
 
             siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount);
@@ -773,7 +795,7 @@ public static class InventoryController
                             {
                                 if (k - grid.Length >= pattern.products.Length) break;
 
-                                i = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k);
+                                i = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k, overrideSlotProtection: true);
                                 if (i > 0) return null;
                                 //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                             }
@@ -798,7 +820,7 @@ public static class InventoryController
             List<int> indexes;
             for (int i = 0; i < fit; i++)
             {
-                var result = CraftItem(inv, GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, craftItem, pattern, productSlots);
+                var result = CraftItem(inv, GetSectionFromGrid(grid, gridSize, pattern.gridSize, i, out indexes), pattern.gridSize, false, pattern, productSlots);
                 if (result != null)
                 {
                     bool canReturn = true;
@@ -828,7 +850,7 @@ public static class InventoryController
                                     {
                                         if (k - grid.Length >= pattern.products.Length) break;
 
-                                        w = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k);
+                                        w = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k, overrideSlotProtection: true);
                                         if (w > 0) return null;
                                         //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                                     }
@@ -908,7 +930,7 @@ public static class InventoryController
                         {
                             if (k - grid.Length >= recipe.products.Length) break;
 
-                            i = inv.AddItemToSlot(recipe.products[k - grid.Length], 1, k);
+                            i = inv.AddItemToSlot(recipe.products[k - grid.Length], 1, k, overrideSlotProtection: true);
                             if (i > 0) return null;
                             //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                         }
@@ -969,7 +991,7 @@ public class Inventory
     public bool areItemsUsable;
     public bool areItemsDroppable;
     /// <summary>
-    /// Defines the type of interaractions you can have with the inventory
+    /// Defines the type of interactions you can have with the inventory
     /// </summary>
     public IteractiableTypes interactiable;
 
@@ -1039,6 +1061,15 @@ public struct Slot
     public SlotInteractive interative;
 
     public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotInteractive.Any);
+
+    public Slot(Slot slot, bool _isProductSlot, SlotInteractive _interactive)
+    {
+        item = slot.item;
+        amount = slot.amount;
+        hasItem = slot.hasItem;
+        isProductSlot = _isProductSlot;
+        interative = _interactive;
+    }
 
     public Slot(Item _item)
     {
