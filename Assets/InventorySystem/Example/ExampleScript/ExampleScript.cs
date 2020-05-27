@@ -38,13 +38,13 @@ public class ExampleScript : MonoBehaviour
     //Callback function for when an item is removed from any inventory
     private void OnRemoveItem(object sender, InventoryHandler.RemoveItemEventArgs e)
     {
-        Debug.Log("Remove");
+        Debug.Log("Remove (ExampleScript)");
     }
 
     //Callback function for when an item is added from any inventory
     private void OnAddItem(object sender, InventoryHandler.AddItemEventArgs e)
     {
-        Debug.Log($"The item {e.itemAdded.name} was added");
+        Debug.Log($"The item {e.itemAdded.name} was added (ExampleScript)");
     }
 
     //Unsubscribing the events if this object gets destoyed (better use the OnDisable func if your gameobj can be set inactive in hireachy)

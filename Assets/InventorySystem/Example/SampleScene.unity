@@ -1502,6 +1502,7 @@ MonoBehaviour:
   - {fileID: 467073798}
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
+  useOnClick: 0
   outlineColor: {r: 0.2757876, g: 0.6981132, b: 0.25355998, a: 1}
   outlineSize: 5
   hideInventory: 1
@@ -3883,6 +3884,7 @@ MonoBehaviour:
   slots: []
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
+  useOnClick: 1
   outlineColor: {r: 0.764151, g: 0.37030083, b: 0.2270826, a: 1}
   outlineSize: 5
   hideInventory: 1
@@ -4563,6 +4565,7 @@ MonoBehaviour:
   - {fileID: 1427973872}
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
+  useOnClick: 1
   outlineColor: {r: 0.61933726, g: 0.2741189, b: 0.754717, a: 1}
   outlineSize: 5
   hideInventory: 1
@@ -5764,6 +5767,7 @@ MonoBehaviour:
   - {fileID: 363206676}
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
+  useOnClick: 1
   outlineColor: {r: 0.1490196, g: 0.5592764, b: 0.77254903, a: 1}
   outlineSize: 5
   hideInventory: 1
@@ -9410,6 +9414,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 19f220b7f19eb1045a7ece16afe420f6,
         type: 2}
+    - target: {fileID: 2706381649648841959, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
+        type: 3}
+      propertyPath: autoSaveOnChange
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4230058761226221454, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
         type: 3}
       propertyPath: m_Name

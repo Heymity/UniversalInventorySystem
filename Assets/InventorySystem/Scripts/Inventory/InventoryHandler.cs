@@ -21,6 +21,8 @@ public class InventoryHandler : MonoBehaviour
         if (current == null) current = this;
     }
 
+    public bool autoSaveOnChange;
+
     #region Item Handler
 
     //--------ITEM HANDLER--------//
@@ -342,6 +344,10 @@ public class InventoryHandler : MonoBehaviour
                 break;
             default:
                 break;
+        }
+        if (autoSaveOnChange)
+        {
+            InventoryController.SaveInventoryData();
         }
     }
     #endregion

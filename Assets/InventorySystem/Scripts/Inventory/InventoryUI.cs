@@ -78,7 +78,7 @@ public class InventoryUI : MonoBehaviour
             }
         }
 
-        if (!inv.hasInitializated) inv.InitializeInventory();
+        
 
         var b = Instantiate(dragObj, canvas.transform);
         b.name = $"DRAGITEMOBJ_{name}_{UnityEngine.Random.Range(int.MinValue, int.MaxValue)}";
@@ -151,6 +151,7 @@ public class InventoryUI : MonoBehaviour
     bool hasGenerated = false;
     public void Update()
     {
+        if (!inv.hasInitializated) inv.InitializeInventory();
         if (generateUIFromSlotPrefab && !hasGenerated)
         {
             GenerateUI(inv.slotAmounts);
@@ -231,7 +232,7 @@ public class InventoryUI : MonoBehaviour
                 var index = i;
                 slots[i].GetComponent<Button>().onClick.AddListener(() =>
                 {
-                    Debug.Log($"Slot {slots[index].name} was clicked");
+                    //Debug.Log($"Slot {slots[index].name} was clicked");
                     if(useOnClick)
                         inv.UseItemInSlot(index);
                 });
@@ -276,7 +277,7 @@ public class InventoryUI : MonoBehaviour
                     var index = i;
                     productSlots[i].GetComponent<Button>().onClick.AddListener(() =>
                     {
-                        Debug.Log($"Product slot {slots[index].name} was clicked");
+                        //Debug.Log($"Product slot {slots[index].name} was clicked");
                         if(products != null && products.Length <= productSlots.Length)
                         {
                             if(Enumerable.SequenceEqual(products, productsItem.ToArray()))
@@ -292,7 +293,7 @@ public class InventoryUI : MonoBehaviour
                     for (int j = 0; j < slots[(gridSize.x * gridSize.y) + i].transform.childCount; j++)
                     {
                         Image image;
-                        TextMeshProUGUI text;
+                        //TextMeshProUGUI text;
                         if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out image))
                         {
                             image.sprite = products[productIndex].sprite;
@@ -308,7 +309,7 @@ public class InventoryUI : MonoBehaviour
                     var index = i;
                     productSlots[i].GetComponent<Button>().onClick.AddListener(() =>
                     {
-                        Debug.Log($"Product slot {slots[index].name} was clicked");
+                        //Debug.Log($"Product slot {slots[index].name} was clicked");
                         inv.CraftItem(pattern.ToArray(), gridSize, true, true, productSlots.Length);
                     });
                     
@@ -319,7 +320,7 @@ public class InventoryUI : MonoBehaviour
                         for (int j = 0; j < slots[i].transform.childCount; j++)
                         {
                             Image image;
-                            TextMeshProUGUI text;
+                            //TextMeshProUGUI text;
                             if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent<Image>(out image))
                             {
                                 image.sprite = null;

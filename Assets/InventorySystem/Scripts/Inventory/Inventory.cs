@@ -12,6 +12,8 @@ public static class InventoryController
 
     public static readonly Slot nullSlot = new Slot(null, 0, false);
 
+    public static InventoryData inventoryData = new InventoryData();
+
     public static List<Inventory> GetInventories() => inventories;
 
     public static Inventory GetInventoryById(int id)
@@ -27,6 +29,18 @@ public static class InventoryController
     public static Inventory GetInventory(int index)
     {
         return inventories[index];
+    }
+
+    public static InventoryData SaveInventoryData()
+    {
+        inventoryData.inventories = inventories.ToArray();
+        return inventoryData;
+    }
+
+    public static InventoryData LoadInventoryData(InventoryData loadData)
+    {
+        inventories = loadData.inventories.ToList();
+        return inventoryData;
     }
 
     #region Add
@@ -980,6 +994,20 @@ public static class InventoryController
     }
 
     #endregion
+
+    #region InventoryUtility
+
+    public static void CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount)
+    {
+
+    }
+
+    public static void CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, params int[] slotsToCheck)
+    {
+
+    }
+
+    #endregion
 }
 
 [Serializable]
@@ -1115,6 +1143,12 @@ public struct Slot
         isProductSlot = _isProductSlot;
         interative = _interactive;
     }
+}
+
+[Serializable]
+public class InventoryData
+{
+    public Inventory[] inventories;
 }
 
 public enum IteractiableTypes

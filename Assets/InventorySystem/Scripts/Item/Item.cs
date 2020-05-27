@@ -18,7 +18,7 @@ public class Item : ScriptableObject
 
     public void OnUse(Inventory inv, int slot)
     {
-        Debug.Log("UsingItem");
+        //Debug.Log("UsingItem");
         InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, this, slot);
         object[] tmp = new object[2] { this, uea };
 
@@ -35,6 +35,7 @@ public class Item : ScriptableObject
         if (optionalOnDropBehaviour == null)
         {
             InventoryHandler.DropItemEventArgs dea = new InventoryHandler.DropItemEventArgs(inv, tss, slot, this, amount, dbui, pos.GetValueOrDefault(), true);
+
             InventoryHandler.current.Broadcast(BroadcastEventType.DropItem, dea: dea);
         } else
         {
