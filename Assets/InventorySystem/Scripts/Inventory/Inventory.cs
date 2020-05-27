@@ -742,7 +742,7 @@ public static class InventoryController
     /// <param name="allowPatternRecipe">Wheter it should check for pattern recipes or not (This is useful if you have a big game and dont want to check the patterns, since they are much more time consuming than normal recipes)</param>
     /// <param name="productSlots">The amount of slot to products</param>
     /// <returns>The products of the recipe matched</returns>
-    public static Item[] CraftItem(this Inventory inv, Item[] grid, Vector2Int gridSize, bool craftItem, bool allowPatternRecipe, int productSlots)
+    public static Item[] CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, bool allowPatternRecipe, int productSlots)
     {
         if (InventoryHandler.current == null) return null;
         
@@ -779,7 +779,7 @@ public static class InventoryController
     /// <param name="allowPatternRecipe">Wheter it should check for pattern recipes or not (This is useful if you have a big game and dont want to check the patterns, since they are much more time consuming than normal recipes)</param>
     /// <param name="productSlots">The amount of slot to products</param>
     /// <returns>The products of the recipe matched</returns>
-    public static Item[] CraftItem(this Inventory inv, Item[] grid, Vector2Int gridSize, bool craftItem, RecipeAsset asset, bool allowPatternRecipe, int productSlots)
+    public static Item[] CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, RecipeAsset asset, bool allowPatternRecipe, int productSlots)
     {
         if(allowPatternRecipe)
         {
@@ -807,35 +807,35 @@ public static class InventoryController
     /// <param name="pattern">The PatternRecipe to be checked</param>
     /// <param name="productSlots">The amount of slot to products</param>
     /// <returns>The products of the recipe matched</returns>
-    public static Item[] CraftItem(this Inventory inv, Item[] grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots)
+    public static Item[] CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots)
     {
 
-        if (pattern.pattern.Length > grid.Length) return null;
+        if (pattern.pattern.Length > grid.Item1.Length) return null;
         if (pattern.products.Length > productSlots) return null;
-        else if (pattern.pattern.Length == grid.Length)
+        else if (pattern.pattern.Length == grid.Item1.Length && pattern.amountPattern.Length == grid.Item2.Length)
         {
-            if (Enumerable.SequenceEqual(pattern.pattern, grid))
+            if (Enumerable.SequenceEqual(pattern.pattern, grid.Item1) && SequenceEqualOrGreter(pattern.amountPattern, grid.Item2))
             {
                 if (craftItem)
                 {
                     bool canAdd = true;
-                    for (int h = grid.Length; h - grid.Length < pattern.products.Length; h++)
+                    for (int h = grid.Item1.Length; h - grid.Item1.Length < pattern.products.Length; h++)
                     {
                         //if (h - grid.Length >= pattern.products.Length) break;
                         if (!inv.slots[h].hasItem) continue;
                         if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { canAdd = false; break; }
-                        if (inv.slots[h].item != pattern.products[h - grid.Length]) { canAdd = false; break; }
+                        if (inv.slots[h].item != pattern.products[h - grid.Item1.Length]) { canAdd = false; break; }
                     }
                     if (canAdd)
                     {
                         int i = 0;
-                        for (int k = grid.Length; k < inv.slots.Count; k++)
+                        for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
                         {
-                            if (k > grid.Length - 1)
+                            if (k > grid.Item1.Length - 1)
                             {
-                                if (k - grid.Length >= pattern.products.Length) break;
+                                if (k - grid.Item1.Length >= pattern.products.Length) break;
 
-                                i = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k, overrideSlotProtection: true);
+                                i = inv.AddItemToSlot(pattern.products[k - grid.Item1.Length], pattern.amountProducts[k - grid.Item1.Length], k, overrideSlotProtection: true);
                                 if (i > 0) return null;
                                 //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                             }
@@ -843,17 +843,18 @@ public static class InventoryController
                         if (i > 0) return null;
 
 
-                        for (int k = 0; k < grid.Length; k++)
+                        for (int k = 0; k < grid.Item1.Length; k++)
                         {
-                            if (inv.slots[k].hasItem && k <= grid.Length - 1)
-                                inv.RemoveItemInSlot(k, 1);
+                            if (inv.slots[k].hasItem && k <= grid.Item1.Length - 1) 
+                                inv.RemoveItemInSlot(k, pattern.amountPattern[k]);
+                            
                         }
                     }
                 }
                 return pattern.products;
             }
         }
-        else if (pattern.pattern.Length < grid.Length)
+        else if (pattern.pattern.Length < grid.Item1.Length)
         {
             int fit = (gridSize.y - pattern.gridSize.y + 1) * (gridSize.x - pattern.gridSize.x + 1);
 
@@ -864,44 +865,50 @@ public static class InventoryController
                 if (result != null)
                 {
                     bool canReturn = true;
-                    for (int j = 0; j < grid.Length; j++)
+                    for (int j = 0; j < grid.Item1.Length; j++)
                     {
                         if (indexes.Contains(j)) continue;
-                        if (grid[j] != null) canReturn = false;
+                        if (grid.Item1[j] != null) canReturn = false;
                     }
                     if (canReturn)
                     {
                         if (craftItem)
                         {
                             bool canAdd = true;
-                            for (int h = grid.Length; h - grid.Length < pattern.products.Length; h++)
+                            for (int h = grid.Item1.Length; h - grid.Item1.Length < pattern.products.Length; h++)
                             {
                                 //if (h - grid.Length >= pattern.products.Length) break;
                                 if (!inv.slots[h].hasItem) continue;
                                 if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { canAdd = false; break; }
-                                if (inv.slots[h].item != pattern.products[h - grid.Length]) { canAdd = false; break; }
+                                if (inv.slots[h].item != pattern.products[h - grid.Item1.Length]) { canAdd = false; break; }
                             }
                             if (canAdd)
                             {
                                 int w = 0;
-                                for (int k = grid.Length; k < inv.slots.Count; k++)
+                                for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
                                 {
-                                    if (k > grid.Length - 1)
+                                    if (k > grid.Item1.Length - 1)
                                     {
-                                        if (k - grid.Length >= pattern.products.Length) break;
+                                        if (k - grid.Item1.Length >= pattern.products.Length) break;
 
-                                        w = inv.AddItemToSlot(pattern.products[k - grid.Length], 1, k, overrideSlotProtection: true);
+                                        w = inv.AddItemToSlot(pattern.products[k - grid.Item1.Length], pattern.amountProducts[k - grid.Item1.Length], k, overrideSlotProtection: true);
                                         if (w > 0) return null;
                                         //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                                     }
                                 }
                                 if (w > 0) return null;
 
-
-                                for (int k = 0; k < grid.Length; k++)
+                                for (int v = 0; v < pattern.gridSize.y;v++)
                                 {
-                                    if (inv.slots[k].hasItem && k <= grid.Length - 1)
-                                        inv.RemoveItemInSlot(k, 1);
+                                    for (int u = 0; u < pattern.gridSize.x; u++)
+                                    {
+                                        var index = (v * gridSize.x) + u;
+                                        if (inv.slots[index].hasItem && index <= grid.Item1.Length - 1)
+                                        {
+                                            Debug.Log(index + " " + " " + pattern.amountPattern.Length);
+                                            inv.RemoveItemInSlot(index, pattern.amountPattern[v * pattern.gridSize.x + u]);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -923,14 +930,14 @@ public static class InventoryController
     /// <param name="recipe">The Recipe to be checked</param>
     /// <param name="productSlots">The amount of slot to products</param>
     /// <returns>The products of the recipe matched</returns>
-    public static Item[] CraftItem(this Inventory inv, Item[] grid, Vector2Int gridSize, bool craftItem, Recipe recipe, int productSlots)
+    public static Item[] CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, Recipe recipe, int productSlots)
     {
         List<int> jumpIndexes = new List<int>();
         for (int i = 0; i < recipe.numberOfFactors; i++)
         {
-            for (int j = 0; j < grid.Length; j++)
+            for (int j = 0; j < grid.Item1.Length; j++)
             {
-                if (grid[j] == recipe.factors[i] && !jumpIndexes.Contains(j))
+                if (grid.Item1[j] == recipe.factors[i] && !jumpIndexes.Contains(j))
                 {
                     //i++;
                     jumpIndexes.Add(j);
@@ -942,9 +949,9 @@ public static class InventoryController
         }
         bool canReturn = true;
         if (jumpIndexes.Count != recipe.numberOfFactors) return null;
-        for (int j = 0; j < grid.Length; j++)
+        for (int j = 0; j < grid.Item1.Length; j++)
         {
-            if (grid[j] != null && !jumpIndexes.Contains(j))
+            if (grid.Item1[j] != null && !jumpIndexes.Contains(j))
             {
                 canReturn = false;
             }
@@ -954,23 +961,23 @@ public static class InventoryController
             if (craftItem)
             {
                 bool canAdd = true;
-                for (int h = grid.Length; h - grid.Length < recipe.products.Length; h++)
+                for (int h = grid.Item1.Length; h - grid.Item1.Length < recipe.products.Length; h++)
                 {
                     //if (h - grid.Length >= pattern.products.Length) break;
                     if (!inv.slots[h].hasItem) continue;
                     if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { canAdd = false; break; }
-                    if (inv.slots[h].item != recipe.products[h - grid.Length]) { canAdd = false; break; }
+                    if (inv.slots[h].item != recipe.products[h - grid.Item1.Length]) { canAdd = false; break; }
                 }
                 if (canAdd)
                 {
                     int i = 0;
-                    for (int k = grid.Length; k < inv.slots.Count; k++)
+                    for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
                     {
-                        if (k > grid.Length - 1)
+                        if (k > grid.Item1.Length - 1)
                         {
-                            if (k - grid.Length >= recipe.products.Length) break;
+                            if (k - grid.Item1.Length >= recipe.products.Length) break;
 
-                            i = inv.AddItemToSlot(recipe.products[k - grid.Length], 1, k, overrideSlotProtection: true);
+                            i = inv.AddItemToSlot(recipe.products[k - grid.Item1.Length], 1, k, overrideSlotProtection: true);
                             if (i > 0) return null;
                             //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                         }
@@ -978,9 +985,9 @@ public static class InventoryController
                     if (i > 0) return null;
 
 
-                    for (int k = 0; k < grid.Length; k++)
+                    for (int k = 0; k < grid.Item1.Length; k++)
                     {
-                        if (inv.slots[k].hasItem && k <= grid.Length - 1)
+                        if (inv.slots[k].hasItem && k <= grid.Item1.Length - 1)
                             inv.RemoveItemInSlot(k, 1);
                     }
                 }
@@ -1000,9 +1007,10 @@ public static class InventoryController
     /// <param name="offsetIndex">The offset of the section</param>
     /// <param name="usedIndexes">The index of the original grid that were selected</param>
     /// <returns>a new grid that is a section from the original one</returns>
-    public static Item[] GetSectionFromGrid(Item[] originalGrid, Vector2Int originalGridSize, Vector2Int sectionSize, int offsetIndex, out List<int> usedIndexes)
+    public static (Item[], int[]) GetSectionFromGrid((Item[], int[]) originalGrid, Vector2Int originalGridSize, Vector2Int sectionSize, int offsetIndex, out List<int> usedIndexes)
     {
         Item[] returnGrid = new Item[sectionSize.x * sectionSize.y];
+        int[] returnIntGrid = new int[sectionSize.x * sectionSize.y];
         usedIndexes = new List<int>();
 
         int fitx = originalGridSize.x - sectionSize.x + 1;
@@ -1012,11 +1020,23 @@ public static class InventoryController
         {
             for (int j = 0; j < sectionSize.x; j++)
             {
-                returnGrid[i * sectionSize.x + j] = originalGrid[(i + offsety) * originalGridSize.x + j + offsetx];
+                returnGrid[i * sectionSize.x + j] = originalGrid.Item1[(i + offsety) * originalGridSize.x + j + offsetx];
+                returnIntGrid[i * sectionSize.x + j] = originalGrid.Item2[(i + offsety) * originalGridSize.x + j + offsetx];
                 usedIndexes.Add((i + offsety) * originalGridSize.x + j + offsetx);
             }
         }
-        return returnGrid;
+        return (returnGrid, returnIntGrid);
+    }
+
+    public static bool SequenceEqualOrGreter(int[] firstInt, int[] greterInt)
+    {
+        bool isEqualOrGreter = true;
+        for (int i = 0;i < firstInt.Length; i++)
+        {
+            if (greterInt[i] >= firstInt[i]) continue;
+            isEqualOrGreter = false;
+        }
+        return isEqualOrGreter;
     }
 
     #endregion

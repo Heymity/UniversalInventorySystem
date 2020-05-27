@@ -60,6 +60,7 @@ public class InventoryUI : MonoBehaviour
     public bool shouldSwap;
     [HideInInspector]
     public List<Item> pattern = new List<Item>();
+    public List<int> amount = new List<int>();
 
     public void SetInventory(Inventory _inv) => inv = _inv;
     public Inventory GetInventory() => inv;
@@ -118,8 +119,11 @@ public class InventoryUI : MonoBehaviour
 
         if (isCraftInventory)
         {
-            for(int i = 0;i < gridSize.x * gridSize.y;i++)
+            for (int i = 0; i < gridSize.x * gridSize.y; i++)
+            {
                 pattern.Add(null);
+                amount.Add(0);
+            }
 
             for(int i = gridSize.x * gridSize.y; i < inv.slots.Count; i++)
             {
@@ -168,7 +172,11 @@ public class InventoryUI : MonoBehaviour
 
         for (int i = 0;i < inv.slots.Count; i++)
         {
-            if(isCraftInventory && i < pattern.Count) pattern[i] = inv.slots[i].item;
+            if (isCraftInventory && i < pattern.Count)
+            {
+                pattern[i] = inv.slots[i].item;
+                amount[i] = inv.slots[i].amount;
+            }
             if (i >= slots.Count) break;
             Image image;
             TextMeshProUGUI text;
@@ -241,7 +249,7 @@ public class InventoryUI : MonoBehaviour
 
         if (isCraftInventory)
         {
-            Item[] products = inv.CraftItem(pattern.ToArray(), gridSize, false, true, productSlots.Length);
+            Item[] products = inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, false, true, productSlots.Length);
 
             List<Item> productsItem = new List<Item>();
             if (products != null && products.Length <= productSlots.Length)
@@ -282,7 +290,7 @@ public class InventoryUI : MonoBehaviour
                         {
                             if(Enumerable.SequenceEqual(products, productsItem.ToArray()))
                             {
-                                inv.CraftItem(pattern.ToArray(), gridSize, true, true, productSlots.Length);
+                                inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
                             }
                         }
                     });
@@ -310,7 +318,7 @@ public class InventoryUI : MonoBehaviour
                     productSlots[i].GetComponent<Button>().onClick.AddListener(() =>
                     {
                         //Debug.Log($"Product slot {slots[index].name} was clicked");
-                        inv.CraftItem(pattern.ToArray(), gridSize, true, true, productSlots.Length);
+                        inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
                     });
                     
                 }else

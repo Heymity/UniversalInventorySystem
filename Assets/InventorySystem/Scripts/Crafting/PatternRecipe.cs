@@ -10,11 +10,14 @@ public class PatternRecipe : ScriptableObject
 
     public int numberOfProducts;
     public Item[] products;
+    public int[] amountProducts;
 
     public Vector2Int gridSize;
 
     public Item[] pattern;
+    public int[] amountPattern;
 
     public int id;
     public string key;
 }
+

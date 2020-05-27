@@ -99,6 +99,7 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
             EditorGUILayout.PropertyField(serializedObject.FindProperty("numberOfProducts"));
 
             serializedObject.FindProperty("products").arraySize = serializedObject.FindProperty("numberOfProducts").intValue;
+            serializedObject.FindProperty("amountProducts").arraySize = serializedObject.FindProperty("numberOfProducts").intValue;
 
             serializedObject.FindProperty("products").isExpanded = EditorGUILayout.Foldout(serializedObject.FindProperty("products").isExpanded, new GUIContent("Products"));
 
@@ -112,10 +113,13 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
                     if (item != null)
                     {
                         content.image = item.sprite.texture;
-                        content.text = item.name + $" (Element {i})";
+                        content.text = $"({i}) " + item.name;
                     }
-                    
+
+                    EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.ObjectField(serializedObject.FindProperty("products").GetArrayElementAtIndex(i), content);
+                    serializedObject.FindProperty("amountProducts").GetArrayElementAtIndex(i).intValue = EditorGUILayout.IntField(new GUIContent("Amount"), serializedObject.FindProperty("amountProducts").GetArrayElementAtIndex(i).intValue);
+                    EditorGUILayout.EndHorizontal();
                 }
                 EditorGUI.indentLevel--;
             }
@@ -150,6 +154,7 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
                 possibleItems.Add(new GUIContent(item.name, texture));
             }
             possibleItems.Add(new GUIContent("Erase item"));
+            possibleItems.Add(new GUIContent("Erase one item"));
 
             selectedIndex = GUILayout.SelectionGrid(selectedIndex, possibleItems.ToArray(), 1, GUILayout.MaxHeight(possibleItems.Count * 40));
 
@@ -166,6 +171,7 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
 
             var tmp = EditorGUILayout.Vector2IntField("Grid size", serializedObject.FindProperty("gridSize").vector2IntValue);
 
+            //Safity features
             if(tmp.x >= 0 && tmp.y >= 0)
             {
                 if(tmp.x * tmp.y == 900) serializedObject.FindProperty("gridSize").vector2IntValue = tmp;
@@ -173,7 +179,7 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
                 {
                     EditorGUILayout.BeginHorizontal("box");
                     EditorGUILayout.HelpBox($"You`re inserting more than 900 slots ({tmp.x * tmp.y}), with more than this amount, depending on your setup, unity may crash, and you may need to delete this recipe. Also in game performace might be affected with a recipe of this size", MessageType.Warning);
-                    if (GUILayout.Button($"Allow big values {allowBigValues}"))
+                    if (GUILayout.Button($"Allow big values ({allowBigValues})"))
                     {
                         allowBigValues = !allowBigValues;
                     }
@@ -188,6 +194,7 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
             gridSize = serializedObject.FindProperty("gridSize").vector2IntValue;
 
             serializedObject.FindProperty("pattern").arraySize = gridSize.x * gridSize.y;
+            serializedObject.FindProperty("amountPattern").arraySize = gridSize.x * gridSize.y;
 
             var gridRect = EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true));
             
@@ -228,12 +235,35 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
                     }
 
                     Rect btnRect = new Rect(gridRect.x + xOffsetValue, gridRect.y + yOffsetValue, sideValue, sideValue);
+                    
                     if(GUI.Button(btnRect, btnContent))
                     {
                         //i * gridsize.x + j
-                        if(selectedIndex >= items.Count) serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue = null;
-                        else serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue = items[selectedIndex];
+                        if (selectedIndex == items.Count)
+                        {
+                            serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue = null;
+                            serializedObject.FindProperty("amountPattern").GetArrayElementAtIndex(i * gridSize.x + j).intValue = 0;
+                        }else if (selectedIndex == items.Count + 1)
+                        {
+                            var a = serializedObject.FindProperty("amountPattern").GetArrayElementAtIndex(i * gridSize.x + j).intValue--;
+                            if(a - 1 <= 0) serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue = null;
+                        }
+                        else if (selectedIndex < items.Count)
+                        {
+                            if(serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue == items[selectedIndex])
+                            {
+                                if(serializedObject.FindProperty("amountPattern").GetArrayElementAtIndex(i * gridSize.x + j).intValue < (serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue as Item).maxAmount)
+                                serializedObject.FindProperty("amountPattern").GetArrayElementAtIndex(i * gridSize.x + j).intValue++;
+                            } else
+                            {
+                                serializedObject.FindProperty("amountPattern").GetArrayElementAtIndex(i * gridSize.x + j).intValue = 1;
+                            }
+                            serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue = items[selectedIndex];
+                        }
                     }
+                    Rect labelRect = new Rect(gridRect.x + xOffsetValue + sideValue - 20, gridRect.y + yOffsetValue + (sideValue / 2) - 20, sideValue, sideValue);
+                    if (serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue != null)
+                        EditorGUI.LabelField(labelRect, serializedObject.FindProperty("amountPattern").GetArrayElementAtIndex(i * gridSize.x + j).intValue.ToString());
                 }
                 EditorGUILayout.EndHorizontal();
             }
