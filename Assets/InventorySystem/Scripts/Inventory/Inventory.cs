@@ -63,12 +63,10 @@ public static class InventoryController
         return inventoryData;
     }
 
-    
-
     public static InventoryData LoadInventoryData(InventoryData loadData)
     {
         inventories = loadData.inventories.ToList();
-        return inventoryData;
+        return SaveInventoryData();
     }
 
     #region Add
@@ -298,7 +296,7 @@ public static class InventoryController
     /// <param name="item">The item that will be removed in the inventory</param>
     /// <param name="slot">The slot that will have item removed</param>
     /// <returns>The RemoveItem or RemoveItemInSlot function return value</returns>
-    public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, Item item = null, int? slot = null, BroadcastEventType e = BroadcastEventType.DropItem)
+    public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, Item item = null, int? slot = null, BroadcastEventType e = BroadcastEventType.DropItem, bool overrideSlotProtecion = true)
     {
         if (inv.interactiable == InventoryProtection.Locked) return false;
 
@@ -310,13 +308,13 @@ public static class InventoryController
 
         if (slot != null)
         {
-            return RemoveItemInSlot(inv, slot.GetValueOrDefault(), amount, e);
+            return RemoveItemInSlot(inv, slot.GetValueOrDefault(), amount, e, dropPosition, overrideSlotProtecion);
         } else if(item != null)
         {
-            return RemoveItem(inv, item, amount, e);
+            return RemoveItem(inv, item, amount, e, dropPosition, overrideSlotProtecion);
         } else
         {
-            Debug.LogError($"No slot number or item provided; item: {item}, slot number: {slot}");
+            Debug.LogError($"No item or invalid slot number provided; item: {item}, slot number: {slot}");
             return false;
         }
     }
@@ -328,7 +326,7 @@ public static class InventoryController
     /// <param name="item">The item that will be removed in the inventory</param>
     /// <param name="amount">The amount of items to be removed</param>
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
-    public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
+    public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtecion = false)
     {
         if (inv.interactiable == InventoryProtection.Locked) return false;
 
@@ -355,7 +353,7 @@ public static class InventoryController
         {
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.OnlyRemove || inv.slots[i].interative == SlotProtection.Any))
+                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.OnlyRemove || inv.slots[i].interative == SlotProtection.Any || overrideSlotProtecion))
                 {
                     int prevAmount = inv.slots[i].amount;
                     Slot slot = inv.slots[i];
@@ -389,7 +387,7 @@ public static class InventoryController
     /// <param name="slot">The slot that will have item removed</param>
     /// <param name="amount">The amount of items to be removed</param>
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
-    public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
+    public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtecion = false)
     {
         if (inv.interactiable == InventoryProtection.Locked) return false;
 
@@ -399,7 +397,7 @@ public static class InventoryController
             return false;
         }
 
-        if (!(inv.slots[slot].interative == SlotProtection.OnlyRemove || inv.slots[slot].interative == SlotProtection.Any)) return false;
+        if (!(inv.slots[slot].interative == SlotProtection.OnlyRemove || inv.slots[slot].interative == SlotProtection.Any) && !overrideSlotProtecion) return false;
 
         dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
         InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
