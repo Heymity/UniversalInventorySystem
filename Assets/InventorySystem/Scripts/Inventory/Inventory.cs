@@ -12,6 +12,32 @@ public static class InventoryController
 
     public static readonly Slot nullSlot = new Slot(null, 0, false);
 
+    #region Protection readonly and methods
+
+    public static readonly InventoryProtection[] allInventoryProtections = new InventoryProtection[6]
+    {
+        InventoryProtection.Any,
+        InventoryProtection.InventoryToInventory,
+        InventoryProtection.Locked,
+        InventoryProtection.LockSlots,
+        InventoryProtection.LockThruInventory,
+        InventoryProtection.SlotToSlot
+    };
+
+    public static InventoryProtection[] newInvProtectionArray(params InventoryProtection[] protections) { return protections; }
+
+    public static readonly SlotProtection[] allSlotProtections = new SlotProtection[4]
+    {
+        SlotProtection.Any,
+        SlotProtection.Locked,
+        SlotProtection.OnlyAdd,
+        SlotProtection.OnlyRemove
+    };
+
+    public static SlotProtection[] newSlotProtectionArray(params SlotProtection[] protections) { return protections; }
+
+    #endregion
+
     public static InventoryData inventoryData = new InventoryData();
 
     public static List<Inventory> GetInventories() => inventories;
@@ -37,6 +63,8 @@ public static class InventoryController
         return inventoryData;
     }
 
+    
+
     public static InventoryData LoadInventoryData(InventoryData loadData)
     {
         inventories = loadData.inventories.ToList();
@@ -54,7 +82,7 @@ public static class InventoryController
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
     public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false)
     {
-        if (inv.interactiable == IteractiableTypes.Locked) return amount;
+        if (inv.interactiable == InventoryProtection.Locked) return amount;
 
         if (inv == null)
         {
@@ -74,7 +102,7 @@ public static class InventoryController
                 if (inv.slots[i].hasItem && i < inv.slots.Count - 1) continue;
                 else if (i < inv.slots.Count - 1)
                 {
-                    if ((inv.slots[i].interative == SlotInteractive.Locked || inv.slots[i].interative == SlotInteractive.OnlyRemove) && !overrideSlotProtection) continue;
+                    if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
                     inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative);
                     amount--;
 
@@ -106,7 +134,7 @@ public static class InventoryController
         for (int i = 0; i < inv.slots.Count; i++)
         {
             if (inv.slots[i].hasItem) continue;
-            if ((inv.slots[i].interative == SlotInteractive.Locked || inv.slots[i].interative == SlotInteractive.OnlyRemove) && !overrideSlotProtection) continue;
+            if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
             else if (i < inv.slots.Count - 1)
             {
                 var maxAmount = item.maxAmount;
@@ -158,7 +186,7 @@ public static class InventoryController
     /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
     public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false)
     {
-        if (inv.interactiable == IteractiableTypes.Locked) return amount;
+        if (inv.interactiable == InventoryProtection.Locked) return amount;
 
         if (inv == null)
         {
@@ -176,7 +204,7 @@ public static class InventoryController
         {
             if (inv.slots[i].item != item) continue;
             if (inv.slots[i].amount == inv.slots[i].item.maxAmount) continue;
-            if ((inv.slots[i].interative == SlotInteractive.Locked || inv.slots[i].interative == SlotInteractive.OnlyRemove) && !overrideSlotProtection) continue;
+            if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
             var newSlot = inv.slots[i];
 
             if (newSlot.amount + amount <= item.maxAmount)
@@ -210,9 +238,9 @@ public static class InventoryController
     /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
     public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false)
     {
-        if (inv.interactiable == IteractiableTypes.Locked) return amount;
+        if (inv.interactiable == InventoryProtection.Locked) return amount;
 
-        if ((inv.slots[slotNumber].interative == SlotInteractive.Locked || inv.slots[slotNumber].interative == SlotInteractive.OnlyRemove) && !overrideSlotProtection) return amount;
+        if ((inv.slots[slotNumber].interative == SlotProtection.Locked || inv.slots[slotNumber].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) return amount;
 
         if (inv == null)
         {
@@ -272,7 +300,7 @@ public static class InventoryController
     /// <returns>The RemoveItem or RemoveItemInSlot function return value</returns>
     public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, Item item = null, int? slot = null, BroadcastEventType e = BroadcastEventType.DropItem)
     {
-        if (inv.interactiable == IteractiableTypes.Locked) return false;
+        if (inv.interactiable == InventoryProtection.Locked) return false;
 
         if (inv == null)
         {
@@ -302,7 +330,7 @@ public static class InventoryController
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
     public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
     {
-        if (inv.interactiable == IteractiableTypes.Locked) return false;
+        if (inv.interactiable == InventoryProtection.Locked) return false;
 
         if (inv == null)
         {
@@ -318,7 +346,7 @@ public static class InventoryController
         int total = 0;
         for(int i = 0; i < inv.slots.Count; i++)
         {
-            if(inv.slots[i].item == item && (inv.slots[i].interative == SlotInteractive.OnlyRemove || inv.slots[i].interative == SlotInteractive.Any))
+            if(inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.OnlyRemove || inv.slots[i].interative == SlotProtection.Any))
             {
                 total += inv.slots[i].amount;
             }
@@ -327,7 +355,7 @@ public static class InventoryController
         {
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotInteractive.OnlyRemove || inv.slots[i].interative == SlotInteractive.Any))
+                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.OnlyRemove || inv.slots[i].interative == SlotProtection.Any))
                 {
                     int prevAmount = inv.slots[i].amount;
                     Slot slot = inv.slots[i];
@@ -363,7 +391,7 @@ public static class InventoryController
     /// <returns>True if it was able to remove the items False if it wasnt</returns>
     public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null)
     {
-        if (inv.interactiable == IteractiableTypes.Locked) return false;
+        if (inv.interactiable == InventoryProtection.Locked) return false;
 
         if (inv == null)
         {
@@ -371,7 +399,7 @@ public static class InventoryController
             return false;
         }
 
-        if (!(inv.slots[slot].interative == SlotInteractive.OnlyRemove || inv.slots[slot].interative == SlotInteractive.Any)) return false;
+        if (!(inv.slots[slot].interative == SlotProtection.OnlyRemove || inv.slots[slot].interative == SlotProtection.Any)) return false;
 
         dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
         InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
@@ -410,7 +438,7 @@ public static class InventoryController
     /// <param name="slot">The slot that will have item used</param>
     public static void UseItemInSlot(this Inventory inv, int slot, BroadcastEventType e = BroadcastEventType.UseItem)
     {
-        if (inv.interactiable == IteractiableTypes.Locked) return;
+        if (inv.interactiable == InventoryProtection.Locked) return;
 
         if (inv == null)
         {
@@ -445,7 +473,7 @@ public static class InventoryController
     /// <param name="targetSlot">The slot to gain items</param>
     public static void SwapItemsInSlots(this Inventory inv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
     {
-        if (inv.interactiable == IteractiableTypes.Locked || inv.interactiable == IteractiableTypes.LockSlots) return;
+        if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return;
 
         if (inv == null)
         {
@@ -453,9 +481,9 @@ public static class InventoryController
             return;
         }
 
-        if (inv.slots[targetSlot].interative == SlotInteractive.Locked || inv.slots[nativeSlot].interative == SlotInteractive.Locked || inv.slots[targetSlot].isProductSlot) return;
+        if (inv.slots[targetSlot].interative == SlotProtection.Locked || inv.slots[nativeSlot].interative == SlotProtection.Locked || inv.slots[targetSlot].isProductSlot) return;
 
-        if (inv.interactiable == IteractiableTypes.SlotToSlot || inv.interactiable == IteractiableTypes.Any)
+        if (inv.interactiable == InventoryProtection.SlotToSlot || inv.interactiable == InventoryProtection.Any)
         {
             Slot tmpSlot = inv.slots[targetSlot];
 
@@ -489,9 +517,9 @@ public static class InventoryController
     /// <returns>Returns the number of items that dind fit in the other slot</returns>
     public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem)
     {
-        if (inv.interactiable == IteractiableTypes.Locked || inv.interactiable == IteractiableTypes.LockSlots) return (_amount ?? inv.slots[nativeSlot].amount);
+        if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return (_amount ?? inv.slots[nativeSlot].amount);
 
-        if (inv.slots[targetSlot].interative == SlotInteractive.Locked || inv.slots[nativeSlot].interative == SlotInteractive.Locked || inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
+        if (inv.slots[targetSlot].interative == SlotProtection.Locked || inv.slots[nativeSlot].interative == SlotProtection.Locked || inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
 
         if (inv == null)
         {
@@ -500,7 +528,7 @@ public static class InventoryController
         }
 
         int amount = (_amount ?? inv.slots[nativeSlot].amount);
-        if (inv.interactiable == IteractiableTypes.SlotToSlot || inv.interactiable == IteractiableTypes.Any)
+        if (inv.interactiable == InventoryProtection.SlotToSlot || inv.interactiable == InventoryProtection.Any)
         {
             if (amount <= 0) return amount;
             InventoryHandler.SwapItemsEventArgs sea;
@@ -552,12 +580,12 @@ public static class InventoryController
             return -1;
         }
 
-        if (nativeInv.slots[nativeSlotNumber].interative == SlotInteractive.Locked || nativeInv.slots[nativeSlotNumber].interative == SlotInteractive.Locked) return amount;
+        if (nativeInv.slots[nativeSlotNumber].interative == SlotProtection.Locked || nativeInv.slots[nativeSlotNumber].interative == SlotProtection.Locked) return amount;
 
-        if (targetInv.slots[targetSlotNumber].interative == SlotInteractive.Locked || targetInv.slots[targetSlotNumber].interative == SlotInteractive.Locked || targetInv.slots[targetSlotNumber].isProductSlot) return amount;
+        if (targetInv.slots[targetSlotNumber].interative == SlotProtection.Locked || targetInv.slots[targetSlotNumber].interative == SlotProtection.Locked || targetInv.slots[targetSlotNumber].isProductSlot) return amount;
 
-        if (nativeInv.interactiable == IteractiableTypes.Locked || targetInv.interactiable == IteractiableTypes.Locked || nativeInv.interactiable == IteractiableTypes.LockThruInventory || targetInv.interactiable == IteractiableTypes.LockThruInventory) return amount;
-        if ((nativeInv.interactiable == IteractiableTypes.InventoryToInventory || nativeInv.interactiable == IteractiableTypes.Any ) && (targetInv.interactiable == IteractiableTypes.InventoryToInventory || targetInv.interactiable == IteractiableTypes.Any)) 
+        if (nativeInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockThruInventory || targetInv.interactiable == InventoryProtection.LockThruInventory) return amount;
+        if ((nativeInv.interactiable == InventoryProtection.InventoryToInventory || nativeInv.interactiable == InventoryProtection.Any ) && (targetInv.interactiable == InventoryProtection.InventoryToInventory || targetInv.interactiable == InventoryProtection.Any)) 
         {
             InventoryHandler.SwapItemsTrhuInvEventArgs siea;
             if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
@@ -623,8 +651,8 @@ public static class InventoryController
             return false;
         }
 
-        if (nativeInv.interactiable == IteractiableTypes.Locked || targetInv.interactiable == IteractiableTypes.Locked || nativeInv.interactiable == IteractiableTypes.LockThruInventory || targetInv.interactiable == IteractiableTypes.LockThruInventory) return false;
-        if ((nativeInv.interactiable == IteractiableTypes.InventoryToInventory || nativeInv.interactiable == IteractiableTypes.Any) && (targetInv.interactiable == IteractiableTypes.InventoryToInventory || targetInv.interactiable == IteractiableTypes.Any))
+        if (nativeInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockThruInventory || targetInv.interactiable == InventoryProtection.LockThruInventory) return false;
+        if ((nativeInv.interactiable == InventoryProtection.InventoryToInventory || nativeInv.interactiable == InventoryProtection.Any) && (targetInv.interactiable == InventoryProtection.InventoryToInventory || targetInv.interactiable == InventoryProtection.Any))
             {
                 {
                 if (RemoveItem(nativeInv, item, amount))
@@ -997,14 +1025,85 @@ public static class InventoryController
 
     #region InventoryUtility
 
-    public static void CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount)
+    public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection[] acceptableSlotProtections = null, bool mustBeOnSameSlot = false)
     {
+        if(inv == null)
+        {
+            Debug.LogError("Null inventory provided for CheckItemInInventory");
+            return null;
+        }
+        if(itemToCheck == null)
+        {
+            Debug.LogError("Null item to check provided for CheckItemInInventory");
+            return null;
+        }
 
+        List<int> slotsToCheck = new List<int>();
+
+        for(int i = 0; i < inv.slots.Count; i++)
+        {
+            slotsToCheck.Add(i);
+        }
+
+        return CheckItemInInventory(inv, itemToCheck, minAmount, acceptableInvProtections, acceptableSlotProtections, mustBeOnSameSlot, slotsToCheck.ToArray());
     }
 
-    public static void CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, params int[] slotsToCheck)
+    public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection[] acceptableSlotProtections = null, bool mustBeOnSameSlot = false, params int[] slotsToCheck)
     {
+        if (inv == null)
+        {
+            Debug.LogError("Null inventory provided for CheckItemInInventory");
+            return null;
+        }
+        if (itemToCheck == null)
+        {
+            Debug.LogError("Null item to check provided for CheckItemInInventory");
+            return null;
+        }
 
+        if (acceptableInvProtections == null) acceptableInvProtections = allInventoryProtections;
+        if (acceptableSlotProtections == null) acceptableSlotProtections = allSlotProtections;
+
+        if (!acceptableInvProtections.Contains(inv.interactiable)) return null;
+
+        int total = 0;
+        List<int> slotsWithItem = new List<int>();
+        foreach(int slot in slotsToCheck)
+        {
+            if(slot >= inv.slots.Count)
+            {
+                Debug.LogError($"Provided slot index to check is out of array bounds (index: {slot} Array lenght: {inv.slots.Count})\n The code continued to next index");
+                continue;
+            }
+
+            if (!acceptableSlotProtections.Contains(inv.slots[slot].interative)) continue;
+
+            if (mustBeOnSameSlot)
+            {
+                if(inv.slots[slot].item == itemToCheck)
+                {
+                    if(inv.slots[slot].amount >= minAmount)
+                    {
+                        return new CheckItemData(inv, slotsToCheck, new int[1] { slot }, inv.slots[slot].amount, true, true, itemToCheck);
+                    }
+                }
+            }
+            else
+            {
+                if (inv.slots[slot].item == itemToCheck)
+                {
+                    total += inv.slots[slot].amount;
+                    slotsWithItem.Add(slot);
+                }
+            }
+        }
+
+        if (total >= minAmount && !mustBeOnSameSlot)
+        {
+            return new CheckItemData(inv, slotsToCheck, slotsWithItem.ToArray(), total, true, false, itemToCheck); 
+        }
+
+        return new CheckItemData(inv, slotsToCheck, new int[0], 0, false, mustBeOnSameSlot, itemToCheck);
     }
 
     #endregion
@@ -1021,11 +1120,11 @@ public class Inventory
     /// <summary>
     /// Defines the type of interactions you can have with the inventory
     /// </summary>
-    public IteractiableTypes interactiable;
+    public InventoryProtection interactiable;
 
     public bool hasInitializated;
 
-    public Inventory(List<Slot> _slots, int _slotAmounts, IteractiableTypes _interactiable, bool _areItemsUsable = true, bool _areItemsDroppable = true)
+    public Inventory(List<Slot> _slots, int _slotAmounts, InventoryProtection _interactiable, bool _areItemsUsable = true, bool _areItemsDroppable = true)
     {
         slots = _slots;
         slotAmounts = _slotAmounts;
@@ -1047,7 +1146,7 @@ public class Inventory
         slotAmounts = _slotAmounts;
     }
 
-    public Inventory(int _slotAmounts, bool _areItemsUsable, IteractiableTypes _interactiable = IteractiableTypes.Any, bool _areItemsDroppable = true)
+    public Inventory(int _slotAmounts, bool _areItemsUsable, InventoryProtection _interactiable = InventoryProtection.Any, bool _areItemsDroppable = true)
     {
         slots = new List<Slot>();
         slotAmounts = _slotAmounts;
@@ -1056,7 +1155,7 @@ public class Inventory
         areItemsDroppable = _areItemsDroppable;
     }
 
-    public Inventory(int _slotAmounts, bool _areItemsUsable, IteractiableTypes _interactiable = IteractiableTypes.Any)
+    public Inventory(int _slotAmounts, bool _areItemsUsable, InventoryProtection _interactiable = InventoryProtection.Any)
     {
         slots = new List<Slot>();
         slotAmounts = _slotAmounts;
@@ -1086,11 +1185,11 @@ public struct Slot
     public Item item;
     public bool hasItem;
     public bool isProductSlot;
-    public SlotInteractive interative;
+    public SlotProtection interative;
 
-    public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotInteractive.Any);
+    public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any);
 
-    public Slot(Slot slot, bool _isProductSlot, SlotInteractive _interactive)
+    public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive)
     {
         item = slot.item;
         amount = slot.amount;
@@ -1105,7 +1204,7 @@ public struct Slot
         amount = 1;
         hasItem = item != null ? false : true;
         isProductSlot = false;
-        interative = SlotInteractive.Any;
+        interative = SlotProtection.Any;
     }
 
     public Slot(Item _item, int _amount)
@@ -1114,7 +1213,7 @@ public struct Slot
         amount = _amount;
         hasItem = amount == 0 ? false : true;
         isProductSlot = false;
-        interative = SlotInteractive.Any;
+        interative = SlotProtection.Any;
     }
 
     public Slot(Item _item, int _amount, bool _hasItem)
@@ -1123,7 +1222,7 @@ public struct Slot
         amount = _amount;
         hasItem = _hasItem;
         isProductSlot = false;
-        interative = SlotInteractive.Any;
+        interative = SlotProtection.Any;
     }
 
     public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot)
@@ -1132,10 +1231,10 @@ public struct Slot
         amount = _amount;
         hasItem = _hasItem;
         isProductSlot = _isProductSlot;
-        interative = SlotInteractive.Any;
+        interative = SlotProtection.Any;
     }
 
-    public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotInteractive _interactive)
+    public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive)
     {
         item = _item;
         amount = _amount;
@@ -1151,7 +1250,30 @@ public class InventoryData
     public Inventory[] inventories;
 }
 
-public enum IteractiableTypes
+[Serializable]
+public class CheckItemData
+{
+    public Inventory inventory;
+    public int[] slotsChecked;
+    public int[] slotsWithItem;
+    public int amount;
+    public bool hasItem;
+    public bool mustBeOnSameSlot;
+    public Item checkedItem;
+
+    public CheckItemData(Inventory _inventory, int[] _slotsChecked, int[] _slotsWithItem, int _amount, bool _hasItem, bool _mustBeOnSameSlot, Item _checkedItem)
+    {
+        inventory = _inventory;
+        slotsChecked = _slotsChecked;
+        slotsWithItem = _slotsWithItem;
+        amount = _amount;
+        hasItem = _hasItem;
+        mustBeOnSameSlot = _mustBeOnSameSlot;
+        checkedItem = _checkedItem;
+    }
+}
+
+public enum InventoryProtection
 {
     Any = 1,
     InventoryToInventory = 2,
@@ -1161,7 +1283,7 @@ public enum IteractiableTypes
     Locked = 32
 }
 
-public enum SlotInteractive
+public enum SlotProtection
 {
     Any = 1,
     Locked = 2,

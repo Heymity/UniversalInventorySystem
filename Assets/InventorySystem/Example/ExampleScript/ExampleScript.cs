@@ -12,7 +12,7 @@ public class ExampleScript : MonoBehaviour
     private void Start()
     {
         //Inventory initialization
-        inventory = new Inventory(slotAmount, true, IteractiableTypes.Any, true);
+        inventory = new Inventory(slotAmount, true, InventoryProtection.Any, true);
         inventory.InitializeInventory();
 
         //InventoryUI initialization
@@ -33,6 +33,8 @@ public class ExampleScript : MonoBehaviour
         //Adds another type of item
         if (Input.GetKeyDown(KeyCode.D))
             inventory.AddItem(InventoryHandler.current.GetItem(0, 1), 2);
+
+        Debug.Log(inventory.CheckItemInInventory(InventoryHandler.current.GetItem(0, 0), 4).hasItem);
     }
 
     //Callback function for when an item is removed from any inventory
