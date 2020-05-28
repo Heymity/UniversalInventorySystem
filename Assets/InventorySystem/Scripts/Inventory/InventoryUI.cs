@@ -249,14 +249,14 @@ public class InventoryUI : MonoBehaviour
 
         if (isCraftInventory)
         {
-            Item[] products = inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, false, true, productSlots.Length);
+            CraftItemData products = inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, false, true, productSlots.Length);
 
             List<Item> productsItem = new List<Item>();
-            if (products != null && products.Length <= productSlots.Length)
+            if (products != CraftItemData.nullData && products.items.Length <= productSlots.Length)
             {
-                for (int k = 0; k < products.Length; k++)
+                for (int k = 0; k < products.items.Length; k++)
                 {
-                    productsItem.Add(inv.slots[gridSize.x * gridSize.y + k].item ?? products[k]);
+                    productsItem.Add(inv.slots[gridSize.x * gridSize.y + k].item ?? products.items[k]);
                 }
                 
             }
@@ -286,30 +286,30 @@ public class InventoryUI : MonoBehaviour
                     productSlots[i].GetComponent<Button>().onClick.AddListener(() =>
                     {
                         //Debug.Log($"Product slot {slots[index].name} was clicked");
-                        if(products != null && products.Length <= productSlots.Length)
+                        if(products.items != null && products.items.Length <= productSlots.Length)
                         {
-                            if(Enumerable.SequenceEqual(products, productsItem.ToArray()))
+                            if(Enumerable.SequenceEqual(products.items, productsItem.ToArray()))
                             {
                                 inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
                             }
                         }
                     });
                 }
-                else if (products != null && products.Length <= productSlots.Length && productIndex < products.Length)
+                else if (products.items != null && products.items.Length <= productSlots.Length && productIndex < products.items.Length)
                 {
 
                     for (int j = 0; j < slots[(gridSize.x * gridSize.y) + i].transform.childCount; j++)
                     {
                         Image image;
-                        //TextMeshProUGUI text;
+                        TextMeshProUGUI text;
                         if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out image))
                         {
-                            image.sprite = products[productIndex].sprite;
+                            image.sprite = products.items[productIndex].sprite;
                             image.color = new Color(1, 1, 1, 1);
                             productIndex++;
                         }
-                        //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
-                        //  text.text = products[i].amount.ToString();
+                        else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
+                          text.text = products.amounts[i].ToString();
                     }
 
                     //For click and drag
