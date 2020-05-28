@@ -48,6 +48,7 @@ public class PatternRecipeDrawer : PropertyDrawer
                 {
                     amount = (serializedObject.FindProperty("gridSize").vector2IntValue.y * 2) + 1;
                     SerializedProperty pattern = serializedObject.FindProperty("pattern");
+                    SerializedProperty patternAmount = serializedObject.FindProperty("amountPattern");
                     Vector2Int gridSize = serializedObject.FindProperty("gridSize").vector2IntValue;
                     position.y += position.height;
                     Rect patternPos = new Rect(position.x, position.y, position.width, position.height + 18);
@@ -59,6 +60,7 @@ public class PatternRecipeDrawer : PropertyDrawer
                         {
                             //(pattern.GetArrayElementAtIndex(i * gridSize.y + j).objectReferenceValue as Item).sprite.texture
                             var item = pattern.GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue as Item;
+                            var pAmount = patternAmount.GetArrayElementAtIndex(i * gridSize.x + j).intValue;
                             if (item == null) 
                             {
                                 content.text = "null";
@@ -70,6 +72,9 @@ public class PatternRecipeDrawer : PropertyDrawer
                             }
 
                             EditorGUI.LabelField(patternPos, content);
+                            GUIContent secondContent = new GUIContent();
+                            secondContent.text = pAmount == 0 ? "" : pAmount.ToString(); 
+                            EditorGUI.LabelField(patternPos, secondContent);
                             patternPos.x += 36;
                         }
                         patternPos.y += patternPos.height;
@@ -78,6 +83,7 @@ public class PatternRecipeDrawer : PropertyDrawer
                     
 
                     SerializedProperty products = serializedObject.FindProperty("products");
+                    SerializedProperty productsAmount = serializedObject.FindProperty("amountProducts");
                     patternPos.y -= patternPos.height * ((float)gridSize.y / 2f);
                     patternPos.y -= 18;
                     patternPos.x += (gridSize.x * 36) + 18;
@@ -86,6 +92,7 @@ public class PatternRecipeDrawer : PropertyDrawer
                     for (int i = 0;i < products.arraySize; i++)
                     {
                         var productItem = products.GetArrayElementAtIndex(i).objectReferenceValue as Item;
+                        var pAmount = productsAmount.GetArrayElementAtIndex(i).intValue;
                         if (productItem == null)
                         {
                             content.text = "null";
@@ -97,6 +104,9 @@ public class PatternRecipeDrawer : PropertyDrawer
                             content.image = productItem.sprite.texture;
                         }
                         EditorGUI.LabelField(patternPos, content);
+                        GUIContent secondContent = new GUIContent();
+                        secondContent.text = pAmount == 0 ? "" : pAmount.ToString();
+                        EditorGUI.LabelField(patternPos, secondContent);
                         patternPos.x += 36;
                     }
                     patternPos.y = basey;

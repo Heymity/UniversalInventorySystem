@@ -45,6 +45,8 @@ public class RecipeDrawer : PropertyDrawer
                     amount = 3;
                     SerializedProperty pattern = serializedObject.FindProperty("factors");
                     SerializedProperty product = serializedObject.FindProperty("products");
+                    SerializedProperty factorsAmount = serializedObject.FindProperty("amountFactors");
+                    SerializedProperty productsAmount = serializedObject.FindProperty("amountProducts");
                     Rect patternPos = new Rect(position.x, position.y, position.width, position.height + 18);
 
                     //(pattern.GetArrayElementAtIndex(i * gridSize.y + j).objectReferenceValue as Item).sprite.texture
@@ -53,6 +55,7 @@ public class RecipeDrawer : PropertyDrawer
                     {
                         //patternPos.x += 36;
                         var item = pattern.GetArrayElementAtIndex(i).objectReferenceValue as Item;
+                        var fAmount = factorsAmount.GetArrayElementAtIndex(i).intValue;
                         if (item == null)
                         {
                             content.text = "null";
@@ -64,16 +67,23 @@ public class RecipeDrawer : PropertyDrawer
                             content.image = item.sprite.texture;
                         }
                         EditorGUI.LabelField(patternPos, content);
+                        GUIContent secondContent = new GUIContent();
+                        secondContent.text = fAmount == 0 ? "" : fAmount.ToString();
+                        EditorGUI.LabelField(patternPos, secondContent);
                         patternPos.x += 36;
-                        if(i < pattern.arraySize - 1)
+                        if (i < pattern.arraySize - 1)
+                        {
                             EditorGUI.LabelField(patternPos, "+");
+                            patternPos.x += 16;
+                        }
                         else
                         {
                             EditorGUI.LabelField(patternPos, "=");
-                            patternPos.x += 5;
-                            for (int j = 0;j < product.arraySize; j++)
+                            patternPos.x += 15;
+                            for (int j = 0; j < product.arraySize; j++)
                             {
                                 var productItem = product.GetArrayElementAtIndex(j).objectReferenceValue as Item;
+                                var pAmount = productsAmount.GetArrayElementAtIndex(j).intValue;
                                 if (productItem == null)
                                 {
                                     content.text = "null";
@@ -85,6 +95,10 @@ public class RecipeDrawer : PropertyDrawer
                                     content.image = productItem.sprite.texture;
                                 }
                                 EditorGUI.LabelField(patternPos, content);
+                                patternPos.x -= 5;
+                                GUIContent prodContent = new GUIContent();
+                                prodContent.text = pAmount == 0 ? "" : pAmount.ToString();
+                                EditorGUI.LabelField(patternPos, prodContent);
                                 patternPos.x += 36;
                             }
                             patternPos.x += 36;

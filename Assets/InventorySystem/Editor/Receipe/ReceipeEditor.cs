@@ -40,10 +40,10 @@ public class ReceipeEditor : Editor
 
             for(int i = 0;i < factorsProp.arraySize; i++)
             {
-                EditorGUILayout.BeginHorizontal();
+
                 EditorGUILayout.ObjectField(factorsProp.GetArrayElementAtIndex(i), new GUIContent($"Input Item {i}"));
-                factorsAmountProp.GetArrayElementAtIndex(i).intValue = EditorGUILayout.IntField(factorsAmountProp.GetArrayElementAtIndex(i).intValue);
-                EditorGUILayout.EndHorizontal();
+                factorsAmountProp.GetArrayElementAtIndex(i).intValue = EditorGUILayout.IntField(new GUIContent($"Item amount {i}"),factorsAmountProp.GetArrayElementAtIndex(i).intValue);
+                EditorGUILayout.Separator();
             }
 
             if(factorsProp.arraySize == 0)
@@ -67,10 +67,10 @@ public class ReceipeEditor : Editor
 
             for (int i = 0; i < productsProp.arraySize; i++)
             {
-                EditorGUILayout.BeginHorizontal();
+
                 EditorGUILayout.ObjectField(productsProp.GetArrayElementAtIndex(i), new GUIContent($"Output Item {i}"));
-                productsAmountProp.GetArrayElementAtIndex(i).intValue = EditorGUILayout.IntField(productsAmountProp.GetArrayElementAtIndex(i).intValue);
-                EditorGUILayout.EndHorizontal();
+                productsAmountProp.GetArrayElementAtIndex(i).intValue = EditorGUILayout.IntField(new GUIContent($"Item amount {i}"), productsAmountProp.GetArrayElementAtIndex(i).intValue);
+                EditorGUILayout.Separator();
             }
 
             if (productsProp.arraySize == 0)

@@ -245,8 +245,11 @@ public class PatternRecipeEditorWindow : ExtendEditorWindow
                             serializedObject.FindProperty("amountPattern").GetArrayElementAtIndex(i * gridSize.x + j).intValue = 0;
                         }else if (selectedIndex == items.Count + 1)
                         {
-                            var a = serializedObject.FindProperty("amountPattern").GetArrayElementAtIndex(i * gridSize.x + j).intValue--;
-                            if(a - 1 <= 0) serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue = null;
+                            if (serializedObject.FindProperty("amountPattern").GetArrayElementAtIndex(i * gridSize.x + j).intValue > 0)
+                            {
+                                var a = serializedObject.FindProperty("amountPattern").GetArrayElementAtIndex(i * gridSize.x + j).intValue--;
+                                if (a - 1 <= 0) serializedObject.FindProperty("pattern").GetArrayElementAtIndex(i * gridSize.x + j).objectReferenceValue = null;
+                            }
                         }
                         else if (selectedIndex < items.Count)
                         {
