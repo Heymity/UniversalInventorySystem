@@ -12,12 +12,17 @@ public class ReceipeEditor : Editor
     SerializedProperty factorsProp;
     SerializedProperty productsProp;
 
+    SerializedProperty factorsAmountProp;
+    SerializedProperty productsAmountProp;
+
     private void OnEnable()
     {
         numberOfFactorsProp = serializedObject.FindProperty("numberOfFactors");
         numberOfProductsProp = serializedObject.FindProperty("numberOfProducts");
         factorsProp = serializedObject.FindProperty("factors");
+        factorsAmountProp = serializedObject.FindProperty("amountFactors");
         productsProp = serializedObject.FindProperty("products");
+        productsAmountProp = serializedObject.FindProperty("amountProducts");
     }
 
     public override void OnInspectorGUI()
@@ -27,6 +32,7 @@ public class ReceipeEditor : Editor
         EditorGUILayout.PropertyField(numberOfFactorsProp, new GUIContent("Number of input items"));
 
         factorsProp.arraySize = numberOfFactorsProp.intValue;
+        factorsAmountProp.arraySize = numberOfFactorsProp.intValue;
         factorsProp.isExpanded = EditorGUILayout.Foldout(factorsProp.isExpanded, "Input items");
         if (factorsProp.isExpanded)
         {
@@ -34,7 +40,10 @@ public class ReceipeEditor : Editor
 
             for(int i = 0;i < factorsProp.arraySize; i++)
             {
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.ObjectField(factorsProp.GetArrayElementAtIndex(i), new GUIContent($"Input Item {i}"));
+                factorsAmountProp.GetArrayElementAtIndex(i).intValue = EditorGUILayout.IntField(factorsAmountProp.GetArrayElementAtIndex(i).intValue);
+                EditorGUILayout.EndHorizontal();
             }
 
             if(factorsProp.arraySize == 0)
@@ -50,6 +59,7 @@ public class ReceipeEditor : Editor
         EditorGUILayout.PropertyField(numberOfProductsProp, new GUIContent("Number of output items"));
 
         productsProp.arraySize = numberOfProductsProp.intValue;
+        productsAmountProp.arraySize = numberOfProductsProp.intValue;
         productsProp.isExpanded = EditorGUILayout.Foldout(productsProp.isExpanded, "Output items");
         if (productsProp.isExpanded)
         {
@@ -57,7 +67,10 @@ public class ReceipeEditor : Editor
 
             for (int i = 0; i < productsProp.arraySize; i++)
             {
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.ObjectField(productsProp.GetArrayElementAtIndex(i), new GUIContent($"Output Item {i}"));
+                productsAmountProp.GetArrayElementAtIndex(i).intValue = EditorGUILayout.IntField(productsAmountProp.GetArrayElementAtIndex(i).intValue);
+                EditorGUILayout.EndHorizontal();
             }
 
             if (productsProp.arraySize == 0)

@@ -1571,6 +1571,7 @@ MonoBehaviour:
   isDraging: 0
   shouldSwap: 0
   pattern: []
+  amount: 
 --- !u!4 &339091380
 Transform:
   m_ObjectHideFlags: 0
@@ -3946,6 +3947,7 @@ MonoBehaviour:
   isDraging: 0
   shouldSwap: 0
   pattern: []
+  amount: 
 --- !u!4 &645887497
 Transform:
   m_ObjectHideFlags: 0
@@ -4587,6 +4589,7 @@ MonoBehaviour:
   isDraging: 0
   shouldSwap: 0
   pattern: []
+  amount: 
 --- !u!4 &882816581
 Transform:
   m_ObjectHideFlags: 0
@@ -5849,6 +5852,7 @@ MonoBehaviour:
   isDraging: 0
   shouldSwap: 0
   pattern: []
+  amount: 
 --- !u!4 &1140438007
 Transform:
   m_ObjectHideFlags: 0

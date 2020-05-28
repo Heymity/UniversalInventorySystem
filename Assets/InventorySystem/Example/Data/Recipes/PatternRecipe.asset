@@ -20,6 +20,7 @@ MonoBehaviour:
   products:
   - {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
   - {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+  amountProducts: 0100000002000000
   gridSize: {x: 3, y: 3}
   pattern:
   - {fileID: 0}
@@ -31,5 +32,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
   - {fileID: 0}
+  amountPattern: 0000000001000000ffffffff010000000200000001000000000000000100000000000000
   id: 0
   key: PatternRecipe

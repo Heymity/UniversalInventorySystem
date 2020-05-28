@@ -16,8 +16,10 @@ MonoBehaviour:
   factors:
   - {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
   - {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+  amountFactors: 0100000002000000
   numberOfProducts: 1
   products:
   - {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+  amountProducts: 01000000
   id: 0
   key: Receipe1

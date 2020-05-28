@@ -2,6 +2,7 @@
 using UnityEngine;
 using System;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 
 [Serializable]
 public static class InventoryController
@@ -933,19 +934,21 @@ public static class InventoryController
     public static Item[] CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, Recipe recipe, int productSlots)
     {
         List<int> jumpIndexes = new List<int>();
-        for (int i = 0; i < recipe.numberOfFactors; i++)
+        List<int> tmpjumpIndexes = new List<int>();
+        List<int> removeAmount = new List<int>();
+        for (int i = 0; i < grid.Item1.Length; i++)
         {
-            for (int j = 0; j < grid.Item1.Length; j++)
+            for (int j = 0; j < recipe.numberOfFactors; j++)
             {
-                if (grid.Item1[j] == recipe.factors[i] && !jumpIndexes.Contains(j))
+                if (grid.Item1[i] == recipe.factors[j] && !tmpjumpIndexes.Contains(j))
                 {
                     //i++;
-                    jumpIndexes.Add(j);
+                    tmpjumpIndexes.Add(j);
+                    jumpIndexes.Add(i);
+                    removeAmount.Add(recipe.amountFactors[j]);
                     break;
                 }
             }
-            if (i >= recipe.numberOfFactors)
-                break;
         }
         bool canReturn = true;
         if (jumpIndexes.Count != recipe.numberOfFactors) return null;
@@ -956,6 +959,15 @@ public static class InventoryController
                 canReturn = false;
             }
         }
+
+        for(int i = 0;i < jumpIndexes.Count; i++)
+        {
+            if(grid.Item2[jumpIndexes[i]] < recipe.amountFactors[i])
+            {
+                canReturn = false;
+            }
+        }
+
         if (canReturn)
         {
             if (craftItem)
@@ -977,18 +989,21 @@ public static class InventoryController
                         {
                             if (k - grid.Item1.Length >= recipe.products.Length) break;
 
-                            i = inv.AddItemToSlot(recipe.products[k - grid.Item1.Length], 1, k, overrideSlotProtection: true);
+                            i = inv.AddItemToSlot(recipe.products[k - grid.Item1.Length], recipe.amountProducts[k - grid.Item1.Length], k, overrideSlotProtection: true);
                             if (i > 0) return null;
                             //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                         }
                     }
                     if (i > 0) return null;
 
-
+                    var index = 0;
                     for (int k = 0; k < grid.Item1.Length; k++)
                     {
                         if (inv.slots[k].hasItem && k <= grid.Item1.Length - 1)
-                            inv.RemoveItemInSlot(k, 1);
+                        {
+                            inv.RemoveItemInSlot(k, removeAmount[index]);
+                            index++;
+                        }
                     }
                 }
             }
