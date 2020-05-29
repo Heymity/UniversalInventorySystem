@@ -408,7 +408,7 @@ public static class InventoryController
             Item tmp = inv.slots[slot].item;
             inv.slots[slot] = new Slot(nullSlot, inv.slots[slot].isProductSlot, inv.slots[slot].interative);
             if (e == BroadcastEventType.DropItem)
-                tmp.OnDrop(inv, true, slot, amount, false, dropPosition);
+                tmp?.OnDrop(inv, true, slot, amount, false, dropPosition);
             else InventoryHandler.current.Broadcast(e, rea: rea);
             return true;
         }
@@ -417,7 +417,7 @@ public static class InventoryController
             Item tmp = inv.slots[slot].item;
             inv.slots[slot] = new Slot(inv.slots[slot].item, inv.slots[slot].amount - amount, true);
             if (e == BroadcastEventType.DropItem)
-                tmp.OnDrop(inv, true, slot, amount, false, dropPosition);
+                tmp?.OnDrop(inv, true, slot, amount, false, dropPosition);
             else InventoryHandler.current.Broadcast(e, rea: rea);
             return true;
         }

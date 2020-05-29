@@ -25,6 +25,9 @@ public class InventoryUIInspector : Editor
     SerializedProperty allowsPatternCraftingProp;
     SerializedProperty productSlotsProp;
     SerializedProperty useOnClickProp;
+    SerializedProperty dropOnCloseCraftingProp;
+    SerializedProperty dropPosProp;
+    SerializedProperty randomFactorProp;
 
     bool autoGenUI;
 
@@ -56,6 +59,9 @@ public class InventoryUIInspector : Editor
         allowsPatternCraftingProp = serializedObject.FindProperty("allowsPatternCrafting");
         productSlotsProp = serializedObject.FindProperty("productSlots");
         useOnClickProp = serializedObject.FindProperty("useOnClick");
+        dropOnCloseCraftingProp = serializedObject.FindProperty("dropOnCloseCrafting");
+        dropPosProp = serializedObject.FindProperty("dropPos");
+        randomFactorProp = serializedObject.FindProperty("randomFactor");
     }
 
     public override void OnInspectorGUI()
@@ -180,6 +186,18 @@ public class InventoryUIInspector : Editor
                 EditorGUILayout.PropertyField(gridSizeProp, new GUIContent("Crafting grid size"));
                 EditorGUILayout.PropertyField(allowsPatternCraftingProp, new GUIContent("Allows pattern crafting"));
                 EditorGUILayout.PropertyField(productSlotsProp, new GUIContent("Product slots"));
+            }
+
+            EditorGUILayout.Separator();
+
+            if (hideInventoryProp.boolValue)
+            {
+                dropOnCloseCraftingProp.boolValue = EditorGUILayout.Toggle("Drop items on close", dropOnCloseCraftingProp.boolValue);
+                if (dropOnCloseCraftingProp.boolValue)
+                {
+                    dropPosProp.vector3Value = EditorGUILayout.Vector3Field("Drop position", dropPosProp.vector3Value);
+                    randomFactorProp.vector3Value = EditorGUILayout.Vector3Field("Ramdom factor", randomFactorProp.vector3Value);
+                }
             }
         }
 

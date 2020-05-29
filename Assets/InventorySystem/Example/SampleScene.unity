@@ -1508,7 +1508,9 @@ MonoBehaviour:
   hideInventory: 1
   toggleKey: 99
   togglableObject: {fileID: 1652197365}
-  dropOnCloseCrafting: 0
+  dropOnCloseCrafting: 1
+  dropPos: {x: 0, y: 0, z: 0}
+  randomFactor: {x: 1, y: 1, z: 0}
   inv:
     slots:
     - amount: 0
@@ -3892,6 +3894,8 @@ MonoBehaviour:
   toggleKey: 101
   togglableObject: {fileID: 747462573}
   dropOnCloseCrafting: 0
+  dropPos: {x: 0, y: 0, z: 0}
+  randomFactor: {x: 0, y: 0, z: 0}
   inv:
     slots:
     - amount: 0
@@ -4574,6 +4578,8 @@ MonoBehaviour:
   toggleKey: 111
   togglableObject: {fileID: 166081460}
   dropOnCloseCrafting: 0
+  dropPos: {x: 0, y: 0, z: 0}
+  randomFactor: {x: 0, y: 0, z: 0}
   inv:
     slots: []
     slotAmounts: 0
@@ -5777,6 +5783,8 @@ MonoBehaviour:
   toggleKey: 105
   togglableObject: {fileID: 1459554219}
   dropOnCloseCrafting: 0
+  dropPos: {x: 0, y: 0, z: 0}
+  randomFactor: {x: 0, y: 0, z: 0}
   inv:
     slots:
     - amount: 0

@@ -38,7 +38,9 @@ public class InventoryUI : MonoBehaviour
     public KeyCode toggleKey;
     public GameObject togglableObject;
 
-    public bool dropOnCloseCrafting;
+    public bool dropOnCloseCrafting = false;
+    public Vector3 dropPos = Vector3.zero;
+    public Vector3 randomFactor = Vector3.zero;
 
     //Inv
     public Inventory inv;
@@ -166,6 +168,18 @@ public class InventoryUI : MonoBehaviour
         {
             if (Input.GetKeyDown(toggleKey) && !isDraging)
             {
+                if (isCraftInventory && dropOnCloseCrafting)
+                {
+                    for(int i = 0;i < inv.slots.Count; i++)
+                    {
+                        var item = inv.slots[i];
+                        Vector3 finalDropPos = dropPos;
+                        finalDropPos.x += Random.Range(-randomFactor.x, randomFactor.x);
+                        finalDropPos.y += Random.Range(-randomFactor.y, randomFactor.y);
+                        finalDropPos.z += Random.Range(-randomFactor.z, randomFactor.z);
+                        inv.DropItem(item.amount, finalDropPos, slot: i);
+                    }
+                }
                 togglableObject.SetActive(!togglableObject.activeInHierarchy);
             }
         }
