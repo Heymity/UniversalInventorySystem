@@ -350,7 +350,7 @@ namespace UniversalInventorySystem
             int total = 0;
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.OnlyRemove || inv.slots[i].interative == SlotProtection.Any))
+                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.OnlyRemove || inv.slots[i].interative == SlotProtection.Any || overrideSlotProtecion))
                 {
                     total += inv.slots[i].amount;
                 }
@@ -695,7 +695,10 @@ namespace UniversalInventorySystem
             for (int i = 0; i < inv.slotAmounts; i++)
             {
                 //Debug.Log(inv.slots.Count);
-                inv.slots.Add(new Slot(null, 0, false));
+                if(i < inv.slots.Count)
+                    inv.slots.Add(new Slot(null, 0, false, inv.slots[i].isProductSlot, inv.slots[i].interative));
+                else
+                    inv.slots.Add(new Slot(null, 0, false));
             }
             //Debug.Log(inv.slots.Count);
             inv.id = inventories.Count;
