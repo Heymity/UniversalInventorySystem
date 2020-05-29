@@ -287,7 +287,7 @@ public class InventoryUI : MonoBehaviour
                         if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent<Image>(out image))
                         {
                             image.sprite = inv.slots[(gridSize.x * gridSize.y) + i].item.sprite;
-                            image.color = new Color(1, 1, 1, 1);
+                            image.color = new Color(1, 1, 1, 1);                       
                             productIndex++;
                         }
                         else if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out text))
@@ -319,7 +319,7 @@ public class InventoryUI : MonoBehaviour
                         if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out image))
                         {
                             image.sprite = products.items[productIndex].sprite;
-                            image.color = new Color(1, 1, 1, 1);
+                            image.color = new Color(1, 1, 1, .7f);
                             productIndex++;
                         }
                         else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
@@ -342,15 +342,14 @@ public class InventoryUI : MonoBehaviour
                         for (int j = 0; j < slots[i].transform.childCount; j++)
                         {
                             Image image;
-                            //TextMeshProUGUI text;
+                            TextMeshProUGUI text;
                             if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent<Image>(out image))
                             {
                                 image.sprite = null;
                                 image.color = new Color(0, 0, 0, 0);
-
                             }
-                            //else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
-                            //  text.text = products[i].amount.ToString();
+                            else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
+                              text.text = "";
                         }
 
                     }                    

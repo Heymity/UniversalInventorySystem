@@ -28,6 +28,7 @@ public class InventoryUIInspector : Editor
     SerializedProperty dropOnCloseCraftingProp;
     SerializedProperty dropPosProp;
     SerializedProperty randomFactorProp;
+    SerializedProperty previewMatProp;
 
     bool autoGenUI;
 
@@ -62,6 +63,7 @@ public class InventoryUIInspector : Editor
         dropOnCloseCraftingProp = serializedObject.FindProperty("dropOnCloseCrafting");
         dropPosProp = serializedObject.FindProperty("dropPos");
         randomFactorProp = serializedObject.FindProperty("randomFactor");
+        previewMatProp = serializedObject.FindProperty("previewMat");
     }
 
     public override void OnInspectorGUI()
@@ -123,7 +125,7 @@ public class InventoryUIInspector : Editor
             }
 
             EditorGUILayout.Separator();
-            EditorGUILayout.HelpBox(new GUIContent("The GameObject that represents a dragged item. We recomend using the default one"));
+            EditorGUILayout.HelpBox(new GUIContent("The GameObject that represents a dragged item. We recomend using the default one (DragSlot prefab in UniversalInventorySystem/Prefabs/DragSlot)"));
             EditorGUILayout.ObjectField(dragObjProp, new GUIContent("Drag Object"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("hideDragObj"), new GUIContent("Hide drag object"));
         }
@@ -186,17 +188,17 @@ public class InventoryUIInspector : Editor
                 EditorGUILayout.PropertyField(gridSizeProp, new GUIContent("Crafting grid size"));
                 EditorGUILayout.PropertyField(allowsPatternCraftingProp, new GUIContent("Allows pattern crafting"));
                 EditorGUILayout.PropertyField(productSlotsProp, new GUIContent("Product slots"));
-            }
 
-            EditorGUILayout.Separator();
+                EditorGUILayout.Separator();
 
-            if (hideInventoryProp.boolValue)
-            {
-                dropOnCloseCraftingProp.boolValue = EditorGUILayout.Toggle("Drop items on close", dropOnCloseCraftingProp.boolValue);
-                if (dropOnCloseCraftingProp.boolValue)
+                if (hideInventoryProp.boolValue)
                 {
-                    dropPosProp.vector3Value = EditorGUILayout.Vector3Field("Drop position", dropPosProp.vector3Value);
-                    randomFactorProp.vector3Value = EditorGUILayout.Vector3Field("Ramdom factor", randomFactorProp.vector3Value);
+                    dropOnCloseCraftingProp.boolValue = EditorGUILayout.Toggle("Drop items on close", dropOnCloseCraftingProp.boolValue);
+                    if (dropOnCloseCraftingProp.boolValue)
+                    {
+                        dropPosProp.vector3Value = EditorGUILayout.Vector3Field("Drop position", dropPosProp.vector3Value);
+                        randomFactorProp.vector3Value = EditorGUILayout.Vector3Field("Ramdom factor", randomFactorProp.vector3Value);
+                    }
                 }
             }
         }
