@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
 using UnityScript.Scripting.Pipeline;
+using UniversalInventorySystem;
 
 [CustomPropertyDrawer(typeof(Recipe))]
 public class RecipeDrawer : PropertyDrawer

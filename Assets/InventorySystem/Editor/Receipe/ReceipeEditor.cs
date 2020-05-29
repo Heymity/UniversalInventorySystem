@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UniversalInventorySystem;
 
 [CustomEditor(typeof(Recipe))]
 public class ReceipeEditor : Editor

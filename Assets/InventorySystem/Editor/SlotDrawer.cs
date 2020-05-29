@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UniversalInventorySystem;
 
 [CustomPropertyDrawer(typeof(Slot))]
 public class SlotDrawer : PropertyDrawer

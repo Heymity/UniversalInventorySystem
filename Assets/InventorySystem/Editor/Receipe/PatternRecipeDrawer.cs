@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
+using UniversalInventorySystem;
 using UnityScript.Scripting.Pipeline;
 
 [CustomPropertyDrawer(typeof(PatternRecipe))]

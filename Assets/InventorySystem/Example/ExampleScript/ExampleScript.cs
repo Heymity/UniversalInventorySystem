@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UniversalInventorySystem;
 
 public class ExampleScript : MonoBehaviour
 {

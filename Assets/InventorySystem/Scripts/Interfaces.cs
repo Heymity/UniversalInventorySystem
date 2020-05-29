@@ -1,40 +1,43 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-/// <summary>
-/// Remember to subscribe this functioon to the InventoyrEventHandler in order to work
-/// </summary>
-public interface IDropBehaviour
+namespace UniversalInventorySystem
 {
-    void OnDropItem(object sender, InventoryHandler.DropItemEventArgs e);
-}
-
-/// <summary>
-/// Remember to subscribe this functioon to the InventoyrEventHandler in order to work
-/// </summary>
-public interface IPickUpBehaviour
-{
-    void OnPickUp(object sender, InventoryHandler.AddItemEventArgs e);
-}
-
-public interface IUsable
-{
-    void OnUse(object sender, InventoryHandler.UseItemEventArgs e);
-}
-
-
-
-public abstract class DropBehaviour : MonoBehaviour, IDropBehaviour
-{
-    public virtual void OnEnable()
+    /// <summary>
+    /// Remember to subscribe this functioon to the InventoyrEventHandler in order to work
+    /// </summary>
+    public interface IDropBehaviour
     {
-        InventoryHandler.current.OnDropItem += OnDropItem;
+        void OnDropItem(object sender, InventoryHandler.DropItemEventArgs e);
     }
 
-    public virtual void OnDestroy()
+    /// <summary>
+    /// Remember to subscribe this functioon to the InventoyrEventHandler in order to work
+    /// </summary>
+    public interface IPickUpBehaviour
     {
-        InventoryHandler.current.OnDropItem -= OnDropItem;
+        void OnPickUp(object sender, InventoryHandler.AddItemEventArgs e);
     }
 
-    public abstract void OnDropItem(object sender, InventoryHandler.DropItemEventArgs e);
+    public interface IUsable
+    {
+        void OnUse(object sender, InventoryHandler.UseItemEventArgs e);
+    }
+
+
+
+    public abstract class DropBehaviour : MonoBehaviour, IDropBehaviour
+    {
+        public virtual void OnEnable()
+        {
+            InventoryHandler.current.OnDropItem += OnDropItem;
+        }
+
+        public virtual void OnDestroy()
+        {
+            InventoryHandler.current.OnDropItem -= OnDropItem;
+        }
+
+        public abstract void OnDropItem(object sender, InventoryHandler.DropItemEventArgs e);
+    }
 }

@@ -3,29 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class DroppedItem : MonoBehaviour
+namespace UniversalInventorySystem
 {
-    SpriteRenderer sr;
-    public int amount;
-
-    private void OnEnable()
+    public class DroppedItem : MonoBehaviour
     {
-        sr = GetComponent<SpriteRenderer>();
-    }
+        SpriteRenderer sr;
+        public int amount;
 
-    public void SetSprite(Sprite s) 
-    {
-        sr = GetComponent<SpriteRenderer>();
-        sr.sprite = s; 
-    }
-
-    public void SetAmount(int _amount) => amount = _amount;
-
-    private void Update()
-    {
-        if (RectTransformUtility.RectangleContainsScreenPoint(transform as RectTransform, Camera.main.ScreenToWorldPoint(Input.mousePosition)))
+        private void OnEnable()
         {
-            Debug.Log("Pick Up");
+            sr = GetComponent<SpriteRenderer>();
+        }
+
+        public void SetSprite(Sprite s)
+        {
+            sr = GetComponent<SpriteRenderer>();
+            sr.sprite = s;
+        }
+
+        public void SetAmount(int _amount) => amount = _amount;
+
+        private void Update()
+        {
+            if (RectTransformUtility.RectangleContainsScreenPoint(transform as RectTransform, Camera.main.ScreenToWorldPoint(Input.mousePosition)))
+            {
+                Debug.Log("Pick Up");
+            }
         }
     }
 }

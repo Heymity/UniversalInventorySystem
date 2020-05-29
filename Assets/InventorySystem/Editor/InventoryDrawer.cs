@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UniversalInventorySystem;
 
 [CustomPropertyDrawer(typeof(Inventory))]
 public class InventoryDrawer : PropertyDrawer

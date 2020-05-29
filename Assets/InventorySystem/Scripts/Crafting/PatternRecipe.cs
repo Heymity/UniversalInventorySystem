@@ -2,22 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("UniversalInventorySystem/PatternRecipe"), CreateAssetMenu(fileName = "PatternRecipe", menuName = "UniversalInventorySystem/PatternRecipe", order = 1), System.Serializable]
-public class PatternRecipe : ScriptableObject
+namespace UniversalInventorySystem
 {
-    public int numberOfFactors;
-    public Item[] factors;
 
-    public int numberOfProducts;
-    public Item[] products;
-    public int[] amountProducts;
+    [AddComponentMenu("UniversalInventorySystem/PatternRecipe"), CreateAssetMenu(fileName = "PatternRecipe", menuName = "UniversalInventorySystem/PatternRecipe", order = 1), System.Serializable]
+    public class PatternRecipe : ScriptableObject
+    {
+        public int numberOfFactors;
+        public Item[] factors;
 
-    public Vector2Int gridSize;
+        public int numberOfProducts;
+        public Item[] products;
+        public int[] amountProducts;
 
-    public Item[] pattern;
-    public int[] amountPattern;
+        public Vector2Int gridSize;
 
-    public int id;
-    public string key;
+        public Item[] pattern;
+        public int[] amountPattern;
+
+        public int id;
+        public string key;
+    }
 }
 

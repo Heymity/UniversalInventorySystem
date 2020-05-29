@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DefaultDropBehaviour : DropBehaviour
+namespace UniversalInventorySystem
 {
-    public GameObject droppedItemObj;
 
-    public override void OnDropItem(object sender, InventoryHandler.DropItemEventArgs e)
+    public class DefaultDropBehaviour : DropBehaviour
     {
-        e.inv.RemoveItemInSlot(e.slot.GetValueOrDefault(), e.amount);
-        var b = Instantiate(droppedItemObj, new Vector3(e.positionDropped.x, e.positionDropped.y, 0), Quaternion.identity);
-        DroppedItem droppedItem = b.GetComponent<DroppedItem>();
-        droppedItem.SetSprite(e.item.sprite);
-        droppedItem.SetAmount(e.amount);
-    }
+        public GameObject droppedItemObj;
 
+        public override void OnDropItem(object sender, InventoryHandler.DropItemEventArgs e)
+        {
+            e.inv.RemoveItemInSlot(e.slot.GetValueOrDefault(), e.amount);
+            var b = Instantiate(droppedItemObj, new Vector3(e.positionDropped.x, e.positionDropped.y, 0), Quaternion.identity);
+            DroppedItem droppedItem = b.GetComponent<DroppedItem>();
+            droppedItem.SetSprite(e.item.sprite);
+            droppedItem.SetAmount(e.amount);
+        }
+    }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UniversalInventorySystem;
 
 [CustomEditor(typeof(Item))]
 public class ItemInspector : Editor
