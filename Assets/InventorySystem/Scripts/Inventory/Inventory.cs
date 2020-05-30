@@ -677,10 +677,10 @@ namespace UniversalInventorySystem
         #endregion
 
         /// <summary>
-        /// This function must be called when a inventory is being created. It fills the inventory if null Slots, give an id to the inventory and add it to the list of inventories in the InventoryController. This function dont need to be called if you are using an loading system;
+        /// This function must be called when a inventory is being created. It fills the inventory if null Slots if the list of slots is null or have less elments than inv.slotAmounts, give an id to the inventory and add it to the list of inventories in the InventoryController. This function dont need to be called if you are using an loading system;
         /// </summary>
         /// <param name="inv">The inventory to be initialized</param>
-        /// <returns>The list of slots of the inventory</returns>
+        /// <returns>The initiaized inventory</returns>
         public static Inventory InitializeInventory(this Inventory inv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
         {
             if (inv == null)
@@ -690,16 +690,20 @@ namespace UniversalInventorySystem
             }
 
             if (inv.hasInitializated) return inv;
-
-            inv.slots = new List<Slot>();
-            for (int i = 0; i < inv.slotAmounts; i++)
+            
+            if(inv.slots.Count != inv.slotAmounts)
             {
-                //Debug.Log(inv.slots.Count);
-                if(i < inv.slots.Count)
-                    inv.slots.Add(new Slot(null, 0, false, inv.slots[i].isProductSlot, inv.slots[i].interative));
-                else
-                    inv.slots.Add(new Slot(null, 0, false));
+                if (inv.slots == null) inv.slots = new List<Slot>();
+                for (int i = 0; i < inv.slotAmounts; i++)
+                {
+                    //Debug.Log(inv.slots.Count);
+                    if (i < inv.slots.Count)
+                        inv.slots.Add(new Slot(null, 0, false, inv.slots[i].isProductSlot, inv.slots[i].interative));
+                    else
+                        inv.slots.Add(new Slot(null, 0, false));
+                }
             }
+
             //Debug.Log(inv.slots.Count);
             inv.id = inventories.Count;
             inventories.Add(inv);
@@ -713,7 +717,7 @@ namespace UniversalInventorySystem
         /// This function is an alternative for the InitializeInventory function. It initializes a Inventory using another inventory as a Model;
         /// </summary>
         /// <param name="inv">The inventory to be initialized</param>
-        /// <returns>The list of slots of the inventory</returns>
+        /// <returns>The initialized inventory</returns>
         public static Inventory InitializeInventoryFromAnotherInventory(this Inventory inv, Inventory modelInv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
         {
             if (inv == null)
@@ -1051,7 +1055,7 @@ namespace UniversalInventorySystem
             return (returnGrid, returnIntGrid);
         }
 
-        public static bool SequenceEqualOrGreter(int[] firstInt, int[] greterInt)
+        private static bool SequenceEqualOrGreter(int[] firstInt, int[] greterInt)
         {
             bool isEqualOrGreter = true;
             for (int i = 0; i < firstInt.Length; i++)
