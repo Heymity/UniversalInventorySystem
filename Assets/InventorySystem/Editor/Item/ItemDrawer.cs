@@ -156,6 +156,7 @@ public class ItemDrawer : PropertyDrawer
                 else
                 {
                     baseAmount = 3f;
+                    position.width -= 20;
                     EditorGUI.ObjectField(position, property);
                 }
             }
@@ -166,6 +167,17 @@ public class ItemDrawer : PropertyDrawer
             }
             position.x -= 20;
             serializedObject.ApplyModifiedProperties();
+        } else
+        {
+            amountOfFilds = 1;
+            baseAmount = 1;
+            EditorGUI.ObjectField(position, property);
+            if (property.objectReferenceValue != null)
+            {
+                serializedObject = new SerializedObject(property.objectReferenceValue);
+                serializedObject.ApplyModifiedProperties();
+                useObjValues = true;
+            }
         }
     }
 }
