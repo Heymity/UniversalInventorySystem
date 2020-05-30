@@ -129,7 +129,7 @@ namespace UniversalInventorySystem
                 for (int i = gridSize.x * gridSize.y; i < inv.slots.Count; i++)
                 {
                     var slot = inv.slots[i];
-                    inv.slots.Add(new Slot(slot.item, slot.amount, slot.hasItem, true, SlotProtection.OnlyRemove));
+                    inv.slots[i] = new Slot(slot.item, slot.amount, slot.hasItem, true, SlotProtection.OnlyRemove);
                 }
 
             }
@@ -157,24 +157,8 @@ namespace UniversalInventorySystem
         public void Update()
         {
             if (!inv.hasInitializated)
-            {
                 inv.InitializeInventory();
-                if (isCraftInventory)
-                {
-                    for (int i = 0; i < gridSize.x * gridSize.y; i++)
-                    {
-                        pattern.Add(null);
-                        amount.Add(0);
-                    }
-
-                    for (int i = gridSize.x * gridSize.y; i < inv.slots.Count; i++)
-                    {
-                        var slot = inv.slots[i];
-                        inv.slots[i] = new Slot(slot.item, slot.amount, slot.hasItem, true, SlotProtection.OnlyRemove);
-                    }
-
-                }
-            }
+            
             if (generateUIFromSlotPrefab && !hasGenerated)
             {
                 GenerateUI(inv.slotAmounts);
