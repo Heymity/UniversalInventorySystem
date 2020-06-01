@@ -300,7 +300,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be removed in the inventory</param>
         /// <param name="slot">The slot that will have item removed</param>
         /// <returns>The RemoveItem or RemoveItemInSlot function return value</returns>
-        public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, Item item = null, int? slot = null, BroadcastEventType e = BroadcastEventType.DropItem, bool overrideSlotProtecion = true)
+        public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, Item item, BroadcastEventType e = BroadcastEventType.DropItem, bool overrideSlotProtecion = true)
         {
             if (inv.interactiable == InventoryProtection.Locked) return false;
 
@@ -310,17 +310,34 @@ namespace UniversalInventorySystem
                 return false;
             }
 
-            if (slot != null)
-            {
-                return RemoveItemInSlot(inv, slot.GetValueOrDefault(), amount, e, dropPosition, overrideSlotProtecion);
-            }
             else if (item != null)
             {
                 return RemoveItem(inv, item, amount, e, dropPosition, overrideSlotProtecion);
             }
             else
             {
-                Debug.LogError($"No item or invalid slot number provided; item: {item}, slot number: {slot}");
+                Debug.LogError($"Null item provided for DropItem");
+                return false;
+            }
+        }
+
+        public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, int slot, BroadcastEventType e = BroadcastEventType.DropItem, bool overrideSlotProtecion = true)
+        {
+            if (inv.interactiable == InventoryProtection.Locked) return false;
+
+            if (inv == null)
+            {
+                Debug.LogError("Null inventory provided for DropItem");
+                return false;
+            }
+
+            if (slot >= 0 && slot < inv.slots.Count)
+            {
+                return RemoveItemInSlot(inv, slot, amount, e, dropPosition, overrideSlotProtecion);
+            }
+            else
+            {
+                Debug.LogError($"Invalid slot number provided for DropItem; slot number: {slot}");
                 return false;
             }
         }
@@ -436,7 +453,7 @@ namespace UniversalInventorySystem
         #endregion
 
         /// <summary>
-        /// To be Implemented by the proper way
+        /// Calls the OnUse function on the item. This function calls the OnUse on the provided useBehavoiur script
         /// </summary>
         /// <param name="inv">The inventory in witch the item will be used</param>
         /// <param name="slot">The slot that will have item used</param>
@@ -463,7 +480,52 @@ namespace UniversalInventorySystem
                     }
                     return;
                 }
-                else if (!inv.slots[slot].item.destroyOnUse) inv.slots[slot].item.OnUse(inv, slot);
+                else if (!inv.slots[slot].item.destroyOnUse)
+                {
+                    inv.slots[slot].item.OnUse(inv, slot);
+                    InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[slot].item, slot);
+                    InventoryHandler.current.Broadcast(e, uea: uea);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calls the OnUse function on the item. This function calls the OnUse on the provided useBehavoiur script
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be used</param>
+        /// <param name="item">The item that will be used</param>
+        public static void UseItem(this Inventory inv, Item item, BroadcastEventType e = BroadcastEventType.UseItem)
+        {
+            if (inv.interactiable == InventoryProtection.Locked) return;
+            if (!inv.areItemsUsable) return;
+
+            if (inv == null)
+            {
+                Debug.LogError("Null inventory provided for UseItemInSlot");
+                return;
+            }
+
+            for(int i = 0; i < inv.slots.Count; i++)
+            {
+                if (!inv.slots[i].hasItem) continue;
+                if (inv.slots[i].item != item) continue;
+                if (inv.slots[i].item.destroyOnUse)
+                {
+                    Item it = inv.slots[i].item;
+                    if (RemoveItemInSlot(inv, i, inv.slots[i].item.useHowManyWhenUsed))
+                    {
+                        it.OnUse(inv, i);
+                        InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, i);
+                        InventoryHandler.current.Broadcast(e, uea: uea);
+                    }
+                    return;
+                }
+                else if (!inv.slots[i].item.destroyOnUse)
+                {
+                    inv.slots[i].item.OnUse(inv, i);
+                    InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[i].item, i);
+                    InventoryHandler.current.Broadcast(e, uea: uea);
+                }
             }
         }
 
