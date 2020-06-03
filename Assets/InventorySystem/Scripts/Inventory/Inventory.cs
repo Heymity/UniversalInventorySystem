@@ -1292,8 +1292,19 @@ namespace UniversalInventorySystem
         public bool hasItem;
         public bool isProductSlot;
         public SlotProtection interative;
+        public ItemAsset whitelist;
 
-        public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any);
+        public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null);
+
+        public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive, ItemAsset _whitelist)
+        {
+            item = slot.item;
+            amount = slot.amount;
+            hasItem = slot.hasItem;
+            isProductSlot = _isProductSlot;
+            interative = _interactive;
+            whitelist = _whitelist;
+        }
 
         public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive)
         {
@@ -1302,6 +1313,7 @@ namespace UniversalInventorySystem
             hasItem = slot.hasItem;
             isProductSlot = _isProductSlot;
             interative = _interactive;
+            whitelist = null;
         }
 
         public Slot(Item _item)
@@ -1311,6 +1323,7 @@ namespace UniversalInventorySystem
             hasItem = item != null ? false : true;
             isProductSlot = false;
             interative = SlotProtection.Any;
+            whitelist = null;
         }
 
         public Slot(Item _item, int _amount)
@@ -1320,6 +1333,7 @@ namespace UniversalInventorySystem
             hasItem = amount == 0 ? false : true;
             isProductSlot = false;
             interative = SlotProtection.Any;
+            whitelist = null;
         }
 
         public Slot(Item _item, int _amount, bool _hasItem)
@@ -1329,6 +1343,7 @@ namespace UniversalInventorySystem
             hasItem = _hasItem;
             isProductSlot = false;
             interative = SlotProtection.Any;
+            whitelist = null;
         }
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot)
@@ -1338,6 +1353,7 @@ namespace UniversalInventorySystem
             hasItem = _hasItem;
             isProductSlot = _isProductSlot;
             interative = SlotProtection.Any;
+            whitelist = null;
         }
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive)
@@ -1347,6 +1363,17 @@ namespace UniversalInventorySystem
             hasItem = _hasItem;
             isProductSlot = _isProductSlot;
             interative = _interactive;
+            whitelist = null;
+        }
+
+        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemAsset _whitelist)
+        {
+            item = _item;
+            amount = _amount;
+            hasItem = _hasItem;
+            isProductSlot = _isProductSlot;
+            interative = _interactive;
+            whitelist = _whitelist;
         }
     }
 

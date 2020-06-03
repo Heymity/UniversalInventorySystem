@@ -60,12 +60,14 @@ public class InventoryDrawer : PropertyDrawer
             {
                 if (slots.arraySize > 0)
                 {
-                    amountOfFilds = baseAmount + 1 + slots.arraySize;
+                    float childHeight = 0;
                     for (int i = 0; i < slots.arraySize; i++)
                     {
+                        childHeight += EditorGUI.GetPropertyHeight(slots.GetArrayElementAtIndex(i)) / 18;
                         EditorGUI.PropertyField(position, slots.GetArrayElementAtIndex(i));
-                        position.y += position.height;
+                        position.y += EditorGUI.GetPropertyHeight(slots.GetArrayElementAtIndex(i));
                     }
+                    amountOfFilds = baseAmount + childHeight;
                 }
             }
             EditorGUI.indentLevel--;

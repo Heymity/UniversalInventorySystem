@@ -1,10 +1,22 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UniversalInventorySystem;
 
 [CustomPropertyDrawer(typeof(Slot))]
 public class SlotDrawer : PropertyDrawer
 {
+    public Dictionary<string, SlotInfo> unfold = new Dictionary<string, SlotInfo>();
+
+    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    {
+        if (unfold.ContainsKey(property.propertyPath))
+             return unfold[property.propertyPath].boolValue ? 18 * unfold[property.propertyPath].fieldAmount : 18;
+         else
+            return 18;
+    }
+
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
         EditorGUI.BeginProperty(position, label, property);
@@ -12,7 +24,24 @@ public class SlotDrawer : PropertyDrawer
         var t = label.text.Split(' ');
         label.text = "Slot " + t[t.Length - 1];
 
-        position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+        if (!unfold.ContainsKey(property.propertyPath))
+             unfold.Add(property.propertyPath, new SlotInfo(false, 1));
+
+        var originalPosition = position;
+        position = EditorGUI.PrefixLabel(position, label);
+
+        originalPosition.width = position.x - 20;
+        unfold[property.propertyPath].boolValue = EditorGUI.Foldout(originalPosition, unfold[property.propertyPath].boolValue, label, true);
+
+        if (unfold[property.propertyPath].boolValue)
+        {
+            var foldPos = new Rect(position.x, position.y + 16f, position.width, position.height);
+            EditorGUI.LabelField(foldPos, property.propertyPath);
+            unfold[property.propertyPath].fieldAmount = 2;
+        } else
+        {
+            unfold[property.propertyPath].fieldAmount = 1;
+        }
 
         var indent = EditorGUI.indentLevel;
         EditorGUI.indentLevel = 0;
@@ -37,5 +66,17 @@ public class SlotDrawer : PropertyDrawer
         EditorGUI.indentLevel = indent;
 
         EditorGUI.EndProperty();
+    }
+
+    public class SlotInfo
+    {
+        public bool boolValue;
+        public int fieldAmount;
+
+        public SlotInfo(bool _boolValues, int _fieldAmount)
+        {
+            boolValue = _boolValues;
+            fieldAmount = _fieldAmount;
+        }
     }
 }
