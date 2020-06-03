@@ -13,8 +13,6 @@ public class SlotDrawer : PropertyDrawer
 {
     public Dictionary<string, SlotInfo> unfold = new Dictionary<string, SlotInfo>();
 
-    List<Object> objs;
-
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
         if (unfold.ContainsKey(property.propertyPath))
@@ -31,7 +29,7 @@ public class SlotDrawer : PropertyDrawer
         label.text = "Slot " + t[t.Length - 1];
 
         if (!unfold.ContainsKey(property.propertyPath))
-             unfold.Add(property.propertyPath, new SlotInfo(false, 1, false, 0));
+             unfold.Add(property.propertyPath, new SlotInfo(false, 1, false, 0, false));
 
         var originalPosition = position;
         position = EditorGUI.PrefixLabel(position, label);
@@ -42,12 +40,15 @@ public class SlotDrawer : PropertyDrawer
         if (unfold[property.propertyPath].boolValue)
         {
             Rect ampos = new Rect(originalPosition.x, originalPosition.y + 18f, 120, 18);
-            bool amBool = EditorPrefs.GetBool(property.propertyPath + "AM", false);
+            bool amBool = unfold[property.propertyPath].multipleAssign;
 
             bool amTmp = EditorGUI.Toggle(ampos, "Assign multiple", amBool);
 
-            //Take out from editorPrefs
-            if (amTmp != amBool) EditorPrefs.SetBool(property.propertyPath + "AM", amTmp);
+            if (amTmp != amBool)
+            {
+                unfold[property.propertyPath].multipleAssign = amTmp;
+                unfold[property.propertyPath].executeOnce = false;
+            }
 
             unfold[property.propertyPath].fieldAmount = 2.5f;
             var whitelistProp = property.FindPropertyRelative("whitelist");
@@ -61,7 +62,47 @@ public class SlotDrawer : PropertyDrawer
                 bool tmp = EditorGUI.Toggle(uia, "Use ItemAsset", useItemAsset);
                 foldPos.x += 120;
 
-                if (tmp != useItemAsset) EditorPrefs.SetBool(property.propertyPath, tmp);
+                if (tmp != useItemAsset || !unfold[property.propertyPath].executeOnce) 
+                {
+                    unfold[property.propertyPath].executeOnce = true;
+                    EditorPrefs.SetBool(property.propertyPath, tmp);
+                    unfold[property.propertyPath].objs = new List<Object>();
+
+                    if (unfold[property.propertyPath].editorAssignSize < 0) unfold[property.propertyPath].editorAssignSize = 0;
+
+                    unfold[property.propertyPath].objs = new List<Object>(unfold[property.propertyPath].editorAssignSize);
+                    for (int i = 0; i < unfold[property.propertyPath].objs.Capacity; i++)
+                    {
+                        if (i >= unfold[property.propertyPath].objs.Count) unfold[property.propertyPath].objs.Add(null);
+                    }
+                    
+                    if (tmp)
+                    {
+                        if (whitelistProp.objectReferenceValue != null)
+                        {
+                            if (unfold[property.propertyPath].editorAssignSize < 1) unfold[property.propertyPath].editorAssignSize = 1;
+                            if (unfold[property.propertyPath].objs.Count >= 1) unfold[property.propertyPath].objs[0] = whitelistProp.objectReferenceValue;
+                        }
+                    } else
+                    {
+                        if (whitelistProp.objectReferenceValue != null)
+                        {
+                            var ia = whitelistProp.objectReferenceValue as ItemAsset;
+
+                            if (unfold[property.propertyPath].editorAssignSize < ia.itemsList.Count) unfold[property.propertyPath].editorAssignSize = ia.itemsList.Count;
+                            for (int i = 0; i < ia.itemsList.Count; i++)
+                            {
+                                if (i < unfold[property.propertyPath].objs.Count)
+                                {
+                                    unfold[property.propertyPath].objs[i] = ia.itemsList[i];
+                                }else
+                                {
+                                    unfold[property.propertyPath].objs.Add(ia.itemsList[i]);
+                                }
+                            }
+                        }
+                    }
+                }
 
                 if (tmp)
                 {
@@ -74,20 +115,16 @@ public class SlotDrawer : PropertyDrawer
                     unfold[property.propertyPath].editorAssignSize = EditorGUI.IntField(ias, "Size for assign", unfold[property.propertyPath].editorAssignSize);
                     if (unfold[property.propertyPath].editorAssignSize < 0) unfold[property.propertyPath].editorAssignSize = 0;
 
-                    if (objs == null) objs = new List<Object>(unfold[property.propertyPath].editorAssignSize);
-                    if (objs.Count != unfold[property.propertyPath].editorAssignSize)
+                    if (unfold[property.propertyPath].objs == null) unfold[property.propertyPath].objs = new List<Object>(unfold[property.propertyPath].editorAssignSize);
+                    if (unfold[property.propertyPath].objs.Count != unfold[property.propertyPath].editorAssignSize)
                     {
-                        objs = new List<Object>(unfold[property.propertyPath].editorAssignSize);
-                        for(int i = 0; i < objs.Capacity; i++)
+                        unfold[property.propertyPath].objs = new List<Object>(unfold[property.propertyPath].editorAssignSize);
+                        for(int i = 0; i < unfold[property.propertyPath].objs.Capacity; i++)
                         {
-                            if (i >= objs.Count) objs.Add(null);
+                            if (i >= unfold[property.propertyPath].objs.Count) unfold[property.propertyPath].objs.Add(null);
                         }
                     }
-                    if (whitelistProp.objectReferenceValue != null)
-                    {
-                        if (unfold[property.propertyPath].editorAssignSize < 1) unfold[property.propertyPath].editorAssignSize = 1;
-                        if (objs.Count >= 1) if(objs[0] == null) objs[0] = whitelistProp.objectReferenceValue;
-                    }
+
 
                     if (unfold[property.propertyPath].iasExpand)
                     {
@@ -98,25 +135,26 @@ public class SlotDrawer : PropertyDrawer
                             ias.y += 18f;
                             var objRect = new Rect(position.x + 120, ias.y, position.width - 140, ias.height);
                             Object obj = null;
-                            if (i < objs.Count)
+                            if (i < unfold[property.propertyPath].objs.Count)
                             {
-                                objs[i] = EditorGUI.ObjectField(objRect, new GUIContent($"Item Asset {i}"), objs[i], typeof(ItemAsset), false);
+                                unfold[property.propertyPath].objs[i] = EditorGUI.ObjectField(objRect, new GUIContent($"Item Asset {i}"), unfold[property.propertyPath].objs[i], typeof(ItemAsset), false);
                             } else
                             {
-                                objs.Add(EditorGUI.ObjectField(objRect, new GUIContent($"Item Asset {i}"), obj, typeof(ItemAsset), false));
+                                unfold[property.propertyPath].objs.Add(EditorGUI.ObjectField(objRect, new GUIContent($"Item Asset {i}"), obj, typeof(ItemAsset), false));
                             }
                         }
                     }
 
-                    //Add merge btn
+                    //Add save btn
                     if (amBool != amTmp)
                     {
                         ItemAsset newAsset = ScriptableObject.CreateInstance<ItemAsset>();
 
-                        foreach (Object iaobj in objs)
+                        foreach (Object iaobj in unfold[property.propertyPath].objs)
                         {
                             ItemAsset ia = iaobj as ItemAsset;
                             if (ia == null) continue;
+                            newAsset.name += ia.name + " ";
                             foreach (Item item in ia.itemsList)
                             {
                                 if (!newAsset.itemsList.Contains(item)) newAsset.itemsList.Add(item);
@@ -125,17 +163,91 @@ public class SlotDrawer : PropertyDrawer
 
                         if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemAsset).itemsList, newAsset.itemsList))
                         {
+                            newAsset.strId = newAsset.name;
+                            newAsset.id = Random.Range(10000, int.MaxValue);
                             whitelistProp.objectReferenceValue = newAsset;
                         }
                     }
                 }
                 else
                 {
+                    Rect ias = new Rect(foldPos.x, foldPos.y, 80, foldPos.height);
+                    unfold[property.propertyPath].iasExpand = EditorGUI.Foldout(ias, unfold[property.propertyPath].iasExpand, "Items", true);
+                    ias.x += 80;
+                    ias.width = 160;
 
+
+                    unfold[property.propertyPath].editorAssignSize = EditorGUI.IntField(ias, "Size for assign", unfold[property.propertyPath].editorAssignSize);
+                    if (unfold[property.propertyPath].editorAssignSize < 0) unfold[property.propertyPath].editorAssignSize = 0;
+
+                    if (unfold[property.propertyPath].objs == null) unfold[property.propertyPath].objs = new List<Object>(unfold[property.propertyPath].editorAssignSize);
+                    if (unfold[property.propertyPath].objs.Count != unfold[property.propertyPath].editorAssignSize)
+                    {
+                        unfold[property.propertyPath].objs = new List<Object>(unfold[property.propertyPath].editorAssignSize);
+                        for (int i = 0; i < unfold[property.propertyPath].objs.Capacity; i++)
+                        {
+                            if (i >= unfold[property.propertyPath].objs.Count) unfold[property.propertyPath].objs.Add(null);
+                        }
+                    }
+
+
+                    if (unfold[property.propertyPath].iasExpand)
+                    {
+                        unfold[property.propertyPath].fieldAmount = 3.5f + unfold[property.propertyPath].editorAssignSize;
+
+                        for (int i = 0; i < unfold[property.propertyPath].editorAssignSize; i++)
+                        {
+                            ias.y += 18f;
+                            var objRect = new Rect(position.x + 120, ias.y, position.width - 140, ias.height);
+                            Object obj = null;
+                            if (i < unfold[property.propertyPath].objs.Count)
+                            {
+                                unfold[property.propertyPath].objs[i] = EditorGUI.ObjectField(objRect, new GUIContent($"Item {i}"), unfold[property.propertyPath].objs[i], typeof(Item), false);
+                            }
+                            else
+                            {
+                                unfold[property.propertyPath].objs.Add(EditorGUI.ObjectField(objRect, new GUIContent($"Item {i}"), obj, typeof(Item), false));
+                            }
+                        }
+                    }
+
+                    //Add save btn
+                    if (amBool != amTmp)
+                    {
+                        ItemAsset newAsset = ScriptableObject.CreateInstance<ItemAsset>();
+
+                        newAsset.name += "Custom ItemGroup";
+                        foreach (Object itemobj in unfold[property.propertyPath].objs)
+                        {
+                            Item item = itemobj as Item;
+                            if (item == null) continue;
+
+                            if (!newAsset.itemsList.Contains(item))
+                            {
+                                newAsset.itemsList.Add(item);
+                                newAsset.strId += item.itemName;
+                            }
+                            
+                        }
+
+                        if(whitelistProp.objectReferenceValue != null)
+                        {
+                            if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemAsset).itemsList, newAsset.itemsList))
+                            {
+                                newAsset.id = Random.Range(10000, int.MaxValue);
+                                whitelistProp.objectReferenceValue = newAsset;
+                            }
+                        }
+                        else
+                        {
+                            newAsset.id = Random.Range(10000, int.MaxValue);
+                            whitelistProp.objectReferenceValue = newAsset;
+                        }
+                    }
                 }
             } else
             {
-                objs = new List<Object>();
+                unfold[property.propertyPath].objs = new List<Object>();
                 unfold[property.propertyPath].editorAssignSize = 1;
                 var objRect = new Rect(ampos.x + 120, ampos.y, position.width - 140, ampos.height);
                 EditorGUI.ObjectField(objRect, whitelistProp, new GUIContent("Whitelist"));
@@ -174,15 +286,19 @@ public class SlotDrawer : PropertyDrawer
     {
         public bool boolValue;
         public bool iasExpand;
+        public bool multipleAssign;
         public float fieldAmount;
         public int editorAssignSize;
+        public List<Object> objs;
+        public bool executeOnce;
 
-        public SlotInfo(bool _boolValues, int _fieldAmount, bool _iasExpand, int _editorAssignSize)
+        public SlotInfo(bool _boolValues, int _fieldAmount, bool _iasExpand, int _editorAssignSize, bool _multipleAssign)
         {
             boolValue = _boolValues;
             fieldAmount = _fieldAmount;
             iasExpand = _iasExpand;
             editorAssignSize = _editorAssignSize;
+            multipleAssign = _multipleAssign;
         }
     }
 }
