@@ -29,7 +29,7 @@ public class SlotDrawer : PropertyDrawer
         label.text = "Slot " + t[t.Length - 1];
 
         if (!unfold.ContainsKey(property.propertyPath))
-             unfold.Add(property.propertyPath, new SlotInfo(false, 1, false, 0, false));
+             unfold.Add(property.propertyPath, new SlotInfo(false, 1, false, 0, false, true));
 
         var originalPosition = position;
         position = EditorGUI.PrefixLabel(position, label);
@@ -62,7 +62,7 @@ public class SlotDrawer : PropertyDrawer
                 bool tmp = EditorGUI.Toggle(uia, "Use ItemAsset", useItemAsset);
                 foldPos.x += 120;
 
-                if (tmp != useItemAsset || !unfold[property.propertyPath].executeOnce) 
+                if ((tmp != useItemAsset || !unfold[property.propertyPath].executeOnce) && amTmp == amBool) 
                 {
                     unfold[property.propertyPath].executeOnce = true;
                     EditorPrefs.SetBool(property.propertyPath, tmp);
@@ -113,6 +113,11 @@ public class SlotDrawer : PropertyDrawer
 
 
                     unfold[property.propertyPath].editorAssignSize = EditorGUI.IntField(ias, "Size for assign", unfold[property.propertyPath].editorAssignSize);
+
+                    ias.x += 150;
+
+                    unfold[property.propertyPath].addNullMatch = EditorGUI.ToggleLeft(ias, "Add null match", unfold[property.propertyPath].addNullMatch);
+
                     if (unfold[property.propertyPath].editorAssignSize < 0) unfold[property.propertyPath].editorAssignSize = 0;
 
                     if (unfold[property.propertyPath].objs == null) unfold[property.propertyPath].objs = new List<Object>(unfold[property.propertyPath].editorAssignSize);
@@ -124,6 +129,7 @@ public class SlotDrawer : PropertyDrawer
                             if (i >= unfold[property.propertyPath].objs.Count) unfold[property.propertyPath].objs.Add(null);
                         }
                     }
+
 
 
                     if (unfold[property.propertyPath].iasExpand)
@@ -178,6 +184,11 @@ public class SlotDrawer : PropertyDrawer
 
 
                     unfold[property.propertyPath].editorAssignSize = EditorGUI.IntField(ias, "Size for assign", unfold[property.propertyPath].editorAssignSize);
+
+                    ias.x += 150;
+
+                    unfold[property.propertyPath].addNullMatch = EditorGUI.ToggleLeft(ias, "Add null match", unfold[property.propertyPath].addNullMatch);
+
                     if (unfold[property.propertyPath].editorAssignSize < 0) unfold[property.propertyPath].editorAssignSize = 0;
 
                     if (unfold[property.propertyPath].objs == null) unfold[property.propertyPath].objs = new List<Object>(unfold[property.propertyPath].editorAssignSize);
@@ -214,6 +225,7 @@ public class SlotDrawer : PropertyDrawer
                     //Add save btn
                     if (amBool != amTmp)
                     {
+                        Debug.Log(unfold[property.propertyPath].objs[unfold[property.propertyPath].objs.Count - 1]);
                         ItemAsset newAsset = ScriptableObject.CreateInstance<ItemAsset>();
 
                         newAsset.name += "Custom ItemGroup";
@@ -230,7 +242,10 @@ public class SlotDrawer : PropertyDrawer
                             
                         }
 
-                        if(whitelistProp.objectReferenceValue != null)
+                        if(unfold[property.propertyPath].addNullMatch && !newAsset.itemsList.Contains(null))
+                            newAsset.itemsList.Add(null);
+
+                        if (whitelistProp.objectReferenceValue != null)
                         {
                             if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemAsset).itemsList, newAsset.itemsList))
                             {
@@ -287,18 +302,20 @@ public class SlotDrawer : PropertyDrawer
         public bool boolValue;
         public bool iasExpand;
         public bool multipleAssign;
+        public bool addNullMatch;
         public float fieldAmount;
         public int editorAssignSize;
         public List<Object> objs;
         public bool executeOnce;
 
-        public SlotInfo(bool _boolValues, int _fieldAmount, bool _iasExpand, int _editorAssignSize, bool _multipleAssign)
+        public SlotInfo(bool _boolValues, int _fieldAmount, bool _iasExpand, int _editorAssignSize, bool _multipleAssign, bool _addNullMatch)
         {
             boolValue = _boolValues;
             fieldAmount = _fieldAmount;
             iasExpand = _iasExpand;
             editorAssignSize = _editorAssignSize;
             multipleAssign = _multipleAssign;
+            addNullMatch = _addNullMatch;
         }
     }
 }

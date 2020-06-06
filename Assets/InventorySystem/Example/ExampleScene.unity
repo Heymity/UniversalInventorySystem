@@ -1508,7 +1508,7 @@ MonoBehaviour:
   hideInventory: 1
   toggleKey: 99
   togglableObject: {fileID: 1652197365}
-  dropOnCloseCrafting: 1
+  dropOnCloseCrafting: 0
   dropPos: {x: 0, y: 0, z: 0}
   randomFactor: {x: 1, y: 1, z: 0}
   inv:
@@ -1518,46 +1518,55 @@ MonoBehaviour:
       hasItem: 0
       isProductSlot: 0
       interative: 1
+      whitelist: {fileID: 11400000, guid: 57c447cc307026949829e61220432bc0, type: 2}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 1
+      whitelist: {fileID: 11400000, guid: 0eb205f4b501a4f44bff0bf4795882aa, type: 2}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 1
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 1
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 1
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 1
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 1
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 4
+      interative: 1
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 4
+      interative: 1
+      whitelist: {fileID: 0}
     slotAmounts: 9
     id: 0
     areItemsUsable: 0
@@ -3903,41 +3912,49 @@ MonoBehaviour:
       hasItem: 0
       isProductSlot: 0
       interative: 0
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
+      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
+      whitelist: {fileID: 0}
     slotAmounts: 8
     id: 0
     areItemsUsable: 1
@@ -5786,68 +5803,8 @@ MonoBehaviour:
   dropPos: {x: 0, y: 0, z: 0}
   randomFactor: {x: 0, y: 0, z: 0}
   inv:
-    slots:
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-    slotAmounts: 12
+    slots: []
+    slotAmounts: 0
     id: 0
     areItemsUsable: 1
     areItemsDroppable: 1

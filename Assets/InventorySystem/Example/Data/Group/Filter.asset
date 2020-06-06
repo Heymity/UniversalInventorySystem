@@ -10,8 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa95f0165b876cd4d8546fe5c29f4e6e, type: 3}
-  m_Name: Test
+  m_Name: Filter
   m_EditorClassIdentifier: 
-  itemsList: []
-  strId: 
+  itemsList:
+  - {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+  - {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
+  strId: Filter
   id: 0

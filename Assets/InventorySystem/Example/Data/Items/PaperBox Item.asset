@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ca3a9c65542bda48a70feeda4a20499, type: 3}
-  m_Name: Item
+  m_Name: PaperBox Item
   m_EditorClassIdentifier: 
-  itemName: Item1
+  itemName: PaperBox
   id: 0
   sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6, type: 3}
   maxAmount: 10

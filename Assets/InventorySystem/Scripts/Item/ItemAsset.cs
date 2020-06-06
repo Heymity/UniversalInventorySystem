@@ -53,6 +53,21 @@ namespace UniversalInventorySystem
                 }
             }
             return inputArray;
+        } 
+    }
+
+    public static class ItemAssetController
+    {
+        public static bool ContainsWNull(this List<Item> items, Item item)
+        {
+            if (item == null)
+            {
+                return true;
+            }
+            else
+            {
+                return items.Contains(item);
+            }
         }
     }
 }
