@@ -153,7 +153,6 @@ public class SlotDrawer : PropertyDrawer
                         }
                     }
 
-                    //Add save btn
                     if (amBool != amTmp)
                     {
                         ItemAsset newAsset = ScriptableObject.CreateInstance<ItemAsset>();
@@ -224,7 +223,6 @@ public class SlotDrawer : PropertyDrawer
                         }
                     }
 
-                    //Add save btn
                     if (amBool != amTmp)
                     {
                         Debug.Log(unfold[property.propertyPath].objs[unfold[property.propertyPath].objs.Count - 1]);
