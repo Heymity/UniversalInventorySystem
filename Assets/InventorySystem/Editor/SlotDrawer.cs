@@ -29,7 +29,7 @@ public class SlotDrawer : PropertyDrawer
         label.text = "Slot " + t[t.Length - 1];
 
         if (!unfold.ContainsKey(property.propertyPath))
-             unfold.Add(property.propertyPath, new SlotInfo(false, 1, false, 0, false, true));
+             unfold.Add(property.propertyPath, new SlotInfo(false, 1, false, 0, false, false));
 
         var originalPosition = position;
         position = EditorGUI.PrefixLabel(position, label);
@@ -39,10 +39,12 @@ public class SlotDrawer : PropertyDrawer
 
         if (unfold[property.propertyPath].boolValue)
         {
-            Rect ampos = new Rect(originalPosition.x, originalPosition.y + 18f, 120, 18);
+            Rect ampos = new Rect(originalPosition.x, originalPosition.y + 18f, 100, 18);
             bool amBool = unfold[property.propertyPath].multipleAssign;
 
-            bool amTmp = EditorGUI.Toggle(ampos, "Assign multiple", amBool);
+            bool _amTmp = GUI.Button(ampos, amBool ? "Save variable" : "Assign multiple");
+
+            bool amTmp = _amTmp ? !amBool : amBool;
 
             if (amTmp != amBool)
             {
