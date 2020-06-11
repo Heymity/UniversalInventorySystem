@@ -9,7 +9,7 @@ public class ItemDataEditorWindow : ExtendEditorWindow
     Vector2 sideBar;
     Vector2 content;
 
-    public static void Open(ItemAsset dataObject)
+    public static void Open(ItemGroup dataObject)
     {
         ItemDataEditorWindow window = GetWindow<ItemDataEditorWindow>("Item Data Editor");
         window.serializedObject = new SerializedObject(dataObject);

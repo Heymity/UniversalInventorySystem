@@ -21,3 +21,12 @@ MonoBehaviour:
   stackable: 1
   onUseFunc: {fileID: 11500000, guid: fbc6a140bc2ae644788371b67a162054, type: 3}
   optionalOnDropBehaviour: {fileID: 0}
+  tooltip:
+    title: Paper box
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut urna
+      ex, ultricies in ex sit. '
+    sprite: {fileID: 0}
+    size: {x: 1, y: 1}
+    padding: {x: 4, y: 4}
+    color: {r: 0, g: 0, b: 0, a: 1}
+    backgroudColor: {r: 1, g: 1, b: 1, a: 0.50980395}

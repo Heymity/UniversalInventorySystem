@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace UniversalInventorySystem
 {
-    [AddComponentMenu("UniversalInventorySystem/ItemAsset"), CreateAssetMenu(fileName = "ItemAsset", menuName = "UniversalInventorySystem/ItemAsset", order = 1), System.Serializable]
-    public class ItemAsset : ScriptableObject
+    [AddComponentMenu("UniversalInventorySystem/ItemGroup"), CreateAssetMenu(fileName = "ItemGroup", menuName = "UniversalInventorySystem/ItemGroup", order = 1), System.Serializable]
+    public class ItemGroup : ScriptableObject
     {
         public List<Item> itemsList = new List<Item>();
         public string strId;

@@ -5,8 +5,8 @@ using UnityEditor;
 
 namespace UniversalInventorySystem
 {
-    [AddComponentMenu("UniversalInventorySystem/RecipeAsset"), CreateAssetMenu(fileName = "RecipeAsset", menuName = "UniversalInventorySystem/RecipeAsset", order = 10), System.Serializable]
-    public class RecipeAsset : ScriptableObject
+    [AddComponentMenu("UniversalInventorySystem/RecipeGroup"), CreateAssetMenu(fileName = "RecipeGroup", menuName = "UniversalInventorySystem/RecipeGroup", order = 10), System.Serializable]
+    public class RecipeGroup : ScriptableObject
     {
         public List<Recipe> recipesList = new List<Recipe>();
         public List<PatternRecipe> receipePatternsList = new List<PatternRecipe>();

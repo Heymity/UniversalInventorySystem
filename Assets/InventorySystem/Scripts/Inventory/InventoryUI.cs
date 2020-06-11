@@ -79,8 +79,6 @@ namespace UniversalInventorySystem
                 }
             }
 
-
-
             var b = Instantiate(dragObj, canvas.transform);
             b.name = $"DRAGITEMOBJ_{name}_{UnityEngine.Random.Range(int.MinValue, int.MaxValue)}";
             b.AddComponent<DragSlot>();
@@ -110,6 +108,20 @@ namespace UniversalInventorySystem
                                 drag = slots[i].transform.GetChild(j).gameObject.AddComponent<ItemDragHandler>();
                                 drag.canvas = canvas;
                                 drag.invUI = this;
+                            }
+
+                            Tooltip tooltip;
+                            if (slots[i].transform.GetChild(j).TryGetComponent(out tooltip))
+                            {
+                                tooltip.canvas = canvas;
+                                tooltip.invUI = this;
+                                tooltip.slotNum = i;
+                            } else
+                            {
+                                tooltip = slots[i].transform.GetChild(j).gameObject.AddComponent<Tooltip>();
+                                tooltip.canvas = canvas;
+                                tooltip.invUI = this;
+                                tooltip.slotNum = i;
                             }
                         }
                     }
@@ -148,6 +160,41 @@ namespace UniversalInventorySystem
                 tmp.invUI = this;
                 g.name = i.ToString();
                 gb.Add(g);
+
+                for (int j = 0; j < g.transform.childCount; j++)
+                {
+                    Image image;
+                    if (g.transform.GetChild(j).TryGetComponent<Image>(out image))
+                    {
+                        ItemDragHandler drag;
+                        if (g.transform.GetChild(j).TryGetComponent(out drag))
+                        {
+                            drag.canvas = canvas;
+                            drag.invUI = this;
+                        }
+                        else
+                        {
+                            drag = g.transform.GetChild(j).gameObject.AddComponent<ItemDragHandler>();
+                            drag.canvas = canvas;
+                            drag.invUI = this;
+                        }
+
+                        Tooltip tooltip;
+                        if (g.transform.GetChild(j).TryGetComponent(out tooltip))
+                        {
+                            tooltip.canvas = canvas;
+                            tooltip.invUI = this;
+                            tooltip.slotNum = i;
+                        }
+                        else
+                        {
+                            tooltip = g.transform.GetChild(j).gameObject.AddComponent<Tooltip>();
+                            tooltip.canvas = canvas;
+                            tooltip.invUI = this;
+                            tooltip.slotNum = i;
+                        }
+                    }
+                }
             }
             slots = gb;
             return gb;

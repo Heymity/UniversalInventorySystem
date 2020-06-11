@@ -61,7 +61,7 @@ public class SlotDrawer : PropertyDrawer
                 bool useItemAsset = EditorPrefs.GetBool(property.propertyPath, true);
 
                 Rect uia = new Rect(foldPos.x, foldPos.y, 120, foldPos.height);
-                bool tmp = EditorGUI.Toggle(uia, "Use ItemAsset", useItemAsset);
+                bool tmp = EditorGUI.Toggle(uia, "Use ItemGroup", useItemAsset);
                 foldPos.x += 120;
 
                 if ((tmp != useItemAsset || !unfold[property.propertyPath].executeOnce) && amTmp == amBool) 
@@ -89,7 +89,7 @@ public class SlotDrawer : PropertyDrawer
                     {
                         if (whitelistProp.objectReferenceValue != null)
                         {
-                            var ia = whitelistProp.objectReferenceValue as ItemAsset;
+                            var ia = whitelistProp.objectReferenceValue as ItemGroup;
 
                             if (unfold[property.propertyPath].editorAssignSize < ia.itemsList.Count) unfold[property.propertyPath].editorAssignSize = ia.itemsList.Count;
                             for (int i = 0; i < ia.itemsList.Count; i++)
@@ -109,7 +109,7 @@ public class SlotDrawer : PropertyDrawer
                 if (tmp)
                 {
                     Rect ias = new Rect(foldPos.x, foldPos.y, 80, foldPos.height);
-                    unfold[property.propertyPath].iasExpand = EditorGUI.Foldout(ias, unfold[property.propertyPath].iasExpand, "Item Assets", true);
+                    unfold[property.propertyPath].iasExpand = EditorGUI.Foldout(ias, unfold[property.propertyPath].iasExpand, "Item Group", true);
                     ias.x += 80;
                     ias.width = 160;
 
@@ -145,21 +145,21 @@ public class SlotDrawer : PropertyDrawer
                             Object obj = null;
                             if (i < unfold[property.propertyPath].objs.Count)
                             {
-                                unfold[property.propertyPath].objs[i] = EditorGUI.ObjectField(objRect, new GUIContent($"Item Asset {i}"), unfold[property.propertyPath].objs[i], typeof(ItemAsset), false);
+                                unfold[property.propertyPath].objs[i] = EditorGUI.ObjectField(objRect, new GUIContent($"Item Asset {i}"), unfold[property.propertyPath].objs[i], typeof(ItemGroup), false);
                             } else
                             {
-                                unfold[property.propertyPath].objs.Add(EditorGUI.ObjectField(objRect, new GUIContent($"Item Asset {i}"), obj, typeof(ItemAsset), false));
+                                unfold[property.propertyPath].objs.Add(EditorGUI.ObjectField(objRect, new GUIContent($"Item Asset {i}"), obj, typeof(ItemGroup), false));
                             }
                         }
                     }
 
                     if (amBool != amTmp)
                     {
-                        ItemAsset newAsset = ScriptableObject.CreateInstance<ItemAsset>();
+                        ItemGroup newAsset = ScriptableObject.CreateInstance<ItemGroup>();
 
                         foreach (Object iaobj in unfold[property.propertyPath].objs)
                         {
-                            ItemAsset ia = iaobj as ItemAsset;
+                            ItemGroup ia = iaobj as ItemGroup;
                             if (ia == null) continue;
                             newAsset.name += ia.name + " ";
                             foreach (Item item in ia.itemsList)
@@ -168,7 +168,7 @@ public class SlotDrawer : PropertyDrawer
                             }
                         }
 
-                        if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemAsset).itemsList, newAsset.itemsList))
+                        if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList))
                         {
                             newAsset.strId = newAsset.name;
                             newAsset.id = Random.Range(10000, int.MaxValue);
@@ -225,8 +225,7 @@ public class SlotDrawer : PropertyDrawer
 
                     if (amBool != amTmp)
                     {
-                        Debug.Log(unfold[property.propertyPath].objs[unfold[property.propertyPath].objs.Count - 1]);
-                        ItemAsset newAsset = ScriptableObject.CreateInstance<ItemAsset>();
+                        ItemGroup newAsset = ScriptableObject.CreateInstance<ItemGroup>();
 
                         newAsset.name += "Custom ItemGroup";
                         foreach (Object itemobj in unfold[property.propertyPath].objs)
@@ -247,7 +246,7 @@ public class SlotDrawer : PropertyDrawer
 
                         if (whitelistProp.objectReferenceValue != null)
                         {
-                            if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemAsset).itemsList, newAsset.itemsList))
+                            if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList))
                             {
                                 newAsset.id = Random.Range(10000, int.MaxValue);
                                 whitelistProp.objectReferenceValue = newAsset;

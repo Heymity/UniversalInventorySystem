@@ -30,13 +30,13 @@ namespace UniversalInventorySystem
         //--------ITEM HANDLER--------//
 
         [Header("Items Handler")]
-        public List<ItemAsset> itemAssets;
+        public List<ItemGroup> itemAssets;
 
-        public ItemAsset GetItemAssetAtIndex(int index) { return itemAssets[index]; }
+        public ItemGroup GetItemAssetAtIndex(int index) { return itemAssets[index]; }
 
-        public ItemAsset GetItemAssetWithName(string _strId)
+        public ItemGroup GetItemAssetWithName(string _strId)
         {
-            foreach (ItemAsset i in itemAssets)
+            foreach (ItemGroup i in itemAssets)
             {
                 if (i.strId == _strId) return i;
             }
@@ -44,9 +44,9 @@ namespace UniversalInventorySystem
             return null;
         }
 
-        public ItemAsset GetItemAssetWithID(int id)
+        public ItemGroup GetItemAssetWithID(int id)
         {
-            foreach (ItemAsset i in itemAssets)
+            foreach (ItemGroup i in itemAssets)
             {
                 if (i.id == id) return i;
             }
@@ -54,12 +54,12 @@ namespace UniversalInventorySystem
             return null;
         }
 
-        public List<ItemAsset> OrderItemsAssetById()
+        public List<ItemGroup> OrderItemsAssetById()
         {
             return InsertionSort(itemAssets);
         }
 
-        static List<ItemAsset> InsertionSort(List<ItemAsset> inputArray)
+        static List<ItemGroup> InsertionSort(List<ItemGroup> inputArray)
         {
             for (int i = 0; i < inputArray.Count - 1; i++)
             {
@@ -89,13 +89,13 @@ namespace UniversalInventorySystem
         //--------RECIPE-HANDLER--------//
 
         [Header("Recipe Handler")]
-        public List<RecipeAsset> recipeAssets = new List<RecipeAsset>();
+        public List<RecipeGroup> recipeAssets = new List<RecipeGroup>();
 
-        public RecipeAsset GetRecipeAssetAtIndex(int index) { return recipeAssets[index]; }
+        public RecipeGroup GetRecipeAssetAtIndex(int index) { return recipeAssets[index]; }
 
-        public RecipeAsset GetRecipeAssetWithName(string _strId)
+        public RecipeGroup GetRecipeAssetWithName(string _strId)
         {
-            foreach (RecipeAsset i in recipeAssets)
+            foreach (RecipeGroup i in recipeAssets)
             {
                 if (i.strId == _strId) return i;
             }
@@ -103,9 +103,9 @@ namespace UniversalInventorySystem
             return null;
         }
 
-        public RecipeAsset GetRecipeAssetWithID(int id)
+        public RecipeGroup GetRecipeAssetWithID(int id)
         {
-            foreach (RecipeAsset i in recipeAssets)
+            foreach (RecipeGroup i in recipeAssets)
             {
                 if (i.id == id) return i;
             }
@@ -113,12 +113,12 @@ namespace UniversalInventorySystem
             return null;
         }
 
-        public List<RecipeAsset> OrderRecipeAssetById()
+        public List<RecipeGroup> OrderRecipeAssetById()
         {
             return InsertionSort(recipeAssets);
         }
 
-        static List<RecipeAsset> InsertionSort(List<RecipeAsset> inputArray)
+        static List<RecipeGroup> InsertionSort(List<RecipeGroup> inputArray)
         {
             for (int i = 0; i < inputArray.Count - 1; i++)
             {
@@ -149,7 +149,7 @@ namespace UniversalInventorySystem
 
         public PatternRecipe GetPatternRecipeWithID(int recipeAssetID, int patternRecipeID)
         {
-            RecipeAsset asset = GetRecipeAssetWithID(recipeAssetID);
+            RecipeGroup asset = GetRecipeAssetWithID(recipeAssetID);
 
             if (asset != null)
             {

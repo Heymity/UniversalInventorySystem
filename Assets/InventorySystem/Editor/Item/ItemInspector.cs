@@ -24,10 +24,14 @@ public class ItemInspector : Editor
     SerializedProperty onUseFuncProp;
     SerializedProperty optionalOnDropBehaviour;
 
+    //Tooltip
+    SerializedProperty tooltipProp;
+
     bool itemFoldout;
     bool storageFoldout;
     bool usingFoldout;
     bool behaviourFoldout;
+    bool tooltipFoldout;
 
     private void OnEnable()
     {
@@ -40,6 +44,7 @@ public class ItemInspector : Editor
         stackableProp = serializedObject.FindProperty("stackable");
         onUseFuncProp = serializedObject.FindProperty("onUseFunc");
         optionalOnDropBehaviour = serializedObject.FindProperty("optionalOnDropBehaviour");
+        tooltipProp = serializedObject.FindProperty("tooltip");
     }
 
     public override void OnInspectorGUI()
@@ -92,6 +97,13 @@ public class ItemInspector : Editor
             EditorGUILayout.HelpBox(new GUIContent("The field below accepts any script, but it will only work if the provided script has the OnDropItem function"));
             EditorGUILayout.ObjectField(optionalOnDropBehaviour, new GUIContent("On drop item optional Behaviour"));
             EditorGUI.indentLevel--;
+        }
+
+        EditorGUILayout.Separator();
+        tooltipFoldout = EditorGUILayout.Foldout(tooltipFoldout, "Tooltip Configuration", true, EditorStyles.foldoutHeader);
+        if (tooltipFoldout)
+        {
+            EditorGUILayout.PropertyField(tooltipProp);
         }
 
         serializedObject.ApplyModifiedProperties();

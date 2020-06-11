@@ -979,7 +979,7 @@ namespace UniversalInventorySystem
 
             InventoryHandler handler = InventoryHandler.current;
 
-            foreach (RecipeAsset asset in handler.recipeAssets)
+            foreach (RecipeGroup asset in handler.recipeAssets)
             {
                 if (allowPatternRecipe)
                 {
@@ -1000,17 +1000,17 @@ namespace UniversalInventorySystem
         }
 
         /// <summary>
-        /// This function checks every recipe in the provided RecipeAsset and if it finds a match it returns the product. The pattern recipes are checked before the normal ones, and once a match is find it returns
+        /// This function checks every recipe in the provided RecipeGroup and if it finds a match it returns the product. The pattern recipes are checked before the normal ones, and once a match is find it returns
         /// </summary>
         /// <param name="inv">The crafting inventory</param>
         /// <param name="grid">The items grid (the rest of the inventory will be ignored)</param>
         /// <param name="gridSize">The size of the crafting grid</param>
         /// <param name="craftItem">Wheter it should remove the items form the grid or not</param>
-        /// <param name="asset">The RecipeAsset to be checked</param>
+        /// <param name="asset">The RecipeGroup to be checked</param>
         /// <param name="allowPatternRecipe">Wheter it should check for pattern recipes or not (This is useful if you have a big game and dont want to check the patterns, since they are much more time consuming than normal recipes)</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, RecipeAsset asset, bool allowPatternRecipe, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, RecipeGroup asset, bool allowPatternRecipe, int productSlots)
         {
             if (allowPatternRecipe)
             {
@@ -1369,6 +1369,21 @@ namespace UniversalInventorySystem
             return new CheckItemData(inv, slotsToCheck, new int[0], 0, false, mustBeOnSameSlot, itemToCheck);
         }
 
+        public static ToolTipInfo GetTooltipInfoFromSlot(this Inventory inv, int slot)
+        {   
+            if(inv == null)
+            {
+                Debug.LogError("Null inventory provided for GetTooltipInfoFromSlot");
+                return null;
+            }
+            if(slot < 0 || slot >= inv.slots.Count)
+            {
+                Debug.LogError("Slot number provided for GetTooltipInfoFromSlot is outside the inventory slots array bounds");
+                return null;
+            }
+
+            return inv.slots[slot].item.tooltip;
+        }
         #endregion
     }
 
@@ -1449,11 +1464,11 @@ namespace UniversalInventorySystem
         public bool hasItem;
         public bool isProductSlot;
         public SlotProtection interative;
-        public ItemAsset whitelist;
+        public ItemGroup whitelist;
 
         public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null);
 
-        public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive, ItemAsset _whitelist)
+        public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist)
         {
             item = slot.item;
             amount = slot.amount;
@@ -1523,7 +1538,7 @@ namespace UniversalInventorySystem
             whitelist = null;
         }
 
-        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemAsset _whitelist)
+        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist)
         {
             item = _item;
             amount = _amount;

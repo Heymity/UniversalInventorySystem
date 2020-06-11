@@ -10,7 +10,7 @@ public class AssetHandler
     [OnOpenAsset()]
     public static bool OpenEditor(int instanceId, int line)
     {
-        ItemAsset obj = EditorUtility.InstanceIDToObject(instanceId) as ItemAsset;
+        ItemGroup obj = EditorUtility.InstanceIDToObject(instanceId) as ItemGroup;
         if(obj != null)
         {
             ItemDataEditorWindow.Open(obj);
@@ -22,7 +22,7 @@ public class AssetHandler
 }
 
 
-[CustomEditor(typeof(ItemAsset))]
+[CustomEditor(typeof(ItemGroup))]
 public class ItemDataEditor : Editor
 {
     SerializedProperty itemsListProp;
@@ -60,7 +60,7 @@ public class ItemDataEditor : Editor
 
         if(GUILayout.Button("Open Editor"))
         {
-            ItemDataEditorWindow.Open((ItemAsset)target);
+            ItemDataEditorWindow.Open((ItemGroup)target);
         }
 
         serializedObject.ApplyModifiedProperties();

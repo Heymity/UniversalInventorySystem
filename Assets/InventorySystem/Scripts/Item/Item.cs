@@ -17,6 +17,7 @@ namespace UniversalInventorySystem
         public bool stackable;
         public MonoScript onUseFunc;
         public MonoScript optionalOnDropBehaviour;
+        public ToolTipInfo tooltip;
 
         public void OnUse(Inventory inv, int slot)
         {

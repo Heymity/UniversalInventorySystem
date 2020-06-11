@@ -5,7 +5,8 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - generatedUIParent: {instanceID: 0}
-  - slotPrefab: {instanceID: 0}
+  - slotPrefab: {fileID: 4676626297327902047, guid: 190af5ce39ca9824191677bd7d614e99,
+      type: 3}
   - canvas: {instanceID: 0}
   - DontDropItemRect: {instanceID: 0}
   - dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd,

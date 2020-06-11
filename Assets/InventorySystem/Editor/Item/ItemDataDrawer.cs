@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using UniversalInventorySystem;
 
-[CustomPropertyDrawer(typeof(ItemAsset))]
+[CustomPropertyDrawer(typeof(ItemGroup))]
 public class ItemDataDrawer : PropertyDrawer
 {
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -21,7 +21,7 @@ public class ItemDataDrawer : PropertyDrawer
         {
             if (GUI.Button(buttonRect, new GUIContent("Open Editor of " + label.text)))
             {
-                ItemDataEditorWindow.Open(property.objectReferenceValue as ItemAsset);
+                ItemDataEditorWindow.Open(property.objectReferenceValue as ItemGroup);
             }
         }
         

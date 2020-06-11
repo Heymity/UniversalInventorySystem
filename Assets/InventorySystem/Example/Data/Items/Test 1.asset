@@ -21,3 +21,11 @@ MonoBehaviour:
   stackable: 0
   onUseFunc: {fileID: 0}
   optionalOnDropBehaviour: {fileID: 0}
+  tooltip:
+    title: 
+    description: 
+    sprite: {fileID: 0}
+    size: {x: 0, y: 0}
+    padding: {x: 0, y: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
+    backgroudColor: {r: 0, g: 0, b: 0, a: 0}
