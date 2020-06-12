@@ -1,4 +1,6 @@
-﻿using TMPro;
+﻿using System.Collections.Generic;
+using System.Security.Cryptography;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,22 +35,48 @@ namespace UniversalInventorySystem
                         sr.sprite = item.tooltip.sprite;
                         sr.color = item.tooltip.backgroudColor;
 
-                        var toolTipText = new GameObject();
-                        toolTipText.name = "title";
-                        toolTipText.transform.SetParent(toolTip.transform);
-
-                        var tmp = toolTipText.AddComponent<TextMeshProUGUI>();
-                        tmp.text = item.tooltip.title;
-                        tmp.color = item.tooltip.color;
-                        tmp.raycastTarget = false;
-                        (tmp.transform as RectTransform).sizeDelta = new Vector2(tmp.preferredWidth, tmp.preferredHeight);
-                        tmp.alignment = TextAlignmentOptions.Center;
-
                         Vector2 padding = new Vector2(item.tooltip.padding.x * 10, item.tooltip.padding.y * 10);
+
+                        float height = 0;
+                        float width = 0;
+
+                        List<GameObject> tttexts = new List<GameObject>();
+                        for (int i = 0; i < item.tooltip.texts.Count; i++)
+                        {
+                            var toolTipText = new GameObject();
+                            toolTipText.name = $"text {i}";
+                            toolTipText.transform.SetParent(toolTip.transform);
+
+                            var tmp = toolTipText.AddComponent<TextMeshProUGUI>();
+                            tmp.text = item.tooltip.texts[i].text;
+                            tmp.color = item.tooltip.texts[i].color;
+                            tmp.fontSize = item.tooltip.texts[i].fontSize;
+                            tmp.raycastTarget = false;
+                            (tmp.transform as RectTransform).sizeDelta = new Vector2(tmp.preferredWidth <= item.tooltip.maxWidth ? tmp.preferredWidth : item.tooltip.maxWidth, tmp.preferredHeight);
+                            tmp.alignment = TextAlignmentOptions.Center;
+
+                            tttexts.Add(toolTipText);
+
+                            height += tmp.preferredHeight;
+                            width = width <= tmp.preferredWidth ? tmp.preferredWidth : _ = width;
+                        }
+
+                        float tmpheight = 0;
+                        foreach (GameObject g in tttexts)
+                        {
+                            float addingheight = -(tmpheight - (height / 2) + g.GetComponent<TextMeshProUGUI>().preferredHeight / 2);
+                            (g.transform as RectTransform).localPosition += new Vector3(0, addingheight, 0);
+                            tmpheight += g.GetComponent<TextMeshProUGUI>().preferredHeight;
+                        }
+
+                        height += padding.x;
+                        width += padding.y;
+
+                        width = width <= item.tooltip.maxWidth ? width : item.tooltip.maxWidth;
 
                         var rt = toolTip.transform as RectTransform;
                         rt.localScale = new Vector3(item.tooltip.size.x / 2f, item.tooltip.size.y / 2f, 1);
-                        rt.sizeDelta = new Vector2(tmp.preferredWidth + padding.x, tmp.preferredHeight + padding.y);
+                        rt.sizeDelta = new Vector2(width, height);
                     }
                     else 
                     {
@@ -110,10 +138,18 @@ namespace UniversalInventorySystem
         public Vector2 size;
         public Vector2 padding;
         public Vector2 margin;
+        public float maxWidth;
 
-        public string title;
-        [TextArea] public string description;
-        public Color color;
+        public List<TooltipText> texts;
+
+        [System.Serializable]
+        public class TooltipText
+        {
+            [TextArea] public string text;
+            public int fontSize;
+            public Color color;
+            public XAligment pivot;
+        }
     }
 
     public enum XAligment
