@@ -52,8 +52,10 @@ namespace UniversalInventorySystem
                             tmp.color = item.tooltip.texts[i].color;
                             tmp.fontSize = item.tooltip.texts[i].fontSize;
                             tmp.raycastTarget = false;
-                            (tmp.transform as RectTransform).sizeDelta = new Vector2(tmp.preferredWidth <= item.tooltip.maxWidth ? tmp.preferredWidth : item.tooltip.maxWidth, tmp.preferredHeight);
-                            tmp.alignment = TextAlignmentOptions.Center;
+                            (tmp.transform as RectTransform).sizeDelta = new Vector2(tmp.preferredWidth <= item.tooltip.maxWidth - padding.x ? tmp.preferredWidth : item.tooltip.maxWidth - padding.x, tmp.preferredHeight);
+                            tmp.alignment = item.tooltip.texts[i].alignOptions;
+                            tmp.fontStyle = item.tooltip.texts[i].fontStyles;
+                            tmp.font = item.tooltip.texts[i].font;
 
                             tttexts.Add(toolTipText);
 
@@ -133,6 +135,7 @@ namespace UniversalInventorySystem
         public Sprite sprite;
         public XAligment xalign;
         public YAligment yalign;
+        public Vector2 align;
         public Color backgroudColor;
 
         public Vector2 size;
@@ -145,7 +148,11 @@ namespace UniversalInventorySystem
         [System.Serializable]
         public class TooltipText
         {
-            [TextArea] public string text;
+            [TextArea] 
+            public string text;
+            public TextAlignmentOptions alignOptions;
+            public FontStyles fontStyles;
+            public TMP_FontAsset font;
             public int fontSize;
             public Color color;
             public XAligment pivot;
