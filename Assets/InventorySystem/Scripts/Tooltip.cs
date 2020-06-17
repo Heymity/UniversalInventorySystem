@@ -48,14 +48,14 @@ namespace UniversalInventorySystem
                             toolTipText.transform.SetParent(toolTip.transform);
 
                             var tmp = toolTipText.AddComponent<TextMeshProUGUI>();
+                            tmp.font = item.tooltip.texts[i].font;
                             tmp.text = item.tooltip.texts[i].text;
                             tmp.color = item.tooltip.texts[i].color;
                             tmp.fontSize = item.tooltip.texts[i].fontSize;
                             tmp.raycastTarget = false;
-                            (tmp.transform as RectTransform).sizeDelta = new Vector2(tmp.preferredWidth <= item.tooltip.maxWidth - padding.x ? tmp.preferredWidth : item.tooltip.maxWidth - padding.x, tmp.preferredHeight);
-                            tmp.alignment = item.tooltip.texts[i].alignOptions;
                             tmp.fontStyle = item.tooltip.texts[i].fontStyles;
-                            tmp.font = item.tooltip.texts[i].font;
+                            tmp.alignment = item.tooltip.texts[i].alignOptions;
+                            (tmp.transform as RectTransform).sizeDelta = new Vector2(tmp.preferredWidth <= item.tooltip.maxWidth - padding.x ? tmp.preferredWidth : item.tooltip.maxWidth - padding.x, tmp.preferredHeight);
 
                             tttexts.Add(toolTipText);
 
@@ -64,10 +64,26 @@ namespace UniversalInventorySystem
                         }
 
                         float tmpheight = 0;
-                        foreach (GameObject g in tttexts)
+                        for(int i = 0; i < tttexts.Count;i++)
                         {
+                            GameObject g = tttexts[i];
                             float addingheight = -(tmpheight - (height / 2) + g.GetComponent<TextMeshProUGUI>().preferredHeight / 2);
-                            (g.transform as RectTransform).localPosition += new Vector3(0, addingheight, 0);
+                            switch(item.tooltip.texts[i].pivot)
+                            {
+                                case XAligment.center:
+                                    (g.transform as RectTransform).localPosition += new Vector3(0, addingheight, 0);
+                                    break;
+                                case XAligment.left:
+                                    (g.transform as RectTransform).anchorMin = new Vector2(0, (g.transform as RectTransform).anchorMin.y);
+                                    (g.transform as RectTransform).anchorMax = new Vector2(0, (g.transform as RectTransform).anchorMax.y);
+                                    (g.transform as RectTransform).localPosition += new Vector3(((g.transform as RectTransform).sizeDelta.x / 2) + item.tooltip.margin.x, addingheight, 0);
+                                    break;
+                                case XAligment.right:
+                                    (g.transform as RectTransform).anchorMin = new Vector2(1, (g.transform as RectTransform).anchorMin.y);
+                                    (g.transform as RectTransform).anchorMax = new Vector2(1, (g.transform as RectTransform).anchorMax.y);
+                                    (g.transform as RectTransform).localPosition += new Vector3(-((g.transform as RectTransform).sizeDelta.x / 2) - item.tooltip.margin.x, addingheight, 0);
+                                    break;
+                            }
                             tmpheight += g.GetComponent<TextMeshProUGUI>().preferredHeight;
                         }
 

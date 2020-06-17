@@ -1595,19 +1595,19 @@ namespace UniversalInventorySystem
 
     public enum InventoryProtection
     {
-        Any = 1,
-        InventoryToInventory = 2,
-        SlotToSlot = 4,
-        LockSlots = 8,
-        LockThruInventory = 16,
-        Locked = 32
+        Any = 0,
+        InventoryToInventory = 1,
+        SlotToSlot = 2,
+        LockSlots = 4,
+        LockThruInventory = 8,
+        Locked = 16
     }
 
     public enum SlotProtection
     {
-        Any = 1,
-        Locked = 2,
-        OnlyAdd = 3,
+        Any = 0,
+        Locked = 1,
+        OnlyAdd = 2,
         OnlyRemove = 4
     }
 
