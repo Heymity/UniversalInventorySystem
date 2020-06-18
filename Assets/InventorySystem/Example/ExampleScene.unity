@@ -3962,7 +3962,7 @@ MonoBehaviour:
     id: 0
     areItemsUsable: 1
     areItemsDroppable: 1
-    interactiable: 1
+    interactiable: 0
     hasInitializated: 0
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}

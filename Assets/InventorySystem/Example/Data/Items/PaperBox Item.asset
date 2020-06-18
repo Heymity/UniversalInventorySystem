@@ -26,35 +26,47 @@ MonoBehaviour:
     usePrefab: 0
     tooltipPrefab: {fileID: 0}
     sprite: {fileID: 0}
+    xAligmentOption: 0
     xalign: 2
-    yalign: 1
+    xPixelOrPercentage: 0
+    yAligmentOption: 1
+    yalign: 0
+    yPixelOrPercentage: 40
     align: {x: 0, y: 0}
-    backgroudColor: {r: 0, g: 0, b: 0, a: 1}
+    backgroudColor: {r: 0, g: 0, b: 0, a: 0.8862745}
     size: {x: 1, y: 1}
     padding: {x: 4, y: 4}
     margin: {x: 10, y: 0}
     maxWidth: 450
     texts:
     - text: My Item
-      alignOptions: 514
+      alignOptions: 513
       fontStyles: 1
       font: {fileID: 0}
       fontSize: 46
       color: {r: 0.8490566, g: 0.52623343, b: 0.22828408, a: 1}
-      pivot: 0
+      aligmentOption: 2
+      pivot: 1
+      pixelOrPercentage: 0
     - text: 'Description
 
-        With a lot of text for testing line breaking'
+        With a lot of text for testing line breaking
+
+'
       alignOptions: 520
       fontStyles: 0
       font: {fileID: 0}
       fontSize: 36
       color: {r: 0.28132787, g: 0.29344684, b: 0.5471698, a: 1}
+      aligmentOption: 0
       pivot: 0
+      pixelOrPercentage: 0
     - text: Info
       alignOptions: 514
       fontStyles: 0
       font: {fileID: 0}
       fontSize: 28
       color: {r: 0.24630652, g: 0.26851353, b: 0.4245283, a: 1}
+      aligmentOption: 0
       pivot: 0
+      pixelOrPercentage: 0

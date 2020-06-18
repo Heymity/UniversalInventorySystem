@@ -55,7 +55,7 @@ namespace UniversalInventorySystem
                             tmp.raycastTarget = false;
                             tmp.fontStyle = item.tooltip.texts[i].fontStyles;
                             tmp.alignment = item.tooltip.texts[i].alignOptions;
-                            (tmp.transform as RectTransform).sizeDelta = new Vector2(tmp.preferredWidth <= item.tooltip.maxWidth - padding.x ? tmp.preferredWidth : item.tooltip.maxWidth - padding.x, tmp.preferredHeight);
+                            (tmp.transform as RectTransform).sizeDelta = new Vector2(tmp.preferredWidth <= item.tooltip.maxWidth - Mathf.Abs(padding.x) ? tmp.preferredWidth : item.tooltip.maxWidth - Mathf.Abs(padding.x), tmp.preferredHeight);
 
                             tttexts.Add(toolTipText);
 
@@ -68,20 +68,64 @@ namespace UniversalInventorySystem
                         {
                             GameObject g = tttexts[i];
                             float addingheight = -(tmpheight - (height / 2) + g.GetComponent<TextMeshProUGUI>().preferredHeight / 2);
-                            switch(item.tooltip.texts[i].pivot)
+
+                            switch (item.tooltip.texts[i].aligmentOption)
                             {
-                                case XAligment.center:
-                                    (g.transform as RectTransform).localPosition += new Vector3(0, addingheight, 0);
+                                case AligmentOption.percentage:
+                                    (g.transform as RectTransform).anchorMin = new Vector2(
+                                        item.tooltip.texts[i].pixelOrPercentage / 100,
+                                        (g.transform as RectTransform).anchorMin.y
+                                    );
+                                    (g.transform as RectTransform).anchorMax = new Vector2(
+                                        item.tooltip.texts[i].pixelOrPercentage / 100,
+                                        (g.transform as RectTransform).anchorMax.y
+                                    );
+                                    switch (item.tooltip.texts[i].pivot)
+                                    {
+                                        case XAligment.center:
+                                            (g.transform as RectTransform).localPosition += new Vector3(0, addingheight, 0);
+                                            break;
+                                        case XAligment.left:
+                                            (g.transform as RectTransform).localPosition += new Vector3(((g.transform as RectTransform).sizeDelta.x / 2) + item.tooltip.margin.x, addingheight, 0);
+                                            break;
+                                        case XAligment.right:
+                                            (g.transform as RectTransform).localPosition += new Vector3(-((g.transform as RectTransform).sizeDelta.x / 2) - item.tooltip.margin.x, addingheight, 0);
+                                            break;
+                                    }
                                     break;
-                                case XAligment.left:
-                                    (g.transform as RectTransform).anchorMin = new Vector2(0, (g.transform as RectTransform).anchorMin.y);
-                                    (g.transform as RectTransform).anchorMax = new Vector2(0, (g.transform as RectTransform).anchorMax.y);
-                                    (g.transform as RectTransform).localPosition += new Vector3(((g.transform as RectTransform).sizeDelta.x / 2) + item.tooltip.margin.x, addingheight, 0);
+
+                                case AligmentOption.pixel:
+                                    switch (item.tooltip.texts[i].pivot)
+                                    {
+                                        case XAligment.center:
+                                            (g.transform as RectTransform).localPosition += new Vector3(item.tooltip.texts[i].pixelOrPercentage, addingheight, 0);
+                                            break;
+                                        case XAligment.right:
+                                            (g.transform as RectTransform).localPosition += new Vector3(((g.transform as RectTransform).sizeDelta.x / 2) + item.tooltip.margin.x + item.tooltip.texts[i].pixelOrPercentage, addingheight, 0);
+                                            break;
+                                        case XAligment.left:
+                                            (g.transform as RectTransform).localPosition += new Vector3(-((g.transform as RectTransform).sizeDelta.x / 2) - item.tooltip.margin.x + item.tooltip.texts[i].pixelOrPercentage, addingheight, 0);
+                                            break;
+                                    }
                                     break;
-                                case XAligment.right:
-                                    (g.transform as RectTransform).anchorMin = new Vector2(1, (g.transform as RectTransform).anchorMin.y);
-                                    (g.transform as RectTransform).anchorMax = new Vector2(1, (g.transform as RectTransform).anchorMax.y);
-                                    (g.transform as RectTransform).localPosition += new Vector3(-((g.transform as RectTransform).sizeDelta.x / 2) - item.tooltip.margin.x, addingheight, 0);
+
+                                case AligmentOption.preDefined:
+                                    switch (item.tooltip.texts[i].pivot)
+                                    {
+                                        case XAligment.center:
+                                            (g.transform as RectTransform).localPosition += new Vector3(0, addingheight, 0);
+                                            break;
+                                        case XAligment.left:
+                                            (g.transform as RectTransform).anchorMin = new Vector2(0, (g.transform as RectTransform).anchorMin.y);
+                                            (g.transform as RectTransform).anchorMax = new Vector2(0, (g.transform as RectTransform).anchorMax.y);
+                                            (g.transform as RectTransform).localPosition += new Vector3(((g.transform as RectTransform).sizeDelta.x / 2) + item.tooltip.margin.x, addingheight, 0);
+                                            break;
+                                        case XAligment.right:
+                                            (g.transform as RectTransform).anchorMin = new Vector2(1, (g.transform as RectTransform).anchorMin.y);
+                                            (g.transform as RectTransform).anchorMax = new Vector2(1, (g.transform as RectTransform).anchorMax.y);
+                                            (g.transform as RectTransform).localPosition += new Vector3(-((g.transform as RectTransform).sizeDelta.x / 2) - item.tooltip.margin.x, addingheight, 0);
+                                            break;
+                                    }
                                     break;
                             }
                             tmpheight += g.GetComponent<TextMeshProUGUI>().preferredHeight;
@@ -106,30 +150,120 @@ namespace UniversalInventorySystem
                 Vector3 tooltipPos = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
                toolTip.transform.position = tooltipPos;
 
-                switch (item.tooltip.xalign)
+                switch (item.tooltip.xAligmentOption)
                 {
-                    case XAligment.right:
-                        (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
-                        goto case XAligment.center;
-                    case XAligment.center:
-                        (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
+                    case AligmentOption.percentage:
+                        switch (item.tooltip.xalign)
+                        {
+                            case XAligment.right:
+                                (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3((item.tooltip.xPixelOrPercentage / 100) * ((toolTip.transform as RectTransform).rect.width), 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
+                                break;
+                            case XAligment.center:
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / 2), 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.xPixelOrPercentage / 100 * (toolTip.transform as RectTransform).rect.width, 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
+                                break;
+                            case XAligment.left:
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / 4), 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3((item.tooltip.xPixelOrPercentage / 100) * ((toolTip.transform as RectTransform).rect.width), 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
+                                break;
+                        }
                         break;
-                    case XAligment.left:
-                        (toolTip.transform as RectTransform).localPosition -= new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
-                        goto case XAligment.center;
+                    case AligmentOption.preDefined:
+                        switch (item.tooltip.xalign)
+                        {
+                            case XAligment.right:
+                                (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                                goto case XAligment.center;
+                            case XAligment.center:
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
+                                break;
+                            case XAligment.left:
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                                goto case XAligment.center;
+                        }
+                        break;
+                    case AligmentOption.pixel:
+                        switch (item.tooltip.xalign)
+                        {
+                            case XAligment.right:
+                                (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(item.tooltip.xPixelOrPercentage, 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
+                                break;
+                            case XAligment.center:
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / 2), 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.xPixelOrPercentage, 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
+                                break;
+                            case XAligment.left:
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / 4), 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.xPixelOrPercentage, 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
+                                break;
+                        }
+                        break;
                 }
-
-                switch (item.tooltip.yalign)
+               
+                switch (item.tooltip.yAligmentOption)
                 {
-                    case YAligment.up:
-                        (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
-                        goto case YAligment.center;
-                    case YAligment.center:
-                        (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
+                    case AligmentOption.percentage:
+                        switch (item.tooltip.yalign)
+                        {
+                            case YAligment.up:
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (item.tooltip.yPixelOrPercentage / 100) * ((toolTip.transform as RectTransform).rect.height), 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
+                                break;
+                            case YAligment.center:
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / 2), 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.yPixelOrPercentage / 100 * (toolTip.transform as RectTransform).rect.height, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
+                                break;
+                            case YAligment.down:
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / 4), 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, (item.tooltip.yPixelOrPercentage / 100) * ((toolTip.transform as RectTransform).rect.height), 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
+                                break;
+                        }
                         break;
-                    case YAligment.down:
-                        (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
-                        goto case YAligment.center;
+                    case AligmentOption.preDefined:
+                        switch (item.tooltip.yalign)
+                        {
+                            case YAligment.up:
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                                goto case YAligment.center;
+                            case YAligment.center:
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
+                                break;
+                            case YAligment.down:
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                                goto case YAligment.center;
+                        }
+                        break;
+                    case AligmentOption.pixel:
+                        switch (item.tooltip.yalign)
+                        {
+                            case YAligment.up:
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, item.tooltip.yPixelOrPercentage, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
+                                break;
+                            case YAligment.center:
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / 2), 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.yPixelOrPercentage, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
+                                break;
+                            case YAligment.down:
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / 4), 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.yPixelOrPercentage, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
+                                break;
+                        }
+                        break;
                 }
             }
             else
@@ -149,8 +283,15 @@ namespace UniversalInventorySystem
         public GameObject tooltipPrefab;
 
         public Sprite sprite;
+
+        public AligmentOption xAligmentOption;
         public XAligment xalign;
+        public float xPixelOrPercentage;
+
+        public AligmentOption yAligmentOption;
         public YAligment yalign;
+        public float yPixelOrPercentage;
+
         public Vector2 align;
         public Color backgroudColor;
 
@@ -171,7 +312,10 @@ namespace UniversalInventorySystem
             public TMP_FontAsset font;
             public int fontSize;
             public Color color;
+
+            public AligmentOption aligmentOption;
             public XAligment pivot;
+            public float pixelOrPercentage;
         }
     }
 
@@ -186,5 +330,11 @@ namespace UniversalInventorySystem
         up = 0,
         center = 1,
         down = 2
+    }
+    public enum AligmentOption
+    {
+        preDefined = 0,
+        percentage = 1,
+        pixel = 2,
     }
 }
