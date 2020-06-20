@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +12,7 @@ namespace UniversalInventorySystem
         [HideInInspector] public InventoryUI invUI;
         [HideInInspector] public int slotNum;
         GameObject toolTip;
+        RectTransform tooltipRect;
 
         private void Update()
         {
@@ -146,14 +147,13 @@ namespace UniversalInventorySystem
                         toolTip.name = $"Tooltip {invUI.name} {name} {Random.Range(int.MinValue, int.MaxValue)}";
                     }
                 }
-
                 Vector3 tooltipPos = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
                toolTip.transform.position = tooltipPos;
 
                 switch (item.tooltip.xAligmentOption)
                 {
                     case AligmentOption.percentage:
-                        switch (item.tooltip.xalign)
+                        switch (item.tooltip.xAlign)
                         {
                             case XAligment.right:
                                 (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
@@ -173,7 +173,7 @@ namespace UniversalInventorySystem
                         }
                         break;
                     case AligmentOption.preDefined:
-                        switch (item.tooltip.xalign)
+                        switch (item.tooltip.xAlign)
                         {
                             case XAligment.right:
                                 (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
@@ -187,7 +187,7 @@ namespace UniversalInventorySystem
                         }
                         break;
                     case AligmentOption.pixel:
-                        switch (item.tooltip.xalign)
+                        switch (item.tooltip.xAlign)
                         {
                             case XAligment.right:
                                 (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
@@ -211,7 +211,7 @@ namespace UniversalInventorySystem
                 switch (item.tooltip.yAligmentOption)
                 {
                     case AligmentOption.percentage:
-                        switch (item.tooltip.yalign)
+                        switch (item.tooltip.yAlign)
                         {
                             case YAligment.up:
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
@@ -231,7 +231,7 @@ namespace UniversalInventorySystem
                         }
                         break;
                     case AligmentOption.preDefined:
-                        switch (item.tooltip.yalign)
+                        switch (item.tooltip.yAlign)
                         {
                             case YAligment.up:
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
@@ -245,7 +245,7 @@ namespace UniversalInventorySystem
                         }
                         break;
                     case AligmentOption.pixel:
-                        switch (item.tooltip.yalign)
+                        switch (item.tooltip.yAlign)
                         {
                             case YAligment.up:
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
@@ -265,12 +265,47 @@ namespace UniversalInventorySystem
                         }
                         break;
                 }
+
+                if (item.tooltip.autoReAlign)
+                {
+                    tooltipRect = toolTip.transform as RectTransform;
+                    Vector3[] corners = new Vector3[4];
+                    tooltipRect.GetWorldCorners(corners);
+                    Debug.Log($"2: {Camera.main.WorldToViewportPoint(corners[2]).x} 3: {Camera.main.WorldToViewportPoint(corners[3]).x}");
+
+                    bool outRight = (Camera.main.WorldToViewportPoint(corners[2]).x > 1 || Camera.main.WorldToViewportPoint(corners[2]).x < 0) && (Camera.main.WorldToViewportPoint(corners[3]).x > 1 || Camera.main.WorldToViewportPoint(corners[3]).x < 0);
+                    if (outRight) Debug.Log("outRight");
+                    bool outLeft = (Camera.main.WorldToViewportPoint(corners[0]).x > 1 || Camera.main.WorldToViewportPoint(corners[0]).x < 0) && (Camera.main.WorldToViewportPoint(corners[1]).x > 1 || Camera.main.WorldToViewportPoint(corners[1]).x < 0);
+                    if (outLeft) Debug.Log("outLeft");
+                    bool outUp = (Camera.main.WorldToViewportPoint(corners[1]).x > 1 || Camera.main.WorldToViewportPoint(corners[1]).x < 0) && (Camera.main.WorldToViewportPoint(corners[2]).x > 1 || Camera.main.WorldToViewportPoint(corners[2]).x < 0);
+                    if (outUp) Debug.Log("outUp");
+                    bool outDown = (Camera.main.WorldToViewportPoint(corners[3]).x > 1 || Camera.main.WorldToViewportPoint(corners[3]).x < 0) && (Camera.main.WorldToViewportPoint(corners[0]).x > 1 || Camera.main.WorldToViewportPoint(corners[0]).x < 0);
+                    if (outDown) Debug.Log("outDown");
+                }
             }
             else
             {
                 Destroy(toolTip, 0.0000001f);
                 toolTip = null;
             }
+        }
+
+        void OnDrawGizmos()
+        {
+            if (!toolTip) return;
+
+            //tooltipRect = toolTip.transform as RectTransform;
+            Vector3[] corners = new Vector3[4];
+            tooltipRect.GetWorldCorners(corners);
+            //Debug.Log($"Gizmos 2: {Camera.main.WorldToViewportPoint(corners[2]).x} 3: {Camera.main.WorldToViewportPoint(corners[3]).x}");
+            for (var i = 0; i < corners.Length; i++)
+            {
+                    //Debug.Log($"Corner {i} {corners[i]}");
+                if (Camera.main.WorldToViewportPoint(corners[i]).x > 1 || Camera.main.WorldToViewportPoint(corners[i]).x < 0 || Camera.main.WorldToViewportPoint(corners[i]).y > 1 || Camera.main.WorldToViewportPoint(corners[i]).y < 0)
+                    Gizmos.color = Color.red;
+                else Gizmos.color = Color.green;
+                Gizmos.DrawSphere(corners[i], .25f);
+            }         
         }
     }
 
@@ -285,12 +320,15 @@ namespace UniversalInventorySystem
         public Sprite sprite;
 
         public AligmentOption xAligmentOption;
-        public XAligment xalign;
+        public XAligment xAlign;
         public float xPixelOrPercentage;
 
         public AligmentOption yAligmentOption;
-        public YAligment yalign;
+        public YAligment yAlign;
         public float yPixelOrPercentage;
+        
+        public bool autoReAlign;
+        public AutoRealignOptions autoRealignOptions;
 
         public Vector2 align;
         public Color backgroudColor;
@@ -336,5 +374,10 @@ namespace UniversalInventorySystem
         preDefined = 0,
         percentage = 1,
         pixel = 2,
+    }
+    public enum AutoRealignOptions
+    {
+        snapToSide,
+        switchSide
     }
 }
