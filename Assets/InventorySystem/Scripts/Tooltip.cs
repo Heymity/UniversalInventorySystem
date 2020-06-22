@@ -273,11 +273,11 @@ namespace UniversalInventorySystem
                     tooltipRect.GetWorldCorners(corners);
 
                     //X
-                    bool outRight = (Camera.main.WorldToViewportPoint(corners[2]).x > 1 || Camera.main.WorldToViewportPoint(corners[2]).x < 0) && (Camera.main.WorldToViewportPoint(corners[3]).x > 1 || Camera.main.WorldToViewportPoint(corners[3]).x < 0);
-                    bool outLeft = (Camera.main.WorldToViewportPoint(corners[0]).x > 1 || Camera.main.WorldToViewportPoint(corners[0]).x < 0) && (Camera.main.WorldToViewportPoint(corners[1]).x > 1 || Camera.main.WorldToViewportPoint(corners[1]).x < 0);
+                    bool outRight = Camera.main.WorldToViewportPoint(corners[2]).x > 1 - item.tooltip.snapMargin.x && Camera.main.WorldToViewportPoint(corners[3]).x > 1 - item.tooltip.snapMargin.x;
+                    bool outLeft = Camera.main.WorldToViewportPoint(corners[0]).x < 0 + item.tooltip.snapMargin.x && Camera.main.WorldToViewportPoint(corners[1]).x < 0 + item.tooltip.snapMargin.x;
                     //Y
-                    bool outUp = (Camera.main.WorldToViewportPoint(corners[1]).y > 1 || Camera.main.WorldToViewportPoint(corners[1]).y < 0) && (Camera.main.WorldToViewportPoint(corners[2]).y > 1 || Camera.main.WorldToViewportPoint(corners[2]).y < 0);
-                    bool outDown = (Camera.main.WorldToViewportPoint(corners[3]).y > 1 || Camera.main.WorldToViewportPoint(corners[3]).y < 0) && (Camera.main.WorldToViewportPoint(corners[0]).y > 1 || Camera.main.WorldToViewportPoint(corners[0]).y < 0);
+                    bool outUp = Camera.main.WorldToViewportPoint(corners[1]).y > 1 - item.tooltip.snapMargin.y&& Camera.main.WorldToViewportPoint(corners[2]).y > 1 - item.tooltip.snapMargin.y;
+                    bool outDown = Camera.main.WorldToViewportPoint(corners[3]).y < 0 + item.tooltip.snapMargin.y && Camera.main.WorldToViewportPoint(corners[0]).y < 0 + item.tooltip.snapMargin.y;
                     
                     if(item.tooltip.autoRealignOptions == AutoRealignOptions.snapToSide)
                     {
@@ -285,25 +285,25 @@ namespace UniversalInventorySystem
                         if (outRight)
                         {
                             //Debug.Log("outRight");
-                            toolTip.transform.position = new Vector3(Camera.main.ViewportToWorldPoint(new Vector3(1, 0, 0), Camera.main.stereoActiveEye).x, toolTip.transform.position.y, toolTip.transform.position.z);
+                            toolTip.transform.position = new Vector3(Camera.main.ViewportToWorldPoint(new Vector3(1 - item.tooltip.snapTo.x, 0, 0), Camera.main.stereoActiveEye).x, toolTip.transform.position.y, toolTip.transform.position.z);
                             (toolTip.transform as RectTransform).localPosition -= new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
                         }
                         if (outLeft)
                         {
                             //Debug.Log("outLeft");
-                            toolTip.transform.position = new Vector3(Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0), Camera.main.stereoActiveEye).x, toolTip.transform.position.y, toolTip.transform.position.z);
+                            toolTip.transform.position = new Vector3(Camera.main.ViewportToWorldPoint(new Vector3(item.tooltip.snapTo.x, 0, 0), Camera.main.stereoActiveEye).x, toolTip.transform.position.y, toolTip.transform.position.z);
                             (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
                         }
                         if (outUp)
                         {
                             //Debug.Log("outUp");
-                            toolTip.transform.position = new Vector3(toolTip.transform.position.x, Camera.main.ViewportToWorldPoint(new Vector3(0, 1, 0)).y, toolTip.transform.position.z);
+                            toolTip.transform.position = new Vector3(toolTip.transform.position.x, Camera.main.ViewportToWorldPoint(new Vector3(0, 1 - item.tooltip.snapTo.y, 0)).y, toolTip.transform.position.z);
                             (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
                         }
                         if (outDown)
                         {
                             //Debug.Log("outDown");
-                            toolTip.transform.position = new Vector3(toolTip.transform.position.x, Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y, toolTip.transform.position.z);
+                            toolTip.transform.position = new Vector3(toolTip.transform.position.x, Camera.main.ViewportToWorldPoint(new Vector3(0, item.tooltip.snapTo.y, 0)).y, toolTip.transform.position.z);
                             (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
                         }
                     }
@@ -355,6 +355,9 @@ namespace UniversalInventorySystem
         void OnDrawGizmos()
         {
             if (!toolTip) return;
+            var item = invUI.GetInventory().slots[slotNum].item;
+            if (item == null) return;
+            if (item.tooltip == null) return;
 
             //tooltipRect = toolTip.transform as RectTransform;
             Vector3[] corners = new Vector3[4];
@@ -365,9 +368,11 @@ namespace UniversalInventorySystem
                     //Debug.Log($"Corner {i} {corners[i]}");
                 if (Camera.main.WorldToViewportPoint(corners[i]).x > 1 || Camera.main.WorldToViewportPoint(corners[i]).x < 0 || Camera.main.WorldToViewportPoint(corners[i]).y > 1 || Camera.main.WorldToViewportPoint(corners[i]).y < 0)
                     Gizmos.color = Color.red;
-                else Gizmos.color = Color.green;
-                if (Camera.main.WorldToViewportPoint(corners[i]).x == 1 || Camera.main.WorldToViewportPoint(corners[i]).x == 0 || Camera.main.WorldToViewportPoint(corners[i]).y == 1 || Camera.main.WorldToViewportPoint(corners[i]).y == 0)
+                else if (Camera.main.WorldToViewportPoint(corners[i]).x == 1 || Camera.main.WorldToViewportPoint(corners[i]).x == 0 || Camera.main.WorldToViewportPoint(corners[i]).y == 1 || Camera.main.WorldToViewportPoint(corners[i]).y == 0)
                     Gizmos.color = Color.blue;
+                else if (Camera.main.WorldToViewportPoint(corners[i]).x > 1 - item.tooltip.snapMargin.x || Camera.main.WorldToViewportPoint(corners[i]).x < 0 + item.tooltip.snapMargin.x || Camera.main.WorldToViewportPoint(corners[i]).y > 1 - item.tooltip.snapMargin.y || Camera.main.WorldToViewportPoint(corners[i]).y < 0 + item.tooltip.snapMargin.y)
+                    Gizmos.color = Color.yellow;
+                else Gizmos.color = Color.green;
                 Gizmos.DrawSphere(corners[i], .25f);
             }         
         }
@@ -393,6 +398,8 @@ namespace UniversalInventorySystem
         
         public bool autoReAlign;
         public AutoRealignOptions autoRealignOptions;
+        public Vector2 snapMargin;
+        public Vector2 snapTo;
 
         public Vector2 align;
         public Color backgroudColor;
