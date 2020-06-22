@@ -1,11 +1,7 @@
-﻿using NUnit.Framework;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
-using UnityEngine.Experimental.AI;
 using UniversalInventorySystem;
 
 [CustomPropertyDrawer(typeof(Slot))]
@@ -40,6 +36,20 @@ public class SlotDrawer : PropertyDrawer
         if (unfold[property.propertyPath].boolValue)
         {
             Rect ampos = new Rect(originalPosition.x, originalPosition.y + 18f, 100, 18);
+            unfold[property.propertyPath].fieldAmount = 2.5f;
+
+            var durRect = ampos;
+            durRect.width = position.width;
+            var durability = property.FindPropertyRelative("durability");
+            var hasItem = property.FindPropertyRelative("hasItem");
+            var slotItem = property.FindPropertyRelative("item");
+            if (hasItem.boolValue && (slotItem.objectReferenceValue as Item) != null)
+            {
+                unfold[property.propertyPath].fieldAmount = 3.5f;
+                EditorGUI.IntSlider(durRect, durability, 0, (int)(slotItem.objectReferenceValue as Item).maxDurability, "Durability");
+                ampos.y += ampos.height;
+            }
+
             bool amBool = unfold[property.propertyPath].multipleAssign;
 
             bool _amTmp = GUI.Button(ampos, amBool ? "Save variable" : "Assign multiple");
@@ -52,12 +62,11 @@ public class SlotDrawer : PropertyDrawer
                 unfold[property.propertyPath].executeOnce = false;
             }
 
-            unfold[property.propertyPath].fieldAmount = 2.5f;
             var whitelistProp = property.FindPropertyRelative("whitelist");
             if (amBool)
             {
                 var foldPos = new Rect(position.x, position.y + 18f, position.width, position.height);
-
+                foldPos.y = ampos.y;
                 bool useItemAsset = EditorPrefs.GetBool(property.propertyPath, true);
 
                 Rect uia = new Rect(foldPos.x, foldPos.y, 120, foldPos.height);
@@ -113,7 +122,6 @@ public class SlotDrawer : PropertyDrawer
                     ias.x += 80;
                     ias.width = 160;
 
-
                     unfold[property.propertyPath].editorAssignSize = EditorGUI.IntField(ias, "Size for assign", unfold[property.propertyPath].editorAssignSize);
 
                     ias.x += 150;
@@ -168,7 +176,7 @@ public class SlotDrawer : PropertyDrawer
                             }
                         }
 
-                        if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList))
+                        if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList) && newAsset.itemsList.Count > 0)
                         {
                             newAsset.strId = newAsset.name;
                             newAsset.id = Random.Range(10000, int.MaxValue);
@@ -244,15 +252,15 @@ public class SlotDrawer : PropertyDrawer
                         if(unfold[property.propertyPath].addNullMatch && !newAsset.itemsList.Contains(null))
                             newAsset.itemsList.Add(null);
 
-                        if (whitelistProp.objectReferenceValue != null)
+                        if (whitelistProp.objectReferenceValue != null && newAsset.itemsList.Count > 0)
                         {
-                            if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList))
+                            if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList) && newAsset.itemsList.Count > 0)
                             {
                                 newAsset.id = Random.Range(10000, int.MaxValue);
                                 whitelistProp.objectReferenceValue = newAsset;
                             }
                         }
-                        else
+                        else if (newAsset.itemsList.Count > 0)
                         {
                             newAsset.id = Random.Range(10000, int.MaxValue);
                             whitelistProp.objectReferenceValue = newAsset;

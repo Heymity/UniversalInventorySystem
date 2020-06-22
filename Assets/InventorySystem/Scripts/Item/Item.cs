@@ -15,6 +15,8 @@ namespace UniversalInventorySystem
         public bool destroyOnUse;
         public int useHowManyWhenUsed;
         public bool stackable;
+        public uint maxDurability;
+        public bool hasDurability;
         public MonoScript onUseFunc;
         public MonoScript optionalOnDropBehaviour;
         public ToolTipInfo tooltip;

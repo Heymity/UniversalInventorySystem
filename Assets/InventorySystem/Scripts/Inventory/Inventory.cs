@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace UniversalInventorySystem
@@ -1465,14 +1466,32 @@ namespace UniversalInventorySystem
         public bool isProductSlot;
         public SlotProtection interative;
         public ItemGroup whitelist;
+        public uint durability;
 
         public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null);
+
+        public uint SetDurability(uint value, bool op = false)
+        {
+            if (op)
+            {
+                durability = value;
+                return value;
+            }
+            if (item == null || !hasItem || value > item.maxDurability || !item.hasDurability)
+                return 0u;
+            durability = value;
+            return value;
+        }
+
+        public uint GetDurability() { return durability; }
+        public int GetDurabiliyIntValue() { return (int)durability; }
 
         public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist)
         {
             item = slot.item;
             amount = slot.amount;
             hasItem = slot.hasItem;
+            durability = slot.durability;
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = _whitelist;
@@ -1483,6 +1502,7 @@ namespace UniversalInventorySystem
             item = slot.item;
             amount = slot.amount;
             hasItem = slot.hasItem;
+            durability = slot.durability;
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = null;
@@ -1496,6 +1516,7 @@ namespace UniversalInventorySystem
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
+            durability = 0;
         }
 
         public Slot(Item _item, int _amount)
@@ -1506,6 +1527,7 @@ namespace UniversalInventorySystem
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
+            durability = 0;
         }
 
         public Slot(Item _item, int _amount, bool _hasItem)
@@ -1516,6 +1538,18 @@ namespace UniversalInventorySystem
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
+            durability = 0;
+        } 
+        
+        public Slot(Item _item, int _amount, bool _hasItem, uint _durability)
+        {
+            item = _item;
+            amount = _amount;
+            hasItem = _hasItem;
+            isProductSlot = false;
+            interative = SlotProtection.Any;
+            whitelist = null;
+            durability = _durability;
         }
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot)
@@ -1526,6 +1560,18 @@ namespace UniversalInventorySystem
             isProductSlot = _isProductSlot;
             interative = SlotProtection.Any;
             whitelist = null;
+            durability = 0;
+        }
+        
+        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, uint _durability)
+        {
+            item = _item;
+            amount = _amount;
+            hasItem = _hasItem;
+            isProductSlot = _isProductSlot;
+            interative = SlotProtection.Any;
+            whitelist = null;
+            durability = _durability;
         }
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive)
@@ -1536,6 +1582,7 @@ namespace UniversalInventorySystem
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = null;
+            durability = 0;
         }
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist)
@@ -1546,6 +1593,18 @@ namespace UniversalInventorySystem
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = _whitelist;
+            durability = 0;
+        }
+        
+        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, uint _durability)
+        {
+            item = _item;
+            amount = _amount;
+            hasItem = _hasItem;
+            isProductSlot = _isProductSlot;
+            interative = _interactive;
+            whitelist = _whitelist;
+            durability = _durability;
         }
     }
 

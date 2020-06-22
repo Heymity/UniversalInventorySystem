@@ -19,6 +19,8 @@ public class ItemInspector : Editor
     //Using Props
     SerializedProperty destroyOnUseProp;
     SerializedProperty useHowManyWhenUsedProp;
+    SerializedProperty maxDurabilityProp;
+    SerializedProperty hasDurabilityProp;
 
     //Behaviours
     SerializedProperty onUseFuncProp;
@@ -45,6 +47,8 @@ public class ItemInspector : Editor
         onUseFuncProp = serializedObject.FindProperty("onUseFunc");
         optionalOnDropBehaviour = serializedObject.FindProperty("optionalOnDropBehaviour");
         tooltipProp = serializedObject.FindProperty("tooltip");
+        maxDurabilityProp = serializedObject.FindProperty("maxDurability");
+        hasDurabilityProp = serializedObject.FindProperty("hasDurability");
     }
 
     public override void OnInspectorGUI()
@@ -81,6 +85,9 @@ public class ItemInspector : Editor
             EditorGUI.indentLevel++;
             destroyOnUseProp.boolValue = EditorGUILayout.Toggle(new GUIContent("Remove item when used"), destroyOnUseProp.boolValue);
             useHowManyWhenUsedProp.intValue = EditorGUILayout.IntField(new GUIContent("The amount of item to remove"), useHowManyWhenUsedProp.intValue);
+            hasDurabilityProp.boolValue = EditorGUILayout.Toggle("Has durability", hasDurabilityProp.boolValue);
+            if (hasDurabilityProp.boolValue)
+                EditorGUILayout.PropertyField(maxDurabilityProp, new GUIContent("Max durability"), true);
             EditorGUI.indentLevel--;
         }
 
