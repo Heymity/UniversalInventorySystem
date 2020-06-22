@@ -265,22 +265,84 @@ namespace UniversalInventorySystem
                         }
                         break;
                 }
-
+                //TODO Consider Percentage and pixel. For percentage subtracting it from 100 and using it should do it
                 if (item.tooltip.autoReAlign)
                 {
                     tooltipRect = toolTip.transform as RectTransform;
                     Vector3[] corners = new Vector3[4];
                     tooltipRect.GetWorldCorners(corners);
-                    Debug.Log($"2: {Camera.main.WorldToViewportPoint(corners[2]).x} 3: {Camera.main.WorldToViewportPoint(corners[3]).x}");
 
+                    //X
                     bool outRight = (Camera.main.WorldToViewportPoint(corners[2]).x > 1 || Camera.main.WorldToViewportPoint(corners[2]).x < 0) && (Camera.main.WorldToViewportPoint(corners[3]).x > 1 || Camera.main.WorldToViewportPoint(corners[3]).x < 0);
-                    if (outRight) Debug.Log("outRight");
                     bool outLeft = (Camera.main.WorldToViewportPoint(corners[0]).x > 1 || Camera.main.WorldToViewportPoint(corners[0]).x < 0) && (Camera.main.WorldToViewportPoint(corners[1]).x > 1 || Camera.main.WorldToViewportPoint(corners[1]).x < 0);
-                    if (outLeft) Debug.Log("outLeft");
-                    bool outUp = (Camera.main.WorldToViewportPoint(corners[1]).x > 1 || Camera.main.WorldToViewportPoint(corners[1]).x < 0) && (Camera.main.WorldToViewportPoint(corners[2]).x > 1 || Camera.main.WorldToViewportPoint(corners[2]).x < 0);
-                    if (outUp) Debug.Log("outUp");
-                    bool outDown = (Camera.main.WorldToViewportPoint(corners[3]).x > 1 || Camera.main.WorldToViewportPoint(corners[3]).x < 0) && (Camera.main.WorldToViewportPoint(corners[0]).x > 1 || Camera.main.WorldToViewportPoint(corners[0]).x < 0);
-                    if (outDown) Debug.Log("outDown");
+                    //Y
+                    bool outUp = (Camera.main.WorldToViewportPoint(corners[1]).y > 1 || Camera.main.WorldToViewportPoint(corners[1]).y < 0) && (Camera.main.WorldToViewportPoint(corners[2]).y > 1 || Camera.main.WorldToViewportPoint(corners[2]).y < 0);
+                    bool outDown = (Camera.main.WorldToViewportPoint(corners[3]).y > 1 || Camera.main.WorldToViewportPoint(corners[3]).y < 0) && (Camera.main.WorldToViewportPoint(corners[0]).y > 1 || Camera.main.WorldToViewportPoint(corners[0]).y < 0);
+                    
+                    if(item.tooltip.autoRealignOptions == AutoRealignOptions.snapToSide)
+                    {
+                        //Debug.Log("Snap");
+                        if (outRight)
+                        {
+                            //Debug.Log("outRight");
+                            toolTip.transform.position = new Vector3(Camera.main.ViewportToWorldPoint(new Vector3(1, 0, 0), Camera.main.stereoActiveEye).x, toolTip.transform.position.y, toolTip.transform.position.z);
+                            (toolTip.transform as RectTransform).localPosition -= new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                        }
+                        if (outLeft)
+                        {
+                            //Debug.Log("outLeft");
+                            toolTip.transform.position = new Vector3(Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0), Camera.main.stereoActiveEye).x, toolTip.transform.position.y, toolTip.transform.position.z);
+                            (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                        }
+                        if (outUp)
+                        {
+                            //Debug.Log("outUp");
+                            toolTip.transform.position = new Vector3(toolTip.transform.position.x, Camera.main.ViewportToWorldPoint(new Vector3(0, 1, 0)).y, toolTip.transform.position.z);
+                            (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                        }
+                        if (outDown)
+                        {
+                            //Debug.Log("outDown");
+                            toolTip.transform.position = new Vector3(toolTip.transform.position.x, Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y, toolTip.transform.position.z);
+                            (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                        }
+                    }
+                    else if (item.tooltip.autoRealignOptions == AutoRealignOptions.switchSide)
+                    {
+                        Debug.Log("Switch");
+                        if (outRight)
+                        {
+                            Debug.Log("outRight");
+                            int tmp = 4;
+                            if (item.tooltip.xAlign == XAligment.right) tmp = 2;
+                            (toolTip.transform as RectTransform).localPosition -= new Vector3((toolTip.transform as RectTransform).rect.width / tmp, 0, 0);
+                            (toolTip.transform as RectTransform).localPosition += new Vector3(tmp == 2 ? -2 : -1 * item.tooltip.margin.x, 0, 0);   
+                        }
+                        if (outLeft)
+                        {
+                            Debug.Log("outLeft");
+                            int tmp = 4;
+                            if (item.tooltip.xAlign == XAligment.left) tmp = 2;
+                            (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / tmp, 0, 0);
+                            (toolTip.transform as RectTransform).localPosition += new Vector3(tmp == 2 ? -2 : -1 * item.tooltip.margin.x, 0, 0);
+                        }
+                        if (outUp)
+                        {
+                            Debug.Log("outUp");
+                            int tmp = 4;
+                            if (item.tooltip.yAlign == YAligment.up) tmp = 2;
+                            (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (toolTip.transform as RectTransform).rect.height / tmp, 0);
+                            (toolTip.transform as RectTransform).localPosition += new Vector3(0, tmp == 2 ? -2 : -1 * item.tooltip.margin.y, 0);  
+                        }
+                        if (outDown)
+                        {
+                            int tmp = 4;
+                            if (item.tooltip.yAlign == YAligment.down) tmp = 2;
+                            (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / tmp, 0);
+                            (toolTip.transform as RectTransform).localPosition += new Vector3(0, tmp == 2 ? -2 : -1 * item.tooltip.margin.y, 0);
+                            Debug.Log("outDown");
+                        }
+                    }            
                 }
             }
             else
@@ -304,6 +366,8 @@ namespace UniversalInventorySystem
                 if (Camera.main.WorldToViewportPoint(corners[i]).x > 1 || Camera.main.WorldToViewportPoint(corners[i]).x < 0 || Camera.main.WorldToViewportPoint(corners[i]).y > 1 || Camera.main.WorldToViewportPoint(corners[i]).y < 0)
                     Gizmos.color = Color.red;
                 else Gizmos.color = Color.green;
+                if (Camera.main.WorldToViewportPoint(corners[i]).x == 1 || Camera.main.WorldToViewportPoint(corners[i]).x == 0 || Camera.main.WorldToViewportPoint(corners[i]).y == 1 || Camera.main.WorldToViewportPoint(corners[i]).y == 0)
+                    Gizmos.color = Color.blue;
                 Gizmos.DrawSphere(corners[i], .25f);
             }         
         }
@@ -377,7 +441,8 @@ namespace UniversalInventorySystem
     }
     public enum AutoRealignOptions
     {
-        snapToSide,
-        switchSide
+        snapToSide = 0,
+        switchSide = 1,
+        //fit = 2, 
     }
 }

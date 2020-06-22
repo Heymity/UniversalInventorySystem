@@ -27,11 +27,13 @@ MonoBehaviour:
     tooltipPrefab: {fileID: 0}
     sprite: {fileID: 0}
     xAligmentOption: 0
-    xalign: 2
+    xAlign: 2
     xPixelOrPercentage: 0
     yAligmentOption: 1
-    yalign: 0
+    yAlign: 0
     yPixelOrPercentage: 40
+    autoReAlign: 1
+    autoRealignOptions: 0
     align: {x: 0, y: 0}
     backgroudColor: {r: 0, g: 0, b: 0, a: 0.8862745}
     size: {x: 1, y: 1}
@@ -45,8 +47,8 @@ MonoBehaviour:
       font: {fileID: 0}
       fontSize: 46
       color: {r: 0.8490566, g: 0.52623343, b: 0.22828408, a: 1}
-      aligmentOption: 2
-      pivot: 1
+      aligmentOption: 0
+      pivot: 0
       pixelOrPercentage: 0
     - text: 'Description
 
