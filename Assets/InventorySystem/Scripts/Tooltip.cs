@@ -156,17 +156,17 @@ namespace UniversalInventorySystem
                         switch (item.tooltip.xAlign)
                         {
                             case XAligment.right:
-                                (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 2 * toolTip.transform.localScale.x, 0, 0);
                                 (toolTip.transform as RectTransform).localPosition -= new Vector3((item.tooltip.xPixelOrPercentage / 100) * ((toolTip.transform as RectTransform).rect.width), 0, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
                                 break;
                             case XAligment.center:
-                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / 2), 0, 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / toolTip.transform.localScale.x), 0, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.xPixelOrPercentage / 100 * (toolTip.transform as RectTransform).rect.width, 0, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
                                 break;
                             case XAligment.left:
-                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / 4), 0, 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / 2 * toolTip.transform.localScale.x), 0, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3((item.tooltip.xPixelOrPercentage / 100) * ((toolTip.transform as RectTransform).rect.width), 0, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
                                 break;
@@ -176,13 +176,13 @@ namespace UniversalInventorySystem
                         switch (item.tooltip.xAlign)
                         {
                             case XAligment.right:
-                                (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 2 * toolTip.transform.localScale.x, 0, 0);
                                 goto case XAligment.center;
                             case XAligment.center:
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
                                 break;
                             case XAligment.left:
-                                (toolTip.transform as RectTransform).localPosition -= new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3((toolTip.transform as RectTransform).rect.width / 2 * toolTip.transform.localScale.x, 0, 0);
                                 goto case XAligment.center;
                         }
                         break;
@@ -190,17 +190,17 @@ namespace UniversalInventorySystem
                         switch (item.tooltip.xAlign)
                         {
                             case XAligment.right:
-                                (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 2 * toolTip.transform.localScale.x, 0, 0);
                                 (toolTip.transform as RectTransform).localPosition -= new Vector3(item.tooltip.xPixelOrPercentage, 0, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
                                 break;
                             case XAligment.center:
-                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / 2), 0, 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / toolTip.transform.localScale.x), 0, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.xPixelOrPercentage, 0, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
                                 break;
                             case XAligment.left:
-                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / 4), 0, 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(((toolTip.transform as RectTransform).rect.width / 2 * toolTip.transform.localScale.x), 0, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.xPixelOrPercentage, 0, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(item.tooltip.margin.x, 0, 0);
                                 break;
@@ -214,17 +214,17 @@ namespace UniversalInventorySystem
                         switch (item.tooltip.yAlign)
                         {
                             case YAligment.up:
-                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 2 * toolTip.transform.localScale.y, 0);
                                 (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (item.tooltip.yPixelOrPercentage / 100) * ((toolTip.transform as RectTransform).rect.height), 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
                                 break;
                             case YAligment.center:
-                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / 2), 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / toolTip.transform.localScale.y), 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.yPixelOrPercentage / 100 * (toolTip.transform as RectTransform).rect.height, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
                                 break;
                             case YAligment.down:
-                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / 4), 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / 2 * toolTip.transform.localScale.y), 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, (item.tooltip.yPixelOrPercentage / 100) * ((toolTip.transform as RectTransform).rect.height), 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
                                 break;
@@ -234,13 +234,13 @@ namespace UniversalInventorySystem
                         switch (item.tooltip.yAlign)
                         {
                             case YAligment.up:
-                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 2 * toolTip.transform.localScale.y, 0);
                                 goto case YAligment.center;
                             case YAligment.center:
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
                                 break;
                             case YAligment.down:
-                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (toolTip.transform as RectTransform).rect.height / 2 * toolTip.transform.localScale.y, 0);
                                 goto case YAligment.center;
                         }
                         break;
@@ -248,17 +248,17 @@ namespace UniversalInventorySystem
                         switch (item.tooltip.yAlign)
                         {
                             case YAligment.up:
-                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                                (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 2 * toolTip.transform.localScale.y, 0);
                                 (toolTip.transform as RectTransform).localPosition -= new Vector3(0, item.tooltip.yPixelOrPercentage, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
                                 break;
                             case YAligment.center:
-                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / 2), 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / toolTip.transform.localScale.y), 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.yPixelOrPercentage, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
                                 break;
                             case YAligment.down:
-                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / 4), 0);
+                                (toolTip.transform as RectTransform).localPosition -= new Vector3(0, ((toolTip.transform as RectTransform).rect.height / 2 * toolTip.transform.localScale.y), 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.yPixelOrPercentage, 0);
                                 (toolTip.transform as RectTransform).localPosition += new Vector3(0, item.tooltip.margin.y, 0);
                                 break;
@@ -286,25 +286,25 @@ namespace UniversalInventorySystem
                         {
                             //Debug.Log("outRight");
                             toolTip.transform.position = new Vector3(Camera.main.ViewportToWorldPoint(new Vector3(1 - item.tooltip.snapTo.x, 0, 0), Camera.main.stereoActiveEye).x, toolTip.transform.position.y, toolTip.transform.position.z);
-                            (toolTip.transform as RectTransform).localPosition -= new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                            (toolTip.transform as RectTransform).localPosition -= new Vector3((toolTip.transform as RectTransform).rect.width / 2 * toolTip.transform.localScale.x, 0, 0);
                         }
                         if (outLeft)
                         {
                             //Debug.Log("outLeft");
                             toolTip.transform.position = new Vector3(Camera.main.ViewportToWorldPoint(new Vector3(item.tooltip.snapTo.x, 0, 0), Camera.main.stereoActiveEye).x, toolTip.transform.position.y, toolTip.transform.position.z);
-                            (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 4, 0, 0);
+                            (toolTip.transform as RectTransform).localPosition += new Vector3((toolTip.transform as RectTransform).rect.width / 2 * toolTip.transform.localScale.x, 0, 0);
                         }
                         if (outUp)
                         {
                             //Debug.Log("outUp");
                             toolTip.transform.position = new Vector3(toolTip.transform.position.x, Camera.main.ViewportToWorldPoint(new Vector3(0, 1 - item.tooltip.snapTo.y, 0)).y, toolTip.transform.position.z);
-                            (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                            (toolTip.transform as RectTransform).localPosition -= new Vector3(0, (toolTip.transform as RectTransform).rect.height / 2 * toolTip.transform.localScale.y, 0);
                         }
                         if (outDown)
                         {
                             //Debug.Log("outDown");
                             toolTip.transform.position = new Vector3(toolTip.transform.position.x, Camera.main.ViewportToWorldPoint(new Vector3(0, item.tooltip.snapTo.y, 0)).y, toolTip.transform.position.z);
-                            (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 4, 0);
+                            (toolTip.transform as RectTransform).localPosition += new Vector3(0, (toolTip.transform as RectTransform).rect.height / 2 * toolTip.transform.localScale.y, 0);
                         }
                     }
                     else if (item.tooltip.autoRealignOptions == AutoRealignOptions.switchSide)
@@ -401,7 +401,6 @@ namespace UniversalInventorySystem
         public Vector2 snapMargin;
         public Vector2 snapTo;
 
-        public Vector2 align;
         public Color backgroudColor;
 
         public Vector2 size;
