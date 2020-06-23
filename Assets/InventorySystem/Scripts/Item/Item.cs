@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -17,9 +18,29 @@ namespace UniversalInventorySystem
         public bool stackable;
         public uint maxDurability;
         public bool hasDurability;
+        [SerializeField] 
+        public List<DurabilityImage> durabilityImages
+        {
+            get
+            {
+                return _durabilityImages;
+            }
+            set
+            {
+                _durabilityImages = value;
+                SortDurabilityImages(_durabilityImages);
+            }
+        }
+        [SerializeField]
+        private List<DurabilityImage> _durabilityImages;
         public MonoScript onUseFunc;
         public MonoScript optionalOnDropBehaviour;
         public ToolTipInfo tooltip;
+
+        public void OnEnable()
+        {
+            SortDurabilityImages(_durabilityImages);
+        }
 
         public void OnUse(Inventory inv, int slot)
         {
@@ -56,5 +77,31 @@ namespace UniversalInventorySystem
                 else monoMethod.Invoke(Activator.CreateInstance(optionalOnDropBehaviour.GetClass()), tmp);
             }
         }
+
+        public static List<DurabilityImage> SortDurabilityImages(List<DurabilityImage> inputArray)
+        {
+            if (inputArray == null) return inputArray;
+            for (int i = 0; i < inputArray.Count - 1; i++)
+            {
+                for (int j = i + 1; j > 0; j--)
+                {
+                    if (inputArray[j - 1].durability > inputArray[j].durability)
+                    {
+                        int temp = inputArray[j - 1].durability;
+                        inputArray[j - 1].durability = inputArray[j].durability;
+                        inputArray[j].durability = temp;
+                    }
+                }
+            }
+            return inputArray;
+        }       
+    }
+
+    [Serializable]
+    public class DurabilityImage : System.Object
+    {
+        [SerializeField] public string imageName;
+        [SerializeField] public Sprite sprite;
+        [SerializeField] public int durability;
     }
 }

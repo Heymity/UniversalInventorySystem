@@ -1517,56 +1517,65 @@ MonoBehaviour:
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 1
+      interative: 0
       whitelist: {fileID: 11400000, guid: 57c447cc307026949829e61220432bc0, type: 2}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 1
+      interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 1
+      interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 1
+      interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 1
+      interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 1
+      interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 1
+      interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 1
+      interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
-      interative: 1
+      interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     slotAmounts: 9
     id: 0
     areItemsUsable: 0
@@ -3916,48 +3925,56 @@ MonoBehaviour:
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
+      durability: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+      isProductSlot: 0
+      interative: 0
+      whitelist: {fileID: 1221787597}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
+      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      isProductSlot: 0
-      interative: 0
-      whitelist: {fileID: 0}
+      durability: 0
     slotAmounts: 8
     id: 0
     areItemsUsable: 1
@@ -6223,6 +6240,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198337620}
   m_CullTransparentMesh: 0
+--- !u!114 &1221787597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ee53646823e09f4a902eae1f9e00541, type: 3}
+  m_Name: Custom ItemGroup
+  m_EditorClassIdentifier: 
+  itemsList: []
+  strId: 
+  id: 408903310
 --- !u!1 &1304940391 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4676626297327902047, guid: 190af5ce39ca9824191677bd7d614e99,

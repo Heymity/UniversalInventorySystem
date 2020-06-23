@@ -19,6 +19,21 @@ MonoBehaviour:
   destroyOnUse: 1
   useHowManyWhenUsed: 1
   stackable: 1
+  maxDurability: 4
+  hasDurability: 1
+  _durabilityImages:
+  - imageName: 
+    sprite: {fileID: 0}
+    durability: 3
+  - imageName: 
+    sprite: {fileID: 0}
+    durability: 2
+  - imageName: 
+    sprite: {fileID: 0}
+    durability: 4
+  - imageName: 
+    sprite: {fileID: 0}
+    durability: 1
   onUseFunc: {fileID: 11500000, guid: fbc6a140bc2ae644788371b67a162054, type: 3}
   optionalOnDropBehaviour: {fileID: 0}
   tooltip:
@@ -31,12 +46,13 @@ MonoBehaviour:
     xPixelOrPercentage: 0
     yAligmentOption: 1
     yAlign: 0
-    yPixelOrPercentage: 40
+    yPixelOrPercentage: 30
     autoReAlign: 1
     autoRealignOptions: 0
-    align: {x: 0, y: 0}
+    snapMargin: {x: 0, y: 0}
+    snapTo: {x: 0, y: 0}
     backgroudColor: {r: 0, g: 0, b: 0, a: 0.8862745}
-    size: {x: 1, y: 1}
+    size: {x: 0.75, y: 0.75}
     padding: {x: 4, y: 4}
     margin: {x: 10, y: 0}
     maxWidth: 450

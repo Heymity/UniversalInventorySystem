@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using UniversalInventorySystem;
 
 [CustomEditor(typeof(Item))]
@@ -21,6 +22,7 @@ public class ItemInspector : Editor
     SerializedProperty useHowManyWhenUsedProp;
     SerializedProperty maxDurabilityProp;
     SerializedProperty hasDurabilityProp;
+    SerializedProperty durabilityImagesProp;
 
     //Behaviours
     SerializedProperty onUseFuncProp;
@@ -49,6 +51,7 @@ public class ItemInspector : Editor
         tooltipProp = serializedObject.FindProperty("tooltip");
         maxDurabilityProp = serializedObject.FindProperty("maxDurability");
         hasDurabilityProp = serializedObject.FindProperty("hasDurability");
+        durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
     }
 
     public override void OnInspectorGUI()
@@ -87,7 +90,29 @@ public class ItemInspector : Editor
             useHowManyWhenUsedProp.intValue = EditorGUILayout.IntField(new GUIContent("The amount of item to remove"), useHowManyWhenUsedProp.intValue);
             hasDurabilityProp.boolValue = EditorGUILayout.Toggle("Has durability", hasDurabilityProp.boolValue);
             if (hasDurabilityProp.boolValue)
+            {
                 EditorGUILayout.PropertyField(maxDurabilityProp, new GUIContent("Max durability"), true);
+                //EditorGUILayout.PropertyField(durabilityImagesProp, new GUIContent("Durability Images"), true);
+                //Debug.Log(durabilityImagesProp);
+                var tmpBool = EditorGUILayout.Foldout(durabilityImagesProp.isExpanded, "Durability Images", true);
+                if(tmpBool != durabilityImagesProp.isExpanded)
+                    Item.SortDurabilityImages((target as Item).durabilityImages);
+                durabilityImagesProp.isExpanded = tmpBool;
+                if (durabilityImagesProp.isExpanded)
+                {
+                    EditorGUI.indentLevel++;
+                    durabilityImagesProp.arraySize = EditorGUILayout.IntField("Size", durabilityImagesProp.arraySize);
+                    for(int i = 0; i < durabilityImagesProp.arraySize; i++)
+                    {
+                        EditorGUILayout.PropertyField(durabilityImagesProp.GetArrayElementAtIndex(i));
+                        DurabilityImage dur = (target as Item).durabilityImages[i];
+                        EditorGUI.ProgressBar(GUILayoutUtility.GetRect(38, 18), (float)dur.durability / (float)maxDurabilityProp.intValue, "Durability");
+                    }
+                    EditorGUI.indentLevel--;
+                    if(GUILayout.Button("Sort"))
+                        Item.SortDurabilityImages((target as Item).durabilityImages);
+                }
+            }
             EditorGUI.indentLevel--;
         }
 
