@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace UniversalInventorySystem
 {
@@ -263,8 +264,19 @@ namespace UniversalInventorySystem
 
                     if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
                     {
-                        image.sprite = inv.slots[i].item.sprite;
-                        image.color = new Color(1, 1, 1, 1);
+                        if (inv.slots[i].item.hasDurability)
+                        {
+                            if (inv.slots[i].item.durabilityImages.Count > 0)
+                            {
+                                image.sprite = GetNearestSprite(inv.slots[i].durability, i);
+                                image.color = new Color(1, 1, 1, 1);
+                            }
+                        }
+                        else
+                        {
+                            image.sprite = inv.slots[i].item.sprite;
+                            image.color = new Color(1, 1, 1, 1);
+                        }
                     }
                     else if (slots[i].transform.GetChild(j).TryGetComponent(out text))
                         text.text = inv.slots[i].amount.ToString();
@@ -303,7 +315,7 @@ namespace UniversalInventorySystem
                     slots[i].GetComponent<Button>().onClick.AddListener(() =>
                     {
                     //Debug.Log($"Slot {slots[index].name} was clicked");
-                    if (useOnClick)
+                        if (useOnClick)
                             inv.UseItemInSlot(index);
                     });
                 }
@@ -400,11 +412,27 @@ namespace UniversalInventorySystem
                                 else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
                                     text.text = "";
                             }
-
                         }
                     }
                 }
             }
+        }
+
+        private Sprite GetNearestSprite(uint durability, int slot)
+        {
+            var minDif = int.MaxValue;
+            var index = 0;
+            for(int i = inv.slots[slot].item.durabilityImages.Count - 1; i >= 0;i--)
+            {
+                int dif = checked((int)inv.slots[slot].item.durabilityImages[i].durability - (int)durability);
+                if (dif < 0) break;
+                if (dif < minDif)
+                {
+                    minDif = dif;
+                    index = i;
+                }
+            }
+            return inv.slots[slot].item.durabilityImages[index].sprite;
         }
     }
 }

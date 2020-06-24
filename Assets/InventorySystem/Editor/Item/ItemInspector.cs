@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 using UniversalInventorySystem;
 
 [CustomEditor(typeof(Item))]
@@ -102,7 +99,8 @@ public class ItemInspector : Editor
                 {
                     EditorGUI.indentLevel++;
                     durabilityImagesProp.arraySize = EditorGUILayout.IntField("Size", durabilityImagesProp.arraySize);
-                    for(int i = 0; i < durabilityImagesProp.arraySize; i++)
+                    serializedObject.ApplyModifiedProperties();
+                    for (int i = 0; i < durabilityImagesProp.arraySize; i++)
                     {
                         EditorGUILayout.PropertyField(durabilityImagesProp.GetArrayElementAtIndex(i));
                         DurabilityImage dur = (target as Item).durabilityImages[i];

@@ -259,6 +259,7 @@ namespace UniversalInventorySystem
             public Inventory inv;
             public Item item;
             public int slot;
+            //public uint durability
 
             public UseItemEventArgs(Inventory _inv, Item _item, int _slot)
             {

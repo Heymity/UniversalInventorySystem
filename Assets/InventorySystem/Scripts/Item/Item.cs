@@ -87,9 +87,12 @@ namespace UniversalInventorySystem
                 {
                     if (inputArray[j - 1].durability > inputArray[j].durability)
                     {
-                        int temp = inputArray[j - 1].durability;
-                        inputArray[j - 1].durability = inputArray[j].durability;
-                        inputArray[j].durability = temp;
+                        checked
+                        {
+                            int temp = (int)inputArray[j - 1].durability;
+                            inputArray[j - 1].durability = inputArray[j].durability;
+                            inputArray[j].durability = (uint)temp;
+                        }
                     }
                 }
             }
@@ -102,6 +105,6 @@ namespace UniversalInventorySystem
     {
         [SerializeField] public string imageName;
         [SerializeField] public Sprite sprite;
-        [SerializeField] public int durability;
+        [SerializeField] public uint durability;
     }
 }

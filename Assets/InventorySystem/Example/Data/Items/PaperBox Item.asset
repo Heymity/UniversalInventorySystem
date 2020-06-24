@@ -23,17 +23,21 @@ MonoBehaviour:
   hasDurability: 1
   _durabilityImages:
   - imageName: 
-    sprite: {fileID: 0}
-    durability: 3
+    sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+    durability: 0
   - imageName: 
-    sprite: {fileID: 0}
+    sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    durability: 1
+  - imageName: 
+    sprite: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
     durability: 2
   - imageName: 
-    sprite: {fileID: 0}
-    durability: 4
+    sprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+    durability: 3
   - imageName: 
-    sprite: {fileID: 0}
-    durability: 1
+    sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6,
+      type: 3}
+    durability: 4
   onUseFunc: {fileID: 11500000, guid: fbc6a140bc2ae644788371b67a162054, type: 3}
   optionalOnDropBehaviour: {fileID: 0}
   tooltip:

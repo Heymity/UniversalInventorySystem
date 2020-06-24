@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace UniversalInventorySystem
 {
-
     [Serializable]
     public static class InventoryController
     {
@@ -469,6 +467,8 @@ namespace UniversalInventorySystem
 
         #endregion
 
+        #region Using
+
         /// <summary>
         /// Calls the OnUse function on the item. This function calls the OnUse on the provided useBehavoiur script
         /// </summary>
@@ -489,19 +489,61 @@ namespace UniversalInventorySystem
                 if (inv.slots[slot].item.destroyOnUse)
                 {
                     Item it = inv.slots[slot].item;
-                    if (RemoveItemInSlot(inv, slot, inv.slots[slot].item.useHowManyWhenUsed))
+                    if (it.hasDurability)
                     {
-                        it.OnUse(inv, slot);
-                        InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, slot);
-                        InventoryHandler.current.Broadcast(e, uea: uea);
+                        if(inv.slots[slot].durability > 0)
+                        {
+                            var tmp = inv.slots[slot];
+                            Slot.SetDurability(ref tmp, inv.slots[slot].durability - 1u);
+                            inv.slots[slot] = tmp;
+                            InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, slot);
+                            if (inv.slots[slot].durability == 0)
+                            {
+                                if (RemoveItemInSlot(inv, slot, inv.slots[slot].item.useHowManyWhenUsed))
+                                {
+                                    it.OnUse(inv, slot);
+                                    InventoryHandler.current.Broadcast(e, uea: uea);
+                                }
+                            }
+                            else
+                            {
+                                it.OnUse(inv, slot);
+                                InventoryHandler.current.Broadcast(e, uea: uea);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (RemoveItemInSlot(inv, slot, inv.slots[slot].item.useHowManyWhenUsed))
+                        {
+                            it.OnUse(inv, slot);
+                            InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, slot);
+                            InventoryHandler.current.Broadcast(e, uea: uea);
+                        }
                     }
                     return;
                 }
                 else if (!inv.slots[slot].item.destroyOnUse)
                 {
-                    inv.slots[slot].item.OnUse(inv, slot);
-                    InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[slot].item, slot);
-                    InventoryHandler.current.Broadcast(e, uea: uea);
+                    if (inv.slots[slot].item.hasDurability)
+                    {
+                        if (inv.slots[slot].durability > 0)
+                        {
+                            var tmp = inv.slots[slot];
+                            Slot.SetDurability(ref tmp, inv.slots[slot].durability - 1u);
+                            inv.slots[slot] = tmp;
+                            InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[slot].item, slot);
+                            inv.slots[slot].item.OnUse(inv, slot);
+                            InventoryHandler.current.Broadcast(e, uea: uea);
+
+                        }
+                    }
+                    else
+                    {
+                        inv.slots[slot].item.OnUse(inv, slot);
+                        InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[slot].item, slot);
+                        InventoryHandler.current.Broadcast(e, uea: uea);
+                    }
                 }
             }
         }
@@ -529,22 +571,66 @@ namespace UniversalInventorySystem
                 if (inv.slots[i].item.destroyOnUse)
                 {
                     Item it = inv.slots[i].item;
-                    if (RemoveItemInSlot(inv, i, inv.slots[i].item.useHowManyWhenUsed))
+                    if (it.hasDurability)
                     {
-                        it.OnUse(inv, i);
-                        InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, i);
-                        InventoryHandler.current.Broadcast(e, uea: uea);
+                        if (inv.slots[i].durability > 0)
+                        {
+                            var tmp = inv.slots[i];
+                            Slot.SetDurability(ref tmp, inv.slots[i].durability - 1u);
+                            inv.slots[i] = tmp;
+                            InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, i);
+                            if (inv.slots[i].durability == 0)
+                            {
+                                if (RemoveItemInSlot(inv, i, inv.slots[i].item.useHowManyWhenUsed))
+                                {
+                                    it.OnUse(inv, i);
+                                    InventoryHandler.current.Broadcast(e, uea: uea);
+                                }
+                            }
+                            else
+                            {
+                                it.OnUse(inv, i);
+                                InventoryHandler.current.Broadcast(e, uea: uea);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (RemoveItemInSlot(inv, i, inv.slots[i].item.useHowManyWhenUsed))
+                        {
+                            it.OnUse(inv, i);
+                            InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, i);
+                            InventoryHandler.current.Broadcast(e, uea: uea);
+                        }
                     }
                     return;
                 }
                 else if (!inv.slots[i].item.destroyOnUse)
                 {
-                    inv.slots[i].item.OnUse(inv, i);
-                    InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[i].item, i);
-                    InventoryHandler.current.Broadcast(e, uea: uea);
+                    if (inv.slots[i].item.hasDurability)
+                    {
+                        if (inv.slots[i].durability > 0)
+                        {
+                            var tmp = inv.slots[i];
+                            Slot.SetDurability(ref tmp, inv.slots[i].durability - 1u);
+                            inv.slots[i] = tmp;
+                            InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[i].item, i);
+                            inv.slots[i].item.OnUse(inv, i);
+                            InventoryHandler.current.Broadcast(e, uea: uea);
+
+                        }
+                    }
+                    else
+                    {
+                        inv.slots[i].item.OnUse(inv, i);
+                        InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[i].item, i);
+                        InventoryHandler.current.Broadcast(e, uea: uea);
+                    }
                 }
             }
         }
+
+        #endregion
 
         #region Swap
 
@@ -888,6 +974,8 @@ namespace UniversalInventorySystem
 
         #endregion
 
+        #region Initialize
+
         /// <summary>
         /// This function must be called when a inventory is being created. It fills the inventory if null Slots if the list of slots is null or have less elments than inv.slotAmounts, give an id to the inventory and add it to the list of inventories in the InventoryController. This function dont need to be called if you are using an loading system;
         /// </summary>
@@ -961,7 +1049,9 @@ namespace UniversalInventorySystem
             InventoryHandler.current.Broadcast(e, iea: iea);
             return inv;
         }
-        
+
+        #endregion
+
         #region Craft 
 
         /// <summary>
@@ -1289,6 +1379,16 @@ namespace UniversalInventorySystem
 
         #region InventoryUtility
 
+        /// <summary>
+        /// Checks an item in the inventory and return a class with all the info gathered
+        /// </summary>
+        /// <param name="inv">Inventory to check</param>
+        /// <param name="itemToCheck">Item to ckeck</param>
+        /// <param name="minAmount">Minimun amount of items to return true</param>
+        /// <param name="acceptableInvProtections">Inventory protection accepted for checking</param>
+        /// <param name="acceptableSlotProtections">Slot protection accepted for checking</param>
+        /// <param name="mustBeOnSameSlot">If the minimun amount of items must be on the same slot</param>
+        /// <returns>Returns a clas containing 7 attributes: inventory(The inventory checked), slotsCheckced(The slots that where checked), slotsWithItem(The Slots in witch there is the item, does not need to have minimun amount), amout(The total amout of that item in the inventory), hasItem(If the item was found in the provided conditions), mustBeOnSameSlot(SelfExplanatory), checkedItem(The item that was checked)</returns>
         public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection[] acceptableSlotProtections = null, bool mustBeOnSameSlot = false)
         {
             if (inv == null)
@@ -1312,6 +1412,17 @@ namespace UniversalInventorySystem
             return CheckItemInInventory(inv, itemToCheck, minAmount, acceptableInvProtections, acceptableSlotProtections, mustBeOnSameSlot, slotsToCheck.ToArray());
         }
 
+        /// <summary>
+        /// Checks an item in the inventory in the slots provided and return a class with all the info gathered
+        /// </summary>
+        /// <param name="inv">Inventory to check</param>
+        /// <param name="itemToCheck">Item to ckeck</param>
+        /// <param name="minAmount">Minimun amount of items to return true</param>
+        /// <param name="acceptableInvProtections">Inventory protection accepted for checking</param>
+        /// <param name="acceptableSlotProtections">Slot protection accepted for checking</param>
+        /// <param name="mustBeOnSameSlot">If the minimun amount of items must be on the same slot</param>
+        /// <param name="slotsToCheck">Slots that will be checked</param>
+        /// <returns>Returns a clas containing 7 attributes: inventory(The inventory checked), slotsCheckced(The slots that where checked), slotsWithItem(The Slots in witch there is the item, does not need to have minimun amount), amout(The total amout of that item in the inventory), hasItem(If the item was found in the provided conditions), mustBeOnSameSlot(SelfExplanatory), checkedItem(The item that was checked)</returns>
         public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection[] acceptableSlotProtections = null, bool mustBeOnSameSlot = false, params int[] slotsToCheck)
         {
             if (inv == null)
@@ -1370,6 +1481,12 @@ namespace UniversalInventorySystem
             return new CheckItemData(inv, slotsToCheck, new int[0], 0, false, mustBeOnSameSlot, itemToCheck);
         }
 
+        /// <summary>
+        /// Gets the tooltip info of an item in the slot provided from the inventory provided
+        /// </summary>
+        /// <param name="inv">Inventory</param>
+        /// <param name="slot">Slot number</param>
+        /// <returns>Return the tooltip info of the current item in the slot and inventory provided</returns>
         public static ToolTipInfo GetTooltipInfoFromSlot(this Inventory inv, int slot)
         {   
             if(inv == null)
@@ -1385,6 +1502,11 @@ namespace UniversalInventorySystem
 
             return inv.slots[slot].item.tooltip;
         }
+
+        /*public static bool SliptSlot(this Inventory inv, int slot)
+        {
+            if(inv.AddItemToNewSlot())
+        }*/
         #endregion
     }
 
@@ -1470,16 +1592,16 @@ namespace UniversalInventorySystem
 
         public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null);
 
-        public uint SetDurability(uint value, bool op = false)
+        public static uint SetDurability(ref Slot slot, uint value, bool op = false)
         {
             if (op)
             {
-                durability = value;
+                slot.durability = value;
                 return value;
             }
-            if (item == null || !hasItem || value > item.maxDurability || !item.hasDurability)
+            if (slot.item == null || !slot.hasItem || value > slot.item.maxDurability || !slot.item.hasDurability)
                 return 0u;
-            durability = value;
+            slot.durability = value;
             return value;
         }
 
@@ -1652,6 +1774,7 @@ namespace UniversalInventorySystem
         public readonly static CraftItemData nullData = new CraftItemData(null, null);
     }
 
+    [Serializable]
     public enum InventoryProtection
     {
         Any = 0,
@@ -1662,6 +1785,7 @@ namespace UniversalInventorySystem
         Locked = 16
     }
 
+    [Serializable]
     public enum SlotProtection
     {
         Any = 0,
