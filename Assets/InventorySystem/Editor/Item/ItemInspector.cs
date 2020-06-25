@@ -83,14 +83,13 @@ public class ItemInspector : Editor
         if(usingFoldout)
         {
             EditorGUI.indentLevel++;
-            destroyOnUseProp.boolValue = EditorGUILayout.Toggle(new GUIContent("Remove item when used"), destroyOnUseProp.boolValue);
+            destroyOnUseProp.boolValue = EditorGUILayout.Toggle(new GUIContent("Remove item when finish used"), destroyOnUseProp.boolValue);
             useHowManyWhenUsedProp.intValue = EditorGUILayout.IntField(new GUIContent("The amount of item to remove"), useHowManyWhenUsedProp.intValue);
             hasDurabilityProp.boolValue = EditorGUILayout.Toggle("Has durability", hasDurabilityProp.boolValue);
             if (hasDurabilityProp.boolValue)
             {
                 EditorGUILayout.PropertyField(maxDurabilityProp, new GUIContent("Max durability"), true);
-                //EditorGUILayout.PropertyField(durabilityImagesProp, new GUIContent("Durability Images"), true);
-                //Debug.Log(durabilityImagesProp);
+
                 var tmpBool = EditorGUILayout.Foldout(durabilityImagesProp.isExpanded, "Durability Images", true);
                 if(tmpBool != durabilityImagesProp.isExpanded)
                     Item.SortDurabilityImages((target as Item).durabilityImages);
@@ -104,7 +103,10 @@ public class ItemInspector : Editor
                     {
                         EditorGUILayout.PropertyField(durabilityImagesProp.GetArrayElementAtIndex(i));
                         DurabilityImage dur = (target as Item).durabilityImages[i];
-                        EditorGUI.ProgressBar(GUILayoutUtility.GetRect(38, 18), (float)dur.durability / (float)maxDurabilityProp.intValue, "Durability");
+                        var progressRect = GUILayoutUtility.GetRect(38, 18);
+                        progressRect.x += 30;
+                        progressRect.width -= 30;
+                        EditorGUI.ProgressBar(progressRect, (float)dur.durability / (float)maxDurabilityProp.intValue, dur.imageName);
                     }
                     EditorGUI.indentLevel--;
                     if(GUILayout.Button("Sort"))

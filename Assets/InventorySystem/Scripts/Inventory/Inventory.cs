@@ -80,7 +80,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be stored in the inventory</param>
         /// <param name="amount">The amount of items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false)
+        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, uint? durability = null, Action callback = null)
         {
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
@@ -95,6 +95,8 @@ namespace UniversalInventorySystem
                 return -1;
             }
 
+            if(durability == null) durability = item.maxDurability; 
+
             if (!item.stackable)
             {
                 for (int i = 0; i < inv.slots.Count; i++)
@@ -103,7 +105,7 @@ namespace UniversalInventorySystem
                     else if (i < inv.slots.Count - 1)
                     {
                         if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
-                        inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist);
+                        inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist, durability.GetValueOrDefault());
                         amount--;
 
                         if (amount <= 0) break;
@@ -111,7 +113,7 @@ namespace UniversalInventorySystem
                     }
                     else if (!inv.slots[i].hasItem)
                     {
-                        inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist);
+                        inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist, durability.GetValueOrDefault());
                         if (amount <= 0) break;
                         if (amount > 0)
                         {
@@ -127,6 +129,7 @@ namespace UniversalInventorySystem
                         return amount;
                     }
                 }
+                callback?.Invoke();
                 InventoryHandler.AddItemEventArgs aea2 = new InventoryHandler.AddItemEventArgs(inv, true, false, item, amount, null);
                 InventoryHandler.current.Broadcast(e, aea2);
                 return 0;
@@ -140,13 +143,13 @@ namespace UniversalInventorySystem
                 else if (i < inv.slots.Count - 1)
                 {
                     var maxAmount = item.maxAmount;
-                    Slot newSlot = new Slot(item, amount, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist);
+                    Slot newSlot = new Slot(item, amount, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist, durability.GetValueOrDefault());
 
                     if (amount <= maxAmount)
                         inv.slots[i] = newSlot;
                     else
                     {
-                        inv.slots[i] = new Slot(item, maxAmount, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist);
+                        inv.slots[i] = new Slot(item, maxAmount, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist, durability.GetValueOrDefault());
                         amount -= maxAmount;
                         if (amount > 0) continue;
                         else break;
@@ -160,7 +163,7 @@ namespace UniversalInventorySystem
                     var newSlot = inv.slots[i].amount;
                     amount -= item.maxAmount - newSlot;
                     newSlot = item.maxAmount;
-                    inv.slots[i] = new Slot(item, newSlot, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist);
+                    inv.slots[i] = new Slot(item, newSlot, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist, durability.GetValueOrDefault());
                     if (amount > 0)
                     {
                         InventoryHandler.current.Broadcast(e, aea2);
@@ -174,6 +177,7 @@ namespace UniversalInventorySystem
                     return amount;
                 }
             }
+            callback?.Invoke();
             InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, true, false, item, amount, null);
             InventoryHandler.current.Broadcast(e, aea);
             return 0;
@@ -186,7 +190,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be stored in the inventory</param>
         /// <param name="amount">The amount of items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false)
+        public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, uint? durability = null, Action callback = null)
         {
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
@@ -200,6 +204,8 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null item provided for AddItem");
                 return -1;
             }
+
+            if (durability == null) durability = item.maxDurability;
 
             if (!item.stackable) return AddItemToNewSlot(inv, item, amount, e);
             for (int i = 0; i < inv.slots.Count; i++)
@@ -239,12 +245,14 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false)
+        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, uint? durability = null, Action callback = null)
         {
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
             if ((inv.slots[slotNumber].interative == SlotProtection.Locked || inv.slots[slotNumber].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) return amount;
             if (!inv.slots[slotNumber].whitelist?.itemsList.Contains(item) ?? false) return amount;
+
+            if (durability == null) durability = item.maxDurability;
 
             if (inv == null)
             {
@@ -289,7 +297,7 @@ namespace UniversalInventorySystem
             InventoryHandler.current.Broadcast(e, aeaNull);
             return -1;
         }
-
+     
         #endregion
 
         #region Remove
@@ -1507,6 +1515,138 @@ namespace UniversalInventorySystem
         {
             if(inv.AddItemToNewSlot())
         }*/
+        #endregion
+
+        #region PseudoMethods
+
+        /// <summary>
+        /// Adds a certain amount of an item to the first empty slot even if there are slots of the same item that can still hold more items. If the specified amount is grater than the maxAmount for that item it will fill the next slot
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <param name="durability">The durability of the items to be stored</param>
+        /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, uint durability)
+        {
+            return AddItemToNewSlot(inv, item, amount, durability: durability, e: BroadcastEventType.AddItem);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to the first empty slot even if there are slots of the same item that can still hold more items. If the specified amount is grater than the maxAmount for that item it will fill the next slot
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <param name="durability">The durability of the items to be stored</param>
+        /// <param name="callback">The calback function that will be called if everything runs smoothly</param>
+        /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, uint durability, Action callback)
+        {
+            return AddItemToNewSlot(inv, item, amount, durability: durability, callback: callback, e: BroadcastEventType.AddItem);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to the first empty slot even if there are slots of the same item that can still hold more items. If the specified amount is grater than the maxAmount for that item it will fill the next slot
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <param name="callback">The calback function that will be called if everything runs smoothly</param>
+        /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, Action callback)
+        {
+            return AddItemToNewSlot(inv, item, amount, callback: callback, e: BroadcastEventType.AddItem);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to the first empty slot with the same item that isnt full yet. If it fills a entire slot it will go to the next one. If the specified amount is grater than the maxAmount for that item it will fill the next slot. This is what you should use for pick-up an item.
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItem(this Inventory inv, Item item, int amount, uint durability)
+        {
+            return AddItem(inv, item, amount, durability: durability, e: BroadcastEventType.AddItem);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to the first empty slot with the same item that isnt full yet. If it fills a entire slot it will go to the next one. If the specified amount is grater than the maxAmount for that item it will fill the next slot. This is what you should use for pick-up an item.
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItem(this Inventory inv, Item item, int amount, uint durability, Action callback)
+        {
+            return AddItem(inv, item, amount, durability: durability, callback: callback, e: BroadcastEventType.AddItem);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to the first empty slot with the same item that isnt full yet. If it fills a entire slot it will go to the next one. If the specified amount is grater than the maxAmount for that item it will fill the next slot. This is what you should use for pick-up an item.
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItem(this Inventory inv, Item item, int amount, Action callback)
+        {
+            return AddItem(inv, item, amount, callback: callback, e: BroadcastEventType.AddItem);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to an specific slot. If it fills slot entirily it will return the remaning items to be stored.
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <param name="slotNumber">The index of the slot to store the items</param>
+        /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber)
+        {
+            return AddItemToSlot(inv, item, amount, slotNumber);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to an specific slot. If it fills slot entirily it will return the remaning items to be stored.
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <param name="slotNumber">The index of the slot to store the items</param>
+        /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, uint durability)
+        {
+            return AddItemToSlot(inv, item, amount, slotNumber, durability: durability);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to an specific slot. If it fills slot entirily it will return the remaning items to be stored.
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <param name="slotNumber">The index of the slot to store the items</param>
+        /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, uint durability, Action callback)
+        {
+            return AddItemToSlot(inv, item, amount, slotNumber, durability: durability, callback: callback);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to an specific slot. If it fills slot entirily it will return the remaning items to be stored.
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <param name="slotNumber">The index of the slot to store the items</param>
+        /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, Action callback)
+        {
+            return AddItemToSlot(inv, item, amount, slotNumber, callback: callback);
+        }
+
         #endregion
     }
 
