@@ -18,6 +18,10 @@ namespace UniversalInventorySystem
         public bool stackable;
         public uint maxDurability;
         public bool hasDurability;
+        public bool stackAlways;
+        public bool stackOnMaxDurabiliy;
+        public bool stackOnSpecifDurability;
+        public List<int> stackDurabilities;
         [SerializeField] 
         public List<DurabilityImage> durabilityImages
         {

@@ -13,6 +13,10 @@ public class ItemInspector : Editor
     //Storage Props
     SerializedProperty maxAmountProp;
     SerializedProperty stackableProp;
+    SerializedProperty stackAlwaysProp;
+    SerializedProperty stackOnMaxDurabiliyProp;
+    SerializedProperty stackOnSpecifDurabilityProp;
+    SerializedProperty stackDurabilitiesProp;
 
     //Using Props
     SerializedProperty destroyOnUseProp;
@@ -49,6 +53,10 @@ public class ItemInspector : Editor
         maxDurabilityProp = serializedObject.FindProperty("maxDurability");
         hasDurabilityProp = serializedObject.FindProperty("hasDurability");
         durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
+        stackAlwaysProp = serializedObject.FindProperty("stackAlways");
+        stackOnMaxDurabiliyProp = serializedObject.FindProperty("stackOnMaxDurabiliy");
+        stackOnSpecifDurabilityProp = serializedObject.FindProperty("stackOnSpecifDurability");
+        stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");
     }
 
     public override void OnInspectorGUI()
@@ -73,8 +81,36 @@ public class ItemInspector : Editor
         if(storageFoldout)
         {
             EditorGUI.indentLevel++;
-            maxAmountProp.intValue = EditorGUILayout.IntField(new GUIContent("Max amount per slot"), maxAmountProp.intValue);
             stackableProp.boolValue = EditorGUILayout.Toggle(new GUIContent("Stackable"), stackableProp.boolValue);
+            if (stackableProp.boolValue)
+                maxAmountProp.intValue = EditorGUILayout.IntField(new GUIContent("Max amount per slot"), maxAmountProp.intValue);
+            if (hasDurabilityProp.boolValue && stackableProp.boolValue)
+            {
+                EditorGUILayout.PropertyField(stackAlwaysProp);
+                EditorGUILayout.PropertyField(stackOnMaxDurabiliyProp);
+                EditorGUILayout.PropertyField(stackOnSpecifDurabilityProp);
+                if(stackOnSpecifDurabilityProp.boolValue)
+                {
+                    //EditorGUILayout.PropertyField(stackDurabilitiesProp);
+                    stackDurabilitiesProp.isExpanded = EditorGUILayout.Foldout(stackDurabilitiesProp.isExpanded, "Stack Durabilities");
+                    if (stackDurabilitiesProp.isExpanded)
+                    {
+                        EditorGUI.indentLevel++;
+                        stackDurabilitiesProp.arraySize = EditorGUILayout.IntField("Size" ,stackDurabilitiesProp.arraySize);
+                        for(int i = 0;i < stackDurabilitiesProp.arraySize; i++)
+                        {
+                            stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue = EditorGUILayout.IntField("Durability", stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue);
+                            if (i >= (target as Item).stackDurabilities.Count) continue;
+                            int dur = (target as Item).stackDurabilities[i];
+                            var progressRect = GUILayoutUtility.GetRect(38, 18);
+                            progressRect.x += 30;
+                            progressRect.width -= 30;
+                            EditorGUI.ProgressBar(progressRect, (float)dur / (float)maxDurabilityProp.intValue, "Durability");
+                        }
+                        EditorGUI.indentLevel--;
+                    }
+                }
+            }
             EditorGUI.indentLevel--;
         }
 

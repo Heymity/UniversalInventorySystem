@@ -54,10 +54,7 @@ namespace UniversalInventorySystem
             return null;
         }
 
-        public static Inventory GetInventory(int index)
-        {
-            return inventories[index];
-        }
+        public static Inventory GetInventory(int index) => inventories[index];
 
         public static InventoryData SaveInventoryData()
         {
@@ -232,6 +229,7 @@ namespace UniversalInventorySystem
                 }
             }
             if (amount > 0) return AddItemToNewSlot(inv, item, amount, e);
+            callback?.Invoke();
             InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, false, item, amount, null);
             InventoryHandler.current.Broadcast(e, aea);
             return 0;
@@ -274,6 +272,7 @@ namespace UniversalInventorySystem
                     inv.slots[slotNumber] = new Slot(item, item.maxAmount, true, inv.slots[slotNumber].isProductSlot, inv.slots[slotNumber].interative, inv.slots[slotNumber].whitelist);
                     return amount - item.maxAmount;
                 }
+                callback?.Invoke();
                 InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
                 InventoryHandler.current.Broadcast(e, aea);
                 return 0;
@@ -288,6 +287,7 @@ namespace UniversalInventorySystem
                     inv.slots[slotNumber] = new Slot(item, item.maxAmount, true, inv.slots[slotNumber].isProductSlot, inv.slots[slotNumber].interative, inv.slots[slotNumber].whitelist);
                     return valueToReeturn;
                 }
+                callback?.Invoke();
                 InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
                 InventoryHandler.current.Broadcast(e, aea);
                 return 0;
@@ -1729,7 +1729,6 @@ namespace UniversalInventorySystem
         public SlotProtection interative;
         public ItemGroup whitelist;
         public uint durability;
-
         public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null);
 
         public static uint SetDurability(ref Slot slot, uint value, bool op = false)
@@ -1746,7 +1745,7 @@ namespace UniversalInventorySystem
         }
 
         public uint GetDurability() { return durability; }
-        public int GetDurabiliyIntValue() { return (int)durability; }
+        public int GetDurabiliyIntValue() { return checked((int)durability); }
 
         public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist)
         {

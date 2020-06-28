@@ -21,20 +21,24 @@ MonoBehaviour:
   stackable: 1
   maxDurability: 4
   hasDurability: 1
+  stackAlways: 0
+  stackOnMaxDurabiliy: 0
+  stackOnSpecifDurability: 1
+  stackDurabilities: 0200000002000000060000000000000000000000
   _durabilityImages:
-  - imageName: 
+  - imageName: Broken
     sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
     durability: 0
-  - imageName: 
+  - imageName: Kinda Broken
     sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
     durability: 1
-  - imageName: 
+  - imageName: Ok
     sprite: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
     durability: 2
-  - imageName: 
+  - imageName: Good
     sprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
     durability: 3
-  - imageName: 
+  - imageName: Very Good
     sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6,
       type: 3}
     durability: 4
