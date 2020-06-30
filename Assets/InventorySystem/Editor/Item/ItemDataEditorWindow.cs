@@ -18,6 +18,7 @@ public class ItemDataEditorWindow : ExtendEditorWindow
     bool confirmButton;
     private void OnGUI()
     {
+        if (serializedObject == null) return;
         currentProperty = serializedObject.FindProperty("itemsList");
         
         EditorGUILayout.BeginHorizontal();

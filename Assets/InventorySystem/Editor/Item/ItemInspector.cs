@@ -86,6 +86,7 @@ public class ItemInspector : Editor
                 maxAmountProp.intValue = EditorGUILayout.IntField(new GUIContent("Max amount per slot"), maxAmountProp.intValue);
             if (hasDurabilityProp.boolValue && stackableProp.boolValue)
             {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("stackOptions"), new GUIContent("On change durability action"));
                 EditorGUILayout.PropertyField(stackAlwaysProp);
                 EditorGUILayout.PropertyField(stackOnMaxDurabiliyProp);
                 EditorGUILayout.PropertyField(stackOnSpecifDurabilityProp);

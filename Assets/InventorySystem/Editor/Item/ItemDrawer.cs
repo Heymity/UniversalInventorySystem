@@ -11,9 +11,10 @@ public class ItemDrawer : PropertyDrawer
     bool storageFoldout;
     bool usingFoldout;
     bool behaviourFoldout;
+    bool tooltipFoldout;
 
-    float baseAmount = 6f;
-    float amountOfFilds = 6f;
+    float baseAmount = 21f;
+    float amountOfFilds = 21f;
     float total;
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
@@ -39,9 +40,19 @@ public class ItemDrawer : PropertyDrawer
             var stackableProp = serializedObject.FindProperty("stackable");
             var onUseFuncProp = serializedObject.FindProperty("onUseFunc");
             var optionalOnDropBehaviour = serializedObject.FindProperty("optionalOnDropBehaviour");
+            var maxDurabilityProp = serializedObject.FindProperty("maxDurability");
+            var hasDurabilityProp = serializedObject.FindProperty("hasDurability");
+            var stackAlwaysProp = serializedObject.FindProperty("stackAlways");
+            var stackOnMaxDurabiliyProp = serializedObject.FindProperty("stackOnMaxDurabiliy");
+            var stackOnSpecifDurabilityProp = serializedObject.FindProperty("stackOnSpecifDurability");
+            var stackOptionsProp = serializedObject.FindProperty("stackOptions");
+            var stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");
+            var durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
+            var tooltipProp = serializedObject.FindProperty("tooltip");
 
             EditorGUIUtility.wideMode = true;
             EditorGUIUtility.labelWidth = 240;
+            EditorGUI.BeginProperty(position, null, property);
             position.height /= amountOfFilds;
 
             unfold = EditorGUI.Foldout(position, unfold, label);
@@ -90,14 +101,52 @@ public class ItemDrawer : PropertyDrawer
                         position.x += 20;
                         position.width -= 40;
                         EditorGUIUtility.labelWidth -= 20;
-                        total += 2;
+                        total += 6;
                         EditorGUI.indentLevel++;
-
-                        maxAmountProp.intValue = EditorGUI.IntField(position, new GUIContent("Max amount per slot"), maxAmountProp.intValue);
-                        position.y += position.height;
 
                         stackableProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Stackable"), stackableProp.boolValue);
                         position.y += position.height;
+
+                        if (stackableProp.boolValue)
+                        {
+                            maxAmountProp.intValue = EditorGUI.IntField(position, new GUIContent("Max amount per slot"), maxAmountProp.intValue);
+                            position.y += position.height;
+                        }
+                        if (hasDurabilityProp.boolValue && stackableProp.boolValue)
+                        {
+                            EditorGUI.PropertyField(position, serializedObject.FindProperty("stackOptions"), new GUIContent("On change durability action"));
+                            position.y += position.height;
+                            EditorGUI.PropertyField(position, stackAlwaysProp);
+                            position.y += position.height;
+                            EditorGUI.PropertyField(position, stackOnMaxDurabiliyProp);
+                            position.y += position.height;
+                            EditorGUI.PropertyField(position, stackOnSpecifDurabilityProp);
+                            position.y += position.height;
+                            if (stackOnSpecifDurabilityProp.boolValue)
+                            {
+                                //EditorGUI.PropertyField(stackDurabilitiesProp);
+                                stackDurabilitiesProp.isExpanded = EditorGUI.Foldout(position, stackDurabilitiesProp.isExpanded, "Stack Durabilities");
+                                position.y += position.height;
+                                if (stackDurabilitiesProp.isExpanded)
+                                {
+                                    EditorGUI.indentLevel++;
+                                    stackDurabilitiesProp.arraySize = EditorGUI.IntField(position, "Size", stackDurabilitiesProp.arraySize);
+                                    position.y += position.height;
+                                    total += 1;
+                                    for (int i = 0; i < stackDurabilitiesProp.arraySize; i++)
+                                    {
+                                        total += 2;
+                                        stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue = EditorGUI.IntField(position, "Durability", stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue);
+                                        position.y += position.height;
+                                        if (i >= (property.objectReferenceValue as Item).stackDurabilities.Count) continue;
+                                        int dur = (property.objectReferenceValue as Item).stackDurabilities[i];
+                                        EditorGUI.ProgressBar(position, (float)dur / (float)maxDurabilityProp.intValue, "Durability");
+                                        position.y += position.height;
+                                    }
+                                    EditorGUI.indentLevel--;
+                                }
+                            }
+                        }
 
                         EditorGUI.indentLevel--;
                         position.width += 40;
@@ -112,14 +161,57 @@ public class ItemDrawer : PropertyDrawer
                         position.x += 20;
                         position.width -= 40;
                         EditorGUIUtility.labelWidth -= 20;
-                        total += 2;
+                        total += 3;
                         EditorGUI.indentLevel++;
 
-                        destroyOnUseProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Remove item when used"), destroyOnUseProp.boolValue);
+                        destroyOnUseProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Remove item when finish using"), destroyOnUseProp.boolValue);
                         position.y += position.height;
 
                         useHowManyWhenUsedProp.intValue = EditorGUI.IntField(position, new GUIContent("The amount of item to remove"), useHowManyWhenUsedProp.intValue);
                         position.y += position.height;
+
+                        hasDurabilityProp.boolValue = EditorGUI.Toggle(position, "Has durability", hasDurabilityProp.boolValue);
+                        position.y += position.height;
+                        if (hasDurabilityProp.boolValue)
+                        {
+                            total += 2;
+                            EditorGUI.PropertyField(position, maxDurabilityProp, new GUIContent("Max durability"), true);
+                            position.y += position.height;
+
+                            var tmpBool = EditorGUI.Foldout(position, durabilityImagesProp.isExpanded, "Durability Images", true);
+                            position.y += position.height;
+
+                            if (tmpBool != durabilityImagesProp.isExpanded)
+                                Item.SortDurabilityImages((property.objectReferenceValue as Item).durabilityImages);
+                            durabilityImagesProp.isExpanded = tmpBool;
+                            if (durabilityImagesProp.isExpanded)
+                            {
+                                EditorGUI.indentLevel++;
+                                durabilityImagesProp.arraySize = EditorGUI.IntField(position, "Size", durabilityImagesProp.arraySize);
+                                position.y += position.height;
+                                serializedObject.ApplyModifiedProperties();
+
+                                for (int i = 0; i < durabilityImagesProp.arraySize; i++)
+                                {
+                                    var old = position.height;
+                                    position.height = EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i));
+                                    EditorGUI.PropertyField(position, durabilityImagesProp.GetArrayElementAtIndex(i));
+                                    position.y += EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i));
+                                    total += EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i)) / 18f;
+                                    position.height = old;
+
+                                    DurabilityImage dur = (property.objectReferenceValue as Item).durabilityImages[i];
+
+                                    EditorGUI.ProgressBar(position, (float)dur.durability / (float)maxDurabilityProp.intValue, dur.imageName);
+                                    position.y += position.height;
+                                }
+
+                                EditorGUI.indentLevel--;
+                                if (GUI.Button(position, "Sort"))
+                                    Item.SortDurabilityImages((property.objectReferenceValue as Item).durabilityImages);
+                                position.y += position.height;
+                            }
+                        }
 
                         EditorGUI.indentLevel--;
                         position.width += 40;
@@ -152,6 +244,31 @@ public class ItemDrawer : PropertyDrawer
                         EditorGUIUtility.labelWidth += 20;
                         position.x -= 20;
                     }
+
+                    tooltipFoldout = EditorGUI.Foldout(position, tooltipFoldout, new GUIContent("Tooltip Configuration"), true);
+                    position.y += position.height;
+                    if (tooltipFoldout)
+                    {
+                        position.x += 20;
+                        position.width -= 40;
+                        EditorGUIUtility.labelWidth -= 20;
+                        total += 5;
+                        EditorGUI.indentLevel++;
+
+                        var old = position.height;
+                        position.height = EditorGUI.GetPropertyHeight(tooltipProp);
+                        EditorGUI.PropertyField(position, tooltipProp, true);
+                        position.y += EditorGUI.GetPropertyHeight(tooltipProp);
+                        total += EditorGUI.GetPropertyHeight(tooltipProp) / 18f;
+
+                        position.height = old;
+                        
+
+                        EditorGUI.indentLevel--;
+                        position.width += 40;
+                        EditorGUIUtility.labelWidth += 20;
+                        position.x -= 20;
+                    }
                 }
                 else
                 {
@@ -167,6 +284,7 @@ public class ItemDrawer : PropertyDrawer
             }
             position.x -= 20;
             serializedObject.ApplyModifiedProperties();
+            EditorGUI.EndProperty();
         } else
         {
             amountOfFilds = 1;

@@ -21,8 +21,8 @@ namespace UniversalInventorySystem
         public bool stackAlways;
         public bool stackOnMaxDurabiliy;
         public bool stackOnSpecifDurability;
+        public StackOptions stackOptions;
         public List<int> stackDurabilities;
-        [SerializeField] 
         public List<DurabilityImage> durabilityImages
         {
             get
@@ -110,5 +110,12 @@ namespace UniversalInventorySystem
         [SerializeField] public string imageName;
         [SerializeField] public Sprite sprite;
         [SerializeField] public uint durability;
+    }
+
+    public enum StackOptions
+    {
+        Split = 0,
+        TakeFromAll = 1,
+        Mantain = 2,
     }
 }
