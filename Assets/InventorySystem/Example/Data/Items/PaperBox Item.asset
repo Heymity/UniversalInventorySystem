@@ -23,8 +23,8 @@ MonoBehaviour:
   hasDurability: 1
   stackAlways: 0
   stackOnMaxDurabiliy: 0
-  stackOnSpecifDurability: 1
-  stackDurabilities: 0200000002000000060000000000000000000000
+  stackOnSpecifDurability: 0
+  stackDurabilities: 
   _durabilityImages:
   - imageName: Broken
     sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}

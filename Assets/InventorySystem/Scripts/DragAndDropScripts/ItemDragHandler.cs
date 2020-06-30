@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -147,11 +144,21 @@ namespace UniversalInventorySystem
                 }
                 dragSlot.SetInventory(invUI.GetInventory());
                 dragSlot.SetInventoryUI(invUI);
-                dragSlot.SetItem(null);
+                dragSlot.SetItem(invUI.GetInventory().slots[index].item);
                 dragSlot.SetSlotNumber(index);
-                var image = o.GetComponentInChildren<Image>();
-                image.color = new Color(1, 1, 1, 1);
-                image.sprite = invUI.inv.slots[index].item.sprite;
+                dragSlot.SetDurability(invUI.GetInventory().slots[index].durability);
+                if (invUI.GetInventory().slots[index].item.hasDurability && invUI.GetInventory().slots[index].item.durabilityImages.Count > 0)
+                {
+                    var image = o.GetComponentInChildren<Image>();
+                    image.color = new Color(1, 1, 1, 1);
+                    image.sprite = InventoryUI.GetNearestSprite(invUI.GetInventory(), invUI.GetInventory().slots[index].durability, index);
+                }
+                else
+                {
+                    var image = o.GetComponentInChildren<Image>();
+                    image.color = new Color(1, 1, 1, 1);
+                    image.sprite = invUI.inv.slots[index].item.sprite;
+                }
                 o.GetComponentInChildren<TextMeshProUGUI>().text = amountToTransfer.ToString();
 
             }

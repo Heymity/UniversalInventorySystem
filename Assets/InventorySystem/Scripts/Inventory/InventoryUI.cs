@@ -268,7 +268,7 @@ namespace UniversalInventorySystem
                         {
                             if (inv.slots[i].item.durabilityImages.Count > 0)
                             {
-                                image.sprite = GetNearestSprite(inv.slots[i].durability, i);
+                                image.sprite = GetNearestSprite(inv, inv.slots[i].durability, i);
                                 image.color = new Color(1, 1, 1, 1);
                             }
                         }
@@ -418,7 +418,7 @@ namespace UniversalInventorySystem
             }
         }
 
-        private Sprite GetNearestSprite(uint durability, int slot)
+        public static Sprite GetNearestSprite(Inventory inv, uint durability, int slot)
         {
             var minDif = int.MaxValue;
             var index = 0;
