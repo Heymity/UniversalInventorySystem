@@ -24,6 +24,7 @@ MonoBehaviour:
   stackAlways: 0
   stackOnMaxDurabiliy: 0
   stackOnSpecifDurability: 0
+  stackOptions: 1
   stackDurabilities: 
   _durabilityImages:
   - imageName: Broken

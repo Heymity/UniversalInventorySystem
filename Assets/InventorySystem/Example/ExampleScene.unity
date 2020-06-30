@@ -1580,7 +1580,7 @@ MonoBehaviour:
     id: 0
     areItemsUsable: 0
     areItemsDroppable: 1
-    interactiable: 1
+    interactiable: 0
     hasInitializated: 0
   isCraftInventory: 1
   gridSize: {x: 3, y: 3}
