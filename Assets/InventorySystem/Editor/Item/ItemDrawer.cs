@@ -13,11 +13,12 @@ public class ItemDrawer : PropertyDrawer
     bool behaviourFoldout;
     bool tooltipFoldout;
 
-    float baseAmount = 21f;
+    float baseAmount = 7;
     float amountOfFilds = 21f;
     float total;
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
+        Debug.Log(amountOfFilds);
         return 18f * amountOfFilds;
     }
     bool useObjValues;
@@ -68,7 +69,7 @@ public class ItemDrawer : PropertyDrawer
 
                 if (!useObjValues)
                 {
-                    baseAmount = 6;
+                    baseAmount = 7;
                     itemFoldout = EditorGUI.Foldout(position, itemFoldout, new GUIContent("Item Configuration"), true);
                     position.y += position.height;
                     if (itemFoldout)
@@ -124,6 +125,7 @@ public class ItemDrawer : PropertyDrawer
                             position.y += position.height;
                             if (stackOnSpecifDurabilityProp.boolValue)
                             {
+                                total += 1;
                                 //EditorGUI.PropertyField(stackDurabilitiesProp);
                                 stackDurabilitiesProp.isExpanded = EditorGUI.Foldout(position, stackDurabilitiesProp.isExpanded, "Stack Durabilities");
                                 position.y += position.height;
@@ -190,6 +192,7 @@ public class ItemDrawer : PropertyDrawer
                                 durabilityImagesProp.arraySize = EditorGUI.IntField(position, "Size", durabilityImagesProp.arraySize);
                                 position.y += position.height;
                                 serializedObject.ApplyModifiedProperties();
+                                total += 2;
 
                                 for (int i = 0; i < durabilityImagesProp.arraySize; i++)
                                 {
@@ -197,7 +200,7 @@ public class ItemDrawer : PropertyDrawer
                                     position.height = EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i));
                                     EditorGUI.PropertyField(position, durabilityImagesProp.GetArrayElementAtIndex(i));
                                     position.y += EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i));
-                                    total += EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i)) / 18f;
+                                    total += (EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i)) / 18f) + 1;
                                     position.height = old;
 
                                     DurabilityImage dur = (property.objectReferenceValue as Item).durabilityImages[i];

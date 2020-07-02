@@ -102,7 +102,8 @@ namespace UniversalInventorySystem
                     else if (i < inv.slots.Count - 1)
                     {
                         if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
-                        inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist, durability.GetValueOrDefault());
+                        //inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist, durability.GetValueOrDefault());
+                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault());
                         amount--;
 
                         if (amount <= 0) break;
@@ -1091,7 +1092,7 @@ namespace UniversalInventorySystem
                 }
                 foreach (Recipe recipe in asset.recipesList)
                 {
-                    var recipeRes = CraftItem(inv, grid, gridSize, craftItem, recipe, productSlots);
+                    var recipeRes = CraftItem(inv, grid, craftItem, recipe, productSlots);
                     if (recipeRes != CraftItemData.nullData) return recipeRes;
                 }
             }
@@ -1121,7 +1122,7 @@ namespace UniversalInventorySystem
             }
             foreach (Recipe recipe in asset.recipesList)
             {
-                var recipeRes = CraftItem(inv, grid, gridSize, craftItem, recipe, productSlots);
+                var recipeRes = CraftItem(inv, grid, craftItem, recipe, productSlots);
                 if (recipeRes != CraftItemData.nullData) return recipeRes;
             }
             return CraftItemData.nullData;
@@ -1260,7 +1261,7 @@ namespace UniversalInventorySystem
         /// <param name="recipe">The Recipe to be checked</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, Recipe recipe, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, bool craftItem, Recipe recipe, int productSlots)
         {
             List<int> jumpIndexes = new List<int>();
             List<int> tmpjumpIndexes = new List<int>();
@@ -1722,30 +1723,72 @@ namespace UniversalInventorySystem
     [Serializable]
     public struct Slot
     {
+        //Item properties
         public int amount;
         public Item item;
+        public uint durability;
         public bool hasItem;
+        
+        //Slot properties
         public bool isProductSlot;
         public SlotProtection interative;
         public ItemGroup whitelist;
-        public uint durability;
-        public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null);
 
-        public static uint SetDurability(ref Slot slot, uint value, bool op = false)
+        public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null, 0);
+
+        public static bool SetDurability(ref Slot slot, uint value, bool op = false)
         {
             if (op)
             {
                 slot.durability = value;
-                return value;
+                return true;
             }
             if (slot.item == null || !slot.hasItem || value > slot.item.maxDurability || !slot.item.hasDurability)
-                return 0u;
+                return false;
             slot.durability = value;
-            return value;
+            return true;
         }
 
-        public uint GetDurability() { return durability; }
-        public int GetDurabiliyIntValue() { return checked((int)durability); }
+        public uint GetDurability() => durability; 
+        public int GetDurabiliyIntValue() => checked((int)durability); 
+
+        public static Slot Set(ref Slot slot, Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, uint _durability)
+            => slot = new Slot(_item, _amount, _hasItem, _isProductSlot, _interactive, _whitelist, _durability);   
+
+        public static Slot Set(ref Slot slot, Slot _slot)
+            => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, _slot.isProductSlot, _slot.interative, _slot.whitelist, _slot.durability);
+
+        public static Slot Set(Slot slot, Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, uint _durability)
+    => slot = new Slot(_item, _amount, _hasItem, _isProductSlot, _interactive, _whitelist, _durability);
+
+        public static Slot Set(Slot slot, Slot _slot)
+            => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, _slot.isProductSlot, _slot.interative, _slot.whitelist, _slot.durability);
+
+
+        public static Slot SetSlotProperties(ref Slot slot, Slot _slot)
+            => slot = new Slot(slot.item, slot.amount, slot.hasItem, _slot.isProductSlot, _slot.interative, _slot.whitelist, slot.durability);
+
+        public static Slot SetSlotProperties(ref Slot slot, bool _isProductSlot, SlotProtection _interative, ItemGroup _whitelist) 
+            => slot = new Slot(slot.item, slot.amount, slot.hasItem, _isProductSlot, _interative, _whitelist, slot.durability);
+
+        public static Slot SetSlotProperties(Slot slot, Slot _slot)
+            => slot = new Slot(slot.item, slot.amount, slot.hasItem, _slot.isProductSlot, _slot.interative, _slot.whitelist, slot.durability);
+
+        public static Slot SetSlotProperties(Slot slot, bool _isProductSlot, SlotProtection _interative, ItemGroup _whitelist)
+            => slot = new Slot(slot.item, slot.amount, slot.hasItem, _isProductSlot, _interative, _whitelist, slot.durability);
+
+
+        public static Slot SetItemProperties(ref Slot slot, Slot _slot)
+            => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability);
+
+        public static Slot SetItemProperties(Slot slot, Slot _slot)
+            => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability);
+
+        public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, bool _hasItem, uint _durability)
+            => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability);
+
+        public static Slot SetItemProperties(Slot slot, Item _item, int _amount, bool _hasItem, uint _durability)
+    => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability);
 
         public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist)
         {
@@ -1773,7 +1816,7 @@ namespace UniversalInventorySystem
         {
             item = _item;
             amount = 1;
-            hasItem = item != null ? false : true;
+            hasItem = item == null ? false : true;
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
@@ -1784,7 +1827,7 @@ namespace UniversalInventorySystem
         {
             item = _item;
             amount = _amount;
-            hasItem = amount == 0 ? false : true;
+            hasItem = item == null ? false : true;
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
