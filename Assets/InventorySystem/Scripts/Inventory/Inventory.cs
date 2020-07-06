@@ -78,7 +78,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be stored in the inventory</param>
         /// <param name="amount">The amount of items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, uint? durability = null, Action callback = null)
+        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null, Action callback = null)
         {
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
@@ -190,7 +190,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be stored in the inventory</param>
         /// <param name="amount">The amount of items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, uint? durability = null, Action callback = null)
+        public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null, Action callback = null)
         {
             //Validating Arguments
             if (inv.interactiable == InventoryProtection.Locked) return amount;
@@ -206,7 +206,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("item", "Null Item was provided");
             }
             
-            if (durability == null) durability = (uint)(item.maxDurability * amount);
+            if (durability == null) durability = item.maxDurability * amount;
 
             //If the items is not marked as stackable it calls AddItemToNewSlot witch handles the rest
             if (!item.stackable) return AddItemToNewSlot(inv, item, amount, e);
@@ -269,15 +269,15 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, uint? totalDurability = null, uint? nullSlotDurability = null, Action callback = null)
+        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null, Action callback = null)
         {
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
             if ((inv.slots[slotNumber].interative == SlotProtection.Locked || inv.slots[slotNumber].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) return amount;
             if (!inv.slots[slotNumber].whitelist?.itemsList.Contains(item) ?? false) return amount;
 
-            if (totalDurability == null) totalDurability = (uint)(item.maxDurability * amount);
-            if (nullSlotDurability == null) nullSlotDurability = item.maxDurability;
+            if (durability == null) durability = item.maxDurability * amount;
+            //if (nullSlotDurability == null) nullSlotDurability = item.maxDurability;
 
             if (inv == null)
             {
@@ -292,7 +292,7 @@ namespace UniversalInventorySystem
 
             if (!item.stackable)
             {
-                inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, 1, true, (uint)(totalDurability.GetValueOrDefault() / amount));
+                inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, 1, true, durability.GetValueOrDefault() / amount);
                 callback?.Invoke();
                 InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
                 InventoryHandler.current.Broadcast(e, aea);
@@ -302,10 +302,10 @@ namespace UniversalInventorySystem
             if (!inv.slots[slotNumber].hasItem)
             {
                 if (amount < item.maxAmount)
-                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, amount, true, nullSlotDurability.GetValueOrDefault());
+                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, amount, true, durability.GetValueOrDefault());
                 else
                 {
-                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.maxAmount, true, nullSlotDurability.GetValueOrDefault());
+                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.maxAmount, true, durability.GetValueOrDefault());
                     return amount - item.maxAmount;
                 }
                 callback?.Invoke();
@@ -546,7 +546,7 @@ namespace UniversalInventorySystem
                         if(inv.slots[slot].durability > 0)
                         {
                             var tmp = inv.slots[slot];
-                            Slot.SetDurability(ref tmp, inv.slots[slot].durability - 1u);
+                            Slot.SetDurability(ref tmp, inv.slots[slot].durability - 1);
                             inv.slots[slot] = tmp;
                             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, slot);
                             if (inv.slots[slot].durability == 0)
@@ -582,7 +582,7 @@ namespace UniversalInventorySystem
                         if (inv.slots[slot].durability > 0)
                         {
                             var tmp = inv.slots[slot];
-                            Slot.SetDurability(ref tmp, inv.slots[slot].durability - 1u);
+                            Slot.SetDurability(ref tmp, inv.slots[slot].durability - 1);
                             inv.slots[slot] = tmp;
                             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[slot].item, slot);
                             inv.slots[slot].item.OnUse(inv, slot);
@@ -628,7 +628,7 @@ namespace UniversalInventorySystem
                         if (inv.slots[i].durability > 0)
                         {
                             var tmp = inv.slots[i];
-                            Slot.SetDurability(ref tmp, inv.slots[i].durability - 1u);
+                            Slot.SetDurability(ref tmp, inv.slots[i].durability - 1);
                             inv.slots[i] = tmp;
                             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, i);
                             if (inv.slots[i].durability == 0)
@@ -664,7 +664,7 @@ namespace UniversalInventorySystem
                         if (inv.slots[i].durability > 0)
                         {
                             var tmp = inv.slots[i];
-                            Slot.SetDurability(ref tmp, inv.slots[i].durability - 1u);
+                            Slot.SetDurability(ref tmp, inv.slots[i].durability - 1);
                             inv.slots[i] = tmp;
                             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[i].item, i);
                             inv.slots[i].item.OnUse(inv, i);
@@ -1535,7 +1535,7 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="durability">The durability of the items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, uint durability)
+        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, int durability)
         {
             return AddItemToNewSlot(inv, item, amount, durability: durability, e: BroadcastEventType.AddItem);
         }
@@ -1549,7 +1549,7 @@ namespace UniversalInventorySystem
         /// <param name="durability">The durability of the items to be stored</param>
         /// <param name="callback">The calback function that will be called if everything runs smoothly</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, uint durability, Action callback)
+        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, int durability, Action callback)
         {
             return AddItemToNewSlot(inv, item, amount, durability: durability, callback: callback, e: BroadcastEventType.AddItem);
         }
@@ -1574,7 +1574,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be stored in the inventory</param>
         /// <param name="amount">The amount of items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, uint durability)
+        public static int AddItem(this Inventory inv, Item item, int amount, int durability)
         {
             return AddItem(inv, item, amount, durability: durability, e: BroadcastEventType.AddItem);
         }
@@ -1586,7 +1586,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be stored in the inventory</param>
         /// <param name="amount">The amount of items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, uint durability, Action callback)
+        public static int AddItem(this Inventory inv, Item item, int amount, int durability, Action callback)
         {
             return AddItem(inv, item, amount, durability: durability, callback: callback, e: BroadcastEventType.AddItem);
         }
@@ -1611,7 +1611,7 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber)
+        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber)
         {
             return AddItemToSlot(inv, item, amount, slotNumber);
         }
@@ -1624,9 +1624,9 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, uint durability)
+        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, int durability)
         {
-            return AddItemToSlot(inv, item, amount, slotNumber, totalDurability: durability);
+            return AddItemToSlot(inv, item, amount, slotNumber, durability: durability);
         }
 
         /// <summary>
@@ -1637,9 +1637,9 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, uint durability, Action callback)
+        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, int durability, Action callback)
         {
-            return AddItemToSlot(inv, item, amount, slotNumber, totalDurability: durability, callback: callback);
+            return AddItemToSlot(inv, item, amount, slotNumber, durability: durability, callback: callback);
         }
 
         /// <summary>
@@ -1650,9 +1650,35 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, Action callback)
+        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, int durability)
         {
-            return AddItemToSlot(inv, item, amount, slotNumber, callback: callback);
+            return AddItemToSlot(inv, item, amount, slotNumber, durability: durability, e: BroadcastEventType.AddItem);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to an specific slot. If it fills slot entirily it will return the remaning items to be stored.
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <param name="slotNumber">The index of the slot to store the items</param>
+        /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, int durability, Action callback)
+        {
+            return AddItemToSlot(inv, item, amount, slotNumber, durability: durability, callback: callback, e: BroadcastEventType.AddItem);
+        }
+
+        /// <summary>
+        /// Adds a certain amount of an item to an specific slot. If it fills slot entirily it will return the remaning items to be stored.
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be placed</param>
+        /// <param name="item">The item that will be stored in the inventory</param>
+        /// <param name="amount">The amount of items to be stored</param>
+        /// <param name="slotNumber">The index of the slot to store the items</param>
+        /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
+        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, Action callback)
+        {
+            return AddItemToSlot(inv, item, amount, slotNumber, callback: callback, e: BroadcastEventType.AddItem);
         }
 
         #endregion
@@ -1733,17 +1759,17 @@ namespace UniversalInventorySystem
         //Item properties
         public int amount;
         public Item item;
-        public uint durability
+        public int durability
         {
             get { return _durability; }
             set
             {
-                if (value > (item?.maxDurability ?? uint.MaxValue)) throw new Exception("The value provided for durability is greter than the max durablity\nIf your intentions are of using a durability greter then the max one use the SetDurability function with op=true");
+                if (value > (item?.maxDurability ?? int.MaxValue)) throw new Exception("The value provided for durability is greter than the max durablity\nIf your intentions are of using a durability greter then the max one use the SetDurability function with op=true");
                 //_totalDurability += value - _durability;
                 _durability = value;
             }
         }
-        [SerializeField] private uint _durability;
+        [SerializeField] private int _durability;
         /**public uint totalDurability                                                     ///Old System Code
         {
             get { return _totalDurability; }
@@ -1762,12 +1788,12 @@ namespace UniversalInventorySystem
 
         public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null, 0);
 
-        public uint GetDurability() => durability; 
-        public int GetDurabiliyIntValue() => checked((int)durability);
+        public int GetDurability() => durability; 
+        public bool GetDurabiliyValidation() => durability <= (item?.maxDurability ?? 0);
 
         #region Setters
 
-        public static bool SetDurability(ref Slot slot, uint value, bool op = false)
+        public static bool SetDurability(ref Slot slot, int value, bool op = false)
         {
             if (op)
             {
@@ -1782,13 +1808,13 @@ namespace UniversalInventorySystem
             return true;
         }
 
-        public static Slot Set(ref Slot slot, Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, uint _durability)
+        public static Slot Set(ref Slot slot, Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, int _durability)
             => slot = new Slot(_item, _amount, _hasItem, _isProductSlot, _interactive, _whitelist, _durability);   
 
         public static Slot Set(ref Slot slot, Slot _slot)
             => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, _slot.isProductSlot, _slot.interative, _slot.whitelist, _slot.durability);
 
-        public static Slot Set(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, uint _durability)
+        public static Slot Set(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, int _durability)
             => new Slot(_item, _amount, _hasItem, _isProductSlot, _interactive, _whitelist, _durability);
 
 
@@ -1808,13 +1834,13 @@ namespace UniversalInventorySystem
         public static Slot SetItemProperties(ref Slot slot, Slot _slot)
             => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability);
 
-        public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, bool _hasItem, uint _durability)
+        public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, bool _hasItem, int _durability)
             => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability);
 
         public static Slot SetItemProperties(Slot slot, Slot _slot)
             => new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability);
 
-        public static Slot SetItemProperties(Slot slot, Item _item, int _amount, bool _hasItem, uint _durability)
+        public static Slot SetItemProperties(Slot slot, Item _item, int _amount, bool _hasItem, int _durability)
             => new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability);
 
         /**public static Slot SetItemProperties(Slot slot, Item _item, int _amount, bool _hasItem, uint _durability, uint _totalDurability)
@@ -1893,7 +1919,7 @@ namespace UniversalInventorySystem
             durability = 0;
         } 
         
-        public Slot(Item _item, int _amount, bool _hasItem, uint _durability)
+        public Slot(Item _item, int _amount, bool _hasItem, int _durability)
         {
             item = _item;
             amount = _amount;
@@ -1919,7 +1945,7 @@ namespace UniversalInventorySystem
             durability = 0;
         }
         
-        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, uint _durability)
+        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, int _durability)
         {
             item = _item;
             amount = _amount;
@@ -1958,7 +1984,7 @@ namespace UniversalInventorySystem
             durability = 0;
         }
         
-        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, uint _durability)
+        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, int _durability)
         {
             item = _item;
             amount = _amount;
