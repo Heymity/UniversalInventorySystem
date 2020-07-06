@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using UnityEngine;
 
 namespace UniversalInventorySystem
@@ -100,16 +99,13 @@ namespace UniversalInventorySystem
             {
                 for (int i = 0; i < inv.slots.Count; i++)
                 {
-                    if (inv.slots[i].hasItem) continue;
                     if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
                     if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;
 
                     if (inv.slots[i].hasItem && i < inv.slots.Count - 1) continue;
                     else if (i < inv.slots.Count - 1)
                     {
-                        if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
-                        //inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist, durability.GetValueOrDefault());
-                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault(), durability.GetValueOrDefault());
+                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault()/**, durability.GetValueOrDefault()**/);
                         amount--;
 
                         if (amount <= 0) break;
@@ -117,7 +113,7 @@ namespace UniversalInventorySystem
                     }
                     else if (!inv.slots[i].hasItem)
                     {
-                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault(), durability.GetValueOrDefault());
+                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault()/**, durability.GetValueOrDefault()**/);
                         if (amount <= 0) break;
                         if (amount > 0)
                         {
@@ -167,7 +163,7 @@ namespace UniversalInventorySystem
                     var newSlot = inv.slots[i].amount;
                     amount -= item.maxAmount - newSlot;
                     newSlot = item.maxAmount;
-                    inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, newSlot, true, durability.GetValueOrDefault(), (uint)(durability.GetValueOrDefault() * newSlot));
+                    inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, newSlot, true, durability.GetValueOrDefault()/**, (uint)(durability.GetValueOrDefault() * newSlot)*/);
                     if (amount > 0)
                     {
                         InventoryHandler.current.Broadcast(e, aea2);
@@ -320,11 +316,11 @@ namespace UniversalInventorySystem
             else if (inv.slots[slotNumber].item == item)
             {
                 if (inv.slots[slotNumber].amount + amount < item.maxAmount)
-                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, amount + inv.slots[slotNumber].amount, true, inv.slots[slotNumber].durability, inv.slots[slotNumber].totalDurability + totalDurability.GetValueOrDefault());
+                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, amount + inv.slots[slotNumber].amount, true, inv.slots[slotNumber].durability/*, inv.slots[slotNumber].totalDurability + totalDurability.GetValueOrDefault()*/);
                 else
                 {
                     int valueToReeturn = amount + inv.slots[slotNumber].amount - item.maxAmount;
-                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.maxAmount, true, inv.slots[slotNumber].durability, inv.slots[slotNumber].totalDurability + totalDurability.GetValueOrDefault());
+                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.maxAmount, true, inv.slots[slotNumber].durability/*, inv.slots[slotNumber].totalDurability + totalDurability.GetValueOrDefault()*/);
                     return valueToReeturn;
                 }
                 callback?.Invoke();
@@ -818,8 +814,8 @@ namespace UniversalInventorySystem
                         inv, 
                         inv.slots[nativeSlot].item,
                         amount, 
-                        targetSlot,
-                        totalDurability: inv.slots[nativeSlot].totalDurability
+                        targetSlot
+                        /// totalDurability: inv.slots[nativeSlot].totalDurability
                     );
 
                     inv.slots[nativeSlot] = Slot.SetItemProperties(
@@ -1743,12 +1739,12 @@ namespace UniversalInventorySystem
             set
             {
                 if (value > (item?.maxDurability ?? uint.MaxValue)) throw new Exception("The value provided for durability is greter than the max durablity\nIf your intentions are of using a durability greter then the max one use the SetDurability function with op=true");
-                _totalDurability += value - _durability;
+                //_totalDurability += value - _durability;
                 _durability = value;
             }
         }
         [SerializeField] private uint _durability;
-        public uint totalDurability
+        /**public uint totalDurability                                                     ///Old System Code
         {
             get { return _totalDurability; }
             set
@@ -1756,7 +1752,7 @@ namespace UniversalInventorySystem
                 if (value >= _durability) _totalDurability = value;
             }
         }
-        [SerializeField] private uint _totalDurability;
+        [SerializeField] private uint _totalDurability;                                    ///Old System Code */
         public bool hasItem;
         
         //Slot properties
@@ -1775,13 +1771,13 @@ namespace UniversalInventorySystem
         {
             if (op)
             {
-                slot._totalDurability += value - slot._durability;
+                ///slot._totalDurability += value - slot._durability;
                 slot._durability = value;
                 return true;
             }
             if (slot.item == null || !slot.hasItem || value > slot.item.maxDurability || !slot.item.hasDurability)
                 return false;
-            slot._totalDurability += value - slot._durability;
+            ///slot._totalDurability += value - slot._durability;
             slot._durability = value;
             return true;
         }
@@ -1810,22 +1806,25 @@ namespace UniversalInventorySystem
 
 
         public static Slot SetItemProperties(ref Slot slot, Slot _slot)
-            => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability, _slot.totalDurability);
+            => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability);
 
+        public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, bool _hasItem, uint _durability)
+            => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability);
+
+        public static Slot SetItemProperties(Slot slot, Slot _slot)
+            => new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability);
+
+        public static Slot SetItemProperties(Slot slot, Item _item, int _amount, bool _hasItem, uint _durability)
+            => new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability);
+
+        /**public static Slot SetItemProperties(Slot slot, Item _item, int _amount, bool _hasItem, uint _durability, uint _totalDurability)
+            => new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability, _totalDurability);
         public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, bool _hasItem, uint _durability, uint _totalDurability)
             => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability, _totalDurability);
 
-        public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, bool _hasItem, uint _durability)
-            => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability, (uint)(_item.maxDurability * (_amount - 1) + _durability));
+        (uint)(_item.maxDurability * (_amount - 1) + _durability)
+        **/
 
-        public static Slot SetItemProperties(Slot slot, Slot _slot)
-            => new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability, _slot.totalDurability);
-
-        public static Slot SetItemProperties(Slot slot, Item _item, int _amount, bool _hasItem, uint _durability, uint _totalDurability)
-            => new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability, _totalDurability);
-
-        public static Slot SetItemProperties(Slot slot, Item _item, int _amount, bool _hasItem, uint _durability)
-            => new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability, (uint)(_item.maxDurability * (_amount - 1) + _durability));
 
         #endregion
 
@@ -1838,7 +1837,7 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             _durability = slot.durability;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = slot.durability;
         }
 
@@ -1851,7 +1850,7 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = null;
             _durability = slot.durability;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = slot.durability;
         }
 
@@ -1864,7 +1863,7 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             _durability = 0;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = 0;
         }
 
@@ -1877,7 +1876,7 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             _durability = 0;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = 0;
         }
 
@@ -1890,7 +1889,7 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             _durability = 0;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = 0;
         } 
         
@@ -1903,7 +1902,7 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             this._durability = _durability;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = _durability;
         }
 
@@ -1916,7 +1915,7 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             _durability = 0;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = 0;
         }
         
@@ -1929,7 +1928,7 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             this._durability = _durability;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = _durability;
         }
 
@@ -1942,7 +1941,7 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = null;
             _durability = 0;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = 0;
         }
 
@@ -1955,7 +1954,7 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             _durability = 0;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = 0;
         }
         
@@ -1968,11 +1967,11 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             this._durability = _durability;
-            _totalDurability = 0;
+            ///_totalDurability = 0;
             durability = _durability;
         }
 
-        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, uint _durability, uint _totalDurability)
+        /**public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, uint _durability, uint _totalDurability)
         {
             item = _item;
             amount = _amount;
@@ -1981,9 +1980,9 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             this._durability = _durability;
-            this._totalDurability = 0;
-            totalDurability = _totalDurability;
-        }
+            ///this._totalDurability = 0;
+            ///totalDurability = _totalDurability;
+        }**/
     }
 
     [Serializable]
@@ -2018,6 +2017,7 @@ namespace UniversalInventorySystem
     [Serializable]
     public class CraftItemData
     {
+        /// No Code Here. Line 2020 is cursed
         public Item[] items;
         public int[] amounts;
 
