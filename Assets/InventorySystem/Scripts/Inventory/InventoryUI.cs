@@ -417,13 +417,13 @@ namespace UniversalInventorySystem
             }
         }
 
-        public static Sprite GetNearestSprite(Inventory inv, uint durability, int slot)
+        public static Sprite GetNearestSprite(Inventory inv, int durability, int slot)
         {
             var minDif = int.MaxValue;
             var index = 0;
             for(int i = inv.slots[slot].item.durabilityImages.Count - 1; i >= 0;i--)
             {
-                int dif = checked((int)inv.slots[slot].item.durabilityImages[i].durability - (int)durability);
+                int dif = inv.slots[slot].item.durabilityImages[i].durability - durability;
                 if (dif < 0) break;
                 if (dif < minDif)
                 {

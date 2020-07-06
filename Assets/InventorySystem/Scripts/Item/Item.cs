@@ -96,9 +96,9 @@ namespace UniversalInventorySystem
                     {
                         checked
                         {
-                            int temp = (int)inputArray[j - 1].durability;
+                            int temp = inputArray[j - 1].durability;
                             inputArray[j - 1].durability = inputArray[j].durability;
-                            inputArray[j].durability = (uint)temp;
+                            inputArray[j].durability = temp;
                         }
                     }
                 }
@@ -112,7 +112,7 @@ namespace UniversalInventorySystem
     {
         [SerializeField] public string imageName;
         [SerializeField] public Sprite sprite;
-        [SerializeField] public uint durability;
+        [SerializeField] public int durability;
     }
 
     /*public enum StackOptions
