@@ -40,7 +40,7 @@ public class SlotDrawer : PropertyDrawer
 
             var durRect = ampos;
             durRect.width = position.width;
-            var durability = property.FindPropertyRelative("durability");
+            var durability = property.FindPropertyRelative("_durability");
             var hasItem = property.FindPropertyRelative("hasItem");
             var slotItem = property.FindPropertyRelative("item");
             if (hasItem.boolValue && (slotItem.objectReferenceValue as Item) != null)

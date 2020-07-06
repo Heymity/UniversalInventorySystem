@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using UnityEngine;
 
 namespace UniversalInventorySystem
@@ -93,18 +94,22 @@ namespace UniversalInventorySystem
                 return -1;
             }
 
-            if(durability == null) durability = item.maxDurability; 
+            if (durability == null) durability = item.maxDurability;
 
             if (!item.stackable)
             {
                 for (int i = 0; i < inv.slots.Count; i++)
                 {
+                    if (inv.slots[i].hasItem) continue;
+                    if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
+                    if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;
+
                     if (inv.slots[i].hasItem && i < inv.slots.Count - 1) continue;
                     else if (i < inv.slots.Count - 1)
                     {
                         if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
                         //inv.slots[i] = new Slot(item, 1, true, inv.slots[i].isProductSlot, inv.slots[i].interative, inv.slots[i].whitelist, durability.GetValueOrDefault());
-                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault());
+                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault(), durability.GetValueOrDefault());
                         amount--;
 
                         if (amount <= 0) break;
@@ -112,7 +117,7 @@ namespace UniversalInventorySystem
                     }
                     else if (!inv.slots[i].hasItem)
                     {
-                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault());
+                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault(), durability.GetValueOrDefault());
                         if (amount <= 0) break;
                         if (amount > 0)
                         {
@@ -133,6 +138,7 @@ namespace UniversalInventorySystem
                 InventoryHandler.current.Broadcast(e, aea2);
                 return 0;
             }
+
             for (int i = 0; i < inv.slots.Count; i++)
             {
                 if (inv.slots[i].hasItem) continue;
@@ -161,7 +167,7 @@ namespace UniversalInventorySystem
                     var newSlot = inv.slots[i].amount;
                     amount -= item.maxAmount - newSlot;
                     newSlot = item.maxAmount;
-                    inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, newSlot, true, durability.GetValueOrDefault());
+                    inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, newSlot, true, durability.GetValueOrDefault(), (uint)(durability.GetValueOrDefault() * newSlot));
                     if (amount > 0)
                     {
                         InventoryHandler.current.Broadcast(e, aea2);
@@ -190,38 +196,59 @@ namespace UniversalInventorySystem
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
         public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, uint? durability = null, Action callback = null)
         {
+            //Validating Arguments
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
             if (inv == null)
             {
                 Debug.LogError("Null inventory provided for AddItem");
-                return -1;
+                throw new ArgumentNullException("inv", "Null Inventory was provided");
             }
             if (item == null)
             {
                 Debug.LogError("Null item provided for AddItem");
-                return -1;
+                throw new ArgumentNullException("item", "Null Item was provided");
             }
+            
+            if (durability == null) durability = (uint)(item.maxDurability * amount);
 
-            if (durability == null) durability = item.maxDurability;
-
+            //If the items is not marked as stackable it calls AddItemToNewSlot witch handles the rest
             if (!item.stackable) return AddItemToNewSlot(inv, item, amount, e);
+
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item != item) continue;
-                if (inv.slots[i].amount == inv.slots[i].item.maxAmount) continue;
-                if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
-                if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;
-                var newSlot = inv.slots[i];
+                if (inv.slots[i].item != item) continue;                                         // Must be same item
+                if (inv.slots[i].amount == inv.slots[i].item.maxAmount) continue;                // Must fit at least one
+                if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;                                              // Must have a acceptable protection level
+                if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;        // Must be accepted in the whitelist since it may change in runtime
 
-                if (newSlot.amount + amount <= item.maxAmount)
+                var newSlot = inv.slots[i];                                                      // Tmp var
+
+                /**if (item.hasDurability)                                                       // Old Sytem Code
+                {
+                    if (item.stackAlways)
+                    {
+                        newSlot.totalDurability += durability.GetValueOrDefault();
+                    } 
+                    else if (item.stackOnSpecifDurability)
+                    {
+                        if (!(item.stackDurabilities?.Contains(inv.slots[i].durability) ?? true)) continue;
+                    } 
+                    else if (item.stackOnMaxDurabiliy)
+                    {
+                        if (inv.slots[i].durability != item.maxDurability) continue;
+                    }
+                }                                                                                // Old Sytem Code **/
+
+
+                if (newSlot.amount + amount <= item.maxAmount)                                   // If the entire amount fits on the slot
                 {
                     newSlot.amount += amount;
                     amount = 0;
                     inv.slots[i] = newSlot;
                     break;
                 }
-                else if (newSlot.amount + amount > item.maxAmount)
+                else if (newSlot.amount + amount > item.maxAmount)                               // If the entire amount doesn`t fit on the slot
                 {
                     amount -= item.maxAmount - newSlot.amount;
                     newSlot.amount = item.maxAmount;
@@ -229,6 +256,8 @@ namespace UniversalInventorySystem
                     if (amount > 0) continue;
                 }
             }
+
+            //If there are still Items to add and there are no other slot with the same item it adds to a new slot
             if (amount > 0) return AddItemToNewSlot(inv, item, amount, e);
             callback?.Invoke();
             InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, false, item, amount, null);
@@ -244,14 +273,15 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, uint? durability = null, Action callback = null)
+        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, uint? totalDurability = null, uint? nullSlotDurability = null, Action callback = null)
         {
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
             if ((inv.slots[slotNumber].interative == SlotProtection.Locked || inv.slots[slotNumber].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) return amount;
             if (!inv.slots[slotNumber].whitelist?.itemsList.Contains(item) ?? false) return amount;
 
-            if (durability == null) durability = item.maxDurability;
+            if (totalDurability == null) totalDurability = (uint)(item.maxDurability * amount);
+            if (nullSlotDurability == null) nullSlotDurability = item.maxDurability;
 
             if (inv == null)
             {
@@ -264,13 +294,22 @@ namespace UniversalInventorySystem
                 return -1;
             }
 
+            if (!item.stackable)
+            {
+                inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, 1, true, (uint)(totalDurability.GetValueOrDefault() / amount));
+                callback?.Invoke();
+                InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
+                InventoryHandler.current.Broadcast(e, aea);
+                return amount - 1 > 0 ? amount - 1 : 0;
+            }
+
             if (!inv.slots[slotNumber].hasItem)
             {
                 if (amount < item.maxAmount)
-                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, amount, true, durability.GetValueOrDefault());
+                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, amount, true, nullSlotDurability.GetValueOrDefault());
                 else
                 {
-                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.maxAmount, true, durability.GetValueOrDefault());
+                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.maxAmount, true, nullSlotDurability.GetValueOrDefault());
                     return amount - item.maxAmount;
                 }
                 callback?.Invoke();
@@ -281,11 +320,11 @@ namespace UniversalInventorySystem
             else if (inv.slots[slotNumber].item == item)
             {
                 if (inv.slots[slotNumber].amount + amount < item.maxAmount)
-                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, amount + inv.slots[slotNumber].amount, true, durability.GetValueOrDefault());
+                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, amount + inv.slots[slotNumber].amount, true, inv.slots[slotNumber].durability, inv.slots[slotNumber].totalDurability + totalDurability.GetValueOrDefault());
                 else
                 {
                     int valueToReeturn = amount + inv.slots[slotNumber].amount - item.maxAmount;
-                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.maxAmount, true, durability.GetValueOrDefault());
+                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.maxAmount, true, inv.slots[slotNumber].durability, inv.slots[slotNumber].totalDurability + totalDurability.GetValueOrDefault());
                     return valueToReeturn;
                 }
                 callback?.Invoke();
@@ -779,7 +818,8 @@ namespace UniversalInventorySystem
                         inv, 
                         inv.slots[nativeSlot].item,
                         amount, 
-                        targetSlot
+                        targetSlot,
+                        totalDurability: inv.slots[nativeSlot].totalDurability
                     );
 
                     inv.slots[nativeSlot] = Slot.SetItemProperties(
@@ -1590,7 +1630,7 @@ namespace UniversalInventorySystem
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
         public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, uint durability)
         {
-            return AddItemToSlot(inv, item, amount, slotNumber, durability: durability);
+            return AddItemToSlot(inv, item, amount, slotNumber, totalDurability: durability);
         }
 
         /// <summary>
@@ -1603,7 +1643,7 @@ namespace UniversalInventorySystem
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
         public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, uint durability, Action callback)
         {
-            return AddItemToSlot(inv, item, amount, slotNumber, durability: durability, callback: callback);
+            return AddItemToSlot(inv, item, amount, slotNumber, totalDurability: durability, callback: callback);
         }
 
         /// <summary>
@@ -1697,7 +1737,26 @@ namespace UniversalInventorySystem
         //Item properties
         public int amount;
         public Item item;
-        public uint durability;
+        public uint durability
+        {
+            get { return _durability; }
+            set
+            {
+                if (value > (item?.maxDurability ?? uint.MaxValue)) throw new Exception("The value provided for durability is greter than the max durablity\nIf your intentions are of using a durability greter then the max one use the SetDurability function with op=true");
+                _totalDurability += value - _durability;
+                _durability = value;
+            }
+        }
+        [SerializeField] private uint _durability;
+        public uint totalDurability
+        {
+            get { return _totalDurability; }
+            set
+            {
+                if (value >= _durability) _totalDurability = value;
+            }
+        }
+        [SerializeField] private uint _totalDurability;
         public bool hasItem;
         
         //Slot properties
@@ -1707,21 +1766,25 @@ namespace UniversalInventorySystem
 
         public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null, 0);
 
+        public uint GetDurability() => durability; 
+        public int GetDurabiliyIntValue() => checked((int)durability);
+
+        #region Setters
+
         public static bool SetDurability(ref Slot slot, uint value, bool op = false)
         {
             if (op)
             {
-                slot.durability = value;
+                slot._totalDurability += value - slot._durability;
+                slot._durability = value;
                 return true;
             }
             if (slot.item == null || !slot.hasItem || value > slot.item.maxDurability || !slot.item.hasDurability)
                 return false;
-            slot.durability = value;
+            slot._totalDurability += value - slot._durability;
+            slot._durability = value;
             return true;
         }
-
-        public uint GetDurability() => durability; 
-        public int GetDurabiliyIntValue() => checked((int)durability); 
 
         public static Slot Set(ref Slot slot, Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, uint _durability)
             => slot = new Slot(_item, _amount, _hasItem, _isProductSlot, _interactive, _whitelist, _durability);   
@@ -1747,27 +1810,36 @@ namespace UniversalInventorySystem
 
 
         public static Slot SetItemProperties(ref Slot slot, Slot _slot)
-            => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability);
+            => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability, _slot.totalDurability);
+
+        public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, bool _hasItem, uint _durability, uint _totalDurability)
+            => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability, _totalDurability);
 
         public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, bool _hasItem, uint _durability)
-            => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability);
+            => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability, (uint)(_item.maxDurability * (_amount - 1) + _durability));
 
         public static Slot SetItemProperties(Slot slot, Slot _slot)
-            => new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability);
+            => new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability, _slot.totalDurability);
+
+        public static Slot SetItemProperties(Slot slot, Item _item, int _amount, bool _hasItem, uint _durability, uint _totalDurability)
+            => new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability, _totalDurability);
 
         public static Slot SetItemProperties(Slot slot, Item _item, int _amount, bool _hasItem, uint _durability)
-            => new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability);
+            => new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability, (uint)(_item.maxDurability * (_amount - 1) + _durability));
 
+        #endregion
 
         public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist)
         {
             item = slot.item;
             amount = slot.amount;
             hasItem = slot.hasItem;
-            durability = slot.durability;
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = _whitelist;
+            _durability = slot.durability;
+            _totalDurability = 0;
+            durability = slot.durability;
         }
 
         public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive)
@@ -1775,10 +1847,12 @@ namespace UniversalInventorySystem
             item = slot.item;
             amount = slot.amount;
             hasItem = slot.hasItem;
-            durability = slot.durability;
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = null;
+            _durability = slot.durability;
+            _totalDurability = 0;
+            durability = slot.durability;
         }
 
         public Slot(Item _item)
@@ -1789,6 +1863,8 @@ namespace UniversalInventorySystem
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
+            _durability = 0;
+            _totalDurability = 0;
             durability = 0;
         }
 
@@ -1800,6 +1876,8 @@ namespace UniversalInventorySystem
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
+            _durability = 0;
+            _totalDurability = 0;
             durability = 0;
         }
 
@@ -1811,6 +1889,8 @@ namespace UniversalInventorySystem
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
+            _durability = 0;
+            _totalDurability = 0;
             durability = 0;
         } 
         
@@ -1822,6 +1902,8 @@ namespace UniversalInventorySystem
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
+            this._durability = _durability;
+            _totalDurability = 0;
             durability = _durability;
         }
 
@@ -1833,6 +1915,8 @@ namespace UniversalInventorySystem
             isProductSlot = _isProductSlot;
             interative = SlotProtection.Any;
             whitelist = null;
+            _durability = 0;
+            _totalDurability = 0;
             durability = 0;
         }
         
@@ -1844,6 +1928,8 @@ namespace UniversalInventorySystem
             isProductSlot = _isProductSlot;
             interative = SlotProtection.Any;
             whitelist = null;
+            this._durability = _durability;
+            _totalDurability = 0;
             durability = _durability;
         }
 
@@ -1855,6 +1941,8 @@ namespace UniversalInventorySystem
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = null;
+            _durability = 0;
+            _totalDurability = 0;
             durability = 0;
         }
 
@@ -1866,6 +1954,8 @@ namespace UniversalInventorySystem
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = _whitelist;
+            _durability = 0;
+            _totalDurability = 0;
             durability = 0;
         }
         
@@ -1877,7 +1967,22 @@ namespace UniversalInventorySystem
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = _whitelist;
+            this._durability = _durability;
+            _totalDurability = 0;
             durability = _durability;
+        }
+
+        public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, uint _durability, uint _totalDurability)
+        {
+            item = _item;
+            amount = _amount;
+            hasItem = _hasItem;
+            isProductSlot = _isProductSlot;
+            interative = _interactive;
+            whitelist = _whitelist;
+            this._durability = _durability;
+            this._totalDurability = 0;
+            totalDurability = _totalDurability;
         }
     }
 
@@ -1923,7 +2028,7 @@ namespace UniversalInventorySystem
         }
 
         public readonly static CraftItemData nullData = new CraftItemData(null, null);
-    }
+    } 
 
     [Serializable]
     public enum InventoryProtection

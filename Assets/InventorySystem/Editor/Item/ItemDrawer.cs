@@ -18,7 +18,6 @@ public class ItemDrawer : PropertyDrawer
     float total;
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-        Debug.Log(amountOfFilds);
         return 18f * amountOfFilds;
     }
     bool useObjValues;
@@ -43,11 +42,11 @@ public class ItemDrawer : PropertyDrawer
             var optionalOnDropBehaviour = serializedObject.FindProperty("optionalOnDropBehaviour");
             var maxDurabilityProp = serializedObject.FindProperty("maxDurability");
             var hasDurabilityProp = serializedObject.FindProperty("hasDurability");
-            var stackAlwaysProp = serializedObject.FindProperty("stackAlways");
+            /*var stackAlwaysProp = serializedObject.FindProperty("stackAlways");
             var stackOnMaxDurabiliyProp = serializedObject.FindProperty("stackOnMaxDurabiliy");
             var stackOnSpecifDurabilityProp = serializedObject.FindProperty("stackOnSpecifDurability");
             var stackOptionsProp = serializedObject.FindProperty("stackOptions");
-            var stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");
+            var stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");*/
             var durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
             var tooltipProp = serializedObject.FindProperty("tooltip");
 
@@ -56,7 +55,7 @@ public class ItemDrawer : PropertyDrawer
             EditorGUI.BeginProperty(position, null, property);
             position.height /= amountOfFilds;
 
-            unfold = EditorGUI.Foldout(position, unfold, label);
+            unfold = EditorGUI.Foldout(position, unfold, (property.objectReferenceValue as Item).name);
             position.y += position.height;
             position.x += 20;
 
@@ -105,15 +104,23 @@ public class ItemDrawer : PropertyDrawer
                         total += 6;
                         EditorGUI.indentLevel++;
 
+                        if (hasDurabilityProp.boolValue)
+                        {
+                            EditorGUI.HelpBox(position, "You can only have durability or stackable selected, not both", MessageType.Info);
+                            position.y += position.height;
+                        }
+                        EditorGUI.BeginDisabledGroup(hasDurabilityProp.boolValue);
                         stackableProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Stackable"), stackableProp.boolValue);
+                        EditorGUI.EndDisabledGroup();
                         position.y += position.height;
 
                         if (stackableProp.boolValue)
                         {
                             maxAmountProp.intValue = EditorGUI.IntField(position, new GUIContent("Max amount per slot"), maxAmountProp.intValue);
                             position.y += position.height;
+                            hasDurabilityProp.boolValue = false;
                         }
-                        if (hasDurabilityProp.boolValue && stackableProp.boolValue)
+                        /*if (hasDurabilityProp.boolValue && stackableProp.boolValue)
                         {
                             EditorGUI.PropertyField(position, serializedObject.FindProperty("stackOptions"), new GUIContent("On change durability action"));
                             position.y += position.height;
@@ -141,14 +148,14 @@ public class ItemDrawer : PropertyDrawer
                                         stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue = EditorGUI.IntField(position, "Durability", stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue);
                                         position.y += position.height;
                                         if (i >= (property.objectReferenceValue as Item).stackDurabilities.Count) continue;
-                                        int dur = (property.objectReferenceValue as Item).stackDurabilities[i];
+                                        uint dur = (property.objectReferenceValue as Item).stackDurabilities[i];
                                         EditorGUI.ProgressBar(position, (float)dur / (float)maxDurabilityProp.intValue, "Durability");
                                         position.y += position.height;
                                     }
                                     EditorGUI.indentLevel--;
                                 }
                             }
-                        }
+                        }*/
 
                         EditorGUI.indentLevel--;
                         position.width += 40;
@@ -172,7 +179,19 @@ public class ItemDrawer : PropertyDrawer
                         useHowManyWhenUsedProp.intValue = EditorGUI.IntField(position, new GUIContent("The amount of item to remove"), useHowManyWhenUsedProp.intValue);
                         position.y += position.height;
 
+                        if (stackableProp.boolValue)
+                        { 
+                            EditorGUI.HelpBox(position, "You can only have durability or stackable selected, not both", MessageType.Info);
+                            position.y += position.height;
+                        }
+                        EditorGUI.BeginDisabledGroup(stackableProp.boolValue);
                         hasDurabilityProp.boolValue = EditorGUI.Toggle(position, "Has durability", hasDurabilityProp.boolValue);
+                        EditorGUI.EndDisabledGroup();
+                        if (stackableProp.boolValue)
+                        {
+                            hasDurabilityProp.boolValue = false;
+                        }
+
                         position.y += position.height;
                         if (hasDurabilityProp.boolValue)
                         {

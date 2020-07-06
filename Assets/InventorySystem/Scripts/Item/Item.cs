@@ -6,7 +6,11 @@ using UnityEngine;
 
 namespace UniversalInventorySystem
 {
-    [AddComponentMenu("UniversalInventorySystem/Item"), CreateAssetMenu(fileName = "Item", menuName = "UniversalInventorySystem/Item", order = 1), System.Serializable]
+    [
+        AddComponentMenu("UniversalInventorySystem/Item"), 
+        CreateAssetMenu(fileName = "Item", menuName = "UniversalInventorySystem/Item", order = 1), 
+        Serializable
+    ]
     public class Item : ScriptableObject
     {
         public string itemName;
@@ -18,11 +22,11 @@ namespace UniversalInventorySystem
         public bool stackable;
         public uint maxDurability;
         public bool hasDurability;
-        public bool stackAlways;
+        /*public bool stackAlways;
         public bool stackOnMaxDurabiliy;
         public bool stackOnSpecifDurability;
         public StackOptions stackOptions;
-        public List<int> stackDurabilities;
+        public List<uint> stackDurabilities;*/
         public List<DurabilityImage> durabilityImages
         {
             get
@@ -31,8 +35,7 @@ namespace UniversalInventorySystem
             }
             set
             {
-                _durabilityImages = value;
-                SortDurabilityImages(_durabilityImages);
+                _durabilityImages = SortDurabilityImages(value);
             }
         }
         [SerializeField]
@@ -43,7 +46,7 @@ namespace UniversalInventorySystem
 
         public void OnEnable()
         {
-            SortDurabilityImages(_durabilityImages);
+            _durabilityImages = SortDurabilityImages(_durabilityImages);
         }
 
         public void OnUse(Inventory inv, int slot)
@@ -105,17 +108,17 @@ namespace UniversalInventorySystem
     }
 
     [Serializable]
-    public class DurabilityImage : System.Object
+    public class DurabilityImage : object
     {
         [SerializeField] public string imageName;
         [SerializeField] public Sprite sprite;
         [SerializeField] public uint durability;
     }
 
-    public enum StackOptions
+    /*public enum StackOptions
     {
         Split = 0,
         TakeFromAll = 1,
         Mantain = 2,
-    }
+    }*/
 }

@@ -51,7 +51,7 @@ public class ExtendEditorWindow : EditorWindow
 
         foreach (SerializedProperty p in prop)
         {
-            if (GUILayout.Button("Item " + p.displayName.TrimStart('E', 'l', 'e', 'm', 'e', 'n', 't')))
+            if (GUILayout.Button((p.objectReferenceValue as Item).name))
             {
                 showItemAssets = false;
                 selectedPropertyPath = p.propertyPath;

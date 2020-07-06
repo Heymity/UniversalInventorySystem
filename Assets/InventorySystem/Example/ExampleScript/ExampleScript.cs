@@ -25,6 +25,7 @@ public class ExampleScript : MonoBehaviour
         invEvent.OnAddItem += OnAddItem;
         invEvent.OnRemoveItem += OnRemoveItem;
     }
+
     private void Update()
     {
         //Adds a item

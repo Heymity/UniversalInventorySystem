@@ -11,11 +11,11 @@ public class ItemDataEditorWindow : ExtendEditorWindow
 
     public static void Open(ItemGroup dataObject)
     {
-        ItemDataEditorWindow window = GetWindow<ItemDataEditorWindow>("Item Data Editor");
+        ItemDataEditorWindow window = GetWindow<ItemDataEditorWindow>("Item Group Editor");
         window.serializedObject = new SerializedObject(dataObject);
     }
 
-    bool confirmButton;
+    //bool confirmButton;
     private void OnGUI()
     {
         if (serializedObject == null) return;

@@ -81,10 +81,16 @@ public class ItemInspector : Editor
         if(storageFoldout)
         {
             EditorGUI.indentLevel++;
+            if (hasDurabilityProp.boolValue) EditorGUILayout.HelpBox(new GUIContent("You can only have durability or stackable selected, not both"));
+            EditorGUI.BeginDisabledGroup(hasDurabilityProp.boolValue);
             stackableProp.boolValue = EditorGUILayout.Toggle(new GUIContent("Stackable"), stackableProp.boolValue);
+            EditorGUI.EndDisabledGroup();
             if (stackableProp.boolValue)
+            {
                 maxAmountProp.intValue = EditorGUILayout.IntField(new GUIContent("Max amount per slot"), maxAmountProp.intValue);
-            if (hasDurabilityProp.boolValue && stackableProp.boolValue)
+                hasDurabilityProp.boolValue = false;
+            }
+            /**if (hasDurabilityProp.boolValue && stackableProp.boolValue)
             {
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("stackOptions"), new GUIContent("On change durability action"));
                 EditorGUILayout.PropertyField(stackAlwaysProp);
@@ -102,7 +108,7 @@ public class ItemInspector : Editor
                         {
                             stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue = EditorGUILayout.IntField("Durability", stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue);
                             if (i >= (target as Item).stackDurabilities.Count) continue;
-                            int dur = (target as Item).stackDurabilities[i];
+                            uint dur = (target as Item).stackDurabilities[i];
                             var progressRect = GUILayoutUtility.GetRect(38, 18);
                             progressRect.x += 30;
                             progressRect.width -= 30;
@@ -111,7 +117,7 @@ public class ItemInspector : Editor
                         EditorGUI.indentLevel--;
                     }
                 }
-            }
+            }*/
             EditorGUI.indentLevel--;
         }
 
@@ -122,7 +128,15 @@ public class ItemInspector : Editor
             EditorGUI.indentLevel++;
             destroyOnUseProp.boolValue = EditorGUILayout.Toggle(new GUIContent("Remove item when finish used"), destroyOnUseProp.boolValue);
             useHowManyWhenUsedProp.intValue = EditorGUILayout.IntField(new GUIContent("The amount of item to remove"), useHowManyWhenUsedProp.intValue);
+
+            if (stackableProp.boolValue) EditorGUILayout.HelpBox(new GUIContent("You can only have durability or stackable selected, not both"));
+            EditorGUI.BeginDisabledGroup(stackableProp.boolValue);
             hasDurabilityProp.boolValue = EditorGUILayout.Toggle("Has durability", hasDurabilityProp.boolValue);
+            EditorGUI.EndDisabledGroup();
+            if (stackableProp.boolValue)
+            {
+                hasDurabilityProp.boolValue = false;
+            }
             if (hasDurabilityProp.boolValue)
             {
                 EditorGUILayout.PropertyField(maxDurabilityProp, new GUIContent("Max durability"), true);
