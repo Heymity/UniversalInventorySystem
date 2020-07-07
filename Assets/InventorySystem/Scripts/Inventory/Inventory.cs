@@ -70,7 +70,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Durability
+        ///TODO: Durability, Crafting Events
         #region Add
 
         /// <summary>
@@ -999,11 +999,11 @@ namespace UniversalInventorySystem
         /// </summary>
         /// <param name="inv">The inventory to be initialized</param>
         /// <returns>The initiaized inventory</returns>
-        public static Inventory InitializeInventory(this Inventory inv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
+        public static Inventory Initialize(this Inventory inv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
         {
             if (inv == null)
             {
-                Debug.LogError("Null inventory provided for InitializeInventory");
+                Debug.LogError("Null inventory provided for Initialize");
                 return null;
             }
 
@@ -1015,31 +1015,30 @@ namespace UniversalInventorySystem
                 for (int i = 0; i < inv.slotAmounts; i++)
                 {
                     //Debug.Log(inv.slots.Count);
-                    if (i < inv.slots.Count)
-                        inv.slots[i] = new Slot(
-                            null, 
-                            0,
-                            false,
-                            inv.slots[i].isProductSlot, 
-                            inv.slots[i].interative,
-                            inv.slots[i].whitelist
-                        );
+                    if (i < inv.slots.Count) continue;
+                    /*inv.slots[i] = Slot.SetItemProperties(
+                        inv.slots[i],
+                        null, 
+                        0,
+                        false,
+                        0
+                    );*/
                     else
-                        inv.slots.Add(new Slot(null, 0, false));
+                        inv.slots.Add(Slot.nullSlot);
                 }
             }
 
             //Debug.Log(inv.slots.Count);
             inv.id = inventories.Count;
-            inventories.Add(inv);
             inv.hasInitializated = true;
+            inventories.Add(inv);
             InventoryHandler.InitializeInventoryEventArgs iea = new InventoryHandler.InitializeInventoryEventArgs(inv);
             InventoryHandler.current.Broadcast(e, iea: iea);
             return inv;
         }
 
         /// <summary>
-        /// This function is an alternative for the InitializeInventory function. It initializes a Inventory using another inventory as a Model;
+        /// This function is an alternative for the Initialize function. It initializes a Inventory using another inventory as a Model;
         /// </summary>
         /// <param name="inv">The inventory to be initialized</param>
         /// <returns>The initialized inventory</returns>
@@ -1047,12 +1046,12 @@ namespace UniversalInventorySystem
         {
             if (inv == null)
             {
-                Debug.LogError("Null inventory provided for InitializeInventory");
+                Debug.LogError("Null inventory provided for Initialize");
                 return null;
             }
             if (modelInv == null)
             {
-                Debug.LogError("Null model inventory provided for InitializeInventory");
+                Debug.LogError("Null model inventory provided for Initialize");
                 return null;
             }
 

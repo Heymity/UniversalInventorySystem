@@ -14,7 +14,7 @@ public class ExampleScript : MonoBehaviour
     {
         //Inventory initialization
         inventory = new Inventory(slotAmount, true, InventoryProtection.Any, true);
-        inventory.InitializeInventory();
+        inventory.Initialize();
 
         //InventoryUI initialization
         invUI.SetInventory(inventory);

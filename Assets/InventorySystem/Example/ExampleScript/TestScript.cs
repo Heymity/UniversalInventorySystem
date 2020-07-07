@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using UniversalInventorySystem;
 
-public class TestScript2 : MonoBehaviour
+[RequireComponent(typeof(InventoryUI))]
+public class TestScript : MonoBehaviour
 {
     Inventory inventory;
-    public InventoryUI invUI;
+    InventoryUI invUI;
 
     private void Start()
     {
+        invUI = GetComponent<InventoryUI>();
         inventory = invUI.GetInventory();
     }
    

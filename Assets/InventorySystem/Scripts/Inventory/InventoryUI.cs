@@ -204,7 +204,7 @@ namespace UniversalInventorySystem
         public void Update()
         {
             if (!inv.hasInitializated)
-                inv.InitializeInventory();
+                inv.Initialize();
             
             if (generateUIFromSlotPrefab && !hasGenerated)
             {
