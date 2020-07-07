@@ -56,6 +56,8 @@ namespace UniversalInventorySystem
 
         public static Inventory GetInventory(int index) => inventories[index];
 
+        public static Slot GetSlotInInventory(int invIndex, int slotIndex) => inventories[invIndex][slotIndex];
+
         public static InventoryData SaveInventoryData()
         {
             inventoryData.inventories = inventories.ToArray();
@@ -68,7 +70,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        //TODO: Durability
+        ///TODO: Durability
         #region Add
 
         /// <summary>
@@ -1699,6 +1701,12 @@ namespace UniversalInventorySystem
 
         public bool hasInitializated;
 
+        public Slot this[int i]
+        {
+            get { return slots[i]; }
+            set { slots[i] = value; }
+        }
+
         public Inventory(List<Slot> _slots, int _slotAmounts, InventoryProtection _interactiable, bool _areItemsUsable = true, bool _areItemsDroppable = true)
         {
             slots = _slots;
@@ -2009,7 +2017,7 @@ namespace UniversalInventorySystem
             ///this._totalDurability = 0;
             ///totalDurability = _totalDurability;
         }**/
-    }
+    } /// No Code Here. Line 2020 is cursed
 
     [Serializable]
     public class InventoryData
@@ -2043,7 +2051,6 @@ namespace UniversalInventorySystem
     [Serializable]
     public class CraftItemData
     {
-        /// No Code Here. Line 2020 is cursed
         public Item[] items;
         public int[] amounts;
 
@@ -2075,5 +2082,4 @@ namespace UniversalInventorySystem
         OnlyAdd = 2,
         OnlyRemove = 4
     }
-
 }
