@@ -29,7 +29,7 @@ public class InventoryUIInspector : Editor
     SerializedProperty dropOnCloseCraftingProp;
     SerializedProperty dropPosProp;
     SerializedProperty randomFactorProp;
-    SerializedProperty previewMatProp;
+    SerializedProperty ShowAmountProp;
 
     bool autoGenUI;
 
@@ -64,7 +64,7 @@ public class InventoryUIInspector : Editor
         dropOnCloseCraftingProp = serializedObject.FindProperty("dropOnCloseCrafting");
         dropPosProp = serializedObject.FindProperty("dropPos");
         randomFactorProp = serializedObject.FindProperty("randomFactor");
-        previewMatProp = serializedObject.FindProperty("previewMat");
+        ShowAmountProp = serializedObject.FindProperty("showAmount");
     }
 
     public override void OnInspectorGUI()
@@ -98,6 +98,7 @@ public class InventoryUIInspector : Editor
 
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(useOnClickProp, new GUIContent("Use item on click"));
+            EditorGUILayout.PropertyField(ShowAmountProp, new GUIContent("Show Amount in slots"));
             EditorGUILayout.Separator();
 
             slotsFold = EditorGUILayout.Foldout(slotsFold, new GUIContent("Slots GameObjects"), true);  

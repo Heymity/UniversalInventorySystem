@@ -159,7 +159,8 @@ namespace UniversalInventorySystem
                     image.color = new Color(1, 1, 1, 1);
                     image.sprite = invUI.inv.slots[index].item.sprite;
                 }
-                o.GetComponentInChildren<TextMeshProUGUI>().text = amountToTransfer.ToString();
+                if (invUI.showAmount && invUI.GetInventory()[index].item.showAmount) o.GetComponentInChildren<TextMeshProUGUI>().text = amountToTransfer.ToString();
+                else o.GetComponentInChildren<TextMeshProUGUI>().text = "";
 
             }
         }

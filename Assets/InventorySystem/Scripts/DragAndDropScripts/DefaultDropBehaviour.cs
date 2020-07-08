@@ -1,21 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UniversalInventorySystem
+﻿using UnityEngine;
+using UniversalInventorySystem;
+public class DefaultDropBehaviour : DropBehaviour
 {
+    public GameObject droppedItemObj;
 
-    public class DefaultDropBehaviour : DropBehaviour
+    public override void OnDropItem(object sender, InventoryHandler.DropItemEventArgs e)
     {
-        public GameObject droppedItemObj;
-
-        public override void OnDropItem(object sender, InventoryHandler.DropItemEventArgs e)
-        {
-            e.inv.RemoveItemInSlot(e.slot.GetValueOrDefault(), e.amount);
-            var b = Instantiate(droppedItemObj, new Vector3(e.positionDropped.x, e.positionDropped.y, 0), Quaternion.identity);
-            DroppedItem droppedItem = b.GetComponent<DroppedItem>();
-            droppedItem.SetSprite(e.item.sprite);
-            droppedItem.SetAmount(e.amount);
-        }
+        if (droppedItemObj == null) droppedItemObj = new GameObject();
+        var dur = e.inv[e.slot].durability;
+        e.inv.RemoveItemInSlot(e.slot, e.amount);
+        var b = Instantiate(droppedItemObj, new Vector3(e.positionDropped.x, e.positionDropped.y, 0), Quaternion.identity);
+        DroppedItem droppedItem = b.GetComponent<DroppedItem>();
+        droppedItem.SetSprite(InventoryUI.GetNearestSprite(e.item, dur));
+        droppedItem.SetAmount(e.amount);
     }
 }
+

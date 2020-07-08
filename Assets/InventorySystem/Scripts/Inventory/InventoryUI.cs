@@ -22,6 +22,8 @@ namespace UniversalInventorySystem
 
         public List<GameObject> slots;
 
+        public bool showAmount = true;
+
         public GameObject dragObj;
 
         public bool hideDragObj;
@@ -277,8 +279,10 @@ namespace UniversalInventorySystem
                             image.color = new Color(1, 1, 1, 1);
                         }
                     }
-                    else if (slots[i].transform.GetChild(j).TryGetComponent(out text))
+                    else if (slots[i].transform.GetChild(j).TryGetComponent(out text) && showAmount && inv[i].item.showAmount)
                         text.text = inv.slots[i].amount.ToString();
+                    else if (slots[i].transform.GetChild(j).TryGetComponent(out text))
+                        text.text = "";
                 }
 
                 if (dragObj.GetComponent<DragSlot>().GetSlotNumber() == i && isDraging)
@@ -301,8 +305,10 @@ namespace UniversalInventorySystem
                     {
                         for (int j = 0; j < slots[i].transform.childCount; j++)
                         {
-                            if (slots[i].transform.GetChild(j).TryGetComponent(out text))
+                            if (slots[i].transform.GetChild(j).TryGetComponent(out text) && showAmount && inv[i].item.showAmount)
                                 text.text = (inv.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount()).ToString();
+                            else if (slots[i].transform.GetChild(j).TryGetComponent(out text))
+                                text.text = "";
                         }
                     }
                 }
@@ -349,8 +355,10 @@ namespace UniversalInventorySystem
                                 image.color = new Color(1, 1, 1, 1);
                                 productIndex++;
                             }
-                            else if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out text))
+                            else if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out text) && showAmount && inv[(gridSize.x * gridSize.y) + i].item.showAmount)
                                 text.text = inv.slots[(gridSize.x * gridSize.y) + i].amount.ToString();
+                            else if (slots[(gridSize.x * gridSize.y) + i].transform.GetChild(j).TryGetComponent(out text))
+                                text.text = "";
                         }
 
                         //For click and drag
@@ -381,8 +389,10 @@ namespace UniversalInventorySystem
                                 image.color = new Color(1, 1, 1, .7f);
                                 productIndex++;
                             }
-                            else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
+                            else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text) && showAmount && products.items[i].showAmount)
                                 text.text = products.amounts[i].ToString();
+                            else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
+                                text.text = "";
                         }
 
                         //For click and drag
@@ -416,7 +426,14 @@ namespace UniversalInventorySystem
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Get nearest sprite of durability
+        /// </summary>
+        /// <param name="inv">inventory</param>
+        /// <param name="durability">Usualy the durability in the slot</param>
+        /// <param name="slot">slot number</param>
+        /// <returns>The nearest Sprite</returns>
         public static Sprite GetNearestSprite(Inventory inv, int durability, int slot)
         {
             var minDif = int.MaxValue;
@@ -432,6 +449,23 @@ namespace UniversalInventorySystem
                 }
             }
             return inv.slots[slot].item.durabilityImages[index].sprite;
+        }
+
+        public static Sprite GetNearestSprite(Item item, int durability)
+        {
+            var minDif = int.MaxValue;
+            var index = 0;
+            for (int i = item.durabilityImages.Count - 1; i >= 0; i--)
+            {
+                int dif = item.durabilityImages[i].durability - durability;
+                if (dif < 0) break;
+                if (dif < minDif)
+                {
+                    minDif = dif;
+                    index = i;
+                }
+            }
+            return item.durabilityImages[index].sprite;
         }
     }
 }

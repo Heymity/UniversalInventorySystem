@@ -17,5 +17,7 @@ public class TestScript : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.B))
             inventory.AddItem(InventoryHandler.current.GetItem(0, 0), 12);
+        if (Input.GetKeyDown(KeyCode.V))
+            inventory.AddItem(InventoryHandler.current.GetItem(0, 2), 1);
     }
 }
