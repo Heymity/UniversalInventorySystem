@@ -294,6 +294,7 @@ namespace UniversalInventorySystem
 
             if (!item.stackable)
             {
+                if (inv.slots[slotNumber].hasItem) return amount;
                 inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, 1, true, durability.GetValueOrDefault() / amount);
                 callback?.Invoke();
                 InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
@@ -762,9 +763,23 @@ namespace UniversalInventorySystem
         /// <returns>Returns the number of items that dind fit in the other slot</returns>
         public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem)
         {
+            //Validations
+            if (inv == null)
+            {
+                Debug.LogError("Null inventory provided for SwapItemsInCertainAmountInSlots");
+                return -1;
+            }
+
+            if (!inv[nativeSlot].item.stackable)
+            {
+                inv.SwapItemsInSlots(nativeSlot, targetSlot);
+                return 0;
+            }
+
             if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return (_amount ?? inv.slots[nativeSlot].amount);
 
             if (inv.slots[targetSlot].interative == SlotProtection.Locked || inv.slots[nativeSlot].interative == SlotProtection.Locked || inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
+
 
             //Verifys if the items to be swaped are in the whitelists
             bool whitelist = 
@@ -777,12 +792,6 @@ namespace UniversalInventorySystem
             (inv.slots[nativeSlot].whitelist == null ? true : inv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(inv.slots[targetSlot].item)));
 
             if (!whitelist) return (_amount ?? inv.slots[nativeSlot].amount);
-
-            if (inv == null)
-            {
-                Debug.LogError("Null inventory provided for SwapItemsInCertainAmountInSlots");
-                return -1;
-            }
 
             int amount = (_amount ?? inv.slots[nativeSlot].amount);
             if (inv.interactiable == InventoryProtection.SlotToSlot || inv.interactiable == InventoryProtection.Any)
@@ -864,6 +873,12 @@ namespace UniversalInventorySystem
             {
                 Debug.LogError("Null target inventory provided for SwapItemThruInventoriesSlotToSlot");
                 return -1;
+            }
+
+            if (!nativeInv[nativeSlotNumber].item.stackable)
+            {
+                nativeInv.SwapItemsThruInventoriesInSlots(targetInv, nativeSlotNumber, targetSlotNumber);
+                return 0;
             }
 
             if (nativeInv.slots[nativeSlotNumber].interative == SlotProtection.Locked) return amount;
@@ -988,6 +1003,65 @@ namespace UniversalInventorySystem
                 }
             }
             return false;
+        }
+
+        public static void SwapItemsThruInventoriesInSlots(this Inventory nativeInv, Inventory targetInv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
+        {
+            if (nativeInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockSlots) return;
+            if (targetInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.LockSlots) return;
+
+            if (nativeInv == null || targetInv == null)
+            {
+                Debug.LogError("Null inventory provided for SwapItemsInSlots");
+                return;
+            }
+
+            if (targetInv.slots[targetSlot].interative == SlotProtection.Locked || nativeInv.slots[nativeSlot].interative == SlotProtection.Locked || targetInv.slots[targetSlot].isProductSlot) return;
+
+
+            //Verifys if the items to be swaped are in the whitelists
+            bool whitelist =
+            (nativeInv.slots[nativeSlot].whitelist?.itemsList.ContainsWNull(targetInv.slots[targetSlot].item)
+            ??
+            (targetInv.slots[targetSlot].whitelist == null ? true : targetInv.slots[targetSlot].whitelist.itemsList.ContainsWNull(nativeInv.slots[nativeSlot].item)))
+            &&
+            (targetInv.slots[targetSlot].whitelist?.itemsList.ContainsWNull(nativeInv.slots[nativeSlot].item)
+            ??
+            (nativeInv.slots[nativeSlot].whitelist == null ? true : nativeInv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(targetInv.slots[targetSlot].item)));
+
+            if (!whitelist) return;
+
+            if (nativeInv.interactiable == InventoryProtection.SlotToSlot || nativeInv.interactiable == InventoryProtection.Any)
+            {
+                Slot tmpSlot = targetInv.slots[targetSlot];
+
+                if (nativeInv.slots[nativeSlot].isProductSlot || targetInv.slots[targetSlot].isProductSlot)
+                {
+                    if (tmpSlot.item == null)
+                    {
+                        targetInv.slots[targetSlot] = Slot.SetItemProperties(targetInv.slots[targetSlot], nativeInv.slots[nativeSlot]);
+                        nativeInv.slots[nativeSlot] = Slot.SetItemProperties(nativeInv.slots[nativeSlot], tmpSlot);
+                        /*inv.slots[nativeSlot] = new Slot(
+                            tmpSlot, 
+                            inv.slots[nativeSlot].isProductSlot, 
+                            inv.slots[nativeSlot].interative,
+                            inv.slots[nativeSlot].whitelist
+                        );*/
+
+                        InventoryHandler.SwapItemsTrhuInvEventArgs siea2 = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[targetSlot].item, tmpSlot.item, null);
+                        InventoryHandler.current.Broadcast(e, siea: siea2);
+                        return;
+                    }
+                    return;
+                }
+
+                targetInv.slots[targetSlot] = Slot.SetItemProperties(targetInv.slots[targetSlot], nativeInv.slots[nativeSlot]);
+
+                nativeInv.slots[nativeSlot] = Slot.SetItemProperties(nativeInv.slots[nativeSlot], tmpSlot);
+
+                InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[targetSlot].item, tmpSlot.item, null);
+                InventoryHandler.current.Broadcast(e, siea: siea);
+            }
         }
 
         #endregion
@@ -1614,7 +1688,7 @@ namespace UniversalInventorySystem
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
         public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber)
         {
-            return AddItemToSlot(inv, item, amount, slotNumber);
+            return AddItemToSlot(inv, item, amount, slotNumber, e: BroadcastEventType.AddItem);
         }
 
         /// <summary>
@@ -1796,7 +1870,7 @@ namespace UniversalInventorySystem
         public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null, 0);
 
         public int GetDurability() => durability; 
-        public bool GetDurabiliyValidation() => durability <= (item?.maxDurability ?? 0);
+        public bool GetDurabiliyValidation() => _durability <= (item?.maxDurability ?? 0);
 
         #region Setters
 

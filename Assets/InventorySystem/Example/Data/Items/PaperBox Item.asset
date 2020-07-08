@@ -20,24 +20,19 @@ MonoBehaviour:
   useHowManyWhenUsed: 1
   stackable: 1
   maxDurability: 4
-  hasDurability: 1
-  stackAlways: 0
-  stackOnMaxDurabiliy: 0
-  stackOnSpecifDurability: 0
-  stackOptions: 1
-  stackDurabilities: 
+  hasDurability: 0
   _durabilityImages:
   - imageName: Broken
-    sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+    sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
     durability: 0
   - imageName: Kinda Broken
-    sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-    durability: 1
-  - imageName: Ok
     sprite: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
+    durability: 1
+  - imageName: OK
+    sprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
     durability: 2
   - imageName: Good
-    sprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+    sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
     durability: 3
   - imageName: Very Good
     sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6,
