@@ -692,6 +692,12 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
+            if (inv[nativeSlot].item == null)
+            {
+                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
+                return;
+            }
+
             if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return;
 
             if (inv.slots[targetSlot].interative == SlotProtection.Locked || inv.slots[nativeSlot].interative == SlotProtection.Locked || inv.slots[targetSlot].isProductSlot) return;
@@ -757,6 +763,11 @@ namespace UniversalInventorySystem
             {
                 Debug.LogError("Null inventory provided for SwapItemsInCertainAmountInSlots");
                 throw new ArgumentNullException("inv", "Null inventory provided");
+            }
+            if(inv[nativeSlot].item == null)
+            {
+                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
+                return _amount ?? inv.slots[nativeSlot].amount;
             }
 
             if (!inv[nativeSlot].item.stackable)
@@ -862,6 +873,12 @@ namespace UniversalInventorySystem
             {
                 Debug.LogError("Null target inventory provided for SwapItemThruInventoriesSlotToSlot");
                 throw new ArgumentNullException("targetInv", "Null inventory provided");
+            }
+
+            if (nativeInv[nativeSlotNumber].item == null)
+            {
+                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
+                return amount;
             }
 
             if (!nativeInv[nativeSlotNumber].item.stackable)
@@ -1007,6 +1024,12 @@ namespace UniversalInventorySystem
             {
                 Debug.LogError("Null inventory provided for SwapItemsInSlots");
                 throw new ArgumentNullException(nativeInv == null ? "nativeInv" : "targetInv" , "Null inventory provided");
+            }
+
+            if (nativeInv[nativeSlot].item == null)
+            {
+                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
+                return;
             }
 
             if (nativeInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockSlots) return;
