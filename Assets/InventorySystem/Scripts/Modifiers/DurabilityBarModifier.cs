@@ -6,6 +6,7 @@ using UniversalInventorySystem;
 public class DurabilityBarModifier : BaseUIModifier
 {
     public Gradient gradient;
+    public Color BackgroundColor;
     public Material mat;
     [Range(0, 100)]
     public float percentageX;
@@ -77,6 +78,7 @@ public class DurabilityBarModifier : BaseUIModifier
             img.sprite = null;
             img.material.SetFloat("_FillAmount", percentage);
             img.material.SetColor("_Color", gradient.Evaluate(percentage));
+            img.material.SetColor("_BackGroundColor", BackgroundColor);
 
             Vector2 newSize = new Vector2(
                     (target.slots[gos[i].index].transform as RectTransform).sizeDelta.x * (percentageX / 100),
