@@ -2,11 +2,12 @@
 using UniversalInventorySystem;
 
 public class ExampleScript : MonoBehaviour
-{
+{   
     Inventory inventory;
     public InventoryUI invUI;
     public InventoryUI invUI2;
 
+    // To test the item drawer in inspector
     public Item testItem;
     public int slotAmount;
 
@@ -14,7 +15,7 @@ public class ExampleScript : MonoBehaviour
     {
         //Inventory initialization
         inventory = new Inventory(slotAmount, true, InventoryProtection.Any, true);
-        inventory.InitializeInventory();
+        inventory.Initialize();
 
         //InventoryUI initialization
         invUI.SetInventory(inventory);

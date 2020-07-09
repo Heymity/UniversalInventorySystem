@@ -9,7 +9,6 @@ namespace UniversalInventorySystem
     {
         public void OnDrop(PointerEventData eventData)
         {
-
             List<InventoryUI> invsUI = InventoryController.inventoriesUI;
             RectTransform invPanel = this.GetComponent<RectTransform>();
             InventoryUI nativeInvUI = null;
@@ -27,7 +26,7 @@ namespace UniversalInventorySystem
                 if (!RectTransformUtility.RectangleContainsScreenPoint(invPanel, Camera.main.ScreenToWorldPoint(Input.mousePosition)))
                 {
                     nativeInvUI.shouldSwap = false;
-                    //Debug.Log($"Item out of inventory!{this.name}");
+
                     foreach (InventoryUI invUI in invsUI)
                     {
                         if (!invUI.togglableObject.activeInHierarchy) continue;
@@ -49,16 +48,12 @@ namespace UniversalInventorySystem
                         }
                     }
                     Slot s = nativeInvUI.inv.slots[nativeInvUI.dragSlotNumber.GetValueOrDefault()];
-                    //InventoryEventHandler.DropItemEventArgs dea = new InventoryEventHandler.DropItemEventArgs(nativeInvUI.inv, true, nativeInvUI.dragSlotNumber, s.item, s.amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition), false);
 
-                    s.item.OnDrop(nativeInvUI.inv, true, nativeInvUI.dragSlotNumber, nativeInvUI.dragObj.GetComponent<DragSlot>().amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    //InventoryEventHandler.current.Broadcast(BroadcastEventType.DropItem, dea: dea);
+                    s.item.OnDrop(nativeInvUI.inv, true, nativeInvUI.dragSlotNumber.GetValueOrDefault(), nativeInvUI.dragObj.GetComponent<DragSlot>().amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
                 }
                 else nativeInvUI.shouldSwap = true;
             }
         }
-
-        //Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 }

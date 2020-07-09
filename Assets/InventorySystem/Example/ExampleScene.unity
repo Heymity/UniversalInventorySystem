@@ -1094,7 +1094,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 205, y: -122.900024}
+  m_AnchoredPosition: {x: 205, y: -122.90001}
   m_SizeDelta: {x: -410, y: -245.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &166081462
@@ -1500,6 +1500,7 @@ MonoBehaviour:
   - {fileID: 1687697594}
   - {fileID: 1345432265}
   - {fileID: 467073798}
+  showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
   useOnClick: 0
@@ -1516,66 +1517,66 @@ MonoBehaviour:
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 11400000, guid: 57c447cc307026949829e61220432bc0, type: 2}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     slotAmounts: 9
     id: 0
     areItemsUsable: 0
@@ -3906,6 +3907,7 @@ MonoBehaviour:
   canvas: {fileID: 1427843708}
   DontDropItemRect: {fileID: 747462573}
   slots: []
+  showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
   useOnClick: 1
@@ -3919,62 +3921,62 @@ MonoBehaviour:
   randomFactor: {x: 0, y: 0, z: 0}
   inv:
     slots:
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
+    - amount: 1
+      item: {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
+      hasItem: 1
+      _durability: 8
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
-      isProductSlot: 0
-      interative: 0
-      whitelist: {fileID: 1221787597}
-      durability: 0
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
-      durability: 0
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: 0
+      whitelist: {fileID: 0}
     slotAmounts: 8
     id: 0
     areItemsUsable: 1
@@ -4015,7 +4017,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa9a145d8d783b44cbc75d59b8417aee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  invUI: {fileID: 645887495}
 --- !u!1 &747462573
 GameObject:
   m_ObjectHideFlags: 0
@@ -4052,7 +4053,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -238.13, y: 113.79999}
+  m_AnchoredPosition: {x: -238.12999, y: 113.79999}
   m_SizeDelta: {x: -492.65, y: -252.84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &747462575
@@ -4606,6 +4607,7 @@ MonoBehaviour:
   - {fileID: 564753895}
   - {fileID: 1626397153}
   - {fileID: 1427973872}
+  showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
   useOnClick: 1
@@ -5811,6 +5813,7 @@ MonoBehaviour:
   - {fileID: 2041482293}
   - {fileID: 1940933016}
   - {fileID: 363206676}
+  showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
   useOnClick: 1
@@ -6240,21 +6243,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198337620}
   m_CullTransparentMesh: 0
---- !u!114 &1221787597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ee53646823e09f4a902eae1f9e00541, type: 3}
-  m_Name: Custom ItemGroup
-  m_EditorClassIdentifier: 
-  itemsList: []
-  strId: 
-  id: 408903310
 --- !u!1 &1304940391 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4676626297327902047, guid: 190af5ce39ca9824191677bd7d614e99,
@@ -7620,7 +7608,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -238.13, y: -121.98999}
+  m_AnchoredPosition: {x: -238.12999, y: -121.989975}
   m_SizeDelta: {x: -492.65, y: -261.92}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1652197367

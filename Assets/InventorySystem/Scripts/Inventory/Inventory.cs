@@ -56,6 +56,8 @@ namespace UniversalInventorySystem
 
         public static Inventory GetInventory(int index) => inventories[index];
 
+        public static Slot GetSlotInInventory(int invIndex, int slotIndex) => inventories[invIndex][slotIndex];
+
         public static InventoryData SaveInventoryData()
         {
             inventoryData.inventories = inventories.ToArray();
@@ -68,7 +70,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        //TODO: Durability
+        ///TODO: Crafting Events
         #region Add
 
         /// <summary>
@@ -80,18 +82,18 @@ namespace UniversalInventorySystem
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
         public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null, Action callback = null)
         {
-            if (inv.interactiable == InventoryProtection.Locked) return amount;
-
             if (inv == null)
             {
                 Debug.LogError("Null inventory provided for AddItemToNewSlot");
-                return -1;
+                throw new ArgumentNullException("inv", "Null inventory provided");
             }
             if (item == null)
             {
                 Debug.LogError("Null item provided for AddItemToNewSlot");
-                return -1;
+                throw new ArgumentNullException("inv", "Null item provided");
             }
+
+            if (inv.interactiable == InventoryProtection.Locked) return amount;
 
             if (durability == null) durability = item.maxDurability;
 
@@ -206,7 +208,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("item", "Null Item was provided");
             }
             
-            if (durability == null) durability = item.maxDurability * amount;
+            if (durability == null) durability = item.maxDurability;
 
             //If the items is not marked as stackable it calls AddItemToNewSlot witch handles the rest
             if (!item.stackable) return AddItemToNewSlot(inv, item, amount, e);
@@ -271,27 +273,27 @@ namespace UniversalInventorySystem
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
         public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null, Action callback = null)
         {
+            if (inv == null)
+            {
+                Debug.LogError("Null inventory provided for AddItemToSlot");
+                throw new ArgumentNullException("inv", "Null inventory provided");
+            }
+            if (item == null)
+            {
+                Debug.LogError("Null item provided for AddItemToSlot");
+                throw new ArgumentNullException("item", "Null item provided");
+            }
+
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
             if ((inv.slots[slotNumber].interative == SlotProtection.Locked || inv.slots[slotNumber].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) return amount;
             if (!inv.slots[slotNumber].whitelist?.itemsList.Contains(item) ?? false) return amount;
 
-            if (durability == null) durability = item.maxDurability * amount;
-            //if (nullSlotDurability == null) nullSlotDurability = item.maxDurability;
-
-            if (inv == null)
-            {
-                Debug.LogError("Null inventory provided for AddItemToSlot");
-                return -1;
-            }
-            if (item == null)
-            {
-                Debug.LogError("Null item provided for AddItemToSlot");
-                return -1;
-            }
+            if (durability == null) durability = item.maxDurability;
 
             if (!item.stackable)
             {
+                if (inv.slots[slotNumber].hasItem) return amount;
                 inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, 1, true, durability.GetValueOrDefault() / amount);
                 callback?.Invoke();
                 InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
@@ -347,13 +349,13 @@ namespace UniversalInventorySystem
         /// <returns>The RemoveItem or RemoveItemInSlot function return value</returns>
         public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, Item item, BroadcastEventType e = BroadcastEventType.DropItem, bool overrideSlotProtecion = true)
         {
-            if (inv.interactiable == InventoryProtection.Locked) return false;
-
             if (inv == null)
             {
                 Debug.LogError("Null inventory provided for DropItem");
-                return false;
+                throw new ArgumentNullException("inv", "Null inventory provided");
             }
+
+            if (inv.interactiable == InventoryProtection.Locked) return false;
 
             else if (item != null)
             {
@@ -375,13 +377,13 @@ namespace UniversalInventorySystem
         /// <returns>The RemoveItem or RemoveItemInSlot function return value</returns>
         public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, int slot, BroadcastEventType e = BroadcastEventType.DropItem, bool overrideSlotProtecion = true)
         {
-            if (inv.interactiable == InventoryProtection.Locked) return false;
-
             if (inv == null)
             {
                 Debug.LogError("Null inventory provided for DropItem");
-                return false;
+                throw new ArgumentNullException("inv", "Null inventory provided");
             }
+
+            if (inv.interactiable == InventoryProtection.Locked) return false;
 
             if (slot >= 0 && slot < inv.slots.Count)
             {
@@ -390,7 +392,7 @@ namespace UniversalInventorySystem
             else
             {
                 Debug.LogError($"Invalid slot number provided for DropItem; slot number: {slot}");
-                return false;
+                throw new ArgumentOutOfRangeException("slot", "The slot number provided was out of the inventory slots bounds");
             }
         }
 
@@ -403,18 +405,18 @@ namespace UniversalInventorySystem
         /// <returns>True if it was able to remove the items False if it wasnt</returns>
         public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtecion = false)
         {
-            if (inv.interactiable == InventoryProtection.Locked) return false;
-
             if (inv == null)
             {
                 Debug.LogError("Null inventory provided for RemoveItem");
-                return false;
+                throw new ArgumentNullException("inv", "Null inventory provided");
             }
             if (item == null)
             {
                 Debug.LogError("Null item provided for RemoveItem");
-                return false;
+                throw new ArgumentNullException("item", "Null item provided");
             }
+
+            if (inv.interactiable == InventoryProtection.Locked) return false;
 
             int total = 0;
             for (int i = 0; i < inv.slots.Count; i++)
@@ -424,6 +426,8 @@ namespace UniversalInventorySystem
                     total += inv.slots[i].amount;
                 }
             }
+
+            int index = 0;
             if (total >= amount)
             {
                 for (int i = 0; i < inv.slots.Count; i++)
@@ -438,6 +442,7 @@ namespace UniversalInventorySystem
                             inv.slots[i] = Slot.SetItemProperties(inv.slots[i], nullSlot);
                         else break;
                         amount -= prevAmount;
+                        index = i;
                     }
                 }
             }
@@ -450,7 +455,7 @@ namespace UniversalInventorySystem
             InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, item, null);
 
             if (e == BroadcastEventType.DropItem)
-                item.OnDrop(inv, false, null, amount, false, dropPosition);
+                item.OnDrop(inv, false, index, amount, false, dropPosition);
             else InventoryHandler.current.Broadcast(e, rea: rea);
             return true;
         }
@@ -464,13 +469,13 @@ namespace UniversalInventorySystem
         /// <returns>True if it was able to remove the items False if it wasnt</returns>
         public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtecion = false)
         {
-            if (inv.interactiable == InventoryProtection.Locked) return false;
-
             if (inv == null)
             {
                 Debug.LogError("Null inventory provided for RemoveItemInSlot");
-                return false;
+                throw new ArgumentNullException("inv", "Null inventory provided");
             }
+
+            if (inv.interactiable == InventoryProtection.Locked) return false;
 
             if (!(inv.slots[slot].interative == SlotProtection.OnlyRemove || inv.slots[slot].interative == SlotProtection.Any) && !overrideSlotProtecion) return false;
 
@@ -480,12 +485,6 @@ namespace UniversalInventorySystem
             if (inv.slots[slot].amount == amount)
             {
                 Item tmp = inv.slots[slot].item;
-                /*inv.slots[slot] = new Slot(
-                 *   nullSlot,
-                 *   inv.slots[slot].isProductSlot,
-                 *   inv.slots[slot].interative,
-                 *   inv.slots[slot].whitelist
-                );*/
                 inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], nullSlot);
 
                 if (e == BroadcastEventType.DropItem)
@@ -496,13 +495,6 @@ namespace UniversalInventorySystem
             else if (inv.slots[slot].amount > amount)
             {
                 Item tmp = inv.slots[slot].item;
-                /*inv.slots[slot] = new Slot(
-                 *   inv.slots[slot].item, inv.slots[slot].amount - amount, 
-                 *   true, 
-                 *   inv.slots[slot].isProductSlot, 
-                 *   inv.slots[slot].interative,
-                 *   inv.slots[slot].whitelist
-                );*/
                 inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], inv.slots[slot].item, inv.slots[slot].amount - amount, true, 0);
 
                 if (e == BroadcastEventType.DropItem)
@@ -528,13 +520,13 @@ namespace UniversalInventorySystem
         /// <param name="slot">The slot that will have item used</param>
         public static void UseItemInSlot(this Inventory inv, int slot, BroadcastEventType e = BroadcastEventType.UseItem)
         {
-            if (inv.interactiable == InventoryProtection.Locked) return;
-
             if (inv == null)
             {
                 Debug.LogError("Null inventory provided for UseItemInSlot");
-                return;
+                throw new ArgumentNullException("inv", "Null inventory provided");
             }
+
+            if (inv.interactiable == InventoryProtection.Locked) return;
 
             if (inv.slots[slot].hasItem && inv.areItemsUsable)
             {
@@ -607,14 +599,14 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be used</param>
         public static void UseItem(this Inventory inv, Item item, BroadcastEventType e = BroadcastEventType.UseItem)
         {
-            if (inv.interactiable == InventoryProtection.Locked) return;
-            if (!inv.areItemsUsable) return;
-
             if (inv == null)
+
             {
                 Debug.LogError("Null inventory provided for UseItemInSlot");
-                return;
+                throw new ArgumentNullException("inv", "Null inventory provided");
             }
+            if (inv.interactiable == InventoryProtection.Locked) return;
+            if (!inv.areItemsUsable) return;
 
             for(int i = 0; i < inv.slots.Count; i++)
             {
@@ -694,13 +686,19 @@ namespace UniversalInventorySystem
         /// <param name="targetSlot">The slot to gain items</param>
         public static void SwapItemsInSlots(this Inventory inv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
         {
-            if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return;
-
             if (inv == null)
             {
                 Debug.LogError("Null inventory provided for SwapItemsInSlots");
+                throw new ArgumentNullException("inv", "Null inventory provided");
+            }
+
+            if (inv[nativeSlot].item == null)
+            {
+                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
                 return;
             }
+
+            if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return;
 
             if (inv.slots[targetSlot].interative == SlotProtection.Locked || inv.slots[nativeSlot].interative == SlotProtection.Locked || inv.slots[targetSlot].isProductSlot) return;
 
@@ -760,9 +758,28 @@ namespace UniversalInventorySystem
         /// <returns>Returns the number of items that dind fit in the other slot</returns>
         public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem)
         {
+            //Validations
+            if (inv == null)
+            {
+                Debug.LogError("Null inventory provided for SwapItemsInCertainAmountInSlots");
+                throw new ArgumentNullException("inv", "Null inventory provided");
+            }
+            if(inv[nativeSlot].item == null)
+            {
+                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
+                return _amount ?? inv.slots[nativeSlot].amount;
+            }
+
+            if (!inv[nativeSlot].item.stackable)
+            {
+                inv.SwapItemsInSlots(nativeSlot, targetSlot);
+                return 0;
+            }
+
             if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return (_amount ?? inv.slots[nativeSlot].amount);
 
             if (inv.slots[targetSlot].interative == SlotProtection.Locked || inv.slots[nativeSlot].interative == SlotProtection.Locked || inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
+
 
             //Verifys if the items to be swaped are in the whitelists
             bool whitelist = 
@@ -775,12 +792,6 @@ namespace UniversalInventorySystem
             (inv.slots[nativeSlot].whitelist == null ? true : inv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(inv.slots[targetSlot].item)));
 
             if (!whitelist) return (_amount ?? inv.slots[nativeSlot].amount);
-
-            if (inv == null)
-            {
-                Debug.LogError("Null inventory provided for SwapItemsInCertainAmountInSlots");
-                return -1;
-            }
 
             int amount = (_amount ?? inv.slots[nativeSlot].amount);
             if (inv.interactiable == InventoryProtection.SlotToSlot || inv.interactiable == InventoryProtection.Any)
@@ -856,12 +867,24 @@ namespace UniversalInventorySystem
             if (nativeInv == null)
             {
                 Debug.LogError("Null native inventory provided for SwapItemThruInventoriesSlotToSlot");
-                return -1;
+                throw new ArgumentNullException("nativeInv", "Null inventory provided");
             }
             if (targetInv == null)
             {
                 Debug.LogError("Null target inventory provided for SwapItemThruInventoriesSlotToSlot");
-                return -1;
+                throw new ArgumentNullException("targetInv", "Null inventory provided");
+            }
+
+            if (nativeInv[nativeSlotNumber].item == null)
+            {
+                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
+                return amount;
+            }
+
+            if (!nativeInv[nativeSlotNumber].item.stackable)
+            {
+                nativeInv.SwapItemsThruInventoriesInSlots(targetInv, nativeSlotNumber, targetSlotNumber);
+                return 0;
             }
 
             if (nativeInv.slots[nativeSlotNumber].interative == SlotProtection.Locked) return amount;
@@ -961,12 +984,12 @@ namespace UniversalInventorySystem
             if (nativeInv == null)
             {
                 Debug.LogError("Null native inventory provided for SwapItemThruInventories");
-                return false;
+                throw new ArgumentNullException("nativeInv", "Null inventory provided");
             }
             if (targetInv == null)
             {
                 Debug.LogError("Null target inventory provided for SwapItemThruInventories");
-                return false;
+                throw new ArgumentNullException("targetInv", "Null inventory provided");
             }
 
             if (nativeInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockThruInventory || targetInv.interactiable == InventoryProtection.LockThruInventory) return false;
@@ -988,6 +1011,78 @@ namespace UniversalInventorySystem
             return false;
         }
 
+        /// <summary>
+        /// Literally swap slot A with slot B.
+        /// </summary>
+        /// <param name="nativeInv">The native inventory</param>
+        /// <param name="targetInv">The target inventory</param>
+        /// <param name="nativeSlot">The slot Number of the native inventory</param>
+        /// <param name="targetSlot">The Slot numben of the target inventory</param>
+        public static void SwapItemsThruInventoriesInSlots(this Inventory nativeInv, Inventory targetInv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
+        {
+            if (nativeInv == null || targetInv == null)
+            {
+                Debug.LogError("Null inventory provided for SwapItemsInSlots");
+                throw new ArgumentNullException(nativeInv == null ? "nativeInv" : "targetInv" , "Null inventory provided");
+            }
+
+            if (nativeInv[nativeSlot].item == null)
+            {
+                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
+                return;
+            }
+
+            if (nativeInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockSlots) return;
+            if (targetInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.LockSlots) return;
+
+            if (targetInv.slots[targetSlot].interative == SlotProtection.Locked || nativeInv.slots[nativeSlot].interative == SlotProtection.Locked || targetInv.slots[targetSlot].isProductSlot) return;
+
+
+            //Verifys if the items to be swaped are in the whitelists
+            bool whitelist =
+            (nativeInv.slots[nativeSlot].whitelist?.itemsList.ContainsWNull(targetInv.slots[targetSlot].item)
+            ??
+            (targetInv.slots[targetSlot].whitelist == null ? true : targetInv.slots[targetSlot].whitelist.itemsList.ContainsWNull(nativeInv.slots[nativeSlot].item)))
+            &&
+            (targetInv.slots[targetSlot].whitelist?.itemsList.ContainsWNull(nativeInv.slots[nativeSlot].item)
+            ??
+            (nativeInv.slots[nativeSlot].whitelist == null ? true : nativeInv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(targetInv.slots[targetSlot].item)));
+
+            if (!whitelist) return;
+
+            if (nativeInv.interactiable == InventoryProtection.SlotToSlot || nativeInv.interactiable == InventoryProtection.Any)
+            {
+                Slot tmpSlot = targetInv.slots[targetSlot];
+
+                if (nativeInv.slots[nativeSlot].isProductSlot || targetInv.slots[targetSlot].isProductSlot)
+                {
+                    if (tmpSlot.item == null)
+                    {
+                        targetInv.slots[targetSlot] = Slot.SetItemProperties(targetInv.slots[targetSlot], nativeInv.slots[nativeSlot]);
+                        nativeInv.slots[nativeSlot] = Slot.SetItemProperties(nativeInv.slots[nativeSlot], tmpSlot);
+                        /*inv.slots[nativeSlot] = new Slot(
+                            tmpSlot, 
+                            inv.slots[nativeSlot].isProductSlot, 
+                            inv.slots[nativeSlot].interative,
+                            inv.slots[nativeSlot].whitelist
+                        );*/
+
+                        InventoryHandler.SwapItemsTrhuInvEventArgs siea2 = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[targetSlot].item, tmpSlot.item, null);
+                        InventoryHandler.current.Broadcast(e, siea: siea2);
+                        return;
+                    }
+                    return;
+                }
+
+                targetInv.slots[targetSlot] = Slot.SetItemProperties(targetInv.slots[targetSlot], nativeInv.slots[nativeSlot]);
+
+                nativeInv.slots[nativeSlot] = Slot.SetItemProperties(nativeInv.slots[nativeSlot], tmpSlot);
+
+                InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[nativeSlot].item, tmpSlot.item, null);
+                InventoryHandler.current.Broadcast(e, siea: siea);
+            }
+        }
+
         #endregion
 
         #region Initialize
@@ -997,12 +1092,12 @@ namespace UniversalInventorySystem
         /// </summary>
         /// <param name="inv">The inventory to be initialized</param>
         /// <returns>The initiaized inventory</returns>
-        public static Inventory InitializeInventory(this Inventory inv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
+        public static Inventory Initialize(this Inventory inv, BroadcastEventType e = BroadcastEventType.InitializeInventory)
         {
             if (inv == null)
             {
-                Debug.LogError("Null inventory provided for InitializeInventory");
-                return null;
+                Debug.LogError("Null inventory provided for Initialize");
+                throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
             if (inv.hasInitializated) return inv;
@@ -1012,32 +1107,22 @@ namespace UniversalInventorySystem
                 if (inv.slots == null) inv.slots = new List<Slot>();
                 for (int i = 0; i < inv.slotAmounts; i++)
                 {
-                    //Debug.Log(inv.slots.Count);
-                    if (i < inv.slots.Count)
-                        inv.slots[i] = new Slot(
-                            null, 
-                            0,
-                            false,
-                            inv.slots[i].isProductSlot, 
-                            inv.slots[i].interative,
-                            inv.slots[i].whitelist
-                        );
+                    if (i < inv.slots.Count) continue;
                     else
-                        inv.slots.Add(new Slot(null, 0, false));
+                        inv.slots.Add(Slot.nullSlot);
                 }
             }
 
-            //Debug.Log(inv.slots.Count);
             inv.id = inventories.Count;
-            inventories.Add(inv);
             inv.hasInitializated = true;
+            inventories.Add(inv);
             InventoryHandler.InitializeInventoryEventArgs iea = new InventoryHandler.InitializeInventoryEventArgs(inv);
             InventoryHandler.current.Broadcast(e, iea: iea);
             return inv;
         }
 
         /// <summary>
-        /// This function is an alternative for the InitializeInventory function. It initializes a Inventory using another inventory as a Model;
+        /// This function is an alternative for the Initialize function. It initializes a Inventory using another inventory as a Model;
         /// </summary>
         /// <param name="inv">The inventory to be initialized</param>
         /// <returns>The initialized inventory</returns>
@@ -1045,22 +1130,21 @@ namespace UniversalInventorySystem
         {
             if (inv == null)
             {
-                Debug.LogError("Null inventory provided for InitializeInventory");
-                return null;
+                Debug.LogError("Null inventory provided for Initialize");
+                throw new ArgumentNullException("inv", "Null inventory provided");
             }
             if (modelInv == null)
             {
-                Debug.LogError("Null model inventory provided for InitializeInventory");
-                return null;
+                Debug.LogError("Null model inventory provided for Initialize");
+                throw new ArgumentNullException("modelinv", "Null inventory provided");
             }
 
             if (inv.hasInitializated) return inv;
 
             inv = modelInv;
-            Debug.Log(inv.slots.Count);
             inv.id = inventories.Count;
-            inventories.Add(inv);
             inv.hasInitializated = true;
+            inventories.Add(inv);
             InventoryHandler.InitializeInventoryEventArgs iea = new InventoryHandler.InitializeInventoryEventArgs(inv);
             InventoryHandler.current.Broadcast(e, iea: iea);
             return inv;
@@ -1147,7 +1231,6 @@ namespace UniversalInventorySystem
         /// <returns>The products of the recipe matched</returns>
         public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots)
         {
-
             if (pattern.pattern.Length > grid.Item1.Length) return CraftItemData.nullData;
             if (pattern.products.Length > productSlots) return CraftItemData.nullData;
             else if (pattern.pattern.Length == grid.Item1.Length && pattern.amountPattern.Length == grid.Item2.Length)
@@ -1273,6 +1356,7 @@ namespace UniversalInventorySystem
             List<int> jumpIndexes = new List<int>();
             List<int> tmpjumpIndexes = new List<int>();
             List<int> removeAmount = new List<int>();
+            if (recipe.products.Length > productSlots) return CraftItemData.nullData;
             for (int i = 0; i < grid.Item1.Length; i++)
             {
                 for (int j = 0; j < recipe.numberOfFactors; j++)
@@ -1310,25 +1394,36 @@ namespace UniversalInventorySystem
                 if (craftItem)
                 {
                     bool canAdd = true;
+                    int tmp = 0;
                     for (int h = grid.Item1.Length; h - grid.Item1.Length < recipe.products.Length; h++)
                     {
                         //if (h - grid.Length >= pattern.products.Length) break;
                         if (!inv.slots[h].hasItem) continue;
-                        if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { canAdd = false; break; }
-                        if (inv.slots[h].item != recipe.products[h - grid.Item1.Length]) { canAdd = false; break; }
+                        if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { tmp++; break; }
+                        if (inv.slots[h].item != recipe.products[h - grid.Item1.Length]) {tmp++; break; }
                     }
+                    if (productSlots - tmp < recipe.products.Length)
+                        canAdd = false;
+
                     if (canAdd)
                     {
                         int i = 0;
+                        int offset = 0;
                         for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
                         {
                             if (k > grid.Item1.Length - 1)
                             {
                                 if (k - grid.Item1.Length >= recipe.products.Length) break;
 
-                                i = inv.AddItemToSlot(recipe.products[k - grid.Item1.Length], recipe.amountProducts[k - grid.Item1.Length], k, overrideSlotProtection: true);
+                                AddOffset:
+                                if (inv[k + offset].hasItem && inv[k + offset].item != recipe.products[k - grid.Item1.Length])
+                                {
+                                    offset++;
+                                    goto AddOffset;
+                                }
+                                if(k + offset >= inv.slots.Count) return CraftItemData.nullData;
+                                i = inv.AddItemToSlot(recipe.products[k - grid.Item1.Length], recipe.amountProducts[k - grid.Item1.Length], k + offset, overrideSlotProtection: true);
                                 if (i > 0) return CraftItemData.nullData;
-                                //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                             }
                         }
                         if (i > 0) return CraftItemData.nullData;
@@ -1613,7 +1708,7 @@ namespace UniversalInventorySystem
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
         public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber)
         {
-            return AddItemToSlot(inv, item, amount, slotNumber);
+            return AddItemToSlot(inv, item, amount, slotNumber, e: BroadcastEventType.AddItem);
         }
 
         /// <summary>
@@ -1692,12 +1787,21 @@ namespace UniversalInventorySystem
         public int id;
         public bool areItemsUsable;
         public bool areItemsDroppable;
+
         /// <summary>
         /// Defines the type of interactions you can have with the inventory
         /// </summary>
         public InventoryProtection interactiable;
 
         public bool hasInitializated;
+
+        public Slot this[int i]
+        {
+            get { return slots[i]; }
+            set { slots[i] = value; }
+        }
+        public static bool operator true(Inventory inv) => inv?.slots != null;
+        public static bool operator false(Inventory inv) => inv?.slots == null;
 
         public Inventory(List<Slot> _slots, int _slotAmounts, InventoryProtection _interactiable, bool _areItemsUsable = true, bool _areItemsDroppable = true)
         {
@@ -1759,6 +1863,8 @@ namespace UniversalInventorySystem
         //Item properties
         public int amount;
         public Item item;
+        public bool hasItem;
+
         public int durability
         {
             get { return _durability; }
@@ -1769,17 +1875,7 @@ namespace UniversalInventorySystem
                 _durability = value;
             }
         }
-        [SerializeField] private int _durability;
-        /**public uint totalDurability                                                     ///Old System Code
-        {
-            get { return _totalDurability; }
-            set
-            {
-                if (value >= _durability) _totalDurability = value;
-            }
-        }
-        [SerializeField] private uint _totalDurability;                                    ///Old System Code */
-        public bool hasItem;
+        [SerializeField] private int _durability;     
         
         //Slot properties
         public bool isProductSlot;
@@ -1789,7 +1885,7 @@ namespace UniversalInventorySystem
         public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null, 0);
 
         public int GetDurability() => durability; 
-        public bool GetDurabiliyValidation() => durability <= (item?.maxDurability ?? 0);
+        public bool GetDurabiliyValidation() => _durability <= (item?.maxDurability ?? 0);
 
         #region Setters
 
@@ -1889,7 +1985,6 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             _durability = 0;
-            ///_totalDurability = 0;
             durability = 0;
         }
 
@@ -1902,7 +1997,6 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             _durability = 0;
-            ///_totalDurability = 0;
             durability = 0;
         }
 
@@ -1914,8 +2008,7 @@ namespace UniversalInventorySystem
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
-            _durability = 0;
-            ///_totalDurability = 0;
+            _durability = 0;         
             durability = 0;
         } 
         
@@ -1928,8 +2021,7 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             this._durability = _durability;
-            ///_totalDurability = 0;
-            durability = _durability;
+            durability = _durability;           
         }
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot)
@@ -1941,7 +2033,6 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             _durability = 0;
-            ///_totalDurability = 0;
             durability = 0;
         }
         
@@ -1954,12 +2045,13 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             this._durability = _durability;
-            ///_totalDurability = 0;
+   
             durability = _durability;
         }
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive)
         {
+            /// No Code Here. Line 2020 is cursed
             item = _item;
             amount = _amount;
             hasItem = _hasItem;
@@ -1967,7 +2059,6 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = null;
             _durability = 0;
-            ///_totalDurability = 0;
             durability = 0;
         }
 
@@ -1980,7 +2071,6 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             _durability = 0;
-            ///_totalDurability = 0;
             durability = 0;
         }
         
@@ -1993,7 +2083,6 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             this._durability = _durability;
-            ///_totalDurability = 0;
             durability = _durability;
         }
 
@@ -2009,24 +2098,34 @@ namespace UniversalInventorySystem
             ///this._totalDurability = 0;
             ///totalDurability = _totalDurability;
         }**/
-    }
+        
+        public static bool operator !(Slot s) => !s.hasItem;
+        public static bool operator true(Slot s) => s.hasItem;
+        public static bool operator false(Slot s) => !s.hasItem;
+        public static bool operator >=(Slot s, Slot s2) => s.amount >= s2.amount;
+        public static bool operator <=(Slot s, Slot s2) => s.amount <= s2.amount;
+        public static bool operator <(Slot s, Slot s2) => s.amount < s2.amount;
+        public static bool operator >(Slot s, Slot s2) => s.amount > s2.amount;
+    } 
 
     [Serializable]
-    public class InventoryData
+    public struct InventoryData
     {
         public Inventory[] inventories;
+
+        public Inventory this[int i] => inventories[i];
     }
 
     [Serializable]
     public class CheckItemData
     {
-        public Inventory inventory;
-        public int[] slotsChecked;
-        public int[] slotsWithItem;
-        public int amount;
-        public bool hasItem;
-        public bool mustBeOnSameSlot;
-        public Item checkedItem;
+        public readonly Inventory inventory;
+        public readonly int[] slotsChecked;
+        public readonly int[] slotsWithItem;
+        public readonly int amount;
+        public readonly bool hasItem;
+        public readonly bool mustBeOnSameSlot;
+        public readonly Item checkedItem;
 
         public CheckItemData(Inventory _inventory, int[] _slotsChecked, int[] _slotsWithItem, int _amount, bool _hasItem, bool _mustBeOnSameSlot, Item _checkedItem)
         {
@@ -2038,12 +2137,15 @@ namespace UniversalInventorySystem
             mustBeOnSameSlot = _mustBeOnSameSlot;
             checkedItem = _checkedItem;
         }
+
+        public static bool operator true(CheckItemData c) => c.hasItem;
+        public static bool operator false(CheckItemData c) => !c.hasItem;
+        public static bool operator !(CheckItemData c) => !c.hasItem;
     }
 
     [Serializable]
     public class CraftItemData
     {
-        /// No Code Here. Line 2020 is cursed
         public Item[] items;
         public int[] amounts;
 
@@ -2054,6 +2156,9 @@ namespace UniversalInventorySystem
         }
 
         public readonly static CraftItemData nullData = new CraftItemData(null, null);
+
+        public static bool operator true(CraftItemData c) => c.items != null || c.amounts != null;
+        public static bool operator false(CraftItemData c) => c.items == null || c.amounts == null;
     } 
 
     [Serializable]
@@ -2075,5 +2180,4 @@ namespace UniversalInventorySystem
         OnlyAdd = 2,
         OnlyRemove = 4
     }
-
 }

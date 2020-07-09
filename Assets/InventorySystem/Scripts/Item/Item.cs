@@ -22,7 +22,8 @@ namespace UniversalInventorySystem
         public bool stackable;
         public int maxDurability;
         public bool hasDurability;
-        /*public bool stackAlways;
+        public bool showAmount;
+        /**public bool stackAlways;
         public bool stackOnMaxDurabiliy;
         public bool stackOnSpecifDurability;
         public StackOptions stackOptions;
@@ -51,7 +52,7 @@ namespace UniversalInventorySystem
 
         public void OnUse(Inventory inv, int slot)
         {
-            //Debug.Log("UsingItem");
+            if (onUseFunc == null) return;
             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, this, slot);
             object[] tmp = new object[2] { this, uea };
 
@@ -63,7 +64,7 @@ namespace UniversalInventorySystem
 
         }
 
-        public void OnDrop(Inventory inv, bool tss, int? slot, int amount, bool dbui, Vector3? pos)
+        public void OnDrop(Inventory inv, bool tss, int slot, int amount, bool dbui, Vector3? pos)
         {
             if (optionalOnDropBehaviour == null)
             {

@@ -10,19 +10,39 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ca3a9c65542bda48a70feeda4a20499, type: 3}
-  m_Name: Checkmark
+  m_Name: Axe
   m_EditorClassIdentifier: 
-  itemName: Checkmark
-  id: 1
-  sprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-  maxAmount: 8
+  itemName: Axe
+  id: 2
+  sprite: {fileID: -3543737210478424008, guid: 14da6ce6e6b9b9841ade0ba37558923d, type: 3}
+  maxAmount: 0
   destroyOnUse: 0
-  useHowManyWhenUsed: 0
-  stackable: 1
-  maxDurability: 0
-  hasDurability: 0
-  showAmount: 1
-  _durabilityImages: []
+  useHowManyWhenUsed: 1
+  stackable: 0
+  maxDurability: 8
+  hasDurability: 1
+  showAmount: 0
+  _durabilityImages:
+  - imageName: Broken
+    sprite: {fileID: -7502607194598712675, guid: 14da6ce6e6b9b9841ade0ba37558923d,
+      type: 3}
+    durability: 0
+  - imageName: Kinda Broken
+    sprite: {fileID: 8853568410002368202, guid: 14da6ce6e6b9b9841ade0ba37558923d,
+      type: 3}
+    durability: 1
+  - imageName: Ok
+    sprite: {fileID: -8299567313919708587, guid: 14da6ce6e6b9b9841ade0ba37558923d,
+      type: 3}
+    durability: 2
+  - imageName: Good
+    sprite: {fileID: 9068793746976321694, guid: 14da6ce6e6b9b9841ade0ba37558923d,
+      type: 3}
+    durability: 4
+  - imageName: Perfect
+    sprite: {fileID: -3543737210478424008, guid: 14da6ce6e6b9b9841ade0ba37558923d,
+      type: 3}
+    durability: 8
   onUseFunc: {fileID: 11500000, guid: fbc6a140bc2ae644788371b67a162054, type: 3}
   optionalOnDropBehaviour: {fileID: 0}
   tooltip:
@@ -36,7 +56,7 @@ MonoBehaviour:
     yAligmentOption: 0
     yAlign: 0
     yPixelOrPercentage: 0
-    autoReAlign: 0
+    autoReAlign: 1
     autoRealignOptions: 0
     snapMargin: {x: 0, y: 0}
     snapTo: {x: 0, y: 0}

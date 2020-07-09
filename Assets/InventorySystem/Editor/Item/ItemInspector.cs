@@ -13,10 +13,11 @@ public class ItemInspector : Editor
     //Storage Props
     SerializedProperty maxAmountProp;
     SerializedProperty stackableProp;
-    SerializedProperty stackAlwaysProp;
+    SerializedProperty showAmountProp;
+    /**SerializedProperty stackAlwaysProp;
     SerializedProperty stackOnMaxDurabiliyProp;
     SerializedProperty stackOnSpecifDurabilityProp;
-    SerializedProperty stackDurabilitiesProp;
+    SerializedProperty stackDurabilitiesProp;**/
 
     //Using Props
     SerializedProperty destroyOnUseProp;
@@ -53,10 +54,11 @@ public class ItemInspector : Editor
         maxDurabilityProp = serializedObject.FindProperty("maxDurability");
         hasDurabilityProp = serializedObject.FindProperty("hasDurability");
         durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
-        stackAlwaysProp = serializedObject.FindProperty("stackAlways");
+        showAmountProp = serializedObject.FindProperty("showAmount");
+        /**stackAlwaysProp = serializedObject.FindProperty("stackAlways");
         stackOnMaxDurabiliyProp = serializedObject.FindProperty("stackOnMaxDurabiliy");
         stackOnSpecifDurabilityProp = serializedObject.FindProperty("stackOnSpecifDurability");
-        stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");
+        stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");**/
     }
 
     public override void OnInspectorGUI()
@@ -69,6 +71,7 @@ public class ItemInspector : Editor
             EditorGUI.indentLevel++;
             itemNameProp.stringValue = EditorGUILayout.TextField(new GUIContent("Item name"), itemNameProp.stringValue);
             idProp.intValue = EditorGUILayout.IntField(new GUIContent("Id"), idProp.intValue);
+            showAmountProp.boolValue = EditorGUILayout.Toggle(new GUIContent("Show Amount"), showAmountProp.boolValue);
             EditorGUILayout.ObjectField(spriteProp, new GUIContent("Item sprite"));
             var item = spriteProp.objectReferenceValue as Sprite;
             if (item != null)

@@ -272,14 +272,14 @@ namespace UniversalInventorySystem
         {
             public Inventory inv;
             public bool takenFromSpecificSlot;
-            public int? slot;
+            public int slot;
             public Item item;
             public int amount;
             public bool droppedByUI;
             public UnityEngine.Vector3 positionDropped;
             public bool useGeralDropBehaviour;
 
-            public DropItemEventArgs(Inventory _inv, bool _takenFromSpecificSlot, int? _slot, Item _item, int _amount, bool _droppedByUI, UnityEngine.Vector3 _positionDropped, bool _useGeralDropBehaviour)
+            public DropItemEventArgs(Inventory _inv, bool _takenFromSpecificSlot, int _slot, Item _item, int _amount, bool _droppedByUI, UnityEngine.Vector3 _positionDropped, bool _useGeralDropBehaviour)
             {
                 inv = _inv;
                 takenFromSpecificSlot = _takenFromSpecificSlot;

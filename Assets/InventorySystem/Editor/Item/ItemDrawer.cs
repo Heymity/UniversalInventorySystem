@@ -49,6 +49,7 @@ public class ItemDrawer : PropertyDrawer
             var stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");*/
             var durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
             var tooltipProp = serializedObject.FindProperty("tooltip");
+            var showAmountProp = serializedObject.FindProperty("showAmount");
 
             EditorGUIUtility.wideMode = true;
             EditorGUIUtility.labelWidth = 240;
@@ -83,6 +84,9 @@ public class ItemDrawer : PropertyDrawer
                         position.y += position.height;
 
                         idProp.intValue = EditorGUI.IntField(position, new GUIContent("Id"), idProp.intValue);
+                        position.y += position.height;
+
+                        showAmountProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Show Amount"), showAmountProp.boolValue);
                         position.y += position.height;
 
                         EditorGUI.ObjectField(position, spriteProp, new GUIContent("Item sprite"));
