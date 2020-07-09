@@ -21,6 +21,7 @@ MonoBehaviour:
   stackable: 1
   maxDurability: 4
   hasDurability: 0
+  showAmount: 1
   _durabilityImages:
   - imageName: Broken
     sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
@@ -61,7 +62,10 @@ MonoBehaviour:
     margin: {x: 10, y: 0}
     maxWidth: 450
     texts:
-    - text: My Item
+    - text: 'My Item
+
+
+'
       alignOptions: 513
       fontStyles: 1
       font: {fileID: 0}
@@ -73,6 +77,7 @@ MonoBehaviour:
     - text: 'Description
 
         With a lot of text for testing line breaking
+
 
 '
       alignOptions: 520

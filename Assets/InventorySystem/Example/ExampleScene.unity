@@ -1500,6 +1500,7 @@ MonoBehaviour:
   - {fileID: 1687697594}
   - {fileID: 1345432265}
   - {fileID: 467073798}
+  showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
   useOnClick: 0
@@ -1515,64 +1516,64 @@ MonoBehaviour:
     slots:
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 11400000, guid: 57c447cc307026949829e61220432bc0, type: 2}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
@@ -3906,6 +3907,7 @@ MonoBehaviour:
   canvas: {fileID: 1427843708}
   DontDropItemRect: {fileID: 747462573}
   slots: []
+  showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
   useOnClick: 1
@@ -3919,59 +3921,59 @@ MonoBehaviour:
   randomFactor: {x: 0, y: 0, z: 0}
   inv:
     slots:
-    - amount: 10
-      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
-      _durability: 4
+    - amount: 1
+      item: {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
       hasItem: 1
+      _durability: 8
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
-      _durability: 0
       hasItem: 0
+      _durability: 0
       isProductSlot: 0
       interative: 0
       whitelist: {fileID: 0}
@@ -4605,6 +4607,7 @@ MonoBehaviour:
   - {fileID: 564753895}
   - {fileID: 1626397153}
   - {fileID: 1427973872}
+  showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
   useOnClick: 1
@@ -5810,6 +5813,7 @@ MonoBehaviour:
   - {fileID: 2041482293}
   - {fileID: 1940933016}
   - {fileID: 363206676}
+  showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
   useOnClick: 1

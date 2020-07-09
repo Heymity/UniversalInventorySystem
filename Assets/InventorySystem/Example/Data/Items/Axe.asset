@@ -21,6 +21,7 @@ MonoBehaviour:
   stackable: 0
   maxDurability: 8
   hasDurability: 1
+  showAmount: 0
   _durabilityImages:
   - imageName: Broken
     sprite: {fileID: -7502607194598712675, guid: 14da6ce6e6b9b9841ade0ba37558923d,

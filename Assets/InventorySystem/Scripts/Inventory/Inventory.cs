@@ -70,7 +70,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Durability, Crafting Events
+        ///TODO: Crafting Events
         #region Add
 
         /// <summary>
@@ -485,12 +485,6 @@ namespace UniversalInventorySystem
             if (inv.slots[slot].amount == amount)
             {
                 Item tmp = inv.slots[slot].item;
-                /*inv.slots[slot] = new Slot(
-                 *   nullSlot,
-                 *   inv.slots[slot].isProductSlot,
-                 *   inv.slots[slot].interative,
-                 *   inv.slots[slot].whitelist
-                );*/
                 inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], nullSlot);
 
                 if (e == BroadcastEventType.DropItem)
@@ -501,13 +495,6 @@ namespace UniversalInventorySystem
             else if (inv.slots[slot].amount > amount)
             {
                 Item tmp = inv.slots[slot].item;
-                /*inv.slots[slot] = new Slot(
-                 *   inv.slots[slot].item, inv.slots[slot].amount - amount, 
-                 *   true, 
-                 *   inv.slots[slot].isProductSlot, 
-                 *   inv.slots[slot].interative,
-                 *   inv.slots[slot].whitelist
-                );*/
                 inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], inv.slots[slot].item, inv.slots[slot].amount - amount, true, 0);
 
                 if (e == BroadcastEventType.DropItem)
@@ -1221,7 +1208,6 @@ namespace UniversalInventorySystem
         /// <returns>The products of the recipe matched</returns>
         public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots)
         {
-
             if (pattern.pattern.Length > grid.Item1.Length) return CraftItemData.nullData;
             if (pattern.products.Length > productSlots) return CraftItemData.nullData;
             else if (pattern.pattern.Length == grid.Item1.Length && pattern.amountPattern.Length == grid.Item2.Length)
@@ -1385,23 +1371,35 @@ namespace UniversalInventorySystem
                 if (craftItem)
                 {
                     bool canAdd = true;
+                    int tmp = 0;
                     for (int h = grid.Item1.Length; h - grid.Item1.Length < recipe.products.Length; h++)
                     {
                         //if (h - grid.Length >= pattern.products.Length) break;
                         if (!inv.slots[h].hasItem) continue;
-                        if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { canAdd = false; break; }
-                        if (inv.slots[h].item != recipe.products[h - grid.Item1.Length]) { canAdd = false; break; }
+                        if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { tmp++; break; }
+                        if (inv.slots[h].item != recipe.products[h - grid.Item1.Length]) {tmp++; break; }
                     }
+                    if (productSlots - tmp < recipe.products.Length)
+                        canAdd = false;
+
                     if (canAdd)
                     {
                         int i = 0;
+                        int offset = 0;
                         for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
                         {
                             if (k > grid.Item1.Length - 1)
                             {
                                 if (k - grid.Item1.Length >= recipe.products.Length) break;
 
-                                i = inv.AddItemToSlot(recipe.products[k - grid.Item1.Length], recipe.amountProducts[k - grid.Item1.Length], k, overrideSlotProtection: true);
+                                AddOffset:
+                                if (inv[k + offset].hasItem && inv[k + offset].item != recipe.products[k - grid.Item1.Length])
+                                {
+                                    offset++;
+                                    goto AddOffset;
+                                }
+                                if(k + offset >= inv.slots.Count) return CraftItemData.nullData;
+                                i = inv.AddItemToSlot(recipe.products[k - grid.Item1.Length], recipe.amountProducts[k - grid.Item1.Length], k + offset, overrideSlotProtection: true);
                                 if (i > 0) return CraftItemData.nullData;
                             }
                         }
@@ -1964,7 +1962,6 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             _durability = 0;
-            ///_totalDurability = 0;
             durability = 0;
         }
 
@@ -1977,7 +1974,6 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             _durability = 0;
-            ///_totalDurability = 0;
             durability = 0;
         }
 
@@ -1989,8 +1985,7 @@ namespace UniversalInventorySystem
             isProductSlot = false;
             interative = SlotProtection.Any;
             whitelist = null;
-            _durability = 0;
-            ///_totalDurability = 0;
+            _durability = 0;         
             durability = 0;
         } 
         
@@ -2003,8 +1998,7 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             this._durability = _durability;
-            durability = _durability;
-            /// No Code Here. Line 2020 is cursed
+            durability = _durability;           
         }
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot)
@@ -2016,7 +2010,6 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             _durability = 0;
-            ///_totalDurability = 0;
             durability = 0;
         }
         
@@ -2029,12 +2022,13 @@ namespace UniversalInventorySystem
             interative = SlotProtection.Any;
             whitelist = null;
             this._durability = _durability;
-            ///_totalDurability = 0;
+   
             durability = _durability;
         }
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive)
         {
+            /// No Code Here. Line 2020 is cursed
             item = _item;
             amount = _amount;
             hasItem = _hasItem;
@@ -2042,7 +2036,6 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = null;
             _durability = 0;
-            ///_totalDurability = 0;
             durability = 0;
         }
 
@@ -2055,7 +2048,6 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             _durability = 0;
-            ///_totalDurability = 0;
             durability = 0;
         }
         
@@ -2068,7 +2060,6 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             this._durability = _durability;
-            ///_totalDurability = 0;
             durability = _durability;
         }
 
