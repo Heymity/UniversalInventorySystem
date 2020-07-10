@@ -419,6 +419,8 @@ namespace UniversalInventorySystem
                         {
                             if (products.items != null && products.items.Length <= productSlots.Length)
                             {
+                                // If you dont want the other of the items in the product slot to matter this line should be different, It shoud check if the
+                                // List have the same items, not the same sequence.
                                 if (Enumerable.SequenceEqual(products.items, productsItem.ToArray()))
                                 {
                                     inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
