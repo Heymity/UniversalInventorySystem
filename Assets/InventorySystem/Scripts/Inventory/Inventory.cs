@@ -70,7 +70,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Crafting Events
+        ///TODO: Crafting Events, Change from a tuple to the CraftItemData class
         #region Add
 
         /// <summary>
