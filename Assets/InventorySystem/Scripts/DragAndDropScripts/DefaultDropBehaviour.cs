@@ -11,7 +11,10 @@ public class DefaultDropBehaviour : DropBehaviour
         e.inv.RemoveItemInSlot(e.slot, e.amount);
         var b = Instantiate(droppedItemObj, new Vector3(e.positionDropped.x, e.positionDropped.y, 0), Quaternion.identity);
         DroppedItem droppedItem = b.GetComponent<DroppedItem>();
-        droppedItem.SetSprite(InventoryUI.GetNearestSprite(e.item, dur));
+        if(e.item.hasDurability)
+            droppedItem.SetSprite(InventoryUI.GetNearestSprite(e.item, dur));
+        else
+            droppedItem.SetSprite(e.item.sprite);
         droppedItem.SetAmount(e.amount);
     }
 }

@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*  Copyright 2020 Gabriel Pasquale Rodrigues Scavone
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * 
+ * 
+ *  
+ *  This code is the core of the inventory system, it manipulates the inventories and contains some of the base classes of the system like Slot and Inventory
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -68,7 +87,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Crafting Events
+        ///TODO: Crafting Events, Change from a tuple to the CraftItemData class
         #region Add
 
         /// <summary>
@@ -1231,25 +1250,46 @@ namespace UniversalInventorySystem
                     if (craftItem)
                     {
                         bool canAdd = true;
-                        for (int h = grid.Item1.Length; h - grid.Item1.Length < pattern.products.Length; h++)
+                        int tmp = 0;
+                        for (int h = grid.Item1.Length; h - grid.Item1.Length < productSlots; h++)
                         {
-                            //if (h - grid.Length >= pattern.products.Length) break;
-                            if (!inv.slots[h].hasItem) continue;
-                            if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { canAdd = false; break; }
-                            if (inv.slots[h].item != pattern.products[h - grid.Item1.Length]) { canAdd = false; break; }
+                            if (!inv.slots[h].hasItem) { tmp++; continue; }
+                            for (int index = 0; index < pattern.products.Count(); index++)
+                            {
+                                if (inv.slots[h].item == pattern.products[index])
+                                {
+                                    if (inv.slots[h].amount + pattern.amountProducts[index] > inv.slots[h].item.maxAmount) { continue; }
+                                    tmp++; 
+                                    continue; 
+                                }
+                            }
                         }
+                        if (tmp < pattern.products.Length)
+                            canAdd = false;
+
                         if (canAdd)
                         {
                             int i = 0;
+                            int offset = 0;
                             for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
                             {
                                 if (k > grid.Item1.Length - 1)
                                 {
                                     if (k - grid.Item1.Length >= pattern.products.Length) break;
 
-                                    i = inv.AddItemToSlot(pattern.products[k - grid.Item1.Length], pattern.amountProducts[k - grid.Item1.Length], k, overrideSlotProtection: true);
+                                    AddOffset:
+                                    if (k + offset >= inv.slots.Count) return CraftItemData.nullData;
+                                    if (inv[k + offset].hasItem &&
+                                            (inv[k + offset].item != pattern.products[k - grid.Item1.Length] ||
+                                            (inv[k + offset].item == pattern.products[k - grid.Item1.Length] &&
+                                            inv[k + offset].amount + pattern.amountProducts[k - grid.Item1.Length] > inv[k + offset].item.maxAmount)))
+                                    {
+                                        offset++;
+                                        goto AddOffset;
+                                    }
+
+                                    i = inv.AddItemToSlot(pattern.products[k - grid.Item1.Length], pattern.amountProducts[k - grid.Item1.Length], k + offset, overrideSlotProtection: true);
                                     if (i > 0) return CraftItemData.nullData;
-                                    //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                                 }
                             }
                             if (i > 0) return CraftItemData.nullData;
@@ -1287,25 +1327,46 @@ namespace UniversalInventorySystem
                             if (craftItem)
                             {
                                 bool canAdd = true;
-                                for (int h = grid.Item1.Length; h - grid.Item1.Length < pattern.products.Length; h++)
+                                int tmp = 0;
+                                for (int h = grid.Item1.Length; h - grid.Item1.Length < productSlots; h++)
                                 {
-                                    //if (h - grid.Length >= pattern.products.Length) break;
-                                    if (!inv.slots[h].hasItem) continue;
-                                    if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { canAdd = false; break; }
-                                    if (inv.slots[h].item != pattern.products[h - grid.Item1.Length]) { canAdd = false; break; }
+                                    if (!inv.slots[h].hasItem) { tmp++; continue; }
+                                    for (int index = 0; index < pattern.products.Count(); index++)
+                                    {
+                                        if (inv.slots[h].item == pattern.products[index])
+                                        {
+                                            if (inv.slots[h].amount + pattern.amountProducts[index] > inv.slots[h].item.maxAmount) { continue; }
+                                            tmp++;
+                                            continue;
+                                        }
+                                    }
                                 }
+                                if (tmp < pattern.products.Length)
+                                    canAdd = false;
+
                                 if (canAdd)
                                 {
                                     int w = 0;
+                                    int offset = 0;
                                     for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
                                     {
                                         if (k > grid.Item1.Length - 1)
                                         {
                                             if (k - grid.Item1.Length >= pattern.products.Length) break;
 
-                                            w = inv.AddItemToSlot(pattern.products[k - grid.Item1.Length], pattern.amountProducts[k - grid.Item1.Length], k, overrideSlotProtection: true);
+                                            AddOffset:
+                                            if (k + offset >= inv.slots.Count) return CraftItemData.nullData;
+                                            if (inv[k + offset].hasItem &&
+                                                    (inv[k + offset].item != pattern.products[k - grid.Item1.Length] ||
+                                                    (inv[k + offset].item == pattern.products[k - grid.Item1.Length] &&
+                                                    inv[k + offset].amount + pattern.amountProducts[k - grid.Item1.Length] > inv[k + offset].item.maxAmount)))
+                                            {
+                                                offset++;
+                                                goto AddOffset;
+                                            }
+
+                                            w = inv.AddItemToSlot(pattern.products[k - grid.Item1.Length], pattern.amountProducts[k - grid.Item1.Length], k + offset, overrideSlotProtection: true);
                                             if (w > 0) return CraftItemData.nullData;
-                                            //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                                         }
                                     }
                                     if (w > 0) return CraftItemData.nullData;
@@ -1386,14 +1447,20 @@ namespace UniversalInventorySystem
                 {
                     bool canAdd = true;
                     int tmp = 0;
-                    for (int h = grid.Item1.Length; h - grid.Item1.Length < recipe.products.Length; h++)
+                    for (int h = grid.Item1.Length; h - grid.Item1.Length < productSlots; h++)
                     {
-                        //if (h - grid.Length >= pattern.products.Length) break;
-                        if (!inv.slots[h].hasItem) continue;
-                        if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { tmp++; break; }
-                        if (inv.slots[h].item != recipe.products[h - grid.Item1.Length]) {tmp++; break; }
+                        if (!inv.slots[h].hasItem) { tmp++; continue; }
+                        for (int index = 0; index < recipe.products.Count(); index++)
+                        {
+                            if (inv.slots[h].item == recipe.products[index])
+                            {
+                                if (inv.slots[h].amount + recipe.amountProducts[index] > inv.slots[h].item.maxAmount) { continue; }
+                                tmp++;
+                                continue;
+                            }
+                        }
                     }
-                    if (productSlots - tmp < recipe.products.Length)
+                    if (tmp < recipe.products.Length)
                         canAdd = false;
 
                     if (canAdd)
@@ -1407,12 +1474,16 @@ namespace UniversalInventorySystem
                                 if (k - grid.Item1.Length >= recipe.products.Length) break;
 
                                 AddOffset:
-                                if (inv[k + offset].hasItem && inv[k + offset].item != recipe.products[k - grid.Item1.Length])
+                                if(k + offset >= inv.slots.Count) return CraftItemData.nullData;
+                                if (inv[k + offset].hasItem &&
+                                        (inv[k + offset].item != recipe.products[k - grid.Item1.Length] ||
+                                        (inv[k + offset].item == recipe.products[k - grid.Item1.Length] &&
+                                        inv[k + offset].amount + recipe.amountProducts[k - grid.Item1.Length] > inv[k + offset].item.maxAmount)))
                                 {
                                     offset++;
                                     goto AddOffset;
                                 }
-                                if(k + offset >= inv.slots.Count) return CraftItemData.nullData;
+
                                 i = inv.AddItemToSlot(recipe.products[k - grid.Item1.Length], recipe.amountProducts[k - grid.Item1.Length], k + offset, overrideSlotProtection: true);
                                 if (i > 0) return CraftItemData.nullData;
                             }
