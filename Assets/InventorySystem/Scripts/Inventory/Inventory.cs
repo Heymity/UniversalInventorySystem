@@ -1174,7 +1174,7 @@ namespace UniversalInventorySystem
         /// <param name="allowPatternRecipe">Wheter it should check for pattern recipes or not (This is useful if you have a big game and dont want to check the patterns, since they are much more time consuming than normal recipes)</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, bool allowPatternRecipe, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, Vector2Int gridSize, bool craftItem, bool allowPatternRecipe, int productSlots)
         {
             if (InventoryHandler.current == null) return CraftItemData.nullData;
 
@@ -1211,7 +1211,7 @@ namespace UniversalInventorySystem
         /// <param name="allowPatternRecipe">Wheter it should check for pattern recipes or not (This is useful if you have a big game and dont want to check the patterns, since they are much more time consuming than normal recipes)</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, RecipeGroup asset, bool allowPatternRecipe, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, Vector2Int gridSize, bool craftItem, RecipeGroup asset, bool allowPatternRecipe, int productSlots)
         {
             if (allowPatternRecipe)
             {
@@ -1239,19 +1239,19 @@ namespace UniversalInventorySystem
         /// <param name="pattern">The PatternRecipe to be checked</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots)
         {
-            if (pattern.pattern.Length > grid.Item1.Length) return CraftItemData.nullData;
+            if (pattern.pattern.Length > grid.items.Length) return CraftItemData.nullData;
             if (pattern.products.Length > productSlots) return CraftItemData.nullData;
-            else if (pattern.pattern.Length == grid.Item1.Length && pattern.amountPattern.Length == grid.Item2.Length)
+            else if (pattern.pattern.Length == grid.items.Length && pattern.amountPattern.Length == grid.amounts.Length)
             {
-                if (Enumerable.SequenceEqual(pattern.pattern, grid.Item1) && SequenceEqualOrGreter(pattern.amountPattern, grid.Item2))
+                if (Enumerable.SequenceEqual(pattern.pattern, grid.items) && SequenceEqualOrGreter(pattern.amountPattern, grid.amounts))
                 {
                     if (craftItem)
                     {
                         bool canAdd = true;
                         int tmp = 0;
-                        for (int h = grid.Item1.Length; h - grid.Item1.Length < productSlots; h++)
+                        for (int h = grid.items.Length; h - grid.items.Length < productSlots; h++)
                         {
                             if (!inv.slots[h].hasItem) { tmp++; continue; }
                             for (int index = 0; index < pattern.products.Count(); index++)
@@ -1271,33 +1271,33 @@ namespace UniversalInventorySystem
                         {
                             int i = 0;
                             int offset = 0;
-                            for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
+                            for (int k = grid.items.Length; k < inv.slots.Count; k++)
                             {
-                                if (k > grid.Item1.Length - 1)
+                                if (k > grid.items.Length - 1)
                                 {
-                                    if (k - grid.Item1.Length >= pattern.products.Length) break;
+                                    if (k - grid.items.Length >= pattern.products.Length) break;
 
                                     AddOffset:
                                     if (k + offset >= inv.slots.Count) return CraftItemData.nullData;
                                     if (inv[k + offset].hasItem &&
-                                            (inv[k + offset].item != pattern.products[k - grid.Item1.Length] ||
-                                            (inv[k + offset].item == pattern.products[k - grid.Item1.Length] &&
-                                            inv[k + offset].amount + pattern.amountProducts[k - grid.Item1.Length] > inv[k + offset].item.maxAmount)))
+                                            (inv[k + offset].item != pattern.products[k - grid.items.Length] ||
+                                            (inv[k + offset].item == pattern.products[k - grid.items.Length] &&
+                                            inv[k + offset].amount + pattern.amountProducts[k - grid.items.Length] > inv[k + offset].item.maxAmount)))
                                     {
                                         offset++;
                                         goto AddOffset;
                                     }
 
-                                    i = inv.AddItemToSlot(pattern.products[k - grid.Item1.Length], pattern.amountProducts[k - grid.Item1.Length], k + offset, overrideSlotProtection: true);
+                                    i = inv.AddItemToSlot(pattern.products[k - grid.items.Length], pattern.amountProducts[k - grid.items.Length], k + offset, overrideSlotProtection: true);
                                     if (i > 0) return CraftItemData.nullData;
                                 }
                             }
                             if (i > 0) return CraftItemData.nullData;
 
 
-                            for (int k = 0; k < grid.Item1.Length; k++)
+                            for (int k = 0; k < grid.items.Length; k++)
                             {
-                                if (inv.slots[k].hasItem && k <= grid.Item1.Length - 1)
+                                if (inv.slots[k].hasItem && k <= grid.items.Length - 1)
                                     inv.RemoveItemInSlot(k, pattern.amountPattern[k]);
 
                             }
@@ -1306,7 +1306,7 @@ namespace UniversalInventorySystem
                     return new CraftItemData(pattern.products, pattern.amountProducts);
                 }
             }
-            else if (pattern.pattern.Length < grid.Item1.Length)
+            else if (pattern.pattern.Length < grid.items.Length)
             {
                 int fit = (gridSize.y - pattern.gridSize.y + 1) * (gridSize.x - pattern.gridSize.x + 1);
 
@@ -1317,10 +1317,10 @@ namespace UniversalInventorySystem
                     if (result.items != null)
                     {
                         bool canReturn = true;
-                        for (int j = 0; j < grid.Item1.Length; j++)
+                        for (int j = 0; j < grid.items.Length; j++)
                         {
                             if (indexes.Contains(j)) continue;
-                            if (grid.Item1[j] != null) canReturn = false;
+                            if (grid.items[j] != null) canReturn = false;
                         }
                         if (canReturn)
                         {
@@ -1328,7 +1328,7 @@ namespace UniversalInventorySystem
                             {
                                 bool canAdd = true;
                                 int tmp = 0;
-                                for (int h = grid.Item1.Length; h - grid.Item1.Length < productSlots; h++)
+                                for (int h = grid.items.Length; h - grid.items.Length < productSlots; h++)
                                 {
                                     if (!inv.slots[h].hasItem) { tmp++; continue; }
                                     for (int index = 0; index < pattern.products.Count(); index++)
@@ -1348,24 +1348,24 @@ namespace UniversalInventorySystem
                                 {
                                     int w = 0;
                                     int offset = 0;
-                                    for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
+                                    for (int k = grid.items.Length; k < inv.slots.Count; k++)
                                     {
-                                        if (k > grid.Item1.Length - 1)
+                                        if (k > grid.items.Length - 1)
                                         {
-                                            if (k - grid.Item1.Length >= pattern.products.Length) break;
+                                            if (k - grid.items.Length >= pattern.products.Length) break;
 
                                             AddOffset:
                                             if (k + offset >= inv.slots.Count) return CraftItemData.nullData;
                                             if (inv[k + offset].hasItem &&
-                                                    (inv[k + offset].item != pattern.products[k - grid.Item1.Length] ||
-                                                    (inv[k + offset].item == pattern.products[k - grid.Item1.Length] &&
-                                                    inv[k + offset].amount + pattern.amountProducts[k - grid.Item1.Length] > inv[k + offset].item.maxAmount)))
+                                                    (inv[k + offset].item != pattern.products[k - grid.items.Length] ||
+                                                    (inv[k + offset].item == pattern.products[k - grid.items.Length] &&
+                                                    inv[k + offset].amount + pattern.amountProducts[k - grid.items.Length] > inv[k + offset].item.maxAmount)))
                                             {
                                                 offset++;
                                                 goto AddOffset;
                                             }
 
-                                            w = inv.AddItemToSlot(pattern.products[k - grid.Item1.Length], pattern.amountProducts[k - grid.Item1.Length], k + offset, overrideSlotProtection: true);
+                                            w = inv.AddItemToSlot(pattern.products[k - grid.items.Length], pattern.amountProducts[k - grid.items.Length], k + offset, overrideSlotProtection: true);
                                             if (w > 0) return CraftItemData.nullData;
                                         }
                                     }
@@ -1376,7 +1376,7 @@ namespace UniversalInventorySystem
                                         for (int u = 0; u < pattern.gridSize.x; u++)
                                         {
                                             var index = (v * gridSize.x) + u;
-                                            if (inv.slots[index].hasItem && index <= grid.Item1.Length - 1)
+                                            if (inv.slots[index].hasItem && index <= grid.items.Length - 1)
                                             {
                                                 Debug.Log(index + " " + " " + pattern.amountPattern.Length);
                                                 inv.RemoveItemInSlot(index, pattern.amountPattern[v * pattern.gridSize.x + u]);
@@ -1403,17 +1403,17 @@ namespace UniversalInventorySystem
         /// <param name="recipe">The Recipe to be checked</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, bool craftItem, Recipe recipe, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, bool craftItem, Recipe recipe, int productSlots)
         {
             List<int> jumpIndexes = new List<int>();
             List<int> tmpjumpIndexes = new List<int>();
             List<int> removeAmount = new List<int>();
             if (recipe.products.Length > productSlots) return CraftItemData.nullData;
-            for (int i = 0; i < grid.Item1.Length; i++)
+            for (int i = 0; i < grid.items.Length; i++)
             {
                 for (int j = 0; j < recipe.numberOfFactors; j++)
                 {
-                    if (grid.Item1[i] == recipe.factors[j] && !tmpjumpIndexes.Contains(j))
+                    if (grid.items[i] == recipe.factors[j] && !tmpjumpIndexes.Contains(j))
                     {
                         //i++;
                         tmpjumpIndexes.Add(j);
@@ -1425,9 +1425,9 @@ namespace UniversalInventorySystem
             }
             bool canReturn = true;
             if (jumpIndexes.Count != recipe.numberOfFactors) return CraftItemData.nullData;
-            for (int j = 0; j < grid.Item1.Length; j++)
+            for (int j = 0; j < grid.items.Length; j++)
             {
-                if (grid.Item1[j] != null && !jumpIndexes.Contains(j))
+                if (grid.items[j] != null && !jumpIndexes.Contains(j))
                 {
                     canReturn = false;
                 }
@@ -1435,7 +1435,7 @@ namespace UniversalInventorySystem
 
             for (int i = 0; i < jumpIndexes.Count; i++)
             {
-                if (grid.Item2[jumpIndexes[i]] < recipe.amountFactors[i])
+                if (grid.amounts[jumpIndexes[i]] < recipe.amountFactors[i])
                 {
                     canReturn = false;
                 }
@@ -1447,7 +1447,7 @@ namespace UniversalInventorySystem
                 {
                     bool canAdd = true;
                     int tmp = 0;
-                    for (int h = grid.Item1.Length; h - grid.Item1.Length < productSlots; h++)
+                    for (int h = grid.items.Length; h - grid.items.Length < productSlots; h++)
                     {
                         if (!inv.slots[h].hasItem) { tmp++; continue; }
                         for (int index = 0; index < recipe.products.Count(); index++)
@@ -1467,33 +1467,33 @@ namespace UniversalInventorySystem
                     {
                         int i = 0;
                         int offset = 0;
-                        for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
+                        for (int k = grid.items.Length; k < inv.slots.Count; k++)
                         {
-                            if (k > grid.Item1.Length - 1)
+                            if (k > grid.items.Length - 1)
                             {
-                                if (k - grid.Item1.Length >= recipe.products.Length) break;
+                                if (k - grid.items.Length >= recipe.products.Length) break;
 
                                 AddOffset:
                                 if(k + offset >= inv.slots.Count) return CraftItemData.nullData;
                                 if (inv[k + offset].hasItem &&
-                                        (inv[k + offset].item != recipe.products[k - grid.Item1.Length] ||
-                                        (inv[k + offset].item == recipe.products[k - grid.Item1.Length] &&
-                                        inv[k + offset].amount + recipe.amountProducts[k - grid.Item1.Length] > inv[k + offset].item.maxAmount)))
+                                        (inv[k + offset].item != recipe.products[k - grid.items.Length] ||
+                                        (inv[k + offset].item == recipe.products[k - grid.items.Length] &&
+                                        inv[k + offset].amount + recipe.amountProducts[k - grid.items.Length] > inv[k + offset].item.maxAmount)))
                                 {
                                     offset++;
                                     goto AddOffset;
                                 }
 
-                                i = inv.AddItemToSlot(recipe.products[k - grid.Item1.Length], recipe.amountProducts[k - grid.Item1.Length], k + offset, overrideSlotProtection: true);
+                                i = inv.AddItemToSlot(recipe.products[k - grid.items.Length], recipe.amountProducts[k - grid.items.Length], k + offset, overrideSlotProtection: true);
                                 if (i > 0) return CraftItemData.nullData;
                             }
                         }
                         if (i > 0) return CraftItemData.nullData;
 
                         var index = 0;
-                        for (int k = 0; k < grid.Item1.Length; k++)
+                        for (int k = 0; k < grid.items.Length; k++)
                         {
-                            if (inv.slots[k].hasItem && k <= grid.Item1.Length - 1)
+                            if (inv.slots[k].hasItem && k <= grid.items.Length - 1)
                             {
                                 inv.RemoveItemInSlot(k, removeAmount[index]);
                                 index++;
@@ -1516,7 +1516,7 @@ namespace UniversalInventorySystem
         /// <param name="offsetIndex">The offset of the section</param>
         /// <param name="usedIndexes">The index of the original grid that were selected</param>
         /// <returns>a new grid that is a section from the original one</returns>
-        public static (Item[], int[]) GetSectionFromGrid((Item[], int[]) originalGrid, Vector2Int originalGridSize, Vector2Int sectionSize, int offsetIndex, out List<int> usedIndexes)
+        public static CraftItemData GetSectionFromGrid(CraftItemData originalGrid, Vector2Int originalGridSize, Vector2Int sectionSize, int offsetIndex, out List<int> usedIndexes)
         {
             Item[] returnGrid = new Item[sectionSize.x * sectionSize.y];
             int[] returnIntGrid = new int[sectionSize.x * sectionSize.y];
@@ -1529,12 +1529,12 @@ namespace UniversalInventorySystem
             {
                 for (int j = 0; j < sectionSize.x; j++)
                 {
-                    returnGrid[i * sectionSize.x + j] = originalGrid.Item1[(i + offsety) * originalGridSize.x + j + offsetx];
-                    returnIntGrid[i * sectionSize.x + j] = originalGrid.Item2[(i + offsety) * originalGridSize.x + j + offsetx];
+                    returnGrid[i * sectionSize.x + j] = originalGrid.items[(i + offsety) * originalGridSize.x + j + offsetx];
+                    returnIntGrid[i * sectionSize.x + j] = originalGrid.amounts[(i + offsety) * originalGridSize.x + j + offsetx];
                     usedIndexes.Add((i + offsety) * originalGridSize.x + j + offsetx);
                 }
             }
-            return (returnGrid, returnIntGrid);
+            return new CraftItemData(returnGrid, returnIntGrid);
         }
 
         private static bool SequenceEqualOrGreter(int[] firstInt, int[] greterInt)

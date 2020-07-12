@@ -363,7 +363,7 @@ namespace UniversalInventorySystem
             //Dont use on click if is crafting inventory
             if (isCraftInventory)
             {
-                CraftItemData products = inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, false, true, productSlots.Length);
+                CraftItemData products = inv.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, false, true, productSlots.Length);
 
                 List<Item> productsItem = new List<Item>();
                 if (products != CraftItemData.nullData && products.items.Length <= productSlots.Length)
@@ -454,7 +454,7 @@ namespace UniversalInventorySystem
                                 // List have the same items, not the same sequence.
                                 if (Enumerable.SequenceEqual(products.items, productsItem.ToArray()))
                                 {
-                                    inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
+                                    inv.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
                                 }
                             }
                         });
@@ -509,7 +509,7 @@ namespace UniversalInventorySystem
                         productSlots[i].GetComponent<Button>().onClick.AddListener(() =>
                         {
                             //Debug.Log($"Product slot {slots[index].name} was clicked");
-                            inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
+                            inv.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
                         });
 
                     }
