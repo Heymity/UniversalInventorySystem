@@ -83,6 +83,7 @@ namespace UniversalInventorySystem
         public bool shouldSwap;
         [HideInInspector]
         public List<Item> pattern = new List<Item>();
+        [HideInInspector]
         public List<int> amount = new List<int>();
 
         public void SetInventory(Inventory _inv) => inv = _inv;
@@ -93,6 +94,8 @@ namespace UniversalInventorySystem
             if (isCraftInventory)
             {
                 inv.slotAmounts += productSlots.Length;
+                for(int i = 0; i < productSlots.Length; i++)
+                    inv.slots.Add(Slot.nullSlot);
 
                 foreach (GameObject g in productSlots)
                 {
@@ -148,8 +151,8 @@ namespace UniversalInventorySystem
                     }
                 }
             }
-            ItemDropHandler idh;
-            if (!canvas.TryGetComponent(out idh)) canvas.gameObject.AddComponent<ItemDropHandler>();
+
+            if (!canvas.TryGetComponent(out ItemDropHandler _)) canvas.gameObject.AddComponent<ItemDropHandler>();
 
             if (isCraftInventory)
             {
@@ -160,9 +163,8 @@ namespace UniversalInventorySystem
                 }
 
                 for (int i = gridSize.x * gridSize.y; i < inv.slots.Count; i++)
-                {
-                    var slot = inv.slots[i];
-                    inv.slots[i] = new Slot(slot.item, slot.amount, slot.hasItem, true, SlotProtection.Remove, null);
+                { 
+                    inv.slots[i] = Slot.SetSlotProperties(inv[i], true, SlotProtection.Remove | SlotProtection.Swap, null);
                 }
 
             }
