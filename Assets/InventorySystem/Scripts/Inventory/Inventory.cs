@@ -670,7 +670,7 @@ namespace UniversalInventorySystem
         /// <param name="inv">The inventary to have items swapped</param>
         /// <param name="nativeSlot">The slot to lose items</param>
         /// <param name="targetSlot">The slot to gain items</param>
-        public static void SwapItemsInSlots(this Inventory inv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
+        public static void SwapItemsInSlots(this Inventory inv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem, bool overrideSlotProtection = false)
         {
             if (inv == null)
             {
@@ -686,7 +686,10 @@ namespace UniversalInventorySystem
 
             if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return;
 
-            if (inv.slots[targetSlot].interative == SlotProtection.Locked || inv.slots[nativeSlot].interative == SlotProtection.Locked || inv.slots[targetSlot].isProductSlot) return;
+            if (inv.slots[targetSlot].isProductSlot) return;
+
+            if (!AcceptsSlotProtection(inv.slots[targetSlot], MethodType.Swap) && !overrideSlotProtection) return;
+            if (!AcceptsSlotProtection(inv.slots[nativeSlot], MethodType.Swap) && !overrideSlotProtection) return;
 
 
             //Verifys if the items to be swaped are in the whitelists
@@ -736,7 +739,7 @@ namespace UniversalInventorySystem
         /// <param name="targetSlot">The slot to gain items</param>
         /// <param name="amount">The amount of items to be swaped</param>
         /// <returns>Returns the number of items that dind fit in the other slot</returns>
-        public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem)
+        public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem, bool overrideSlotProtection = false)
         {
             //Validations
             if (inv == null)
@@ -756,9 +759,13 @@ namespace UniversalInventorySystem
                 return 0;
             }
 
-            if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return (_amount ?? inv.slots[nativeSlot].amount);
+            if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) 
+                return (_amount ?? inv.slots[nativeSlot].amount);
 
-            if (inv.slots[targetSlot].interative == SlotProtection.Locked || inv.slots[nativeSlot].interative == SlotProtection.Locked || inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
+            if (inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
+
+            if (!AcceptsSlotProtection(inv.slots[targetSlot], MethodType.Swap) && !overrideSlotProtection) return (_amount ?? inv.slots[nativeSlot].amount);
+            if (!AcceptsSlotProtection(inv.slots[nativeSlot], MethodType.Swap) && !overrideSlotProtection) return (_amount ?? inv.slots[nativeSlot].amount);
 
 
             //Verifys if the items to be swaped are in the whitelists
@@ -842,7 +849,7 @@ namespace UniversalInventorySystem
         /// <param name="targetSlotNumber">The slot index witch will receive items </param>
         /// <param name="amount">The amount of items to be swaped</param>
         /// <returns>Returns the number of items that worent transfered</returns>
-        public static int SwapItemThruInventoriesSlotToSlot(this Inventory nativeInv, Inventory targetInv, int nativeSlotNumber, int targetSlotNumber, int amount, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
+        public static int SwapItemThruInventoriesSlotToSlot(this Inventory nativeInv, Inventory targetInv, int nativeSlotNumber, int targetSlotNumber, int amount, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory, bool overrideSlotProtection = false)
         {
             if (nativeInv == null)
             {
@@ -867,9 +874,10 @@ namespace UniversalInventorySystem
                 return 0;
             }
 
-            if (nativeInv.slots[nativeSlotNumber].interative == SlotProtection.Locked) return amount;
+            if (targetInv.slots[targetSlotNumber].isProductSlot) return amount;
 
-            if (targetInv.slots[targetSlotNumber].interative == SlotProtection.Locked || targetInv.slots[targetSlotNumber].isProductSlot) return amount;
+            if (!AcceptsSlotProtection(nativeInv.slots[nativeSlotNumber], MethodType.Swap) && !overrideSlotProtection) return amount;
+            if (!AcceptsSlotProtection(targetInv.slots[targetSlotNumber], MethodType.Swap) && !overrideSlotProtection) return amount;
 
             //Verifys if the items to be swaped are in the whitelists
             bool whitelist =
@@ -998,7 +1006,7 @@ namespace UniversalInventorySystem
         /// <param name="targetInv">The target inventory</param>
         /// <param name="nativeSlot">The slot Number of the native inventory</param>
         /// <param name="targetSlot">The Slot numben of the target inventory</param>
-        public static void SwapItemsThruInventoriesInSlots(this Inventory nativeInv, Inventory targetInv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
+        public static void SwapItemsThruInventoriesInSlots(this Inventory nativeInv, Inventory targetInv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem, bool overrideSlotProtection = false)
         {
             if (nativeInv == null || targetInv == null)
             {
@@ -1015,7 +1023,10 @@ namespace UniversalInventorySystem
             if (nativeInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockSlots) return;
             if (targetInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.LockSlots) return;
 
-            if (targetInv.slots[targetSlot].interative == SlotProtection.Locked || nativeInv.slots[nativeSlot].interative == SlotProtection.Locked || targetInv.slots[targetSlot].isProductSlot) return;
+            if (targetInv.slots[targetSlot].isProductSlot) return;
+
+            if (!AcceptsSlotProtection(nativeInv.slots[nativeSlot], MethodType.Swap) && !overrideSlotProtection) return;
+            if (!AcceptsSlotProtection(targetInv.slots[targetSlot], MethodType.Swap) && !overrideSlotProtection) return;
 
 
             //Verifys if the items to be swaped are in the whitelists

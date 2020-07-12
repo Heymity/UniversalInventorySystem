@@ -1519,63 +1519,63 @@ MonoBehaviour:
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
-      whitelist: {fileID: 11400000, guid: 57c447cc307026949829e61220432bc0, type: 2}
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
       whitelist: {fileID: 0}
     slotAmounts: 9
     id: 0
@@ -3921,20 +3921,6 @@ MonoBehaviour:
   randomFactor: {x: 0, y: 0, z: 0}
   inv:
     slots:
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
@@ -9476,6 +9462,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: InventorySystemManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 4230058761226221454, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2ec85dcac666aa4587e5e46ec3a9f99, type: 3}
