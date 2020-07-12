@@ -1,6 +1,26 @@
-﻿using System;
+﻿/*  Copyright 2020 Gabriel Pasquale Rodrigues Scavone
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * 
+ * 
+ *  
+ *  This code is the core of the inventory system, it manipulates the inventories and contains some of the base classes of the system like Slot and Inventory
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 
 namespace UniversalInventorySystem
@@ -14,7 +34,7 @@ namespace UniversalInventorySystem
 
         public static readonly Slot nullSlot = new Slot(null, 0, false, 0);
 
-        #region Protection readonly and methods
+        #region Protection consts
 
         public static readonly InventoryProtection[] allInventoryProtections = new InventoryProtection[6]
         {
@@ -28,15 +48,12 @@ namespace UniversalInventorySystem
 
         public static InventoryProtection[] newInvProtectionArray(params InventoryProtection[] protections) { return protections; }
 
-        public static readonly SlotProtection[] allSlotProtections = new SlotProtection[4]
-        {
-        SlotProtection.Any,
-        SlotProtection.Locked,
-        SlotProtection.OnlyAdd,
-        SlotProtection.OnlyRemove
-        };
+        public const SlotProtection AllSlotFlags = SlotProtection.Locked | SlotProtection.Add | SlotProtection.Remove | SlotProtection.Use | SlotProtection.Swap;
 
-        public static SlotProtection[] newSlotProtectionArray(params SlotProtection[] protections) { return protections; }
+        public const SlotProtection AddFlags = SlotProtection.Add;
+        public const SlotProtection RemoveFlags = SlotProtection.Remove;
+        public const SlotProtection SwapFlags = SlotProtection.Swap;
+        public const SlotProtection UseFlags = SlotProtection.Use;
 
         #endregion
 
@@ -70,7 +87,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Crafting Events
+        ///TODO: Crafting Events, Change from a tuple to the CraftItemData class
         #region Add
 
         /// <summary>
@@ -101,7 +118,7 @@ namespace UniversalInventorySystem
             {
                 for (int i = 0; i < inv.slots.Count; i++)
                 {
-                    if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
+                    if (!AcceptsSlotProtection(inv.slots[i], MethodType.Add) && !overrideSlotProtection) continue;
                     if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;
 
                     if (inv.slots[i].hasItem && i < inv.slots.Count - 1) continue;
@@ -140,7 +157,7 @@ namespace UniversalInventorySystem
             for (int i = 0; i < inv.slots.Count; i++)
             {
                 if (inv.slots[i].hasItem) continue;
-                if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
+                if (!AcceptsSlotProtection(inv.slots[i], MethodType.Add) && !overrideSlotProtection) continue;
                 if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;
 
                 else if (i < inv.slots.Count - 1)
@@ -165,7 +182,7 @@ namespace UniversalInventorySystem
                     var newSlot = inv.slots[i].amount;
                     amount -= item.maxAmount - newSlot;
                     newSlot = item.maxAmount;
-                    inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, newSlot, true, durability.GetValueOrDefault()/**, (uint)(durability.GetValueOrDefault() * newSlot)*/);
+                    inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, newSlot, true, durability.GetValueOrDefault());
                     if (amount > 0)
                     {
                         InventoryHandler.current.Broadcast(e, aea2);
@@ -217,27 +234,12 @@ namespace UniversalInventorySystem
             {
                 if (inv.slots[i].item != item) continue;                                         // Must be same item
                 if (inv.slots[i].amount == inv.slots[i].item.maxAmount) continue;                // Must fit at least one
-                if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;                                              // Must have a acceptable protection level
+                if (!AcceptsSlotProtection(inv.slots[i], MethodType.Add) && !overrideSlotProtection) 
+                    continue;                                                                    // Must have a acceptable protection level
+
                 if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;        // Must be accepted in the whitelist since it may change in runtime
 
                 var newSlot = inv.slots[i];                                                      // Tmp var
-
-                /**if (item.hasDurability)                                                       // Old Sytem Code
-                {
-                    if (item.stackAlways)
-                    {
-                        newSlot.totalDurability += durability.GetValueOrDefault();
-                    } 
-                    else if (item.stackOnSpecifDurability)
-                    {
-                        if (!(item.stackDurabilities?.Contains(inv.slots[i].durability) ?? true)) continue;
-                    } 
-                    else if (item.stackOnMaxDurabiliy)
-                    {
-                        if (inv.slots[i].durability != item.maxDurability) continue;
-                    }
-                }                                                                                // Old Sytem Code **/
-
 
                 if (newSlot.amount + amount <= item.maxAmount)                                   // If the entire amount fits on the slot
                 {
@@ -286,7 +288,8 @@ namespace UniversalInventorySystem
 
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
-            if ((inv.slots[slotNumber].interative == SlotProtection.Locked || inv.slots[slotNumber].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) return amount;
+            if (!AcceptsSlotProtection(inv.slots[slotNumber], MethodType.Add) && !overrideSlotProtection) return amount;
+
             if (!inv.slots[slotNumber].whitelist?.itemsList.Contains(item) ?? false) return amount;
 
             if (durability == null) durability = item.maxDurability;
@@ -403,7 +406,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be removed in the inventory</param>
         /// <param name="amount">The amount of items to be removed</param>
         /// <returns>True if it was able to remove the items False if it wasnt</returns>
-        public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtecion = false)
+        public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtection = false)
         {
             if (inv == null)
             {
@@ -421,7 +424,7 @@ namespace UniversalInventorySystem
             int total = 0;
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.OnlyRemove || inv.slots[i].interative == SlotProtection.Any || overrideSlotProtecion))
+                if (inv.slots[i].item == item && (AcceptsSlotProtection(inv.slots[i], MethodType.Remove) || overrideSlotProtection))
                 {
                     total += inv.slots[i].amount;
                 }
@@ -432,7 +435,7 @@ namespace UniversalInventorySystem
             {
                 for (int i = 0; i < inv.slots.Count; i++)
                 {
-                    if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.OnlyRemove || inv.slots[i].interative == SlotProtection.Any || overrideSlotProtecion))
+                    if (inv.slots[i].item == item && (AcceptsSlotProtection(inv.slots[i], MethodType.Remove) || overrideSlotProtection))
                     {
                         int prevAmount = inv.slots[i].amount;
                         Slot slot = inv.slots[i];
@@ -477,7 +480,7 @@ namespace UniversalInventorySystem
 
             if (inv.interactiable == InventoryProtection.Locked) return false;
 
-            if (!(inv.slots[slot].interative == SlotProtection.OnlyRemove || inv.slots[slot].interative == SlotProtection.Any) && !overrideSlotProtecion) return false;
+            if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Remove) && !overrideSlotProtecion) return false;
 
             dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
             InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
@@ -518,7 +521,7 @@ namespace UniversalInventorySystem
         /// </summary>
         /// <param name="inv">The inventory in witch the item will be used</param>
         /// <param name="slot">The slot that will have item used</param>
-        public static void UseItemInSlot(this Inventory inv, int slot, BroadcastEventType e = BroadcastEventType.UseItem)
+        public static void UseItemInSlot(this Inventory inv, int slot, BroadcastEventType e = BroadcastEventType.UseItem, bool overrideSlotProtection = false)
         {
             if (inv == null)
             {
@@ -527,6 +530,7 @@ namespace UniversalInventorySystem
             }
 
             if (inv.interactiable == InventoryProtection.Locked) return;
+            if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Use) && !overrideSlotProtection) return;
 
             if (inv.slots[slot].hasItem && inv.areItemsUsable)
             {
@@ -597,14 +601,14 @@ namespace UniversalInventorySystem
         /// </summary>
         /// <param name="inv">The inventory in witch the item will be used</param>
         /// <param name="item">The item that will be used</param>
-        public static void UseItem(this Inventory inv, Item item, BroadcastEventType e = BroadcastEventType.UseItem)
+        public static void UseItem(this Inventory inv, Item item, BroadcastEventType e = BroadcastEventType.UseItem, bool overrideSlotProtection = false)
         {
             if (inv == null)
-
             {
                 Debug.LogError("Null inventory provided for UseItemInSlot");
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
+
             if (inv.interactiable == InventoryProtection.Locked) return;
             if (!inv.areItemsUsable) return;
 
@@ -612,6 +616,7 @@ namespace UniversalInventorySystem
             {
                 if (!inv.slots[i].hasItem) continue;
                 if (inv.slots[i].item != item) continue;
+                if (!AcceptsSlotProtection(inv.slots[i], MethodType.Use) && !overrideSlotProtection) continue;
                 if (inv.slots[i].item.destroyOnUse)
                 {
                     Item it = inv.slots[i].item;
@@ -684,7 +689,7 @@ namespace UniversalInventorySystem
         /// <param name="inv">The inventary to have items swapped</param>
         /// <param name="nativeSlot">The slot to lose items</param>
         /// <param name="targetSlot">The slot to gain items</param>
-        public static void SwapItemsInSlots(this Inventory inv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
+        public static void SwapItemsInSlots(this Inventory inv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem, bool overrideSlotProtection = false)
         {
             if (inv == null)
             {
@@ -700,7 +705,10 @@ namespace UniversalInventorySystem
 
             if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return;
 
-            if (inv.slots[targetSlot].interative == SlotProtection.Locked || inv.slots[nativeSlot].interative == SlotProtection.Locked || inv.slots[targetSlot].isProductSlot) return;
+            if (inv.slots[targetSlot].isProductSlot) return;
+
+            if (!AcceptsSlotProtection(inv.slots[targetSlot], MethodType.Swap) && !overrideSlotProtection) return;
+            if (!AcceptsSlotProtection(inv.slots[nativeSlot], MethodType.Swap) && !overrideSlotProtection) return;
 
 
             //Verifys if the items to be swaped are in the whitelists
@@ -725,12 +733,6 @@ namespace UniversalInventorySystem
                     {
                         inv.slots[targetSlot] = Slot.SetItemProperties(inv.slots[targetSlot], inv.slots[nativeSlot]);
                         inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], tmpSlot);
-                        /*inv.slots[nativeSlot] = new Slot(
-                            tmpSlot, 
-                            inv.slots[nativeSlot].isProductSlot, 
-                            inv.slots[nativeSlot].interative,
-                            inv.slots[nativeSlot].whitelist
-                        );*/
 
                         InventoryHandler.SwapItemsEventArgs sea2 = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
                         InventoryHandler.current.Broadcast(e, sea: sea2);
@@ -756,7 +758,7 @@ namespace UniversalInventorySystem
         /// <param name="targetSlot">The slot to gain items</param>
         /// <param name="amount">The amount of items to be swaped</param>
         /// <returns>Returns the number of items that dind fit in the other slot</returns>
-        public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem)
+        public static int SwapItemsInCertainAmountInSlots(this Inventory inv, int nativeSlot, int targetSlot, int? _amount, BroadcastEventType e = BroadcastEventType.SwapItem, bool overrideSlotProtection = false)
         {
             //Validations
             if (inv == null)
@@ -776,9 +778,13 @@ namespace UniversalInventorySystem
                 return 0;
             }
 
-            if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return (_amount ?? inv.slots[nativeSlot].amount);
+            if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) 
+                return (_amount ?? inv.slots[nativeSlot].amount);
 
-            if (inv.slots[targetSlot].interative == SlotProtection.Locked || inv.slots[nativeSlot].interative == SlotProtection.Locked || inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
+            if (inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
+
+            if (!AcceptsSlotProtection(inv.slots[targetSlot], MethodType.Swap) && !overrideSlotProtection) return (_amount ?? inv.slots[nativeSlot].amount);
+            if (!AcceptsSlotProtection(inv.slots[nativeSlot], MethodType.Swap) && !overrideSlotProtection) return (_amount ?? inv.slots[nativeSlot].amount);
 
 
             //Verifys if the items to be swaped are in the whitelists
@@ -862,7 +868,7 @@ namespace UniversalInventorySystem
         /// <param name="targetSlotNumber">The slot index witch will receive items </param>
         /// <param name="amount">The amount of items to be swaped</param>
         /// <returns>Returns the number of items that worent transfered</returns>
-        public static int SwapItemThruInventoriesSlotToSlot(this Inventory nativeInv, Inventory targetInv, int nativeSlotNumber, int targetSlotNumber, int amount, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
+        public static int SwapItemThruInventoriesSlotToSlot(this Inventory nativeInv, Inventory targetInv, int nativeSlotNumber, int targetSlotNumber, int amount, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory, bool overrideSlotProtection = false)
         {
             if (nativeInv == null)
             {
@@ -887,9 +893,10 @@ namespace UniversalInventorySystem
                 return 0;
             }
 
-            if (nativeInv.slots[nativeSlotNumber].interative == SlotProtection.Locked) return amount;
+            if (targetInv.slots[targetSlotNumber].isProductSlot) return amount;
 
-            if (targetInv.slots[targetSlotNumber].interative == SlotProtection.Locked || targetInv.slots[targetSlotNumber].isProductSlot) return amount;
+            if (!AcceptsSlotProtection(nativeInv.slots[nativeSlotNumber], MethodType.Swap) && !overrideSlotProtection) return amount;
+            if (!AcceptsSlotProtection(targetInv.slots[targetSlotNumber], MethodType.Swap) && !overrideSlotProtection) return amount;
 
             //Verifys if the items to be swaped are in the whitelists
             bool whitelist =
@@ -1018,7 +1025,7 @@ namespace UniversalInventorySystem
         /// <param name="targetInv">The target inventory</param>
         /// <param name="nativeSlot">The slot Number of the native inventory</param>
         /// <param name="targetSlot">The Slot numben of the target inventory</param>
-        public static void SwapItemsThruInventoriesInSlots(this Inventory nativeInv, Inventory targetInv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem)
+        public static void SwapItemsThruInventoriesInSlots(this Inventory nativeInv, Inventory targetInv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem, bool overrideSlotProtection = false)
         {
             if (nativeInv == null || targetInv == null)
             {
@@ -1035,7 +1042,10 @@ namespace UniversalInventorySystem
             if (nativeInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockSlots) return;
             if (targetInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.LockSlots) return;
 
-            if (targetInv.slots[targetSlot].interative == SlotProtection.Locked || nativeInv.slots[nativeSlot].interative == SlotProtection.Locked || targetInv.slots[targetSlot].isProductSlot) return;
+            if (targetInv.slots[targetSlot].isProductSlot) return;
+
+            if (!AcceptsSlotProtection(nativeInv.slots[nativeSlot], MethodType.Swap) && !overrideSlotProtection) return;
+            if (!AcceptsSlotProtection(targetInv.slots[targetSlot], MethodType.Swap) && !overrideSlotProtection) return;
 
 
             //Verifys if the items to be swaped are in the whitelists
@@ -1164,7 +1174,7 @@ namespace UniversalInventorySystem
         /// <param name="allowPatternRecipe">Wheter it should check for pattern recipes or not (This is useful if you have a big game and dont want to check the patterns, since they are much more time consuming than normal recipes)</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, bool allowPatternRecipe, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, Vector2Int gridSize, bool craftItem, bool allowPatternRecipe, int productSlots)
         {
             if (InventoryHandler.current == null) return CraftItemData.nullData;
 
@@ -1201,7 +1211,7 @@ namespace UniversalInventorySystem
         /// <param name="allowPatternRecipe">Wheter it should check for pattern recipes or not (This is useful if you have a big game and dont want to check the patterns, since they are much more time consuming than normal recipes)</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, RecipeGroup asset, bool allowPatternRecipe, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, Vector2Int gridSize, bool craftItem, RecipeGroup asset, bool allowPatternRecipe, int productSlots)
         {
             if (allowPatternRecipe)
             {
@@ -1229,44 +1239,65 @@ namespace UniversalInventorySystem
         /// <param name="pattern">The PatternRecipe to be checked</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots)
         {
-            if (pattern.pattern.Length > grid.Item1.Length) return CraftItemData.nullData;
+            if (pattern.pattern.Length > grid.items.Length) return CraftItemData.nullData;
             if (pattern.products.Length > productSlots) return CraftItemData.nullData;
-            else if (pattern.pattern.Length == grid.Item1.Length && pattern.amountPattern.Length == grid.Item2.Length)
+            else if (pattern.pattern.Length == grid.items.Length && pattern.amountPattern.Length == grid.amounts.Length)
             {
-                if (Enumerable.SequenceEqual(pattern.pattern, grid.Item1) && SequenceEqualOrGreter(pattern.amountPattern, grid.Item2))
+                if (Enumerable.SequenceEqual(pattern.pattern, grid.items) && SequenceEqualOrGreter(pattern.amountPattern, grid.amounts))
                 {
                     if (craftItem)
                     {
                         bool canAdd = true;
-                        for (int h = grid.Item1.Length; h - grid.Item1.Length < pattern.products.Length; h++)
+                        int tmp = 0;
+                        for (int h = grid.items.Length; h - grid.items.Length < productSlots; h++)
                         {
-                            //if (h - grid.Length >= pattern.products.Length) break;
-                            if (!inv.slots[h].hasItem) continue;
-                            if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { canAdd = false; break; }
-                            if (inv.slots[h].item != pattern.products[h - grid.Item1.Length]) { canAdd = false; break; }
+                            if (!inv.slots[h].hasItem) { tmp++; continue; }
+                            for (int index = 0; index < pattern.products.Count(); index++)
+                            {
+                                if (inv.slots[h].item == pattern.products[index])
+                                {
+                                    if (inv.slots[h].amount + pattern.amountProducts[index] > inv.slots[h].item.maxAmount) { continue; }
+                                    tmp++; 
+                                    continue; 
+                                }
+                            }
                         }
+                        if (tmp < pattern.products.Length)
+                            canAdd = false;
+
                         if (canAdd)
                         {
                             int i = 0;
-                            for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
+                            int offset = 0;
+                            for (int k = grid.items.Length; k < inv.slots.Count; k++)
                             {
-                                if (k > grid.Item1.Length - 1)
+                                if (k > grid.items.Length - 1)
                                 {
-                                    if (k - grid.Item1.Length >= pattern.products.Length) break;
+                                    if (k - grid.items.Length >= pattern.products.Length) break;
 
-                                    i = inv.AddItemToSlot(pattern.products[k - grid.Item1.Length], pattern.amountProducts[k - grid.Item1.Length], k, overrideSlotProtection: true);
+                                    AddOffset:
+                                    if (k + offset >= inv.slots.Count) return CraftItemData.nullData;
+                                    if (inv[k + offset].hasItem &&
+                                            (inv[k + offset].item != pattern.products[k - grid.items.Length] ||
+                                            (inv[k + offset].item == pattern.products[k - grid.items.Length] &&
+                                            inv[k + offset].amount + pattern.amountProducts[k - grid.items.Length] > inv[k + offset].item.maxAmount)))
+                                    {
+                                        offset++;
+                                        goto AddOffset;
+                                    }
+
+                                    i = inv.AddItemToSlot(pattern.products[k - grid.items.Length], pattern.amountProducts[k - grid.items.Length], k + offset, overrideSlotProtection: true);
                                     if (i > 0) return CraftItemData.nullData;
-                                    //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                                 }
                             }
                             if (i > 0) return CraftItemData.nullData;
 
 
-                            for (int k = 0; k < grid.Item1.Length; k++)
+                            for (int k = 0; k < grid.items.Length; k++)
                             {
-                                if (inv.slots[k].hasItem && k <= grid.Item1.Length - 1)
+                                if (inv.slots[k].hasItem && k <= grid.items.Length - 1)
                                     inv.RemoveItemInSlot(k, pattern.amountPattern[k]);
 
                             }
@@ -1275,7 +1306,7 @@ namespace UniversalInventorySystem
                     return new CraftItemData(pattern.products, pattern.amountProducts);
                 }
             }
-            else if (pattern.pattern.Length < grid.Item1.Length)
+            else if (pattern.pattern.Length < grid.items.Length)
             {
                 int fit = (gridSize.y - pattern.gridSize.y + 1) * (gridSize.x - pattern.gridSize.x + 1);
 
@@ -1286,35 +1317,56 @@ namespace UniversalInventorySystem
                     if (result.items != null)
                     {
                         bool canReturn = true;
-                        for (int j = 0; j < grid.Item1.Length; j++)
+                        for (int j = 0; j < grid.items.Length; j++)
                         {
                             if (indexes.Contains(j)) continue;
-                            if (grid.Item1[j] != null) canReturn = false;
+                            if (grid.items[j] != null) canReturn = false;
                         }
                         if (canReturn)
                         {
                             if (craftItem)
                             {
                                 bool canAdd = true;
-                                for (int h = grid.Item1.Length; h - grid.Item1.Length < pattern.products.Length; h++)
+                                int tmp = 0;
+                                for (int h = grid.items.Length; h - grid.items.Length < productSlots; h++)
                                 {
-                                    //if (h - grid.Length >= pattern.products.Length) break;
-                                    if (!inv.slots[h].hasItem) continue;
-                                    if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { canAdd = false; break; }
-                                    if (inv.slots[h].item != pattern.products[h - grid.Item1.Length]) { canAdd = false; break; }
+                                    if (!inv.slots[h].hasItem) { tmp++; continue; }
+                                    for (int index = 0; index < pattern.products.Count(); index++)
+                                    {
+                                        if (inv.slots[h].item == pattern.products[index])
+                                        {
+                                            if (inv.slots[h].amount + pattern.amountProducts[index] > inv.slots[h].item.maxAmount) { continue; }
+                                            tmp++;
+                                            continue;
+                                        }
+                                    }
                                 }
+                                if (tmp < pattern.products.Length)
+                                    canAdd = false;
+
                                 if (canAdd)
                                 {
                                     int w = 0;
-                                    for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
+                                    int offset = 0;
+                                    for (int k = grid.items.Length; k < inv.slots.Count; k++)
                                     {
-                                        if (k > grid.Item1.Length - 1)
+                                        if (k > grid.items.Length - 1)
                                         {
-                                            if (k - grid.Item1.Length >= pattern.products.Length) break;
+                                            if (k - grid.items.Length >= pattern.products.Length) break;
 
-                                            w = inv.AddItemToSlot(pattern.products[k - grid.Item1.Length], pattern.amountProducts[k - grid.Item1.Length], k, overrideSlotProtection: true);
+                                            AddOffset:
+                                            if (k + offset >= inv.slots.Count) return CraftItemData.nullData;
+                                            if (inv[k + offset].hasItem &&
+                                                    (inv[k + offset].item != pattern.products[k - grid.items.Length] ||
+                                                    (inv[k + offset].item == pattern.products[k - grid.items.Length] &&
+                                                    inv[k + offset].amount + pattern.amountProducts[k - grid.items.Length] > inv[k + offset].item.maxAmount)))
+                                            {
+                                                offset++;
+                                                goto AddOffset;
+                                            }
+
+                                            w = inv.AddItemToSlot(pattern.products[k - grid.items.Length], pattern.amountProducts[k - grid.items.Length], k + offset, overrideSlotProtection: true);
                                             if (w > 0) return CraftItemData.nullData;
-                                            //inv.slots[k] = new Slot(pattern.products[k - grid.Length], inv.slots[k].amount + 1, true, true);
                                         }
                                     }
                                     if (w > 0) return CraftItemData.nullData;
@@ -1324,7 +1376,7 @@ namespace UniversalInventorySystem
                                         for (int u = 0; u < pattern.gridSize.x; u++)
                                         {
                                             var index = (v * gridSize.x) + u;
-                                            if (inv.slots[index].hasItem && index <= grid.Item1.Length - 1)
+                                            if (inv.slots[index].hasItem && index <= grid.items.Length - 1)
                                             {
                                                 Debug.Log(index + " " + " " + pattern.amountPattern.Length);
                                                 inv.RemoveItemInSlot(index, pattern.amountPattern[v * pattern.gridSize.x + u]);
@@ -1351,17 +1403,17 @@ namespace UniversalInventorySystem
         /// <param name="recipe">The Recipe to be checked</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, (Item[], int[]) grid, bool craftItem, Recipe recipe, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, bool craftItem, Recipe recipe, int productSlots)
         {
             List<int> jumpIndexes = new List<int>();
             List<int> tmpjumpIndexes = new List<int>();
             List<int> removeAmount = new List<int>();
             if (recipe.products.Length > productSlots) return CraftItemData.nullData;
-            for (int i = 0; i < grid.Item1.Length; i++)
+            for (int i = 0; i < grid.items.Length; i++)
             {
                 for (int j = 0; j < recipe.numberOfFactors; j++)
                 {
-                    if (grid.Item1[i] == recipe.factors[j] && !tmpjumpIndexes.Contains(j))
+                    if (grid.items[i] == recipe.factors[j] && !tmpjumpIndexes.Contains(j))
                     {
                         //i++;
                         tmpjumpIndexes.Add(j);
@@ -1373,9 +1425,9 @@ namespace UniversalInventorySystem
             }
             bool canReturn = true;
             if (jumpIndexes.Count != recipe.numberOfFactors) return CraftItemData.nullData;
-            for (int j = 0; j < grid.Item1.Length; j++)
+            for (int j = 0; j < grid.items.Length; j++)
             {
-                if (grid.Item1[j] != null && !jumpIndexes.Contains(j))
+                if (grid.items[j] != null && !jumpIndexes.Contains(j))
                 {
                     canReturn = false;
                 }
@@ -1383,7 +1435,7 @@ namespace UniversalInventorySystem
 
             for (int i = 0; i < jumpIndexes.Count; i++)
             {
-                if (grid.Item2[jumpIndexes[i]] < recipe.amountFactors[i])
+                if (grid.amounts[jumpIndexes[i]] < recipe.amountFactors[i])
                 {
                     canReturn = false;
                 }
@@ -1395,43 +1447,53 @@ namespace UniversalInventorySystem
                 {
                     bool canAdd = true;
                     int tmp = 0;
-                    for (int h = grid.Item1.Length; h - grid.Item1.Length < recipe.products.Length; h++)
+                    for (int h = grid.items.Length; h - grid.items.Length < productSlots; h++)
                     {
-                        //if (h - grid.Length >= pattern.products.Length) break;
-                        if (!inv.slots[h].hasItem) continue;
-                        if (inv.slots[h].amount >= inv.slots[h].item.maxAmount) { tmp++; break; }
-                        if (inv.slots[h].item != recipe.products[h - grid.Item1.Length]) {tmp++; break; }
+                        if (!inv.slots[h].hasItem) { tmp++; continue; }
+                        for (int index = 0; index < recipe.products.Count(); index++)
+                        {
+                            if (inv.slots[h].item == recipe.products[index])
+                            {
+                                if (inv.slots[h].amount + recipe.amountProducts[index] > inv.slots[h].item.maxAmount) { continue; }
+                                tmp++;
+                                continue;
+                            }
+                        }
                     }
-                    if (productSlots - tmp < recipe.products.Length)
+                    if (tmp < recipe.products.Length)
                         canAdd = false;
 
                     if (canAdd)
                     {
                         int i = 0;
                         int offset = 0;
-                        for (int k = grid.Item1.Length; k < inv.slots.Count; k++)
+                        for (int k = grid.items.Length; k < inv.slots.Count; k++)
                         {
-                            if (k > grid.Item1.Length - 1)
+                            if (k > grid.items.Length - 1)
                             {
-                                if (k - grid.Item1.Length >= recipe.products.Length) break;
+                                if (k - grid.items.Length >= recipe.products.Length) break;
 
                                 AddOffset:
-                                if (inv[k + offset].hasItem && inv[k + offset].item != recipe.products[k - grid.Item1.Length])
+                                if(k + offset >= inv.slots.Count) return CraftItemData.nullData;
+                                if (inv[k + offset].hasItem &&
+                                        (inv[k + offset].item != recipe.products[k - grid.items.Length] ||
+                                        (inv[k + offset].item == recipe.products[k - grid.items.Length] &&
+                                        inv[k + offset].amount + recipe.amountProducts[k - grid.items.Length] > inv[k + offset].item.maxAmount)))
                                 {
                                     offset++;
                                     goto AddOffset;
                                 }
-                                if(k + offset >= inv.slots.Count) return CraftItemData.nullData;
-                                i = inv.AddItemToSlot(recipe.products[k - grid.Item1.Length], recipe.amountProducts[k - grid.Item1.Length], k + offset, overrideSlotProtection: true);
+
+                                i = inv.AddItemToSlot(recipe.products[k - grid.items.Length], recipe.amountProducts[k - grid.items.Length], k + offset, overrideSlotProtection: true);
                                 if (i > 0) return CraftItemData.nullData;
                             }
                         }
                         if (i > 0) return CraftItemData.nullData;
 
                         var index = 0;
-                        for (int k = 0; k < grid.Item1.Length; k++)
+                        for (int k = 0; k < grid.items.Length; k++)
                         {
-                            if (inv.slots[k].hasItem && k <= grid.Item1.Length - 1)
+                            if (inv.slots[k].hasItem && k <= grid.items.Length - 1)
                             {
                                 inv.RemoveItemInSlot(k, removeAmount[index]);
                                 index++;
@@ -1454,7 +1516,7 @@ namespace UniversalInventorySystem
         /// <param name="offsetIndex">The offset of the section</param>
         /// <param name="usedIndexes">The index of the original grid that were selected</param>
         /// <returns>a new grid that is a section from the original one</returns>
-        public static (Item[], int[]) GetSectionFromGrid((Item[], int[]) originalGrid, Vector2Int originalGridSize, Vector2Int sectionSize, int offsetIndex, out List<int> usedIndexes)
+        public static CraftItemData GetSectionFromGrid(CraftItemData originalGrid, Vector2Int originalGridSize, Vector2Int sectionSize, int offsetIndex, out List<int> usedIndexes)
         {
             Item[] returnGrid = new Item[sectionSize.x * sectionSize.y];
             int[] returnIntGrid = new int[sectionSize.x * sectionSize.y];
@@ -1467,12 +1529,12 @@ namespace UniversalInventorySystem
             {
                 for (int j = 0; j < sectionSize.x; j++)
                 {
-                    returnGrid[i * sectionSize.x + j] = originalGrid.Item1[(i + offsety) * originalGridSize.x + j + offsetx];
-                    returnIntGrid[i * sectionSize.x + j] = originalGrid.Item2[(i + offsety) * originalGridSize.x + j + offsetx];
+                    returnGrid[i * sectionSize.x + j] = originalGrid.items[(i + offsety) * originalGridSize.x + j + offsetx];
+                    returnIntGrid[i * sectionSize.x + j] = originalGrid.amounts[(i + offsety) * originalGridSize.x + j + offsetx];
                     usedIndexes.Add((i + offsety) * originalGridSize.x + j + offsetx);
                 }
             }
-            return (returnGrid, returnIntGrid);
+            return new CraftItemData(returnGrid, returnIntGrid);
         }
 
         private static bool SequenceEqualOrGreter(int[] firstInt, int[] greterInt)
@@ -1500,7 +1562,7 @@ namespace UniversalInventorySystem
         /// <param name="acceptableSlotProtections">Slot protection accepted for checking</param>
         /// <param name="mustBeOnSameSlot">If the minimun amount of items must be on the same slot</param>
         /// <returns>Returns a clas containing 7 attributes: inventory(The inventory checked), slotsCheckced(The slots that where checked), slotsWithItem(The Slots in witch there is the item, does not need to have minimun amount), amout(The total amout of that item in the inventory), hasItem(If the item was found in the provided conditions), mustBeOnSameSlot(SelfExplanatory), checkedItem(The item that was checked)</returns>
-        public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection[] acceptableSlotProtections = null, bool mustBeOnSameSlot = false)
+        public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection acceptableSlotProtections = AllSlotFlags, bool mustBeOnSameSlot = false)
         {
             if (inv == null)
             {
@@ -1534,7 +1596,7 @@ namespace UniversalInventorySystem
         /// <param name="mustBeOnSameSlot">If the minimun amount of items must be on the same slot</param>
         /// <param name="slotsToCheck">Slots that will be checked</param>
         /// <returns>Returns a clas containing 7 attributes: inventory(The inventory checked), slotsCheckced(The slots that where checked), slotsWithItem(The Slots in witch there is the item, does not need to have minimun amount), amout(The total amout of that item in the inventory), hasItem(If the item was found in the provided conditions), mustBeOnSameSlot(SelfExplanatory), checkedItem(The item that was checked)</returns>
-        public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection[] acceptableSlotProtections = null, bool mustBeOnSameSlot = false, params int[] slotsToCheck)
+        public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection acceptableSlotProtections = AllSlotFlags, bool mustBeOnSameSlot = false, params int[] slotsToCheck)
         {
             if (inv == null)
             {
@@ -1548,7 +1610,6 @@ namespace UniversalInventorySystem
             }
 
             if (acceptableInvProtections == null) acceptableInvProtections = allInventoryProtections;
-            if (acceptableSlotProtections == null) acceptableSlotProtections = allSlotProtections;
 
             if (!acceptableInvProtections.Contains(inv.interactiable)) return null;
 
@@ -1562,7 +1623,7 @@ namespace UniversalInventorySystem
                     continue;
                 }
 
-                if (!acceptableSlotProtections.Contains(inv.slots[slot].interative)) continue;
+                if (!acceptableSlotProtections.HasFlag(inv.slots[slot].interative)) continue;
 
                 if (mustBeOnSameSlot)
                 {
@@ -1614,10 +1675,6 @@ namespace UniversalInventorySystem
             return inv.slots[slot].item.tooltip;
         }
 
-        /*public static bool SliptSlot(this Inventory inv, int slot)
-        {
-            if(inv.AddItemToNewSlot())
-        }*/
         #endregion
 
         #region PseudoMethods
@@ -1777,6 +1834,37 @@ namespace UniversalInventorySystem
         }
 
         #endregion
+
+
+        [Serializable]
+        protected enum MethodType
+        {
+            Add = 0,
+            Remove = 1,
+            Use = 2,
+            Swap = 3,
+            Initialize = 4,
+            Craft = 5,
+            Utility = 6
+        }
+
+        private static bool AcceptsSlotProtection(Slot slot, MethodType methodType)
+        {
+            if (slot.interative.Equals(SlotProtection.Locked)) return false;
+            switch (methodType)
+            {
+                case MethodType.Add:
+                    return slot.interative.HasFlag(AddFlags);
+                case MethodType.Remove:
+                    return slot.interative.HasFlag(RemoveFlags);
+                case MethodType.Swap:
+                    return slot.interative.HasFlag(SwapFlags);
+                case MethodType.Use:
+                    return slot.interative.HasFlag(UseFlags);
+                default:
+                    return slot.interative.HasFlag(AllSlotFlags);
+            }
+        }
     }
 
     [Serializable]
@@ -1882,7 +1970,7 @@ namespace UniversalInventorySystem
         public SlotProtection interative;
         public ItemGroup whitelist;
 
-        public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null, 0);
+        public readonly static Slot nullSlot = new Slot(null, 0, false, false, InventoryController.AllSlotFlags, null, 0);
 
         public int GetDurability() => durability; 
         public bool GetDurabiliyValidation() => _durability <= (item?.maxDurability ?? 0);
@@ -1982,7 +2070,7 @@ namespace UniversalInventorySystem
             amount = 1;
             hasItem = item == null ? false : true;
             isProductSlot = false;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
             durability = 0;
@@ -1994,7 +2082,7 @@ namespace UniversalInventorySystem
             amount = _amount;
             hasItem = item == null ? false : true;
             isProductSlot = false;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
             durability = 0;
@@ -2006,7 +2094,7 @@ namespace UniversalInventorySystem
             amount = _amount;
             hasItem = _hasItem;
             isProductSlot = false;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;         
             durability = 0;
@@ -2018,7 +2106,7 @@ namespace UniversalInventorySystem
             amount = _amount;
             hasItem = _hasItem;
             isProductSlot = false;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             this._durability = _durability;
             durability = _durability;           
@@ -2030,7 +2118,7 @@ namespace UniversalInventorySystem
             amount = _amount;
             hasItem = _hasItem;
             isProductSlot = _isProductSlot;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
             durability = 0;
@@ -2042,7 +2130,7 @@ namespace UniversalInventorySystem
             amount = _amount;
             hasItem = _hasItem;
             isProductSlot = _isProductSlot;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             this._durability = _durability;
    
@@ -2172,12 +2260,14 @@ namespace UniversalInventorySystem
         Locked = 16
     }
 
-    [Serializable]
-    public enum SlotProtection
+    [Serializable, Flags]
+    public enum SlotProtection : short
     {
-        Any = 0,
-        Locked = 1,
-        OnlyAdd = 2,
-        OnlyRemove = 4
+        Locked = 0,
+        Add = 1,
+        Remove = 2,
+        Swap = 4,
+        Use = 8
     }
+
 }

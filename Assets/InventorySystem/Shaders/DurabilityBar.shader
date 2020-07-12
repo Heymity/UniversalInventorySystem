@@ -12,7 +12,7 @@
         Tags { "Queue"="Transparent" }
         LOD 300
 
-Blend SrcAlpha OneMinusSrcAlpha 
+        Blend SrcAlpha OneMinusSrcAlpha 
         ZWrite Off
         Pass
         {

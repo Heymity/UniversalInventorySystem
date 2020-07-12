@@ -1,5 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/*  Copyright 2020 Gabriel Pasquale Rodrigues Scavone
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * 
+ *  
+ *  This is an Editor Script, it is responsible for drawing the inpector or drawer of the class in the attribute before the class
+ */
+
 using UnityEngine;
 using UnityEditor;
 using UniversalInventorySystem;
@@ -53,7 +69,8 @@ public class InventoryDrawer : PropertyDrawer
         if (unfold)
         {
             EditorGUI.indentLevel++;
-            slots.arraySize = slotAmounts.intValue;
+            var tmp = slots.arraySize;
+            slots.arraySize = slotAmounts.intValue >= 0 ? slotAmounts.intValue : slots.arraySize;
             //amountOfFilds = baseAmount + 1;
             //position.y += position.height;
             if (slots != null)
@@ -65,6 +82,10 @@ public class InventoryDrawer : PropertyDrawer
                     {
                         childHeight += EditorGUI.GetPropertyHeight(slots.GetArrayElementAtIndex(i)) / 18;
                         EditorGUI.PropertyField(position, slots.GetArrayElementAtIndex(i));
+                        if (i > tmp - 1)
+                        {
+                            slots.GetArrayElementAtIndex(i).FindPropertyRelative("interative").intValue = -1;
+                        }
                         position.y += EditorGUI.GetPropertyHeight(slots.GetArrayElementAtIndex(i));
                     }
                     amountOfFilds = baseAmount + childHeight;
