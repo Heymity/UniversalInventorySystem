@@ -53,7 +53,8 @@ public class InventoryDrawer : PropertyDrawer
         if (unfold)
         {
             EditorGUI.indentLevel++;
-            slots.arraySize = slotAmounts.intValue;
+            var tmp = slots.arraySize;
+            slots.arraySize = slotAmounts.intValue >= 0 ? slotAmounts.intValue : slots.arraySize;
             //amountOfFilds = baseAmount + 1;
             //position.y += position.height;
             if (slots != null)
@@ -65,6 +66,10 @@ public class InventoryDrawer : PropertyDrawer
                     {
                         childHeight += EditorGUI.GetPropertyHeight(slots.GetArrayElementAtIndex(i)) / 18;
                         EditorGUI.PropertyField(position, slots.GetArrayElementAtIndex(i));
+                        if (i > tmp - 1)
+                        {
+                            slots.GetArrayElementAtIndex(i).FindPropertyRelative("interative").intValue = -1;
+                        }
                         position.y += EditorGUI.GetPropertyHeight(slots.GetArrayElementAtIndex(i));
                     }
                     amountOfFilds = baseAmount + childHeight;

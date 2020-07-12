@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 
 namespace UniversalInventorySystem
@@ -14,7 +15,7 @@ namespace UniversalInventorySystem
 
         public static readonly Slot nullSlot = new Slot(null, 0, false, 0);
 
-        #region Protection readonly and methods
+        #region Protection consts
 
         public static readonly InventoryProtection[] allInventoryProtections = new InventoryProtection[6]
         {
@@ -28,15 +29,12 @@ namespace UniversalInventorySystem
 
         public static InventoryProtection[] newInvProtectionArray(params InventoryProtection[] protections) { return protections; }
 
-        public static readonly SlotProtection[] allSlotProtections = new SlotProtection[4]
-        {
-        SlotProtection.Any,
-        SlotProtection.Locked,
-        SlotProtection.OnlyAdd,
-        SlotProtection.OnlyRemove
-        };
+        public const SlotProtection AllSlotFlags = SlotProtection.Locked | SlotProtection.Add | SlotProtection.Remove | SlotProtection.Use | SlotProtection.Swap;
 
-        public static SlotProtection[] newSlotProtectionArray(params SlotProtection[] protections) { return protections; }
+        public const SlotProtection AddFlags = SlotProtection.Add;
+        public const SlotProtection RemoveFlags = SlotProtection.Remove;
+        public const SlotProtection SwapFlags = SlotProtection.Swap;
+        public const SlotProtection UseFlags = SlotProtection.Use;
 
         #endregion
 
@@ -101,7 +99,7 @@ namespace UniversalInventorySystem
             {
                 for (int i = 0; i < inv.slots.Count; i++)
                 {
-                    if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
+                    if (!AcceptsSlotProtection(inv.slots[i], MethodType.Add) && !overrideSlotProtection) continue;
                     if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;
 
                     if (inv.slots[i].hasItem && i < inv.slots.Count - 1) continue;
@@ -140,7 +138,7 @@ namespace UniversalInventorySystem
             for (int i = 0; i < inv.slots.Count; i++)
             {
                 if (inv.slots[i].hasItem) continue;
-                if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;
+                if (AcceptsSlotProtection(inv.slots[i], MethodType.Add) == false && !overrideSlotProtection) continue;
                 if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;
 
                 else if (i < inv.slots.Count - 1)
@@ -165,7 +163,7 @@ namespace UniversalInventorySystem
                     var newSlot = inv.slots[i].amount;
                     amount -= item.maxAmount - newSlot;
                     newSlot = item.maxAmount;
-                    inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, newSlot, true, durability.GetValueOrDefault()/**, (uint)(durability.GetValueOrDefault() * newSlot)*/);
+                    inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, newSlot, true, durability.GetValueOrDefault());
                     if (amount > 0)
                     {
                         InventoryHandler.current.Broadcast(e, aea2);
@@ -217,27 +215,12 @@ namespace UniversalInventorySystem
             {
                 if (inv.slots[i].item != item) continue;                                         // Must be same item
                 if (inv.slots[i].amount == inv.slots[i].item.maxAmount) continue;                // Must fit at least one
-                if ((inv.slots[i].interative == SlotProtection.Locked || inv.slots[i].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) continue;                                              // Must have a acceptable protection level
+                if (!AcceptsSlotProtection(inv.slots[i], MethodType.Add) && !overrideSlotProtection) 
+                    continue;                                                                    // Must have a acceptable protection level
+
                 if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;        // Must be accepted in the whitelist since it may change in runtime
 
                 var newSlot = inv.slots[i];                                                      // Tmp var
-
-                /**if (item.hasDurability)                                                       // Old Sytem Code
-                {
-                    if (item.stackAlways)
-                    {
-                        newSlot.totalDurability += durability.GetValueOrDefault();
-                    } 
-                    else if (item.stackOnSpecifDurability)
-                    {
-                        if (!(item.stackDurabilities?.Contains(inv.slots[i].durability) ?? true)) continue;
-                    } 
-                    else if (item.stackOnMaxDurabiliy)
-                    {
-                        if (inv.slots[i].durability != item.maxDurability) continue;
-                    }
-                }                                                                                // Old Sytem Code **/
-
 
                 if (newSlot.amount + amount <= item.maxAmount)                                   // If the entire amount fits on the slot
                 {
@@ -286,7 +269,8 @@ namespace UniversalInventorySystem
 
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
-            if ((inv.slots[slotNumber].interative == SlotProtection.Locked || inv.slots[slotNumber].interative == SlotProtection.OnlyRemove) && !overrideSlotProtection) return amount;
+            if (!AcceptsSlotProtection(inv.slots[slotNumber], MethodType.Add)) return amount;
+
             if (!inv.slots[slotNumber].whitelist?.itemsList.Contains(item) ?? false) return amount;
 
             if (durability == null) durability = item.maxDurability;
@@ -421,7 +405,7 @@ namespace UniversalInventorySystem
             int total = 0;
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.OnlyRemove || inv.slots[i].interative == SlotProtection.Any || overrideSlotProtecion))
+                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.Remove || inv.slots[i].interative == AllSlotFlags || overrideSlotProtecion))
                 {
                     total += inv.slots[i].amount;
                 }
@@ -432,7 +416,7 @@ namespace UniversalInventorySystem
             {
                 for (int i = 0; i < inv.slots.Count; i++)
                 {
-                    if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.OnlyRemove || inv.slots[i].interative == SlotProtection.Any || overrideSlotProtecion))
+                    if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.Remove || inv.slots[i].interative == AllSlotFlags || overrideSlotProtecion))
                     {
                         int prevAmount = inv.slots[i].amount;
                         Slot slot = inv.slots[i];
@@ -477,7 +461,7 @@ namespace UniversalInventorySystem
 
             if (inv.interactiable == InventoryProtection.Locked) return false;
 
-            if (!(inv.slots[slot].interative == SlotProtection.OnlyRemove || inv.slots[slot].interative == SlotProtection.Any) && !overrideSlotProtecion) return false;
+            if (!(inv.slots[slot].interative == SlotProtection.Remove || inv.slots[slot].interative == AllSlotFlags) && !overrideSlotProtecion) return false;
 
             dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
             InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
@@ -1500,7 +1484,7 @@ namespace UniversalInventorySystem
         /// <param name="acceptableSlotProtections">Slot protection accepted for checking</param>
         /// <param name="mustBeOnSameSlot">If the minimun amount of items must be on the same slot</param>
         /// <returns>Returns a clas containing 7 attributes: inventory(The inventory checked), slotsCheckced(The slots that where checked), slotsWithItem(The Slots in witch there is the item, does not need to have minimun amount), amout(The total amout of that item in the inventory), hasItem(If the item was found in the provided conditions), mustBeOnSameSlot(SelfExplanatory), checkedItem(The item that was checked)</returns>
-        public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection[] acceptableSlotProtections = null, bool mustBeOnSameSlot = false)
+        public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection acceptableSlotProtections = AllSlotFlags, bool mustBeOnSameSlot = false)
         {
             if (inv == null)
             {
@@ -1534,7 +1518,7 @@ namespace UniversalInventorySystem
         /// <param name="mustBeOnSameSlot">If the minimun amount of items must be on the same slot</param>
         /// <param name="slotsToCheck">Slots that will be checked</param>
         /// <returns>Returns a clas containing 7 attributes: inventory(The inventory checked), slotsCheckced(The slots that where checked), slotsWithItem(The Slots in witch there is the item, does not need to have minimun amount), amout(The total amout of that item in the inventory), hasItem(If the item was found in the provided conditions), mustBeOnSameSlot(SelfExplanatory), checkedItem(The item that was checked)</returns>
-        public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection[] acceptableSlotProtections = null, bool mustBeOnSameSlot = false, params int[] slotsToCheck)
+        public static CheckItemData CheckItemInInventory(this Inventory inv, Item itemToCheck, int minAmount, InventoryProtection[] acceptableInvProtections = null, SlotProtection acceptableSlotProtections = AllSlotFlags, bool mustBeOnSameSlot = false, params int[] slotsToCheck)
         {
             if (inv == null)
             {
@@ -1548,7 +1532,6 @@ namespace UniversalInventorySystem
             }
 
             if (acceptableInvProtections == null) acceptableInvProtections = allInventoryProtections;
-            if (acceptableSlotProtections == null) acceptableSlotProtections = allSlotProtections;
 
             if (!acceptableInvProtections.Contains(inv.interactiable)) return null;
 
@@ -1562,7 +1545,7 @@ namespace UniversalInventorySystem
                     continue;
                 }
 
-                if (!acceptableSlotProtections.Contains(inv.slots[slot].interative)) continue;
+                if (!acceptableSlotProtections.HasFlag(inv.slots[slot].interative)) continue;
 
                 if (mustBeOnSameSlot)
                 {
@@ -1614,10 +1597,6 @@ namespace UniversalInventorySystem
             return inv.slots[slot].item.tooltip;
         }
 
-        /*public static bool SliptSlot(this Inventory inv, int slot)
-        {
-            if(inv.AddItemToNewSlot())
-        }*/
         #endregion
 
         #region PseudoMethods
@@ -1777,6 +1756,38 @@ namespace UniversalInventorySystem
         }
 
         #endregion
+
+
+        [Serializable]
+        protected enum MethodType
+        {
+            Add = 0,
+            Remove = 1,
+            Use = 2,
+            Swap = 3,
+            Initialize = 4,
+            Craft = 5,
+            Utility = 6
+        }
+
+        private static bool AcceptsSlotProtection(Slot slot, MethodType methodType)
+        {
+            //if (slot.interative.HasFlag(AllSlotFlags)) return true;
+            if (slot.interative.Equals(SlotProtection.Locked)) return false;
+            switch (methodType)
+            {
+                case MethodType.Add:
+                    return slot.interative.HasFlag(AddFlags);
+                case MethodType.Remove:
+                    return slot.interative.HasFlag(RemoveFlags);
+                case MethodType.Swap:
+                    return slot.interative.HasFlag(SwapFlags);
+                case MethodType.Use:
+                    return slot.interative.HasFlag(UseFlags);
+                default:
+                    return slot.interative.HasFlag(AllSlotFlags);
+            }
+        }
     }
 
     [Serializable]
@@ -1882,7 +1893,7 @@ namespace UniversalInventorySystem
         public SlotProtection interative;
         public ItemGroup whitelist;
 
-        public readonly static Slot nullSlot = new Slot(null, 0, false, false, SlotProtection.Any, null, 0);
+        public readonly static Slot nullSlot = new Slot(null, 0, false, false, InventoryController.AllSlotFlags, null, 0);
 
         public int GetDurability() => durability; 
         public bool GetDurabiliyValidation() => _durability <= (item?.maxDurability ?? 0);
@@ -1982,7 +1993,7 @@ namespace UniversalInventorySystem
             amount = 1;
             hasItem = item == null ? false : true;
             isProductSlot = false;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
             durability = 0;
@@ -1994,7 +2005,7 @@ namespace UniversalInventorySystem
             amount = _amount;
             hasItem = item == null ? false : true;
             isProductSlot = false;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
             durability = 0;
@@ -2006,7 +2017,7 @@ namespace UniversalInventorySystem
             amount = _amount;
             hasItem = _hasItem;
             isProductSlot = false;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;         
             durability = 0;
@@ -2018,7 +2029,7 @@ namespace UniversalInventorySystem
             amount = _amount;
             hasItem = _hasItem;
             isProductSlot = false;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             this._durability = _durability;
             durability = _durability;           
@@ -2030,7 +2041,7 @@ namespace UniversalInventorySystem
             amount = _amount;
             hasItem = _hasItem;
             isProductSlot = _isProductSlot;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
             durability = 0;
@@ -2042,7 +2053,7 @@ namespace UniversalInventorySystem
             amount = _amount;
             hasItem = _hasItem;
             isProductSlot = _isProductSlot;
-            interative = SlotProtection.Any;
+            interative = InventoryController.AllSlotFlags;
             whitelist = null;
             this._durability = _durability;
    
@@ -2172,12 +2183,14 @@ namespace UniversalInventorySystem
         Locked = 16
     }
 
-    [Serializable]
-    public enum SlotProtection
+    [Serializable, Flags]
+    public enum SlotProtection : short
     {
-        Any = 0,
-        Locked = 1,
-        OnlyAdd = 2,
-        OnlyRemove = 4
+        Locked = 0,
+        Add = 1,
+        Remove = 2,
+        Swap = 4,
+        Use = 8
     }
+
 }

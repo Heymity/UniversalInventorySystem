@@ -142,7 +142,7 @@ namespace UniversalInventorySystem
                 for (int i = gridSize.x * gridSize.y; i < inv.slots.Count; i++)
                 {
                     var slot = inv.slots[i];
-                    inv.slots[i] = new Slot(slot.item, slot.amount, slot.hasItem, true, SlotProtection.OnlyRemove, null);
+                    inv.slots[i] = new Slot(slot.item, slot.amount, slot.hasItem, true, SlotProtection.Remove, null);
                 }
 
             }
