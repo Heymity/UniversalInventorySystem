@@ -138,7 +138,7 @@ namespace UniversalInventorySystem
             for (int i = 0; i < inv.slots.Count; i++)
             {
                 if (inv.slots[i].hasItem) continue;
-                if (AcceptsSlotProtection(inv.slots[i], MethodType.Add) == false && !overrideSlotProtection) continue;
+                if (!AcceptsSlotProtection(inv.slots[i], MethodType.Add) && !overrideSlotProtection) continue;
                 if (!inv.slots[i].whitelist?.itemsList.Contains(item) ?? false) continue;
 
                 else if (i < inv.slots.Count - 1)
@@ -269,7 +269,7 @@ namespace UniversalInventorySystem
 
             if (inv.interactiable == InventoryProtection.Locked) return amount;
 
-            if (!AcceptsSlotProtection(inv.slots[slotNumber], MethodType.Add)) return amount;
+            if (!AcceptsSlotProtection(inv.slots[slotNumber], MethodType.Add) && !overrideSlotProtection) return amount;
 
             if (!inv.slots[slotNumber].whitelist?.itemsList.Contains(item) ?? false) return amount;
 
@@ -387,7 +387,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be removed in the inventory</param>
         /// <param name="amount">The amount of items to be removed</param>
         /// <returns>True if it was able to remove the items False if it wasnt</returns>
-        public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtecion = false)
+        public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtection = false)
         {
             if (inv == null)
             {
@@ -405,7 +405,7 @@ namespace UniversalInventorySystem
             int total = 0;
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.Remove || inv.slots[i].interative == AllSlotFlags || overrideSlotProtecion))
+                if (inv.slots[i].item == item && (AcceptsSlotProtection(inv.slots[i], MethodType.Remove) || overrideSlotProtection))
                 {
                     total += inv.slots[i].amount;
                 }
@@ -416,7 +416,7 @@ namespace UniversalInventorySystem
             {
                 for (int i = 0; i < inv.slots.Count; i++)
                 {
-                    if (inv.slots[i].item == item && (inv.slots[i].interative == SlotProtection.Remove || inv.slots[i].interative == AllSlotFlags || overrideSlotProtecion))
+                    if (inv.slots[i].item == item && (AcceptsSlotProtection(inv.slots[i], MethodType.Remove) || overrideSlotProtection))
                     {
                         int prevAmount = inv.slots[i].amount;
                         Slot slot = inv.slots[i];
@@ -461,7 +461,7 @@ namespace UniversalInventorySystem
 
             if (inv.interactiable == InventoryProtection.Locked) return false;
 
-            if (!(inv.slots[slot].interative == SlotProtection.Remove || inv.slots[slot].interative == AllSlotFlags) && !overrideSlotProtecion) return false;
+            if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Remove) && !overrideSlotProtecion) return false;
 
             dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
             InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
@@ -502,7 +502,7 @@ namespace UniversalInventorySystem
         /// </summary>
         /// <param name="inv">The inventory in witch the item will be used</param>
         /// <param name="slot">The slot that will have item used</param>
-        public static void UseItemInSlot(this Inventory inv, int slot, BroadcastEventType e = BroadcastEventType.UseItem)
+        public static void UseItemInSlot(this Inventory inv, int slot, BroadcastEventType e = BroadcastEventType.UseItem, bool overrideSlotProtection = false)
         {
             if (inv == null)
             {
@@ -511,6 +511,7 @@ namespace UniversalInventorySystem
             }
 
             if (inv.interactiable == InventoryProtection.Locked) return;
+            if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Use) && !overrideSlotProtection) return;
 
             if (inv.slots[slot].hasItem && inv.areItemsUsable)
             {
@@ -581,14 +582,14 @@ namespace UniversalInventorySystem
         /// </summary>
         /// <param name="inv">The inventory in witch the item will be used</param>
         /// <param name="item">The item that will be used</param>
-        public static void UseItem(this Inventory inv, Item item, BroadcastEventType e = BroadcastEventType.UseItem)
+        public static void UseItem(this Inventory inv, Item item, BroadcastEventType e = BroadcastEventType.UseItem, bool overrideSlotProtection = false)
         {
             if (inv == null)
-
             {
                 Debug.LogError("Null inventory provided for UseItemInSlot");
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
+
             if (inv.interactiable == InventoryProtection.Locked) return;
             if (!inv.areItemsUsable) return;
 
@@ -596,6 +597,7 @@ namespace UniversalInventorySystem
             {
                 if (!inv.slots[i].hasItem) continue;
                 if (inv.slots[i].item != item) continue;
+                if (!AcceptsSlotProtection(inv.slots[i], MethodType.Use) && !overrideSlotProtection) continue;
                 if (inv.slots[i].item.destroyOnUse)
                 {
                     Item it = inv.slots[i].item;
@@ -709,12 +711,6 @@ namespace UniversalInventorySystem
                     {
                         inv.slots[targetSlot] = Slot.SetItemProperties(inv.slots[targetSlot], inv.slots[nativeSlot]);
                         inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], tmpSlot);
-                        /*inv.slots[nativeSlot] = new Slot(
-                            tmpSlot, 
-                            inv.slots[nativeSlot].isProductSlot, 
-                            inv.slots[nativeSlot].interative,
-                            inv.slots[nativeSlot].whitelist
-                        );*/
 
                         InventoryHandler.SwapItemsEventArgs sea2 = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
                         InventoryHandler.current.Broadcast(e, sea: sea2);
@@ -1772,7 +1768,6 @@ namespace UniversalInventorySystem
 
         private static bool AcceptsSlotProtection(Slot slot, MethodType methodType)
         {
-            //if (slot.interative.HasFlag(AllSlotFlags)) return true;
             if (slot.interative.Equals(SlotProtection.Locked)) return false;
             switch (methodType)
             {
