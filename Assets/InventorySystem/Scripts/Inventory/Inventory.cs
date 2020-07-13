@@ -46,6 +46,7 @@ namespace UniversalInventorySystem
         public const InventoryProtection UseInvFlags = InventoryProtection.Use;
         public const InventoryProtection LocalSwapInvFlags = InventoryProtection.SlotToSlot;
         public const InventoryProtection SwapInvFlags = InventoryProtection.InventoryToInventory;
+        public const InventoryProtection DropInvFlags = InventoryProtection.Drop;
 
         public const SlotProtection AllSlotFlags = SlotProtection.Locked
             | SlotProtection.Add
@@ -113,7 +114,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null item provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return amount;
+            if (!AcceptsInventoryProtection(inv, MethodType.Add)) return amount;
 
             if (durability == null) durability = item.maxDurability;
 
@@ -127,7 +128,7 @@ namespace UniversalInventorySystem
                     if (inv.slots[i].hasItem && i < inv.slots.Count - 1) continue;
                     else if (i < inv.slots.Count - 1)
                     {
-                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault()/**, durability.GetValueOrDefault()**/);
+                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault());
                         amount--;
 
                         if (amount <= 0) break;
@@ -135,7 +136,7 @@ namespace UniversalInventorySystem
                     }
                     else if (!inv.slots[i].hasItem)
                     {
-                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault()/**, durability.GetValueOrDefault()**/);
+                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault());
                         if (amount <= 0) break;
                         if (amount > 0)
                         {
@@ -215,7 +216,7 @@ namespace UniversalInventorySystem
         public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null, Action callback = null)
         {
             //Validating Arguments
-            if (inv.interactiable == InventoryProtection.Locked) return amount;
+            if (!AcceptsInventoryProtection(inv, MethodType.Add)) return amount;
 
             if (inv == null)
             {
@@ -289,7 +290,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("item", "Null item provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return amount;
+            if (!AcceptsInventoryProtection(inv, MethodType.Add)) return amount;
 
             if (!AcceptsSlotProtection(inv.slots[slotNumber], MethodType.Add) && !overrideSlotProtection) return amount;
 
@@ -361,7 +362,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return false;
+            if (!AcceptsInventoryProtection(inv, MethodType.Drop)) return false;
 
             else if (item != null)
             {
@@ -389,7 +390,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return false;
+            if (!AcceptsInventoryProtection(inv, MethodType.Drop)) return false;
 
             if (slot >= 0 && slot < inv.slots.Count)
             {
@@ -422,7 +423,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("item", "Null item provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return false;
+            if (!AcceptsInventoryProtection(inv, MethodType.Remove)) return false;
 
             int total = 0;
             for (int i = 0; i < inv.slots.Count; i++)
@@ -481,7 +482,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return false;
+            if (!AcceptsInventoryProtection(inv, MethodType.Remove)) return false;
 
             if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Remove) && !overrideSlotProtecion) return false;
 
@@ -532,7 +533,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return;
+            if (!AcceptsInventoryProtection(inv, MethodType.Use)) return;
             if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Use) && !overrideSlotProtection) return;
 
             if (inv.slots[slot].hasItem && inv.areItemsUsable)
@@ -612,7 +613,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return;
+            if (!AcceptsInventoryProtection(inv, MethodType.Use)) return;
             if (!inv.areItemsUsable) return;
 
             for(int i = 0; i < inv.slots.Count; i++)
@@ -1814,6 +1815,7 @@ namespace UniversalInventorySystem
         #endregion
 
 
+
         [Serializable]
         protected enum MethodType
         {
@@ -1824,7 +1826,8 @@ namespace UniversalInventorySystem
             LocalSwap = 4,
             Initialize = 5,
             Craft = 6,
-            Utility = 7
+            Utility = 7,
+            Drop = 8
         }
 
         private static bool AcceptsSlotProtection(Slot slot, MethodType methodType)
@@ -1862,6 +1865,8 @@ namespace UniversalInventorySystem
                     return inv.interactiable.HasFlag(LocalSwapInvFlags);
                 case MethodType.Use:
                     return inv.interactiable.HasFlag(UseInvFlags);
+                case MethodType.Drop:
+                    return inv.interactiable.HasFlag(DropInvFlags);
                 default:
                     return inv.interactiable.HasFlag(AllInventoryFlags);
             }
@@ -2257,7 +2262,8 @@ namespace UniversalInventorySystem
         SlotToSlot = 2,
         Add = 4,
         Remove = 8,
-        Use = 16
+        Use = 16,
+        Drop = 32
     }
 
     [Serializable, Flags]
