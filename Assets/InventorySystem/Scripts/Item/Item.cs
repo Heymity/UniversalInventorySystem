@@ -85,6 +85,8 @@ public List<DurabilityImage> durabilityImages
 
         public void OnDrop(Inventory inv, bool tss, int slot, int amount, bool dbui, Vector3? pos)
         {
+            if ((inv.interactiable & InventoryController.DropInvFlags) != InventoryController.DropInvFlags) return;
+
             if (optionalOnDropBehaviour == null)
             {
                 InventoryHandler.DropItemEventArgs dea = new InventoryHandler.DropItemEventArgs(inv, tss, slot, this, amount, dbui, pos.GetValueOrDefault(), true);

@@ -38,6 +38,7 @@ namespace UniversalInventorySystem
             | InventoryProtection.InventoryToInventory
             | InventoryProtection.Locked
             | InventoryProtection.Remove
+            | InventoryProtection.Drop
             | InventoryProtection.SlotToSlot
             | InventoryProtection.Use;
 
@@ -46,7 +47,7 @@ namespace UniversalInventorySystem
         public const InventoryProtection UseInvFlags = InventoryProtection.Use;
         public const InventoryProtection LocalSwapInvFlags = InventoryProtection.SlotToSlot;
         public const InventoryProtection SwapInvFlags = InventoryProtection.InventoryToInventory;
-        public const InventoryProtection DropInvFlags = InventoryProtection.Drop;
+        public const InventoryProtection DropInvFlags = (InventoryProtection)0b_0010_1000;
 
         public const SlotProtection AllSlotFlags = SlotProtection.Locked
             | SlotProtection.Add
@@ -1866,7 +1867,7 @@ namespace UniversalInventorySystem
                 case MethodType.Use:
                     return inv.interactiable.HasFlag(UseInvFlags);
                 case MethodType.Drop:
-                    return inv.interactiable.HasFlag(DropInvFlags);
+                    return (inv.interactiable & DropInvFlags) != DropInvFlags;
                 default:
                     return inv.interactiable.HasFlag(AllInventoryFlags);
             }
@@ -2257,13 +2258,13 @@ namespace UniversalInventorySystem
     [Serializable, Flags]
     public enum InventoryProtection
     {
-        Locked = 0,
-        InventoryToInventory = 1,
-        SlotToSlot = 2,
-        Add = 4,
-        Remove = 8,
-        Use = 16,
-        Drop = 32
+        Locked = 0,                                     //0b00000000
+        InventoryToInventory = 1,                       //0b00000001
+        SlotToSlot = 2,                                 //0b00000010
+        Add = 4,                                        //0b00000100
+        Remove = 8,                                     //0b00001000
+        Use = 16,                                       //0b00010000
+        Drop = 32                                       //0b0010000
     }
 
     [Serializable, Flags]
