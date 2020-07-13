@@ -1,4 +1,24 @@
-﻿using System.Collections.Generic;
+﻿/*  Copyright 2020 Gabriel Pasquale Rodrigues Scavone
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * 
+ * 
+ *  
+ *  This code is responsable for the UI of the inventory
+ *  
+ */
+
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -63,6 +83,7 @@ namespace UniversalInventorySystem
         public bool shouldSwap;
         [HideInInspector]
         public List<Item> pattern = new List<Item>();
+        [HideInInspector]
         public List<int> amount = new List<int>();
 
         public void SetInventory(Inventory _inv) => inv = _inv;
@@ -73,6 +94,8 @@ namespace UniversalInventorySystem
             if (isCraftInventory)
             {
                 inv.slotAmounts += productSlots.Length;
+                for(int i = 0; i < productSlots.Length; i++)
+                    inv.slots.Add(Slot.nullSlot);
 
                 foreach (GameObject g in productSlots)
                 {
@@ -128,8 +151,8 @@ namespace UniversalInventorySystem
                     }
                 }
             }
-            ItemDropHandler idh;
-            if (!canvas.TryGetComponent(out idh)) canvas.gameObject.AddComponent<ItemDropHandler>();
+
+            if (!canvas.TryGetComponent(out ItemDropHandler _)) canvas.gameObject.AddComponent<ItemDropHandler>();
 
             if (isCraftInventory)
             {
@@ -140,9 +163,8 @@ namespace UniversalInventorySystem
                 }
 
                 for (int i = gridSize.x * gridSize.y; i < inv.slots.Count; i++)
-                {
-                    var slot = inv.slots[i];
-                    inv.slots[i] = new Slot(slot.item, slot.amount, slot.hasItem, true, SlotProtection.OnlyRemove, null);
+                { 
+                    inv.slots[i] = Slot.SetSlotProperties(inv[i], true, SlotProtection.Remove | SlotProtection.Swap, null);
                 }
 
             }
@@ -240,12 +262,15 @@ namespace UniversalInventorySystem
             //Iterating slots go
             for (int i = 0; i < inv.slots.Count; i++)
             {
+                // Create pattern grid
                 if (isCraftInventory && i < pattern.Count)
                 {
                     pattern[i] = inv.slots[i].item;
                     amount[i] = inv.slots[i].amount;
                 }
                 if (i >= slots.Count) break;
+
+                // Rendering null Slot
                 Image image;
                 TextMeshProUGUI text;
                 if (inv.slots[i].item == null)
@@ -264,9 +289,9 @@ namespace UniversalInventorySystem
                     continue;
                 }
 
+                // Rendering slot
                 for (int j = 0; j < slots[i].transform.childCount; j++)
                 {
-
                     if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
                     {
                         if (inv.slots[i].item.hasDurability)
@@ -338,7 +363,7 @@ namespace UniversalInventorySystem
             //Dont use on click if is crafting inventory
             if (isCraftInventory)
             {
-                CraftItemData products = inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, false, true, productSlots.Length);
+                CraftItemData products = inv.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, false, true, productSlots.Length);
 
                 List<Item> productsItem = new List<Item>();
                 if (products != CraftItemData.nullData && products.items.Length <= productSlots.Length)
@@ -412,6 +437,12 @@ namespace UniversalInventorySystem
                                 text.text = "";
                         }
 
+                        if(products != null && products != CraftItemData.nullData)
+                            if (inv[(gridSize.x * gridSize.y) + i].item == (products?.items[productIndex] ?? null) && 
+                                inv[(gridSize.x * gridSize.y) + i].amount + (products?.amounts[productIndex] ?? int.MaxValue) <= inv[(gridSize.x * gridSize.y) + i].item.maxAmount
+                                ) 
+                                productIndex++;
+
                         //For click and drag
                         productSlots[i].GetComponent<Button>().onClick.RemoveAllListeners();
                         var index = i;
@@ -419,15 +450,18 @@ namespace UniversalInventorySystem
                         {
                             if (products.items != null && products.items.Length <= productSlots.Length)
                             {
+                                // If you dont want the other of the items in the product slot to matter this line should be different, It shoud check if the
+                                // List have the same items, not the same sequence.
                                 if (Enumerable.SequenceEqual(products.items, productsItem.ToArray()))
                                 {
-                                    inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
+                                    inv.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
                                 }
                             }
                         });
                     }
                     else if (products.items != null && products.items.Length <= productSlots.Length && productIndex < products.items.Length)
                     {
+                        bool nextIndex = false;
                         for (int j = 0; j < slots[(gridSize.x * gridSize.y) + i].transform.childCount; j++)
                         {
                             // Iterating the childs
@@ -435,30 +469,39 @@ namespace UniversalInventorySystem
                             {
                                 if (products.items[productIndex].hasDurability)
                                 {
-                                    if (inv.slots[(gridSize.x * gridSize.y) + i].item.durabilityImages.Count > 0)
+                                    if (products.items[productIndex].durabilityImages.Count > 0)
                                     {
-                                        image.sprite = GetNearestSprite(inv, inv.slots[(gridSize.x * gridSize.y) + i].durability, (gridSize.x * gridSize.y) + i);
-                                        image.color = new Color(1, 1, 1, 1);
+                                        image.sprite = GetNearestSprite(products.items[productIndex], products.items[productIndex].maxDurability);
+                                        image.color = new Color(1, 1, 1, .7f);
                                     }
                                     else
                                     {
                                         image.sprite = products.items[productIndex].sprite;
-                                        image.color = new Color(1, 1, 1, 1);
+                                        image.color = new Color(1, 1, 1, .7f);
                                     }
-                                    productIndex++;
+                                    nextIndex = true;
                                 }
                                 else
                                 {
                                     image.sprite = products.items[productIndex].sprite;
                                     image.color = new Color(1, 1, 1, .7f);
-                                    productIndex++;
+                                    nextIndex = true;
                                 }
                             }
                             else if (productSlots[i].transform.GetChild(j).TryGetComponent(out TextMeshProUGUI text) && showAmount && products.items[productIndex].showAmount)
+                            {
                                 text.text = products.amounts[productIndex].ToString();
+                                nextIndex = true;
+                            }
                             else if (productSlots[i].transform.GetChild(j).TryGetComponent(out text))
+                            {
                                 text.text = "";
+                                nextIndex = true;
+                            }
                         }
+
+                        if(nextIndex)
+                            productIndex++;
 
                         //For click and drag
                         productSlots[i].GetComponent<Button>().onClick.RemoveAllListeners();
@@ -466,7 +509,7 @@ namespace UniversalInventorySystem
                         productSlots[i].GetComponent<Button>().onClick.AddListener(() =>
                         {
                             //Debug.Log($"Product slot {slots[index].name} was clicked");
-                            inv.CraftItem((pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
+                            inv.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlots.Length);
                         });
 
                     }

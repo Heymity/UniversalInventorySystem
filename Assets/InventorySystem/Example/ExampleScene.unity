@@ -1519,63 +1519,63 @@ MonoBehaviour:
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
-      whitelist: {fileID: 11400000, guid: 57c447cc307026949829e61220432bc0, type: 2}
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
       whitelist: {fileID: 0}
     slotAmounts: 9
     id: 0
@@ -3921,61 +3921,61 @@ MonoBehaviour:
   randomFactor: {x: 0, y: 0, z: 0}
   inv:
     slots:
-    - amount: 1
-      item: {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
-      hasItem: 1
-      _durability: 8
+    - amount: 0
+      item: {fileID: 0}
+      hasItem: 0
+      _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     - amount: 0
       item: {fileID: 0}
       hasItem: 0
       _durability: 0
       isProductSlot: 0
-      interative: 0
+      interative: -1
       whitelist: {fileID: 0}
     slotAmounts: 8
     id: 0
@@ -4572,6 +4572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 882816581}
   - component: {fileID: 882816579}
+  - component: {fileID: 882816580}
   m_Layer: 0
   m_Name: SecondaryUIForSameInv
   m_TagString: Untagged
@@ -4635,6 +4636,52 @@ MonoBehaviour:
   shouldSwap: 0
   pattern: []
   amount: 
+--- !u!114 &882816580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882816578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e32ae18a9bc6f9246a8508dc1e4b228a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gradient:
+    serializedVersion: 2
+    key0: {r: 0.9811321, g: 0, b: 0, a: 1}
+    key1: {r: 0.8584906, g: 0.36742443, b: 0.08503916, a: 1}
+    key2: {r: 0.1196702, g: 0.9056604, b: 0.089711644, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 28202
+    ctime2: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 2
+  BackgroundColor: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 1}
+  mat: {fileID: 2100000, guid: aeb3b7ab9031afe46a8b7ed306326f31, type: 2}
+  percentageX: 83.3
+  percentageY: 9
+  offset: {x: 0, y: -0.49}
 --- !u!4 &882816581
 Transform:
   m_ObjectHideFlags: 0
@@ -5832,7 +5879,7 @@ MonoBehaviour:
     id: 0
     areItemsUsable: 1
     areItemsDroppable: 1
-    interactiable: 4
+    interactiable: 0
     hasInitializated: 0
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}
@@ -5916,7 +5963,7 @@ MonoBehaviour:
   BackgroundColor: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 1}
   mat: {fileID: 2100000, guid: aeb3b7ab9031afe46a8b7ed306326f31, type: 2}
   percentageX: 83.3
-  percentageY: 9.6
+  percentageY: 9
   offset: {x: 0, y: -0.49}
 --- !u!1 &1162427722
 GameObject:
@@ -9462,6 +9509,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: InventorySystemManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 4230058761226221454, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2ec85dcac666aa4587e5e46ec3a9f99, type: 3}
