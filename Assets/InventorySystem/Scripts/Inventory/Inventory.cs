@@ -13,14 +13,12 @@
  *  limitations under the License.
  * 
  * 
- *  
  *  This code is the core of the inventory system, it manipulates the inventories and contains some of the base classes of the system like Slot and Inventory
  */
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 
 namespace UniversalInventorySystem
@@ -36,19 +34,26 @@ namespace UniversalInventorySystem
 
         #region Protection consts
 
-        public static readonly InventoryProtection[] allInventoryProtections = new InventoryProtection[6]
-        {
-        InventoryProtection.Any,
-        InventoryProtection.InventoryToInventory,
-        InventoryProtection.Locked,
-        InventoryProtection.LockSlots,
-        InventoryProtection.LockThruInventory,
-        InventoryProtection.SlotToSlot
-        };
+        public const InventoryProtection AllInventoryFlags = InventoryProtection.Add
+            | InventoryProtection.InventoryToInventory
+            | InventoryProtection.Locked
+            | InventoryProtection.Remove
+            | InventoryProtection.Drop
+            | InventoryProtection.SlotToSlot
+            | InventoryProtection.Use;
 
-        public static InventoryProtection[] newInvProtectionArray(params InventoryProtection[] protections) { return protections; }
+        public const InventoryProtection AddInvFlags = InventoryProtection.Add;
+        public const InventoryProtection RemoveInvFlags = InventoryProtection.Remove;
+        public const InventoryProtection UseInvFlags = InventoryProtection.Use;
+        public const InventoryProtection LocalSwapInvFlags = InventoryProtection.SlotToSlot;
+        public const InventoryProtection SwapInvFlags = InventoryProtection.InventoryToInventory;
+        public const InventoryProtection DropInvFlags = (InventoryProtection)0b_0010_1000;
 
-        public const SlotProtection AllSlotFlags = SlotProtection.Locked | SlotProtection.Add | SlotProtection.Remove | SlotProtection.Use | SlotProtection.Swap;
+        public const SlotProtection AllSlotFlags = SlotProtection.Locked
+            | SlotProtection.Add
+            | SlotProtection.Remove
+            | SlotProtection.Use
+            | SlotProtection.Swap;
 
         public const SlotProtection AddFlags = SlotProtection.Add;
         public const SlotProtection RemoveFlags = SlotProtection.Remove;
@@ -87,7 +92,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Crafting Events, Change from a tuple to the CraftItemData class
+        ///TODO: Crafting Events
         #region Add
 
         /// <summary>
@@ -110,7 +115,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null item provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return amount;
+            if (!AcceptsInventoryProtection(inv, MethodType.Add)) return amount;
 
             if (durability == null) durability = item.maxDurability;
 
@@ -124,7 +129,7 @@ namespace UniversalInventorySystem
                     if (inv.slots[i].hasItem && i < inv.slots.Count - 1) continue;
                     else if (i < inv.slots.Count - 1)
                     {
-                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault()/**, durability.GetValueOrDefault()**/);
+                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault());
                         amount--;
 
                         if (amount <= 0) break;
@@ -132,7 +137,7 @@ namespace UniversalInventorySystem
                     }
                     else if (!inv.slots[i].hasItem)
                     {
-                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault()/**, durability.GetValueOrDefault()**/);
+                        inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, 1, true, durability.GetValueOrDefault());
                         if (amount <= 0) break;
                         if (amount > 0)
                         {
@@ -212,7 +217,7 @@ namespace UniversalInventorySystem
         public static int AddItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null, Action callback = null)
         {
             //Validating Arguments
-            if (inv.interactiable == InventoryProtection.Locked) return amount;
+            if (!AcceptsInventoryProtection(inv, MethodType.Add)) return amount;
 
             if (inv == null)
             {
@@ -286,7 +291,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("item", "Null item provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return amount;
+            if (!AcceptsInventoryProtection(inv, MethodType.Add)) return amount;
 
             if (!AcceptsSlotProtection(inv.slots[slotNumber], MethodType.Add) && !overrideSlotProtection) return amount;
 
@@ -358,7 +363,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return false;
+            if (!AcceptsInventoryProtection(inv, MethodType.Drop)) return false;
 
             else if (item != null)
             {
@@ -386,7 +391,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return false;
+            if (!AcceptsInventoryProtection(inv, MethodType.Drop)) return false;
 
             if (slot >= 0 && slot < inv.slots.Count)
             {
@@ -419,7 +424,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("item", "Null item provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return false;
+            if (!AcceptsInventoryProtection(inv, MethodType.Remove)) return false;
 
             int total = 0;
             for (int i = 0; i < inv.slots.Count; i++)
@@ -478,7 +483,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return false;
+            if (!AcceptsInventoryProtection(inv, MethodType.Remove)) return false;
 
             if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Remove) && !overrideSlotProtecion) return false;
 
@@ -529,7 +534,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return;
+            if (!AcceptsInventoryProtection(inv, MethodType.Use)) return;
             if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Use) && !overrideSlotProtection) return;
 
             if (inv.slots[slot].hasItem && inv.areItemsUsable)
@@ -609,7 +614,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv.interactiable == InventoryProtection.Locked) return;
+            if (!AcceptsInventoryProtection(inv, MethodType.Use)) return;
             if (!inv.areItemsUsable) return;
 
             for(int i = 0; i < inv.slots.Count; i++)
@@ -703,7 +708,8 @@ namespace UniversalInventorySystem
                 return;
             }
 
-            if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return;
+            if (!AcceptsInventoryProtection(inv, MethodType.LocalSwap))
+                return;
 
             if (inv.slots[targetSlot].isProductSlot) return;
 
@@ -723,31 +729,30 @@ namespace UniversalInventorySystem
 
             if (!whitelist) return;
 
-            if (inv.interactiable == InventoryProtection.SlotToSlot || inv.interactiable == InventoryProtection.Any)
+
+            Slot tmpSlot = inv.slots[targetSlot];
+
+            if (inv.slots[nativeSlot].isProductSlot || inv.slots[targetSlot].isProductSlot)
             {
-                Slot tmpSlot = inv.slots[targetSlot];
-
-                if (inv.slots[nativeSlot].isProductSlot || inv.slots[targetSlot].isProductSlot)
+                if (tmpSlot.item == null)
                 {
-                    if (tmpSlot.item == null)
-                    {
-                        inv.slots[targetSlot] = Slot.SetItemProperties(inv.slots[targetSlot], inv.slots[nativeSlot]);
-                        inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], tmpSlot);
+                    inv.slots[targetSlot] = Slot.SetItemProperties(inv.slots[targetSlot], inv.slots[nativeSlot]);
+                    inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], tmpSlot);
 
-                        InventoryHandler.SwapItemsEventArgs sea2 = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
-                        InventoryHandler.current.Broadcast(e, sea: sea2);
-                        return;
-                    }
+                    InventoryHandler.SwapItemsEventArgs sea2 = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
+                    InventoryHandler.current.Broadcast(e, sea: sea2);
                     return;
                 }
-
-                inv.slots[targetSlot] = Slot.SetItemProperties(inv.slots[targetSlot], inv.slots[nativeSlot]);
-
-                inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], tmpSlot);
-
-                InventoryHandler.SwapItemsEventArgs sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
-                InventoryHandler.current.Broadcast(e, sea: sea);
+                return;
             }
+
+            inv.slots[targetSlot] = Slot.SetItemProperties(inv.slots[targetSlot], inv.slots[nativeSlot]);
+
+            inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], tmpSlot);
+
+            InventoryHandler.SwapItemsEventArgs sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
+            InventoryHandler.current.Broadcast(e, sea: sea);
+
         }
 
         /// <summary>
@@ -766,20 +771,19 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null inventory provided for SwapItemsInCertainAmountInSlots");
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
-            if(inv[nativeSlot].item == null)
-            {
-                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
-                return _amount ?? inv.slots[nativeSlot].amount;
-            }
+            if (inv[nativeSlot].item == null)
+                Debug.LogWarning("Null item provided for SwapItemsInCertainAmountInSlots");
+                //return _amount ?? inv.slots[nativeSlot].amount;
 
-            if (!inv[nativeSlot].item.stackable)
+
+            if (!inv[nativeSlot].item?.stackable ?? false)
             {
                 inv.SwapItemsInSlots(nativeSlot, targetSlot);
                 return 0;
             }
 
-            if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) 
-                return (_amount ?? inv.slots[nativeSlot].amount);
+            if (!AcceptsInventoryProtection(inv, MethodType.LocalSwap))
+                return _amount ?? inv.slots[nativeSlot].amount;
 
             if (inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
 
@@ -788,75 +792,72 @@ namespace UniversalInventorySystem
 
 
             //Verifys if the items to be swaped are in the whitelists
-            bool whitelist = 
-            (inv.slots[nativeSlot].whitelist?.itemsList.ContainsWNull(inv.slots[targetSlot].item) 
-            ?? 
+            bool whitelist =
+            (inv.slots[nativeSlot].whitelist?.itemsList.ContainsWNull(inv.slots[targetSlot].item)
+            ??
             (inv.slots[targetSlot].whitelist == null ? true : inv.slots[targetSlot].whitelist.itemsList.ContainsWNull(inv.slots[nativeSlot].item)))
             &&
-            (inv.slots[targetSlot].whitelist?.itemsList.ContainsWNull(inv.slots[nativeSlot].item) 
-            ?? 
+            (inv.slots[targetSlot].whitelist?.itemsList.ContainsWNull(inv.slots[nativeSlot].item)
+            ??
             (inv.slots[nativeSlot].whitelist == null ? true : inv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(inv.slots[targetSlot].item)));
 
             if (!whitelist) return (_amount ?? inv.slots[nativeSlot].amount);
 
             int amount = (_amount ?? inv.slots[nativeSlot].amount);
-            if (inv.interactiable == InventoryProtection.SlotToSlot || inv.interactiable == InventoryProtection.Any)
+
+            if (amount <= 0) return amount;
+            InventoryHandler.SwapItemsEventArgs sea;
+            if (amount > inv.slots[nativeSlot].amount) return amount;
+            else if (inv.slots[targetSlot].item == null)
             {
-                if (amount <= 0) return amount;
-                InventoryHandler.SwapItemsEventArgs sea;
-                if (amount > inv.slots[nativeSlot].amount) return amount;
-                else if (inv.slots[targetSlot].item == null)
-                {
-                    inv.slots[targetSlot] = Slot.SetItemProperties(
-                        inv.slots[targetSlot],
-                        inv.slots[nativeSlot].item, 
-                        amount, 
-                        true,
-                        inv.slots[nativeSlot].durability
+                inv.slots[targetSlot] = Slot.SetItemProperties(
+                    inv.slots[targetSlot],
+                    inv.slots[nativeSlot].item,
+                    amount,
+                    true,
+                    inv.slots[nativeSlot].durability
+                );
+
+                inv.slots[nativeSlot] = Slot.SetItemProperties(
+                    inv.slots[nativeSlot],
+                    inv.slots[nativeSlot].item,
+                    inv.slots[nativeSlot].amount - amount,
+                    true,
+                    inv.slots[nativeSlot].durability
                     );
 
-                    inv.slots[nativeSlot] = Slot.SetItemProperties(
-                        inv.slots[nativeSlot],
-                        inv.slots[nativeSlot].item, 
-                        inv.slots[nativeSlot].amount - amount, 
-                        true,
-                        inv.slots[nativeSlot].durability
-                        );
-
-                    if (inv.slots[nativeSlot].amount <= 0) inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], nullSlot);
-                }
-                else if (inv.slots[nativeSlot].item == inv.slots[targetSlot].item)
-                {
-                    int remaning = AddItemToSlot(
-                        inv, 
-                        inv.slots[nativeSlot].item,
-                        amount, 
-                        targetSlot
-                        /// totalDurability: inv.slots[nativeSlot].totalDurability
-                    );
-
-                    inv.slots[nativeSlot] = Slot.SetItemProperties(
-                        inv.slots[nativeSlot],
-                        inv.slots[nativeSlot].item,
-                        inv.slots[nativeSlot].amount - amount + remaning, 
-                        true,
-                        inv.slots[nativeSlot].durability
-                    );
-
-                    if (inv.slots[nativeSlot].amount <= 0)
-                        inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], nullSlot);
-
-                    sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount - remaning);
-                    InventoryHandler.current.Broadcast(e, sea: sea);
-                    return remaning;
-                }
-                else SwapItemsInSlots(inv, nativeSlot, targetSlot);
-
-                sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount);
-                InventoryHandler.current.Broadcast(e, sea: sea);
-                return 0;
+                if (inv.slots[nativeSlot].amount <= 0) inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], nullSlot);
             }
-            return amount;
+            else if (inv.slots[nativeSlot].item == inv.slots[targetSlot].item)
+            {
+                int remaning = AddItemToSlot(
+                    inv,
+                    inv.slots[nativeSlot].item,
+                    amount,
+                    targetSlot
+                    /// totalDurability: inv.slots[nativeSlot].totalDurability
+                    );
+
+                inv.slots[nativeSlot] = Slot.SetItemProperties(
+                    inv.slots[nativeSlot],
+                    inv.slots[nativeSlot].item,
+                    inv.slots[nativeSlot].amount - amount + remaning,
+                    true,
+                    inv.slots[nativeSlot].durability
+                );
+
+                if (inv.slots[nativeSlot].amount <= 0)
+                    inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], nullSlot);
+
+                sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount - remaning);
+                InventoryHandler.current.Broadcast(e, sea: sea);
+                return remaning;
+            }
+            else SwapItemsInSlots(inv, nativeSlot, targetSlot);
+
+            sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount);
+            InventoryHandler.current.Broadcast(e, sea: sea);
+            return 0;
         }
 
         /// <summary>
@@ -882,16 +883,16 @@ namespace UniversalInventorySystem
             }
 
             if (nativeInv[nativeSlotNumber].item == null)
-            {
-                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
-                return amount;
-            }
+                Debug.LogWarning("Null item provided for SwapItemsInCertainAmountInSlots");
 
-            if (!nativeInv[nativeSlotNumber].item.stackable)
+            if (!nativeInv[nativeSlotNumber].item?.stackable ?? false)
             {
                 nativeInv.SwapItemsThruInventoriesInSlots(targetInv, nativeSlotNumber, targetSlotNumber);
                 return 0;
             }
+
+            if (!AcceptsInventoryProtection(nativeInv, MethodType.Swap)) return amount;
+            if (!AcceptsInventoryProtection(targetInv, MethodType.Swap)) return amount;
 
             if (targetInv.slots[targetSlotNumber].isProductSlot) return amount;
 
@@ -910,69 +911,64 @@ namespace UniversalInventorySystem
 
             if (!whitelist) return amount;
 
-            if (nativeInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockThruInventory || targetInv.interactiable == InventoryProtection.LockThruInventory) return amount;
-            if ((nativeInv.interactiable == InventoryProtection.InventoryToInventory || nativeInv.interactiable == InventoryProtection.Any) && (targetInv.interactiable == InventoryProtection.InventoryToInventory || targetInv.interactiable == InventoryProtection.Any))
+            InventoryHandler.SwapItemsTrhuInvEventArgs siea;
+            if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
+            else if (targetInv.slots[targetSlotNumber].item == null)
             {
-                InventoryHandler.SwapItemsTrhuInvEventArgs siea;
-                if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
-                else if (targetInv.slots[targetSlotNumber].item == null)
-                {
-                    targetInv.slots[targetSlotNumber] = Slot.SetItemProperties(targetInv.slots[targetSlotNumber],
-                        nativeInv.slots[nativeSlotNumber].item, 
-                        amount, 
-                        true,
-                        nativeInv.slots[nativeSlotNumber].durability
-                    );
+                targetInv.slots[targetSlotNumber] = Slot.SetItemProperties(targetInv.slots[targetSlotNumber],
+                    nativeInv.slots[nativeSlotNumber].item,
+                    amount,
+                    true,
+                    nativeInv.slots[nativeSlotNumber].durability
+                );
 
-                    nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(nativeInv.slots[nativeSlotNumber],
-                        nativeInv.slots[nativeSlotNumber].item, 
-                        nativeInv.slots[nativeSlotNumber].amount - amount, 
-                        true,
-                        nativeInv.slots[nativeSlotNumber].durability
-                    );
+                nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(nativeInv.slots[nativeSlotNumber],
+                    nativeInv.slots[nativeSlotNumber].item,
+                    nativeInv.slots[nativeSlotNumber].amount - amount,
+                    true,
+                    nativeInv.slots[nativeSlotNumber].durability
+                );
 
-                    if (nativeInv.slots[nativeSlotNumber].amount <= 0) nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(
+                if (nativeInv.slots[nativeSlotNumber].amount <= 0) nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(
+                    nativeInv.slots[nativeSlotNumber],
+                    nullSlot
+                );
+            }
+            else if (nativeInv.slots[nativeSlotNumber].item == targetInv.slots[targetSlotNumber].item)
+            {
+                int remaning = AddItemToSlot(targetInv, nativeInv.slots[nativeSlotNumber].item, amount, targetSlotNumber);
+
+                nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(
+                    nativeInv.slots[nativeSlotNumber],
+                    nativeInv.slots[nativeSlotNumber].item,
+                    nativeInv.slots[nativeSlotNumber].amount - amount + remaning,
+                    true,
+                    nativeInv.slots[nativeSlotNumber].durability
+                );
+
+                if (nativeInv.slots[nativeSlotNumber].amount <= 0)
+                    nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(
                         nativeInv.slots[nativeSlotNumber],
                         nullSlot
                     );
-                }
-                else if (nativeInv.slots[nativeSlotNumber].item == targetInv.slots[targetSlotNumber].item)
-                {
-                    int remaning = AddItemToSlot(targetInv, nativeInv.slots[nativeSlotNumber].item, amount, targetSlotNumber);
 
-                    nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(
-                        nativeInv.slots[nativeSlotNumber],
-                        nativeInv.slots[nativeSlotNumber].item,
-                        nativeInv.slots[nativeSlotNumber].amount - amount + remaning,
-                        true,
-                        nativeInv.slots[nativeSlotNumber].durability
-                    );
-
-                    if (nativeInv.slots[nativeSlotNumber].amount <= 0)
-                        nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(
-                            nativeInv.slots[nativeSlotNumber],
-                            nullSlot
-                        );
-
-                    siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount - remaning);
-                    InventoryHandler.current.Broadcast(e, siea: siea);
-
-                    return remaning;
-                }
-                else
-                {
-                    Slot tmpSlot = targetInv.slots[targetSlotNumber];
-
-                    targetInv.slots[targetSlotNumber] = Slot.SetItemProperties(targetInv.slots[targetSlotNumber], nativeInv.slots[nativeSlotNumber]);
-
-                    nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(nativeInv.slots[nativeSlotNumber], tmpSlot);
-                }
-
-                siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount);
+                siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount - remaning);
                 InventoryHandler.current.Broadcast(e, siea: siea);
-                return 0;
+
+                return remaning;
             }
-            return amount;
+            else
+            {
+                Slot tmpSlot = targetInv.slots[targetSlotNumber];
+
+                targetInv.slots[targetSlotNumber] = Slot.SetItemProperties(targetInv.slots[targetSlotNumber], nativeInv.slots[nativeSlotNumber]);
+
+                nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(nativeInv.slots[nativeSlotNumber], tmpSlot);
+            }
+
+            siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount);
+            InventoryHandler.current.Broadcast(e, siea: siea);
+            return 0;
         }
 
         /// <summary>
@@ -999,23 +995,20 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("targetInv", "Null inventory provided");
             }
 
-            if (nativeInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockThruInventory || targetInv.interactiable == InventoryProtection.LockThruInventory) return false;
-            if ((nativeInv.interactiable == InventoryProtection.InventoryToInventory || nativeInv.interactiable == InventoryProtection.Any) && (targetInv.interactiable == InventoryProtection.InventoryToInventory || targetInv.interactiable == InventoryProtection.Any))
-            {
-                {
-                    if (RemoveItem(nativeInv, item, amount))
-                    {
-                        int remaning = AddItem(targetInv, item, amount);
-                        if (remaning > 0) AddItem(nativeInv, item, remaning);
-                    }
-                    else return false;
+            if (!AcceptsInventoryProtection(nativeInv, MethodType.Swap)) return false;
+            if (!AcceptsInventoryProtection(targetInv, MethodType.Swap)) return false;
 
-                    InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, null, null, item, null, amount);
-                    InventoryHandler.current.Broadcast(e, siea: siea);
-                    return true;
-                }
+            if (RemoveItem(nativeInv, item, amount))
+            {
+                int remaning = AddItem(targetInv, item, amount);
+                if (remaning > 0) AddItem(nativeInv, item, remaning);
             }
-            return false;
+            else return false;
+
+            InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, null, null, item, null, amount);
+            InventoryHandler.current.Broadcast(e, siea: siea);
+            return true;
+
         }
 
         /// <summary>
@@ -1025,22 +1018,16 @@ namespace UniversalInventorySystem
         /// <param name="targetInv">The target inventory</param>
         /// <param name="nativeSlot">The slot Number of the native inventory</param>
         /// <param name="targetSlot">The Slot numben of the target inventory</param>
-        public static void SwapItemsThruInventoriesInSlots(this Inventory nativeInv, Inventory targetInv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapItem, bool overrideSlotProtection = false)
+        public static void SwapItemsThruInventoriesInSlots(this Inventory nativeInv, Inventory targetInv, int nativeSlot, int targetSlot, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory, bool overrideSlotProtection = false)
         {
             if (nativeInv == null || targetInv == null)
             {
                 Debug.LogError("Null inventory provided for SwapItemsInSlots");
-                throw new ArgumentNullException(nativeInv == null ? "nativeInv" : "targetInv" , "Null inventory provided");
+                throw new ArgumentNullException(nativeInv == null ? "nativeInv" : "targetInv", "Null inventory provided");
             }
 
-            if (nativeInv[nativeSlot].item == null)
-            {
-                Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
-                return;
-            }
-
-            if (nativeInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockSlots) return;
-            if (targetInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.LockSlots) return;
+            if (!AcceptsInventoryProtection(nativeInv, MethodType.Swap)) return;
+            if (!AcceptsInventoryProtection(targetInv, MethodType.Swap)) return;
 
             if (targetInv.slots[targetSlot].isProductSlot) return;
 
@@ -1060,37 +1047,30 @@ namespace UniversalInventorySystem
 
             if (!whitelist) return;
 
-            if (nativeInv.interactiable == InventoryProtection.SlotToSlot || nativeInv.interactiable == InventoryProtection.Any)
+
+            Slot tmpSlot = targetInv.slots[targetSlot];
+
+            if (nativeInv.slots[nativeSlot].isProductSlot || targetInv.slots[targetSlot].isProductSlot)
             {
-                Slot tmpSlot = targetInv.slots[targetSlot];
-
-                if (nativeInv.slots[nativeSlot].isProductSlot || targetInv.slots[targetSlot].isProductSlot)
+                if (tmpSlot.item == null)
                 {
-                    if (tmpSlot.item == null)
-                    {
-                        targetInv.slots[targetSlot] = Slot.SetItemProperties(targetInv.slots[targetSlot], nativeInv.slots[nativeSlot]);
-                        nativeInv.slots[nativeSlot] = Slot.SetItemProperties(nativeInv.slots[nativeSlot], tmpSlot);
-                        /*inv.slots[nativeSlot] = new Slot(
-                            tmpSlot, 
-                            inv.slots[nativeSlot].isProductSlot, 
-                            inv.slots[nativeSlot].interative,
-                            inv.slots[nativeSlot].whitelist
-                        );*/
+                    targetInv.slots[targetSlot] = Slot.SetItemProperties(targetInv.slots[targetSlot], nativeInv.slots[nativeSlot]);
+                    nativeInv.slots[nativeSlot] = Slot.SetItemProperties(nativeInv.slots[nativeSlot], tmpSlot);
 
-                        InventoryHandler.SwapItemsTrhuInvEventArgs siea2 = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[targetSlot].item, tmpSlot.item, null);
-                        InventoryHandler.current.Broadcast(e, siea: siea2);
-                        return;
-                    }
+                    InventoryHandler.SwapItemsTrhuInvEventArgs siea2 = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[targetSlot].item, tmpSlot.item, null);
+                    InventoryHandler.current.Broadcast(e, siea: siea2);
                     return;
                 }
-
-                targetInv.slots[targetSlot] = Slot.SetItemProperties(targetInv.slots[targetSlot], nativeInv.slots[nativeSlot]);
-
-                nativeInv.slots[nativeSlot] = Slot.SetItemProperties(nativeInv.slots[nativeSlot], tmpSlot);
-
-                InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[nativeSlot].item, tmpSlot.item, null);
-                InventoryHandler.current.Broadcast(e, siea: siea);
+                return;
             }
+
+            targetInv.slots[targetSlot] = Slot.SetItemProperties(targetInv.slots[targetSlot], nativeInv.slots[nativeSlot]);
+
+            nativeInv.slots[nativeSlot] = Slot.SetItemProperties(nativeInv.slots[nativeSlot], tmpSlot);
+
+            InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[nativeSlot].item, tmpSlot.item, null);
+            InventoryHandler.current.Broadcast(e, siea: siea);
+
         }
 
         #endregion
@@ -1609,7 +1589,7 @@ namespace UniversalInventorySystem
                 return null;
             }
 
-            if (acceptableInvProtections == null) acceptableInvProtections = allInventoryProtections;
+            //if (acceptableInvProtections == null) acceptableInvProtections = allInventoryProtections;
 
             if (!acceptableInvProtections.Contains(inv.interactiable)) return null;
 
@@ -1836,6 +1816,7 @@ namespace UniversalInventorySystem
         #endregion
 
 
+
         [Serializable]
         protected enum MethodType
         {
@@ -1843,9 +1824,11 @@ namespace UniversalInventorySystem
             Remove = 1,
             Use = 2,
             Swap = 3,
-            Initialize = 4,
-            Craft = 5,
-            Utility = 6
+            LocalSwap = 4,
+            Initialize = 5,
+            Craft = 6,
+            Utility = 7,
+            Drop = 8
         }
 
         private static bool AcceptsSlotProtection(Slot slot, MethodType methodType)
@@ -1859,10 +1842,34 @@ namespace UniversalInventorySystem
                     return slot.interative.HasFlag(RemoveFlags);
                 case MethodType.Swap:
                     return slot.interative.HasFlag(SwapFlags);
+                case MethodType.LocalSwap:
+                    goto case MethodType.Swap;
                 case MethodType.Use:
                     return slot.interative.HasFlag(UseFlags);
                 default:
                     return slot.interative.HasFlag(AllSlotFlags);
+            }
+        }
+
+        private static bool AcceptsInventoryProtection(Inventory inv, MethodType methodType)
+        {
+            if (inv.interactiable.Equals(InventoryProtection.Locked)) return false;
+            switch (methodType)
+            {
+                case MethodType.Add:
+                    return inv.interactiable.HasFlag(AddInvFlags);
+                case MethodType.Remove:
+                    return inv.interactiable.HasFlag(RemoveInvFlags);
+                case MethodType.Swap:
+                    return inv.interactiable.HasFlag(SwapInvFlags);
+                case MethodType.LocalSwap:
+                    return inv.interactiable.HasFlag(LocalSwapInvFlags);
+                case MethodType.Use:
+                    return inv.interactiable.HasFlag(UseInvFlags);
+                case MethodType.Drop:
+                    return (inv.interactiable & DropInvFlags) != DropInvFlags;
+                default:
+                    return inv.interactiable.HasFlag(AllInventoryFlags);
             }
         }
     }
@@ -1913,7 +1920,7 @@ namespace UniversalInventorySystem
             slotAmounts = _slotAmounts;
         }
 
-        public Inventory(int _slotAmounts, bool _areItemsUsable, InventoryProtection _interactiable = InventoryProtection.Any, bool _areItemsDroppable = true)
+        public Inventory(int _slotAmounts, bool _areItemsUsable, InventoryProtection _interactiable = InventoryController.AllInventoryFlags, bool _areItemsDroppable = true)
         {
             slots = new List<Slot>();
             slotAmounts = _slotAmounts;
@@ -1922,7 +1929,7 @@ namespace UniversalInventorySystem
             areItemsDroppable = _areItemsDroppable;
         }
 
-        public Inventory(int _slotAmounts, bool _areItemsUsable, InventoryProtection _interactiable = InventoryProtection.Any)
+        public Inventory(int _slotAmounts, bool _areItemsUsable, InventoryProtection _interactiable = InventoryController.AllInventoryFlags)
         {
             slots = new List<Slot>();
             slotAmounts = _slotAmounts;
@@ -2017,7 +2024,7 @@ namespace UniversalInventorySystem
 
         public static Slot SetItemProperties(ref Slot slot, Slot _slot)
             => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability);
-
+        /// No Code Here. Line 2020 is cursed
         public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, bool _hasItem, int _durability)
             => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability);
 
@@ -2139,7 +2146,6 @@ namespace UniversalInventorySystem
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive)
         {
-            /// No Code Here. Line 2020 is cursed
             item = _item;
             amount = _amount;
             hasItem = _hasItem;
@@ -2249,15 +2255,16 @@ namespace UniversalInventorySystem
         public static bool operator false(CraftItemData c) => c.items == null || c.amounts == null;
     } 
 
-    [Serializable]
+    [Serializable, Flags]
     public enum InventoryProtection
     {
-        Any = 0,
-        InventoryToInventory = 1,
-        SlotToSlot = 2,
-        LockSlots = 4,
-        LockThruInventory = 8,
-        Locked = 16
+        Locked = 0,                                     //0b00000000
+        InventoryToInventory = 1,                       //0b00000001
+        SlotToSlot = 2,                                 //0b00000010
+        Add = 4,                                        //0b00000100
+        Remove = 8,                                     //0b00001000
+        Use = 16,                                       //0b00010000
+        Drop = 32                                       //0b0010000
     }
 
     [Serializable, Flags]

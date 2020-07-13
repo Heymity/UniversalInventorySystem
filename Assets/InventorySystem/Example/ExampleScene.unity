@@ -1581,7 +1581,7 @@ MonoBehaviour:
     id: 0
     areItemsUsable: 0
     areItemsDroppable: 1
-    interactiable: 0
+    interactiable: -1
     hasInitializated: 0
   isCraftInventory: 1
   gridSize: {x: 3, y: 3}
@@ -3921,10 +3921,10 @@ MonoBehaviour:
   randomFactor: {x: 0, y: 0, z: 0}
   inv:
     slots:
-    - amount: 0
-      item: {fileID: 0}
-      hasItem: 0
-      _durability: 0
+    - amount: 1
+      item: {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
+      hasItem: 1
+      _durability: 8
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
@@ -3981,7 +3981,7 @@ MonoBehaviour:
     id: 0
     areItemsUsable: 1
     areItemsDroppable: 1
-    interactiable: 0
+    interactiable: -1
     hasInitializated: 0
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}
@@ -5879,7 +5879,7 @@ MonoBehaviour:
     id: 0
     areItemsUsable: 1
     areItemsDroppable: 1
-    interactiable: 0
+    interactiable: -1
     hasInitializated: 0
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}
@@ -5964,7 +5964,7 @@ MonoBehaviour:
   mat: {fileID: 2100000, guid: aeb3b7ab9031afe46a8b7ed306326f31, type: 2}
   percentageX: 83.3
   percentageY: 9
-  offset: {x: 0, y: -0.49}
+  offset: {x: 0, y: -0.5}
 --- !u!1 &1162427722
 GameObject:
   m_ObjectHideFlags: 0
