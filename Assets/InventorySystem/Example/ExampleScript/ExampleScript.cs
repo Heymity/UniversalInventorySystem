@@ -33,7 +33,7 @@ public class ExampleScript : MonoBehaviour
     private void Start()
     {
         //Inventory initialization
-        inventory = new Inventory(slotAmount, true, InventoryProtection.Any, true);
+        inventory = new Inventory(slotAmount, true, InventoryController.AllInventoryFlags, true);
         inventory.Initialize();
 
         //InventoryUI initialization

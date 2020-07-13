@@ -36,19 +36,24 @@ namespace UniversalInventorySystem
 
         #region Protection consts
 
-        public static readonly InventoryProtection[] allInventoryProtections = new InventoryProtection[6]
-        {
-        InventoryProtection.Any,
-        InventoryProtection.InventoryToInventory,
-        InventoryProtection.Locked,
-        InventoryProtection.LockSlots,
-        InventoryProtection.LockThruInventory,
-        InventoryProtection.SlotToSlot
-        };
+        public const InventoryProtection AllInventoryFlags = InventoryProtection.Add
+            | InventoryProtection.InventoryToInventory
+            | InventoryProtection.Locked
+            | InventoryProtection.Remove
+            | InventoryProtection.SlotToSlot
+            | InventoryProtection.Use;
 
-        public static InventoryProtection[] newInvProtectionArray(params InventoryProtection[] protections) { return protections; }
+        public const InventoryProtection AddInvFlags = InventoryProtection.Add;
+        public const InventoryProtection RemoveInvFlags = InventoryProtection.Remove;
+        public const InventoryProtection UseInvFlags = InventoryProtection.Use;
+        public const InventoryProtection LocalSwapInvFlags = InventoryProtection.SlotToSlot;
+        public const InventoryProtection SwapInvFlags = InventoryProtection.InventoryToInventory;
 
-        public const SlotProtection AllSlotFlags = SlotProtection.Locked | SlotProtection.Add | SlotProtection.Remove | SlotProtection.Use | SlotProtection.Swap;
+        public const SlotProtection AllSlotFlags = SlotProtection.Locked
+            | SlotProtection.Add
+            | SlotProtection.Remove
+            | SlotProtection.Use
+            | SlotProtection.Swap;
 
         public const SlotProtection AddFlags = SlotProtection.Add;
         public const SlotProtection RemoveFlags = SlotProtection.Remove;
@@ -87,7 +92,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Crafting Events, Change from a tuple to the CraftItemData class
+        ///TODO: Crafting Events
         #region Add
 
         /// <summary>
@@ -703,7 +708,7 @@ namespace UniversalInventorySystem
                 return;
             }
 
-            if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return;
+            //if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) return;
 
             if (inv.slots[targetSlot].isProductSlot) return;
 
@@ -723,7 +728,7 @@ namespace UniversalInventorySystem
 
             if (!whitelist) return;
 
-            if (inv.interactiable == InventoryProtection.SlotToSlot || inv.interactiable == InventoryProtection.Any)
+            if (inv.interactiable == InventoryProtection.SlotToSlot || inv.interactiable == AllInventoryFlags)
             {
                 Slot tmpSlot = inv.slots[targetSlot];
 
@@ -778,10 +783,10 @@ namespace UniversalInventorySystem
                 return 0;
             }
 
-            if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) 
-                return (_amount ?? inv.slots[nativeSlot].amount);
+            //if (inv.interactiable == InventoryProtection.Locked || inv.interactiable == InventoryProtection.LockSlots) 
+                //return (_amount ?? inv.slots[nativeSlot].amount);
 
-            if (inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
+            //if (inv.slots[targetSlot].isProductSlot) return (_amount ?? inv.slots[nativeSlot].amount);
 
             if (!AcceptsSlotProtection(inv.slots[targetSlot], MethodType.Swap) && !overrideSlotProtection) return (_amount ?? inv.slots[nativeSlot].amount);
             if (!AcceptsSlotProtection(inv.slots[nativeSlot], MethodType.Swap) && !overrideSlotProtection) return (_amount ?? inv.slots[nativeSlot].amount);
@@ -800,7 +805,7 @@ namespace UniversalInventorySystem
             if (!whitelist) return (_amount ?? inv.slots[nativeSlot].amount);
 
             int amount = (_amount ?? inv.slots[nativeSlot].amount);
-            if (inv.interactiable == InventoryProtection.SlotToSlot || inv.interactiable == InventoryProtection.Any)
+            if (inv.interactiable == InventoryProtection.SlotToSlot || inv.interactiable == AllInventoryFlags)
             {
                 if (amount <= 0) return amount;
                 InventoryHandler.SwapItemsEventArgs sea;
@@ -910,8 +915,8 @@ namespace UniversalInventorySystem
 
             if (!whitelist) return amount;
 
-            if (nativeInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockThruInventory || targetInv.interactiable == InventoryProtection.LockThruInventory) return amount;
-            if ((nativeInv.interactiable == InventoryProtection.InventoryToInventory || nativeInv.interactiable == InventoryProtection.Any) && (targetInv.interactiable == InventoryProtection.InventoryToInventory || targetInv.interactiable == InventoryProtection.Any))
+            //if (nativeInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockThruInventory || targetInv.interactiable == InventoryProtection.LockThruInventory) return amount;
+            if ((nativeInv.interactiable == InventoryProtection.InventoryToInventory || nativeInv.interactiable == AllInventoryFlags) && (targetInv.interactiable == InventoryProtection.InventoryToInventory || targetInv.interactiable == AllInventoryFlags))
             {
                 InventoryHandler.SwapItemsTrhuInvEventArgs siea;
                 if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
@@ -999,8 +1004,8 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("targetInv", "Null inventory provided");
             }
 
-            if (nativeInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockThruInventory || targetInv.interactiable == InventoryProtection.LockThruInventory) return false;
-            if ((nativeInv.interactiable == InventoryProtection.InventoryToInventory || nativeInv.interactiable == InventoryProtection.Any) && (targetInv.interactiable == InventoryProtection.InventoryToInventory || targetInv.interactiable == InventoryProtection.Any))
+            //if (nativeInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockThruInventory || targetInv.interactiable == InventoryProtection.LockThruInventory) return false;
+            if ((nativeInv.interactiable == InventoryProtection.InventoryToInventory || nativeInv.interactiable == AllInventoryFlags) && (targetInv.interactiable == InventoryProtection.InventoryToInventory || targetInv.interactiable == AllInventoryFlags))
             {
                 {
                     if (RemoveItem(nativeInv, item, amount))
@@ -1039,8 +1044,8 @@ namespace UniversalInventorySystem
                 return;
             }
 
-            if (nativeInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockSlots) return;
-            if (targetInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.LockSlots) return;
+            //if (nativeInv.interactiable == InventoryProtection.Locked || nativeInv.interactiable == InventoryProtection.LockSlots) return;
+            //if (targetInv.interactiable == InventoryProtection.Locked || targetInv.interactiable == InventoryProtection.LockSlots) return;
 
             if (targetInv.slots[targetSlot].isProductSlot) return;
 
@@ -1060,7 +1065,7 @@ namespace UniversalInventorySystem
 
             if (!whitelist) return;
 
-            if (nativeInv.interactiable == InventoryProtection.SlotToSlot || nativeInv.interactiable == InventoryProtection.Any)
+            if (nativeInv.interactiable == InventoryProtection.SlotToSlot || nativeInv.interactiable == AllInventoryFlags)
             {
                 Slot tmpSlot = targetInv.slots[targetSlot];
 
@@ -1609,7 +1614,7 @@ namespace UniversalInventorySystem
                 return null;
             }
 
-            if (acceptableInvProtections == null) acceptableInvProtections = allInventoryProtections;
+            //if (acceptableInvProtections == null) acceptableInvProtections = allInventoryProtections;
 
             if (!acceptableInvProtections.Contains(inv.interactiable)) return null;
 
@@ -1843,9 +1848,10 @@ namespace UniversalInventorySystem
             Remove = 1,
             Use = 2,
             Swap = 3,
-            Initialize = 4,
-            Craft = 5,
-            Utility = 6
+            LocalSwap = 4,
+            Initialize = 5,
+            Craft = 6,
+            Utility = 7
         }
 
         private static bool AcceptsSlotProtection(Slot slot, MethodType methodType)
@@ -1859,10 +1865,32 @@ namespace UniversalInventorySystem
                     return slot.interative.HasFlag(RemoveFlags);
                 case MethodType.Swap:
                     return slot.interative.HasFlag(SwapFlags);
+                case MethodType.LocalSwap:
+                    goto case MethodType.Swap;
                 case MethodType.Use:
                     return slot.interative.HasFlag(UseFlags);
                 default:
                     return slot.interative.HasFlag(AllSlotFlags);
+            }
+        }
+
+        private static bool AcceptsInventoryProtection(Inventory inv, MethodType methodType)
+        {
+            if (inv.interactiable.Equals(InventoryProtection.Locked)) return false;
+            switch (methodType)
+            {
+                case MethodType.Add:
+                    return inv.interactiable.HasFlag(AddInvFlags);
+                case MethodType.Remove:
+                    return inv.interactiable.HasFlag(RemoveInvFlags);
+                case MethodType.Swap:
+                    return inv.interactiable.HasFlag(SwapInvFlags);
+                case MethodType.LocalSwap:
+                    return inv.interactiable.HasFlag(LocalSwapInvFlags);
+                case MethodType.Use:
+                    return inv.interactiable.HasFlag(UseInvFlags);
+                default:
+                    return inv.interactiable.HasFlag(AllInventoryFlags);
             }
         }
     }
@@ -1913,7 +1941,7 @@ namespace UniversalInventorySystem
             slotAmounts = _slotAmounts;
         }
 
-        public Inventory(int _slotAmounts, bool _areItemsUsable, InventoryProtection _interactiable = InventoryProtection.Any, bool _areItemsDroppable = true)
+        public Inventory(int _slotAmounts, bool _areItemsUsable, InventoryProtection _interactiable = InventoryController.AllInventoryFlags, bool _areItemsDroppable = true)
         {
             slots = new List<Slot>();
             slotAmounts = _slotAmounts;
@@ -1922,7 +1950,7 @@ namespace UniversalInventorySystem
             areItemsDroppable = _areItemsDroppable;
         }
 
-        public Inventory(int _slotAmounts, bool _areItemsUsable, InventoryProtection _interactiable = InventoryProtection.Any)
+        public Inventory(int _slotAmounts, bool _areItemsUsable, InventoryProtection _interactiable = InventoryController.AllInventoryFlags)
         {
             slots = new List<Slot>();
             slotAmounts = _slotAmounts;
@@ -2017,7 +2045,7 @@ namespace UniversalInventorySystem
 
         public static Slot SetItemProperties(ref Slot slot, Slot _slot)
             => slot = new Slot(_slot.item, _slot.amount, _slot.hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability);
-
+        /// No Code Here. Line 2020 is cursed
         public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, bool _hasItem, int _durability)
             => slot = new Slot(_item, _amount, _hasItem, slot.isProductSlot, slot.interative, slot.whitelist, _durability);
 
@@ -2139,7 +2167,6 @@ namespace UniversalInventorySystem
 
         public Slot(Item _item, int _amount, bool _hasItem, bool _isProductSlot, SlotProtection _interactive)
         {
-            /// No Code Here. Line 2020 is cursed
             item = _item;
             amount = _amount;
             hasItem = _hasItem;
@@ -2249,15 +2276,15 @@ namespace UniversalInventorySystem
         public static bool operator false(CraftItemData c) => c.items == null || c.amounts == null;
     } 
 
-    [Serializable]
+    [Serializable, Flags]
     public enum InventoryProtection
     {
-        Any = 0,
+        Locked = 0,
         InventoryToInventory = 1,
         SlotToSlot = 2,
-        LockSlots = 4,
-        LockThruInventory = 8,
-        Locked = 16
+        Add = 4,
+        Remove = 8,
+        Use = 16
     }
 
     [Serializable, Flags]
