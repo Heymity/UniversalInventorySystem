@@ -29,3 +29,54 @@ It also is open source and free to use, since it is under the [Apache-2.0 Licese
 </ul>
 
 This license requires you to have a copy of the license in your software and to state the changes that you made, if you made any. I strongly suggest you to fork the repository, maintaining it public, and state the changes in the README file.
+
+
+## Getting Started
+
+You can see in more detail what is here by accesing our [documentation](https://heymity.github.io/UniversalInventorySystemDocs/)
+
+To get started open in the InventorySystem/Example the ExampleScene. There you will find a four UI pf inventories, you can interact with them using the keys A, D, B, V to add items, I, E, O and C to toggle the inventories.
+
+![](GetStarted.gif)
+
+Now play with the values in the inspector and see how it goes.
+
+### Coding
+
+To code with this system, you will need to import it in your code with this line:
+
+```c#
+using UniversalInventorySystem;
+```
+
+Now you have access to all the functions from the UIS. To get started you can create an Inventory variable and initialize it. Make it public so you can see it in the inspector and understand what the InitializeInventory method does
+
+```c#
+using UniversalInventorySystem;
+using UnityEngine;
+
+public class MyInventory : MonoBehaviour {
+    public Inventory myInv;
+
+    public void Start() {
+        myInv.slotAmounts = 10;
+        myInv.InitializeInventory();
+    }
+}
+```
+
+If you use an InventoryUI you will not need to initialize it or set the amout of slots, the UI does all that for you. Now if you want to add an item, just use this code:
+
+```c#
+public Item item;
+
+public void Update() {
+    if (Input.GetKeyDown(KeyCode.W)) myInv.AddItem(item, 1);
+}
+```
+
+You can create your own item by creating a new Item Asset in your project, or you can use one of the example ones.
+
+Congrats! You have just made your first UIS Inventory.
+
+
