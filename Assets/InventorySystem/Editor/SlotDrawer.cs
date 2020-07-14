@@ -309,9 +309,16 @@ public class SlotDrawer : PropertyDrawer
         var amountRect = new Rect(position.x + 135 + (position.width / 2) - 130, position.y, 50, position.height);
         var interactsRect = new Rect(position.x + 245 + (position.width / 2) - 130, position.y, (position.width / 2) - 130, position.height);
 
-        EditorGUI.PropertyField(hasItemRect, property.FindPropertyRelative("hasItem"), GUIContent.none);
+
+        var hasItemProp = property.FindPropertyRelative("hasItem");
+        var itemProp = property.FindPropertyRelative("item");
+        EditorGUI.BeginDisabledGroup(true);
+        EditorGUI.PropertyField(hasItemRect, hasItemProp, GUIContent.none);
+        EditorGUI.EndDisabledGroup();
+        hasItemProp.boolValue = (itemProp.objectReferenceValue as Item) != null;
+
         EditorGUI.LabelField(labelHIRect, new GUIContent("Has item"));
-        EditorGUI.ObjectField(nameRect, property.FindPropertyRelative("item"), GUIContent.none);
+        EditorGUI.ObjectField(nameRect, itemProp, GUIContent.none);
         EditorGUI.LabelField(labelAmRect, new GUIContent("In Amount"));
         EditorGUI.PropertyField(amountRect, property.FindPropertyRelative("amount"), GUIContent.none);//interative
         EditorGUI.LabelField(labelInteracts, new GUIContent("Interacts"));

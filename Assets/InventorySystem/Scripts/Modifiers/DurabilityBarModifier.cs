@@ -79,7 +79,7 @@ public class DurabilityBarModifier : BaseUIModifier
         GoBack:
         for(int i = 0; i < gos.Count; i++)
         {
-            if (!target.GetInventory()[gos[i].index].hasItem)
+            if (!target.GetInventory()[gos[i].index].HasItem)
             {
                 Destroy(gos[i].go, 0.00000000001f);
                 gos.RemoveAt(i);

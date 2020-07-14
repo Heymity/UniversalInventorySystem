@@ -47,7 +47,7 @@ namespace UniversalInventorySystem
         public bool stackOnSpecifDurability;
         public StackOptions stackOptions;
         public List<uint> stackDurabilities;*/
-public List<DurabilityImage> durabilityImages
+        public List<DurabilityImage> durabilityImages
         {
             get
             {

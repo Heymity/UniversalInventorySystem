@@ -57,7 +57,7 @@ public class ExampleScript : MonoBehaviour
             inventory.AddItem(InventoryHandler.current.GetItem(0, 1), 2);
 
         //Checks an item in a inventory
-        //Debug.Log(inventory.CheckItemInInventory(InventoryHandler.current.GetItem(0, 0), 4).hasItem);
+        //Debug.Log(inventory.CheckItemInInventory(InventoryHandler.current.GetItem(0, 0), 4).HasItem);
     }
 
     //Callback function for when an item is removed from any inventory

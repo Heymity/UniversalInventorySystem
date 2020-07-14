@@ -402,7 +402,7 @@ namespace UniversalInventorySystem
                 for (int i = 0; i < productSlots.Length; i++)
                 {
                     // If there is a item in the product slot it renders it and go to the next one
-                    if (inv.slots[(gridSize.x * gridSize.y) + i].hasItem)
+                    if (inv.slots[(gridSize.x * gridSize.y) + i].HasItem)
                     {
                         // Iterating the childs
                         for (int j = 0; j < slots[(gridSize.x * gridSize.y) + i].transform.childCount; j++)
@@ -515,7 +515,7 @@ namespace UniversalInventorySystem
                     }
                     else
                     {
-                        if (!inv.slots[(gridSize.x * gridSize.y) + i].hasItem)
+                        if (!inv.slots[(gridSize.x * gridSize.y) + i].HasItem)
                         {
                             for (int j = 0; j < slots[i].transform.childCount; j++)
                             {
