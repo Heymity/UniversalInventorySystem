@@ -91,6 +91,7 @@ namespace UniversalInventorySystem
 
         public void Start()
         {
+            if (inv == null) return;
             if (isCraftInventory)
             {
                 inv.slotAmounts += productSlots.Length;
@@ -226,8 +227,9 @@ namespace UniversalInventorySystem
         bool hasGenerated = false;
         public void Update()
         {
+            if (inv == null) return;
             //Initialize if not yet
-            if (!inv.hasInitializated)
+            if (!inv.HasInitialized)
                 inv.Initialize();
             
             //Create UI

@@ -25,8 +25,7 @@ using UnityEngine;
 
 namespace UniversalInventorySystem
 {
-    [
-        AddComponentMenu("UniversalInventorySystem/Item"), 
+    [ 
         CreateAssetMenu(fileName = "Item", menuName = "UniversalInventorySystem/Item", order = 1), 
         Serializable
     ]

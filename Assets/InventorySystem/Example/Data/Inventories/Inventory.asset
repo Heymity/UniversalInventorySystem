@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b278c471a3efbda41a30ef8f936d20a0, type: 3}
+  m_Name: Inventory
+  m_EditorClassIdentifier: 
+  slots:
+  - amount: 8
+    item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+    hasItem: 1
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 8
+    item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+    hasItem: 1
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 8
+    item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+    hasItem: 1
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 6
+    item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+    hasItem: 1
+    _durability: 4
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 8
+    item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+    hasItem: 1
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  slotAmounts: 10
+  id: 0
+  areItemsUsable: 1
+  areItemsDroppable: 1
+  interactiable: -1
