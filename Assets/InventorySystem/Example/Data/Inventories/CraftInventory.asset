@@ -78,4 +78,72 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   _slotAmounts: 9
   _id: 2
+  _key: CraftInventory
   _interactiable: -1
+  slots:
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  id: 2
+  key: CraftInventory
+  interactiable: -1

@@ -27,10 +27,10 @@ MonoBehaviour:
     isProductSlot: 0
     interative: -1
     whitelist: {fileID: 0}
-  - amount: 0
+  - amount: 1
     item: {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
     hasItem: 1
-    _durability: 0
+    _durability: 8
     isProductSlot: 0
     interative: -1
     whitelist: {fileID: 0}
@@ -85,6 +85,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   _slotAmounts: 10
   _id: 0
+  _key: asd
   _interactiable: -1
   slots:
   - amount: 1
@@ -101,10 +102,10 @@ MonoBehaviour:
     isProductSlot: 0
     interative: -1
     whitelist: {fileID: 0}
-  - amount: 0
+  - amount: 1
     item: {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
     hasItem: 1
-    _durability: 0
+    _durability: 8
     isProductSlot: 0
     interative: -1
     whitelist: {fileID: 0}
@@ -157,6 +158,6 @@ MonoBehaviour:
     isProductSlot: 0
     interative: -1
     whitelist: {fileID: 0}
-  slotAmounts: 10
   id: 0
+  key: asd
   interactiable: -1

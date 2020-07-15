@@ -94,7 +94,7 @@ namespace UniversalInventorySystem
             if (inv == null) return;
             if (isCraftInventory)
             {
-                inv.slotAmounts += productSlots.Length;
+                //inv.slotAmount += productSlots.Length;
                 for(int i = 0; i < productSlots.Length; i++)
                     inv.slots.Add(Slot.nullSlot);
 
@@ -235,7 +235,7 @@ namespace UniversalInventorySystem
             //Create UI
             if (generateUIFromSlotPrefab && !hasGenerated)
             {
-                GenerateUI(inv.slotAmounts);
+                GenerateUI(inv.slotAmount);
                 hasGenerated = true;
             }
 
@@ -441,7 +441,7 @@ namespace UniversalInventorySystem
 
                         if(products != null && products != CraftItemData.nullData)
                             if (inv[(gridSize.x * gridSize.y) + i].item == (products?.items[productIndex] ?? null) && 
-                                inv[(gridSize.x * gridSize.y) + i].amount + (products?.amounts[productIndex] ?? int.MaxValue) <= inv[(gridSize.x * gridSize.y) + i].item.maxAmount
+                                inv[(gridSize.x * gridSize.y) + i].amount + (products?.amounts[productIndex] ?? int.MaxValue) <= inv[(gridSize.x * gridSize.y) + i].item?.maxAmount
                                 ) 
                                 productIndex++;
 
@@ -580,6 +580,11 @@ namespace UniversalInventorySystem
                 }
             }
             return item.durabilityImages[index].sprite;
+        }
+
+        public void OnDisable()
+        {
+            InventoryController.inventoriesUI.Remove(this);
         }
     }
 }

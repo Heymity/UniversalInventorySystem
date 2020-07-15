@@ -19,7 +19,6 @@
 using UnityEngine;
 using UnityEditor;
 using UniversalInventorySystem;
-using System.Runtime.InteropServices;
 
 [CustomPropertyDrawer(typeof(Inventory))]
 public class InventoryDrawer : PropertyDrawer
@@ -43,7 +42,7 @@ public class InventoryDrawer : PropertyDrawer
         {
             serializedObject.Update();
             var id = serializedObject.FindProperty("_id");
-            var slotAmounts = serializedObject.FindProperty("_slotAmounts");
+            var key = serializedObject.FindProperty("_key");
             var slots = serializedObject.FindProperty("inventorySlots");
             var inte = serializedObject.FindProperty("_interactiable");
 
@@ -55,16 +54,16 @@ public class InventoryDrawer : PropertyDrawer
 
             EditorGUI.BeginProperty(position, label, property);
 
-            EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), new GUIContent("Inventory (id: " + id.intValue.ToString() + ")"));
+            EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), new GUIContent($"{key.stringValue} (id: {id.intValue})"));
             var tmpRect = position;
             position.x += 110;
             position.width = 140;
             if (GUI.Button(position, useObjValues ? "Edit Values" : "Use Object Value")) useObjValues = !useObjValues;
             position = tmpRect;
-            position.y += 18;
 
             if (!useObjValues)
             {
+                position.y += 18;
                 baseAmount = 3f;
 
                 EditorGUI.PropertyField(position, inte);
@@ -74,15 +73,14 @@ public class InventoryDrawer : PropertyDrawer
                 var foldRect = new Rect(position.x, position.y, 50, position.height);
                 unfold = EditorGUI.Foldout(foldRect, unfold, new GUIContent("Slots"), true);
 
-                if (slotAmounts.intValue != slots.arraySize) slotAmounts.intValue = slots.arraySize;
                 var slotAmountsRect = new Rect(position.x + 50, position.y, position.width - 150, position.height);
-                slotAmounts.intValue = EditorGUI.IntField(slotAmountsRect, new GUIContent("Amount of slots"), slotAmounts.intValue);
-                if (slotAmounts.intValue < 0) slotAmounts.intValue = 0;
+                var tmpSize = EditorGUI.IntField(slotAmountsRect, new GUIContent("Amount of slots"), slots.arraySize);
+                if (tmpSize < 0) tmpSize = 0;
 
                 position.y += position.height;
 
                 var tmp = slots.arraySize;
-                slots.arraySize = slotAmounts.intValue >= 0 ? slotAmounts.intValue : slots.arraySize;
+                slots.arraySize = tmpSize >= 0 ? tmpSize : slots.arraySize;
                 if (unfold)
                 {
                     EditorGUI.indentLevel++;
@@ -127,9 +125,10 @@ public class InventoryDrawer : PropertyDrawer
                 }
             } else
             {
-                baseAmount = 2f;
-                position.width -= 20;
-                EditorGUI.ObjectField(position, property);
+                baseAmount = 1f;
+                position.width -= 260;
+                position.x += 260;
+                EditorGUI.ObjectField(position, property, new GUIContent(""));
             }
             serializedObject.ApplyModifiedProperties();
             EditorGUI.EndProperty();

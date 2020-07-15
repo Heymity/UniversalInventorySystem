@@ -71,4 +71,65 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   _slotAmounts: 8
   _id: 1
+  _key: Inventory 2
   _interactiable: -1
+  slots:
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 0
+    interative: -1
+    whitelist: {fileID: 0}
+  id: 1
+  key: Inventory 2
+  interactiable: -1

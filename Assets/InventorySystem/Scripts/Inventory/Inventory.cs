@@ -33,12 +33,14 @@ namespace UniversalInventorySystem
         [SerializeField] private List<Slot> inventorySlots = new List<Slot>();
         [SerializeField] private int _slotAmounts = 0;
         [SerializeField] private int _id = 0;
+        [SerializeField] private string _key;
 
         [SerializeField] private InventoryProtection _interactiable = InventoryController.AllInventoryFlags;
 #pragma warning restore
         public List<Slot> slots;
-        public int slotAmounts;
+        public int slotAmount => slots.Count;
         public int id;
+        public string key;
 
         public InventoryProtection interactiable;
 
@@ -55,6 +57,7 @@ namespace UniversalInventorySystem
 
         public void OnEnable()
         {
+            //if (!Application.isPlaying)
             SetValues();
             hasInitialized = false;
             Initialize();
@@ -69,13 +72,15 @@ namespace UniversalInventorySystem
         void SetValues()
         {
             slots = new List<Slot>(inventorySlots);
-            slotAmounts = _slotAmounts;
+            //slotAmount = _slotAmounts;
             id = _id;
             interactiable = _interactiable;
+            if (String.IsNullOrEmpty(_key)) { key = name; _key = name; }
+            else key = _key;
         }
 
         /// <summary>
-        /// This function must be called when a inventory is being created. It fills the inventory if null Slots if the list of slots is null or have less elments than inv.slotAmounts, give an id to the inventory and add it to the list of inventories in the InventoryController. This function dont need to be called if you are using an loading system;
+        /// This function must be called when a inventory is being created. It fills the inventory if null Slots if the list of slots is null or have less elments than inv.slotAmount, give an id to the inventory and add it to the list of inventories in the InventoryController. This function dont need to be called if you are using an loading system;
         /// </summary>
         /// <returns>The initiaized inventory</returns>
         public Inventory Initialize(BroadcastEventType e = BroadcastEventType.InitializeInventory)
@@ -89,9 +94,9 @@ namespace UniversalInventorySystem
             if (hasInitialized) return this;
 
             if (slots == null) slots = new List<Slot>();
-            if (slots.Count != slotAmounts)
+            if (slots.Count != slotAmount)
             {
-                for (int i = 0; i < slotAmounts; i++)
+                for (int i = 0; i < slotAmount; i++)
                 {
                     if (i < slots.Count) continue;
                     else

@@ -78,8 +78,11 @@ public class ItemDrawer : PropertyDrawer
 
             if (unfold)
             {
+                var tmp = position.width;
+                position.width = 140;
+                if (GUI.Button(position, useObjValues ? "Edit Values" : "Use Object Value")) useObjValues = !useObjValues;
+                position.width = tmp;
 
-                useObjValues = EditorGUI.Toggle(position, new GUIContent("Use Object Field"), useObjValues);
 
                 position.y += position.height;
 

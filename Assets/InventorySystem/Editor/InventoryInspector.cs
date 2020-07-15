@@ -27,12 +27,12 @@ namespace UniversalInventorySystem
     {
         SerializedProperty slotsProp;
         SerializedProperty runtimeSlotsProp;
-        SerializedProperty slotAmountProp;
-        SerializedProperty runtimeSlotAmountProp;
         SerializedProperty idProp;
         SerializedProperty runtimeIdProp;
         SerializedProperty interactiableProp;
         SerializedProperty runtimeInteractiableProp;
+        SerializedProperty keyProp;
+        SerializedProperty runtimeKeyProp;
 
         bool edit = false;
         AnimBool showSlots;
@@ -41,9 +41,10 @@ namespace UniversalInventorySystem
         private void OnEnable()
         {
             slotsProp = serializedObject.FindProperty("inventorySlots");
-            slotAmountProp = serializedObject.FindProperty("_slotAmounts");
             idProp = serializedObject.FindProperty("_id");
             interactiableProp = serializedObject.FindProperty("_interactiable");
+            keyProp = serializedObject.FindProperty("_key");
+
             showSlots = new AnimBool(true);
             showRuntimeSlots = new AnimBool(true);
             showSlots.valueChanged.AddListener(Repaint);
@@ -63,11 +64,12 @@ namespace UniversalInventorySystem
                 EditorGUILayout.LabelField("Runtime Values: ");
 
                 runtimeSlotsProp = serializedObject.FindProperty("slots");
-                runtimeSlotAmountProp = serializedObject.FindProperty("slotAmounts");
                 runtimeIdProp = serializedObject.FindProperty("id");
                 runtimeInteractiableProp = serializedObject.FindProperty("interactiable");
+                runtimeKeyProp = serializedObject.FindProperty("key");
 
                 runtimeIdProp.intValue = EditorGUILayout.IntField("Id", runtimeIdProp.intValue);
+                runtimeKeyProp.stringValue = EditorGUILayout.TextField("Key", runtimeKeyProp.stringValue);
 
                 EditorGUILayout.PropertyField(runtimeInteractiableProp);
 
@@ -80,11 +82,8 @@ namespace UniversalInventorySystem
                 {
                     EditorGUI.indentLevel++;
 
-                    var tmp = runtimeSlotsProp.arraySize;
-                    if (runtimeSlotAmountProp.intValue != runtimeSlotsProp.arraySize) runtimeSlotAmountProp.intValue = runtimeSlotsProp.arraySize;
-                    slotAmountProp.intValue = EditorGUILayout.IntField("Size", runtimeSlotAmountProp.intValue);
-                    if (runtimeSlotAmountProp.intValue < 0) slotAmountProp.intValue = 0;
-                    runtimeSlotsProp.arraySize = runtimeSlotAmountProp.intValue;
+                    var tmp = EditorGUILayout.IntField("Size", runtimeSlotsProp.arraySize);
+                    if (tmp >= 0) runtimeSlotsProp.arraySize = tmp;
 
                     for (int i = 0; i < runtimeSlotsProp.arraySize; i++)
                     {
@@ -109,6 +108,7 @@ namespace UniversalInventorySystem
             EditorGUI.BeginDisabledGroup(!edit && Application.isPlaying);
 
             idProp.intValue = EditorGUILayout.IntField("Id", idProp.intValue);
+            keyProp.stringValue = EditorGUILayout.TextField("Key", keyProp.stringValue);
 
             EditorGUILayout.PropertyField(interactiableProp);
 
@@ -121,11 +121,8 @@ namespace UniversalInventorySystem
             {
                 EditorGUI.indentLevel++;
 
-                var tmp = slotsProp.arraySize;
-                if (slotAmountProp.intValue != slotsProp.arraySize) slotAmountProp.intValue = slotsProp.arraySize;
-                slotAmountProp.intValue = EditorGUILayout.IntField("Size", slotAmountProp.intValue);
-                if (slotAmountProp.intValue < 0) slotAmountProp.intValue = 0;
-                slotsProp.arraySize = slotAmountProp.intValue;
+                var tmp = EditorGUILayout.IntField("Size", slotsProp.arraySize);
+                if (tmp >= 0) slotsProp.arraySize = tmp;
 
                 for (int i = 0;i < slotsProp.arraySize; i++)
                 {
