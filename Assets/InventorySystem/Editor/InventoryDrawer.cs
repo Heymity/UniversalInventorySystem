@@ -110,6 +110,19 @@ public class InventoryDrawer : PropertyDrawer
                 }
                 else
                 {
+                    if (slots != null)
+                    {
+                        if (slots.arraySize > 0)
+                        {
+                            for (int i = tmp - 1; i < slots.arraySize; i++)
+                            {
+                                if (i > tmp - 1)
+                                {
+                                    slots.GetArrayElementAtIndex(i).FindPropertyRelative("interative").intValue = -1;
+                                }
+                            }
+                        }
+                    }
                     amountOfFilds = baseAmount;
                 }
             } else

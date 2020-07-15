@@ -54,13 +54,17 @@ namespace UniversalInventorySystem
 
         public void OnEnable()
         {
+            SetValues();
             Initialize();
         }
 
         public void OnValidate()
         {
-            Debug.Log(slots.Count);
-            Debug.Log(_slots.Length);
+            SetValues();
+        }
+
+        void SetValues()
+        {
             slots = _slots.ToList();
             slotAmounts = _slotAmounts;
             id = _id;

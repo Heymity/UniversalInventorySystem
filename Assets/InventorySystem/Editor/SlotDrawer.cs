@@ -38,7 +38,7 @@ public class SlotDrawer : PropertyDrawer
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
         EditorGUI.BeginProperty(position, label, property);
-
+        position.height = 18f;
         var t = label.text.Split(' ');
         label.text = "Slot " + t[t.Length - 1];
 
@@ -194,11 +194,21 @@ public class SlotDrawer : PropertyDrawer
                             }
                         }
 
-                        if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList) && newAsset.itemsList.Count > 0)
+                        if ((whitelistProp.objectReferenceValue as ItemGroup) == null)
                         {
                             newAsset.strId = newAsset.name;
                             newAsset.id = Random.Range(10000, int.MaxValue);
-                            whitelistProp.objectReferenceValue = newAsset;
+                            AssetDatabase.AddObjectToAsset(newAsset, whitelistProp.serializedObject.targetObject);
+                            whitelistProp.objectReferenceValue = newAsset as Object;
+                        }
+                        else
+                        {
+                            if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList) && newAsset.itemsList.Count > 0)
+                            {
+                                newAsset.strId = newAsset.name;
+                                newAsset.id = Random.Range(10000, int.MaxValue);
+                                whitelistProp.objectReferenceValue = newAsset;
+                            }
                         }
                     }
                 }
@@ -269,7 +279,7 @@ public class SlotDrawer : PropertyDrawer
 
                         if(unfold[property.propertyPath].addNullMatch && !newAsset.itemsList.Contains(null))
                             newAsset.itemsList.Add(null);
-
+                       
                         if (whitelistProp.objectReferenceValue != null && newAsset.itemsList.Count > 0)
                         {
                             if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList) && newAsset.itemsList.Count > 0)
@@ -281,7 +291,8 @@ public class SlotDrawer : PropertyDrawer
                         else if (newAsset.itemsList.Count > 0)
                         {
                             newAsset.id = Random.Range(10000, int.MaxValue);
-                            whitelistProp.objectReferenceValue = newAsset;
+                            AssetDatabase.AddObjectToAsset(newAsset, whitelistProp.serializedObject.targetObject);
+                            whitelistProp.objectReferenceValue = newAsset as Object;
                         }
                     }
                 }
