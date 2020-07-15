@@ -537,7 +537,7 @@ namespace UniversalInventorySystem
             if (!AcceptsInventoryProtection(inv, MethodType.Use)) return;
             if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Use) && !overrideSlotProtection) return;
 
-            if (inv.slots[slot].HasItem && inv.areItemsUsable)
+            if (inv.slots[slot].HasItem)
             {
                 if (inv.slots[slot].item.destroyOnUse)
                 {
@@ -615,7 +615,6 @@ namespace UniversalInventorySystem
             }
 
             if (!AcceptsInventoryProtection(inv, MethodType.Use)) return;
-            if (!inv.areItemsUsable) return;
 
             for(int i = 0; i < inv.slots.Count; i++)
             {

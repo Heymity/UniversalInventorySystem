@@ -42,12 +42,10 @@ public class InventoryDrawer : PropertyDrawer
         if (serializedObject != null)
         {
             serializedObject.Update();
-            var id = serializedObject.FindProperty("id");
-            var areItemsUsable = serializedObject.FindProperty("areItemsUsable");
-            var areItemsDroppable = serializedObject.FindProperty("areItemsDroppable");
-            var slotAmounts = serializedObject.FindProperty("slotAmounts");
-            var slots = serializedObject.FindProperty("slots");
-            var inte = serializedObject.FindProperty("interactiable");
+            var id = serializedObject.FindProperty("_id");
+            var slotAmounts = serializedObject.FindProperty("_slotAmounts");
+            var slots = serializedObject.FindProperty("_slots");
+            var inte = serializedObject.FindProperty("_interactiable");
 
             EditorGUIUtility.wideMode = true;
             EditorGUIUtility.labelWidth = 100;
@@ -68,13 +66,8 @@ public class InventoryDrawer : PropertyDrawer
             if (!useObjValues)
             {
                 baseAmount = 3f;
-                var usableRect = new Rect(position.x, position.y, 120, position.height);
-                areItemsUsable.boolValue = EditorGUI.Toggle(usableRect, "Can use items", areItemsUsable.boolValue);
-                var dropItemRect = new Rect(position.x + 150, position.y, 120, position.height);
-                areItemsDroppable.boolValue = EditorGUI.Toggle(dropItemRect, "Can drop items", areItemsDroppable.boolValue);
 
-                var inteRect = new Rect(position.x + 300, position.y, position.width - 300, position.height);
-                EditorGUI.PropertyField(inteRect, inte);
+                EditorGUI.PropertyField(position, inte);
 
                 position.y += position.height;
 

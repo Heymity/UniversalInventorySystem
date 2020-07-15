@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace UniversalInventorySystem
@@ -28,13 +29,17 @@ namespace UniversalInventorySystem
     ]
     public class Inventory : ScriptableObject
     {
-        public List<Slot> slots;
-        public int slotAmounts;
-        public int id;
-        public bool areItemsUsable;//Useless
-        public bool areItemsDroppable;//Useless
+        [SerializeField] private Slot[] _slots;
+        [SerializeField] private int _slotAmounts;
+        [SerializeField] private int _id;
 
-        public InventoryProtection interactiable;
+        [SerializeField] private InventoryProtection _interactiable;
+
+        public List<Slot> slots { get; set; }
+        public int slotAmounts { get; set; }
+        public int id { get; set; }
+
+        public InventoryProtection interactiable { get; set; }
 
         public bool HasInitialized => hasInitialized;
         private bool hasInitialized;
@@ -50,6 +55,16 @@ namespace UniversalInventorySystem
         public void OnEnable()
         {
             Initialize();
+        }
+
+        public void OnValidate()
+        {
+            Debug.Log(slots.Count);
+            Debug.Log(_slots.Length);
+            slots = _slots.ToList();
+            slotAmounts = _slotAmounts;
+            id = _id;
+            interactiable = _interactiable;
         }
 
         /// <summary>
@@ -83,6 +98,24 @@ namespace UniversalInventorySystem
             if (InventoryHandler.current != null)
                 InventoryHandler.current.Broadcast(e, iea: iea);
             return this;
+        }
+
+        [Serializable]
+        public class InventoryData
+        {
+            [SerializeField] public List<Slot> slots;
+            [SerializeField] public int slotAmounts;
+            [SerializeField] public int id;
+
+            [SerializeField] public InventoryProtection interactiable;
+
+            public InventoryData(Inventory inv)
+            {
+                slots = inv.slots;
+                slotAmounts = inv.slotAmounts;
+                id = inv.id;
+                interactiable = inv.interactiable;
+            }
         }
 
     }
