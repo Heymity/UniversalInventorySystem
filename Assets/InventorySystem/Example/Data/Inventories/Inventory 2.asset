@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b278c471a3efbda41a30ef8f936d20a0, type: 3}
   m_Name: Inventory 2
   m_EditorClassIdentifier: 
-  slots:
+  inventorySlots:
   - amount: 0
     item: {fileID: 0}
     hasItem: 0
@@ -69,8 +69,6 @@ MonoBehaviour:
     isProductSlot: 0
     interative: -1
     whitelist: {fileID: 0}
-  slotAmounts: 8
-  id: 1
-  areItemsUsable: 1
-  areItemsDroppable: 1
-  interactiable: -1
+  _slotAmounts: 8
+  _id: 1
+  _interactiable: -1

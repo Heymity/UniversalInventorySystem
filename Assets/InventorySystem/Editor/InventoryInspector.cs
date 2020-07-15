@@ -16,10 +16,9 @@
  *  This is an Editor Script, it is responsible for drawing the inpector or drawer of the class in the attribute before the class
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 
 namespace UniversalInventorySystem
 {
@@ -27,16 +26,28 @@ namespace UniversalInventorySystem
     public class InventoryInspector : Editor
     {
         SerializedProperty slotsProp;
+        SerializedProperty runtimeSlotsProp;
         SerializedProperty slotAmountProp;
+        SerializedProperty runtimeSlotAmountProp;
         SerializedProperty idProp;
+        SerializedProperty runtimeIdProp;
         SerializedProperty interactiableProp;
+        SerializedProperty runtimeInteractiableProp;
+
+        bool edit = false;
+        AnimBool showSlots;
+        AnimBool showRuntimeSlots;
 
         private void OnEnable()
         {
-            slotsProp = serializedObject.FindProperty("_slots");
+            slotsProp = serializedObject.FindProperty("inventorySlots");
             slotAmountProp = serializedObject.FindProperty("_slotAmounts");
             idProp = serializedObject.FindProperty("_id");
             interactiableProp = serializedObject.FindProperty("_interactiable");
+            showSlots = new AnimBool(true);
+            showRuntimeSlots = new AnimBool(true);
+            showSlots.valueChanged.AddListener(Repaint);
+            showRuntimeSlots.valueChanged.AddListener(Repaint);
         }
 
         public override void OnInspectorGUI()
@@ -46,6 +57,57 @@ namespace UniversalInventorySystem
             EditorGUIUtility.wideMode = true;
             EditorGUIUtility.labelWidth = 100;
 
+            if (Application.isPlaying)
+            {
+                EditorGUILayout.HelpBox("Here is where you change runtime values", MessageType.None);
+                EditorGUILayout.LabelField("Runtime Values: ");
+
+                runtimeSlotsProp = serializedObject.FindProperty("slots");
+                runtimeSlotAmountProp = serializedObject.FindProperty("slotAmounts");
+                runtimeIdProp = serializedObject.FindProperty("id");
+                runtimeInteractiableProp = serializedObject.FindProperty("interactiable");
+
+                runtimeIdProp.intValue = EditorGUILayout.IntField("Id", runtimeIdProp.intValue);
+
+                EditorGUILayout.PropertyField(runtimeInteractiableProp);
+
+                EditorGUILayout.BeginVertical();
+
+                runtimeSlotsProp.isExpanded = EditorGUILayout.Foldout(runtimeSlotsProp.isExpanded, "Slots");
+                showRuntimeSlots.target = runtimeSlotsProp.isExpanded;
+
+                if (EditorGUILayout.BeginFadeGroup(showRuntimeSlots.faded))
+                {
+                    EditorGUI.indentLevel++;
+
+                    var tmp = runtimeSlotsProp.arraySize;
+                    if (runtimeSlotAmountProp.intValue != runtimeSlotsProp.arraySize) runtimeSlotAmountProp.intValue = runtimeSlotsProp.arraySize;
+                    slotAmountProp.intValue = EditorGUILayout.IntField("Size", runtimeSlotAmountProp.intValue);
+                    if (runtimeSlotAmountProp.intValue < 0) slotAmountProp.intValue = 0;
+                    runtimeSlotsProp.arraySize = runtimeSlotAmountProp.intValue;
+
+                    for (int i = 0; i < runtimeSlotsProp.arraySize; i++)
+                    {
+                        EditorGUILayout.PropertyField(runtimeSlotsProp.GetArrayElementAtIndex(i));
+                        if (i > tmp - 1)
+                        {
+                            runtimeSlotsProp.GetArrayElementAtIndex(i).FindPropertyRelative("interative").intValue = -1;
+                        }
+                    }
+
+                    EditorGUI.indentLevel--;
+                }
+                EditorGUILayout.EndFadeGroup();
+
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.Space();
+
+                EditorGUILayout.HelpBox("The values below if changed will override the instance ones and WILL be saved after exiting play mode. If you want change only runtime values, change the ones Before this", MessageType.Info);
+                edit = EditorGUILayout.Toggle("Edit Editor Values", edit);
+            }
+
+            EditorGUI.BeginDisabledGroup(!edit && Application.isPlaying);
+
             idProp.intValue = EditorGUILayout.IntField("Id", idProp.intValue);
 
             EditorGUILayout.PropertyField(interactiableProp);
@@ -53,8 +115,9 @@ namespace UniversalInventorySystem
             EditorGUILayout.BeginVertical();
 
             slotsProp.isExpanded = EditorGUILayout.Foldout(slotsProp.isExpanded, "Slots");
-
-            if (slotsProp.isExpanded)
+            showSlots.target = slotsProp.isExpanded;
+            
+            if (EditorGUILayout.BeginFadeGroup(showSlots.faded))
             {
                 EditorGUI.indentLevel++;
 
@@ -75,8 +138,11 @@ namespace UniversalInventorySystem
 
                 EditorGUI.indentLevel--;
             }
+            EditorGUILayout.EndFadeGroup();
 
             EditorGUILayout.EndVertical();
+
+            EditorGUI.EndDisabledGroup();
 
             serializedObject.ApplyModifiedProperties();
         }

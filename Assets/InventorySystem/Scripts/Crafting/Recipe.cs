@@ -22,7 +22,7 @@
 namespace UniversalInventorySystem
 {
 
-    [AddComponentMenu("UniversalInventorySystem/Recipe"), CreateAssetMenu(fileName = "Recipe", menuName = "UniversalInventorySystem/Recipe", order = 1), System.Serializable]
+    [AddComponentMenu("UniversalInventorySystem/Recipe"), CreateAssetMenu(fileName = "Recipe", menuName = "UniversalInventorySystem/Recipe", order = 132), System.Serializable]
     public class Recipe : ScriptableObject
     {
         public int numberOfFactors;

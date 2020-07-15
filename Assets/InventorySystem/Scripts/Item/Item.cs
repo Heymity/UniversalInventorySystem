@@ -26,7 +26,7 @@ using UnityEngine;
 namespace UniversalInventorySystem
 {
     [ 
-        CreateAssetMenu(fileName = "Item", menuName = "UniversalInventorySystem/Item", order = 1), 
+        CreateAssetMenu(fileName = "Item", menuName = "UniversalInventorySystem/Item", order = 115), 
         Serializable
     ]
     public class Item : ScriptableObject

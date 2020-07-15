@@ -24,22 +24,23 @@ using UnityEngine;
 namespace UniversalInventorySystem
 {
     [
-        CreateAssetMenu(fileName = "Inventory", menuName = "UniversalInventorySystem/Inventory", order = 1),
+        CreateAssetMenu(fileName = "Inventory", menuName = "UniversalInventorySystem/Inventory", order = 90),
         Serializable
     ]
     public class Inventory : ScriptableObject
     {
-        [SerializeField] private Slot[] _slots;
-        [SerializeField] private int _slotAmounts;
-        [SerializeField] private int _id;
+#pragma warning disable
+        [SerializeField] private List<Slot> inventorySlots = new List<Slot>();
+        [SerializeField] private int _slotAmounts = 0;
+        [SerializeField] private int _id = 0;
 
-        [SerializeField] private InventoryProtection _interactiable;
+        [SerializeField] private InventoryProtection _interactiable = InventoryController.AllInventoryFlags;
+#pragma warning restore
+        public List<Slot> slots;
+        public int slotAmounts;
+        public int id;
 
-        public List<Slot> slots { get; set; }
-        public int slotAmounts { get; set; }
-        public int id { get; set; }
-
-        public InventoryProtection interactiable { get; set; }
+        public InventoryProtection interactiable;
 
         public bool HasInitialized => hasInitialized;
         private bool hasInitialized;
@@ -55,17 +56,19 @@ namespace UniversalInventorySystem
         public void OnEnable()
         {
             SetValues();
+            hasInitialized = false;
             Initialize();
         }
 
         public void OnValidate()
         {
-            SetValues();
+            if(!Application.isPlaying)
+                SetValues();
         }
 
         void SetValues()
         {
-            slots = _slots.ToList();
+            slots = new List<Slot>(inventorySlots);
             slotAmounts = _slotAmounts;
             id = _id;
             interactiable = _interactiable;
@@ -82,7 +85,7 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null inventory provided for Initialize");
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
-
+            //Debug.Log("Init");
             if (hasInitialized) return this;
 
             if (slots == null) slots = new List<Slot>();
@@ -97,30 +100,13 @@ namespace UniversalInventorySystem
             }
 
             hasInitialized = true;
-            InventoryController.inventories.Add(this);
+            if (!InventoryController.inventories.Contains(this)) 
+                InventoryController.inventories.Add(this);
+            //Debug.Log($"HI {InventoryController.inventories.Count}");
             InventoryHandler.InitializeInventoryEventArgs iea = new InventoryHandler.InitializeInventoryEventArgs(this);
             if (InventoryHandler.current != null)
                 InventoryHandler.current.Broadcast(e, iea: iea);
             return this;
         }
-
-        [Serializable]
-        public class InventoryData
-        {
-            [SerializeField] public List<Slot> slots;
-            [SerializeField] public int slotAmounts;
-            [SerializeField] public int id;
-
-            [SerializeField] public InventoryProtection interactiable;
-
-            public InventoryData(Inventory inv)
-            {
-                slots = inv.slots;
-                slotAmounts = inv.slotAmounts;
-                id = inv.id;
-                interactiable = inv.interactiable;
-            }
-        }
-
     }
 }

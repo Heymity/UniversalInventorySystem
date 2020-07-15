@@ -44,7 +44,7 @@ public class InventoryDrawer : PropertyDrawer
             serializedObject.Update();
             var id = serializedObject.FindProperty("_id");
             var slotAmounts = serializedObject.FindProperty("_slotAmounts");
-            var slots = serializedObject.FindProperty("_slots");
+            var slots = serializedObject.FindProperty("inventorySlots");
             var inte = serializedObject.FindProperty("_interactiable");
 
             EditorGUIUtility.wideMode = true;

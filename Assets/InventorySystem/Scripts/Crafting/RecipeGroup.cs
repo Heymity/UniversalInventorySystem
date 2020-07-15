@@ -23,7 +23,7 @@ using UnityEngine;
 
 namespace UniversalInventorySystem
 {
-    [AddComponentMenu("UniversalInventorySystem/RecipeGroup"), CreateAssetMenu(fileName = "RecipeGroup", menuName = "UniversalInventorySystem/RecipeGroup", order = 10), System.Serializable]
+    [AddComponentMenu("UniversalInventorySystem/RecipeGroup"), CreateAssetMenu(fileName = "RecipeGroup", menuName = "UniversalInventorySystem/RecipeGroup", order = 133), System.Serializable]
     public class RecipeGroup : ScriptableObject
     {
         public List<Recipe> recipesList = new List<Recipe>();

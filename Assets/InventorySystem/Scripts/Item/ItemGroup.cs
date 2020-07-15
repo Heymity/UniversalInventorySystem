@@ -17,13 +17,12 @@
  *  This is basically a group of items, an item database.
  */ 
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace UniversalInventorySystem
 {
-    [AddComponentMenu("UniversalInventorySystem/ItemGroup"), CreateAssetMenu(fileName = "ItemGroup", menuName = "UniversalInventorySystem/ItemGroup", order = 1), System.Serializable]
+    [CreateAssetMenu(fileName = "ItemGroup", menuName = "UniversalInventorySystem/ItemGroup", order = 116), System.Serializable]
     public class ItemGroup : ScriptableObject
     {
         public List<Item> itemsList = new List<Item>();

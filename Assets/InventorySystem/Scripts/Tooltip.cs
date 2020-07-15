@@ -34,6 +34,8 @@ namespace UniversalInventorySystem
 
         private void Update()
         {
+            if (invUI == null) return;
+            if (invUI.GetInventory() == null) return;
             if (RectTransformUtility.RectangleContainsScreenPoint(transform as RectTransform, Camera.main.ScreenToWorldPoint(Input.mousePosition)))
             {
                 var item = invUI.GetInventory().slots[slotNum].item;

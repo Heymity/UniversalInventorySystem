@@ -38,6 +38,7 @@ public class DurabilityBarModifier : BaseUIModifier
 
     public void LateUpdate()
     {
+        if (target.GetInventory() == null) return;
         for(int i = 0; i < target.slots.Count; i++)
         {
             if (!target.GetInventory()[i]) continue;

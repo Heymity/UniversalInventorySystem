@@ -61,14 +61,14 @@ public class SlotDrawer : PropertyDrawer
             var durability = property.FindPropertyRelative("_durability");
             var hasItem = property.FindPropertyRelative("hasItem");
             var slotItem = property.FindPropertyRelative("item");
-            if (hasItem.boolValue && (slotItem.objectReferenceValue as Item) != null)
+            if (hasItem.boolValue && ((slotItem.objectReferenceValue as Item)?.hasDurability ?? false))
             {
                 unfold[property.propertyPath].fieldAmount = 3.5f;
                 EditorGUI.IntSlider(durRect, durability, 0, (int)(slotItem.objectReferenceValue as Item).maxDurability, "Durability");
                 ampos.y += ampos.height;
             }
 
-            bool amBool = unfold[property.propertyPath].multipleAssign;
+            /**bool amBool = unfold[property.propertyPath].multipleAssign;
 
             bool _amTmp = GUI.Button(ampos, amBool ? "Save variable" : "Assign multiple");
 
@@ -78,10 +78,10 @@ public class SlotDrawer : PropertyDrawer
             {
                 unfold[property.propertyPath].multipleAssign = amTmp;
                 unfold[property.propertyPath].executeOnce = false;
-            }
+            }**/
 
             var whitelistProp = property.FindPropertyRelative("whitelist");
-            if (amBool)
+            /**if (amBool)
             {
                 var foldPos = new Rect(position.x, position.y + 18f, position.width, position.height);
                 foldPos.y = ampos.y;
@@ -207,9 +207,13 @@ public class SlotDrawer : PropertyDrawer
                             {
                                 newAsset.strId = newAsset.name;
                                 newAsset.id = Random.Range(10000, int.MaxValue);
+                                AssetDatabase.RemoveObjectFromAsset(whitelistProp.objectReferenceValue);
+                                AssetDatabase.AddObjectToAsset(newAsset, whitelistProp.serializedObject.targetObject);
+                                
                                 whitelistProp.objectReferenceValue = newAsset;
                             }
                         }
+                        AssetDatabase.Refresh();
                     }
                 }
                 else
@@ -285,6 +289,8 @@ public class SlotDrawer : PropertyDrawer
                             if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList) && newAsset.itemsList.Count > 0)
                             {
                                 newAsset.id = Random.Range(10000, int.MaxValue);
+                                AssetDatabase.RemoveObjectFromAsset(whitelistProp.objectReferenceValue);
+                                AssetDatabase.AddObjectToAsset(newAsset, whitelistProp.serializedObject.targetObject);
                                 whitelistProp.objectReferenceValue = newAsset;
                             }
                         }
@@ -296,13 +302,14 @@ public class SlotDrawer : PropertyDrawer
                         }
                     }
                 }
-            } else
-            {
+            } */
+            //else
+            //{
                 unfold[property.propertyPath].objs = new List<Object>();
                 unfold[property.propertyPath].editorAssignSize = 1;
                 var objRect = new Rect(ampos.x + 120, ampos.y, position.width - 140, ampos.height);
                 EditorGUI.ObjectField(objRect, whitelistProp, new GUIContent("Whitelist"));
-            }        
+            //}        
         } else
         {
             unfold[property.propertyPath].fieldAmount = 1;       
