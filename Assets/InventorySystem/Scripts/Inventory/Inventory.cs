@@ -38,7 +38,7 @@ namespace UniversalInventorySystem
         [SerializeField] private InventoryProtection _interactiable = InventoryController.AllInventoryFlags;
 #pragma warning restore
         public List<Slot> slots;
-        public int slotAmount => slots.Count;
+        public int SlotAmount => slots.Count;
         public int id;
         public string key;
 
@@ -72,7 +72,7 @@ namespace UniversalInventorySystem
         void SetValues()
         {
             slots = new List<Slot>(inventorySlots);
-            //slotAmount = _slotAmounts;
+            //SlotAmount = _slotAmounts;
             id = _id;
             interactiable = _interactiable;
             if (String.IsNullOrEmpty(_key)) { key = name; _key = name; }
@@ -80,7 +80,7 @@ namespace UniversalInventorySystem
         }
 
         /// <summary>
-        /// This function must be called when a inventory is being created. It fills the inventory if null Slots if the list of slots is null or have less elments than inv.slotAmount, give an id to the inventory and add it to the list of inventories in the InventoryController. This function dont need to be called if you are using an loading system;
+        /// This function must be called when a inventory is being created. It fills the inventory if null Slots if the list of slots is null or have less elments than inv.SlotAmount, give an id to the inventory and add it to the list of inventories in the InventoryController. This function dont need to be called if you are using an loading system;
         /// </summary>
         /// <returns>The initiaized inventory</returns>
         public Inventory Initialize(BroadcastEventType e = BroadcastEventType.InitializeInventory)
@@ -94,9 +94,9 @@ namespace UniversalInventorySystem
             if (hasInitialized) return this;
 
             if (slots == null) slots = new List<Slot>();
-            if (slots.Count != slotAmount)
+            if (slots.Count != SlotAmount)
             {
-                for (int i = 0; i < slotAmount; i++)
+                for (int i = 0; i < SlotAmount; i++)
                 {
                     if (i < slots.Count) continue;
                     else

@@ -94,7 +94,7 @@ namespace UniversalInventorySystem
             if (inv == null) return;
             if (isCraftInventory)
             {
-                //inv.slotAmount += productSlots.Length;
+                //inv.SlotAmount += productSlots.Length;
                 for(int i = 0; i < productSlots.Length; i++)
                     inv.slots.Add(Slot.nullSlot);
 
@@ -235,7 +235,7 @@ namespace UniversalInventorySystem
             //Create UI
             if (generateUIFromSlotPrefab && !hasGenerated)
             {
-                GenerateUI(inv.slotAmount);
+                GenerateUI(inv.SlotAmount);
                 hasGenerated = true;
             }
 

@@ -76,6 +76,8 @@ namespace UniversalInventorySystem
             return null;
         }
 
+        public static Inventory GetInventoryWithKey(string key) => inventories.Where((Inventory inv) => inv.key == key).First();
+
         public static Inventory GetInventory(int index) => inventories[index];
 
         public static Slot GetSlotInInventory(int invIndex, int slotIndex) => inventories[invIndex][slotIndex];

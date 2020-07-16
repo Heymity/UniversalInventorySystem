@@ -85,7 +85,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   _slotAmounts: 10
   _id: 0
-  _key: asd
+  _key: Inventory
   _interactiable: -1
   slots:
   - amount: 1
@@ -159,5 +159,5 @@ MonoBehaviour:
     interative: -1
     whitelist: {fileID: 0}
   id: 0
-  key: asd
+  key: Inventory
   interactiable: -1
