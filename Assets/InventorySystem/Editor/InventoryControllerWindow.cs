@@ -1,4 +1,22 @@
-﻿using UnityEngine;
+﻿/*  Copyright 2020 Gabriel Pasquale Rodrigues Scavone
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * 
+ *  
+ *  This is an Editor Script, it is responsible for drawing the inpector or drawer of the class in the attribute before the class
+ */
+
+using UnityEngine;
 using UnityEditor;
 using UniversalInventorySystem;
 using System.Diagnostics;
@@ -8,7 +26,7 @@ public class InventoryControllerWindow : EditorWindow
     [MenuItem("InventorySystem/InventoryController")]
     public static void Init()
     {
-        InventoryControllerWindow window = (InventoryControllerWindow)GetWindow<InventoryControllerWindow>("Controller");
+        InventoryControllerWindow window = GetWindow<InventoryControllerWindow>("Controller");
         window.Show();
     }
 
@@ -19,33 +37,33 @@ public class InventoryControllerWindow : EditorWindow
 
     void OnGUI()
     {
+        EditorGUILayout.BeginVertical("Toolbar", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.BeginVertical("box", GUILayout.MaxWidth(150), GUILayout.ExpandHeight(true));
 
-        if (GUILayout.Button("Inventories"))
+        if (GUILayout.Button("Inventories", EditorStyles.miniButtonLeft))
         {
             inventory = true;
             inventoryUI = false;
             debug = false;
         }
 
-        if (GUILayout.Button("InventoriesUI"))
+        if (GUILayout.Button("InventoriesUI", EditorStyles.miniButtonMid))
         {
             inventory = false;
             inventoryUI = true;
             debug = false;
         }
 
-        if (GUILayout.Button("Debug"))
+        if (GUILayout.Button("Debug", EditorStyles.miniButtonRight))
         {
             inventory = false;
             inventoryUI = false;
             debug = true;
         }
 
+        EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
-
-        EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+        EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
         if (inventory)
@@ -123,7 +141,6 @@ public class InventoryControllerWindow : EditorWindow
 
         EditorGUILayout.EndScrollView();
         EditorGUILayout.EndVertical();
-        EditorGUILayout.EndHorizontal();
     }
 
     Stopwatch stop;

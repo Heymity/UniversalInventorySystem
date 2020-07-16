@@ -17,7 +17,6 @@
  */ 
  
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UniversalInventorySystem;
@@ -318,24 +317,25 @@ public class SlotDrawer : PropertyDrawer
         var indent = EditorGUI.indentLevel;
         EditorGUI.indentLevel = 0;
 
-        var labelHIRect = new Rect(position.x + 15, position.y, 50, position.height);
-        var labelAmRect = new Rect(position.x + 75 + (position.width / 2) - 130, position.y, 70, position.height);
+        var labelHIRect = new Rect(position.x + 15, position.y, 55, position.height);
+        var labelAmRect = new Rect(position.x + 80 + (position.width / 2) - 135, position.y, 70, position.height);
         var labelInteracts = new Rect(position.x + 190 + (position.width / 2) - 130, position.y, 70, position.height);
 
         var hasItemRect = new Rect(position.x, position.y, 10, position.height);
-        var nameRect = new Rect(position.x + 70, position.y, (position.width / 2) - 130, position.height);
+        var nameRect = new Rect(position.x + 75, position.y, (position.width / 2) - 130, position.height);
         var amountRect = new Rect(position.x + 135 + (position.width / 2) - 130, position.y, 50, position.height);
         var interactsRect = new Rect(position.x + 245 + (position.width / 2) - 130, position.y, (position.width / 2) - 130, position.height);
 
 
         var hasItemProp = property.FindPropertyRelative("hasItem");
         var itemProp = property.FindPropertyRelative("item");
-        EditorGUI.BeginDisabledGroup(true);
-        EditorGUI.PropertyField(hasItemRect, hasItemProp, GUIContent.none);
-        EditorGUI.EndDisabledGroup();
         hasItemProp.boolValue = (itemProp.objectReferenceValue as Item) != null;
+        hasItemRect.height = 17;
+        hasItemRect.width = 17;
+        if (hasItemProp.boolValue) EditorGUI.LabelField(hasItemRect, EditorGUIUtility.IconContent("TestPassed"));
+        else EditorGUI.LabelField(hasItemRect, EditorGUIUtility.IconContent("TestFailed"));
 
-        EditorGUI.LabelField(labelHIRect, new GUIContent("Has item"));
+        EditorGUI.LabelField(labelHIRect, new GUIContent(" Has item"));
         EditorGUI.ObjectField(nameRect, itemProp, GUIContent.none);
         EditorGUI.LabelField(labelAmRect, new GUIContent("In Amount"));
         EditorGUI.PropertyField(amountRect, property.FindPropertyRelative("amount"), GUIContent.none);//interative
