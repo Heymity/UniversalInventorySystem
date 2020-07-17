@@ -144,6 +144,34 @@ MonoBehaviour:
     isProductSlot: 0
     interative: -1
     whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 1
+    interative: 6
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 1
+    interative: 6
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 1
+    interative: 6
+    whitelist: {fileID: 0}
+  - amount: 0
+    item: {fileID: 0}
+    hasItem: 0
+    _durability: 0
+    isProductSlot: 1
+    interative: 6
+    whitelist: {fileID: 0}
   id: 2
   key: CraftInventory
   interactiable: -1
