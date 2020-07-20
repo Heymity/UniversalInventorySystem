@@ -57,7 +57,7 @@ namespace UniversalInventorySystem.Editors
                 var stackableProp = serializedObject.FindProperty("stackable");
                 var onUseFuncProp = serializedObject.FindProperty("onUseFunc");
                 var optionalOnDropBehaviour = serializedObject.FindProperty("optionalOnDropBehaviour");
-                var maxDurabilityProp = serializedObject.FindProperty("maxDurability");
+                var maxDurabilityProp = serializedObject.FindProperty("durability");
                 var hasDurabilityProp = serializedObject.FindProperty("hasDurability");
                 /*var stackAlwaysProp = serializedObject.FindProperty("stackAlways");
                 var stackOnMaxDurabiliyProp = serializedObject.FindProperty("stackOnMaxDurabiliy");

@@ -93,7 +93,7 @@ public class DurabilityBarModifier : BaseUIModifier
                 goto GoBack;
             }
 
-            float percentage = (float)target.GetInventory()[gos[i].index].durability / (float)target.GetInventory()[gos[i].index].item.maxDurability;
+            float percentage = (float)target.GetInventory()[gos[i].index].durability / (float)target.GetInventory()[gos[i].index].item.durability;
             var img = gos[i].go.GetComponent<Image>();
             img.sprite = null;
             img.material.SetFloat("_FillAmount", percentage);

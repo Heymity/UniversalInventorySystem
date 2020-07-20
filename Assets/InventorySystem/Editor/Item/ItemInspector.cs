@@ -70,7 +70,7 @@ namespace UniversalInventorySystem.Editors
             onUseFuncProp = serializedObject.FindProperty("onUseFunc");
             optionalOnDropBehaviour = serializedObject.FindProperty("optionalOnDropBehaviour");
             tooltipProp = serializedObject.FindProperty("tooltip");
-            maxDurabilityProp = serializedObject.FindProperty("maxDurability");
+            maxDurabilityProp = serializedObject.FindProperty("durability");
             hasDurabilityProp = serializedObject.FindProperty("hasDurability");
             durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
             showAmountProp = serializedObject.FindProperty("showAmount");

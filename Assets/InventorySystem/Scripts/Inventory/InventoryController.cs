@@ -119,7 +119,7 @@ namespace UniversalInventorySystem
 
             if (!AcceptsInventoryProtection(inv, MethodType.Add)) return amount;
 
-            if (durability == null) durability = item.maxDurability;
+            if (durability == null) durability = item.durability;
 
             if (!item.stackable)
             {
@@ -232,7 +232,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("item", "Null Item was provided");
             }
             
-            if (durability == null) durability = item.maxDurability;
+            if (durability == null) durability = item.durability;
 
             //If the items is not marked as stackable it calls AddItemToNewSlot witch handles the rest
             if (!item.stackable) return AddItemToNewSlot(inv, item, amount, e);
@@ -299,7 +299,7 @@ namespace UniversalInventorySystem
 
             if (!inv.slots[slotNumber].whitelist?.itemsList.Contains(item) ?? false) return amount;
 
-            if (durability == null) durability = item.maxDurability;
+            if (durability == null) durability = item.durability;
 
             if (!item.stackable)
             {
@@ -1826,6 +1826,7 @@ namespace UniversalInventorySystem
                     hasItem = true;
                     return true;
                 }
+                hasItem = false;
                 return false;
             }
         }
@@ -1836,13 +1837,18 @@ namespace UniversalInventorySystem
             get { return _durability; }
             set
             {
-                if (value > (item?.maxDurability ?? int.MaxValue)) throw new Exception("The value provided for durability is greter than the max durablity\nIf your intentions are of using a durability greter then the max one use the SetDurability function with op=true");
-                //_totalDurability += value - _durability;
+                if (value > (item?.durability ?? int.MaxValue)) throw new Exception("The value provided for durability is greter than the max durablity\nIf your intentions are of using a durability greter then the max one, use the SetDurability function with op=true");
+                if(itemInstance == null)
+                {
+                    if (item != null) itemInstance = UnityEngine.Object.Instantiate(item);
+                    else return;
+                }
                 _durability = value;
+                itemInstance.durability = value;
             }
         }
         [SerializeField] private int _durability;     
-        public bool IsDurabilityValid => _durability <= (item?.maxDurability ?? 0);
+        public bool IsDurabilityValid => _durability <= (item?.durability ?? 0);
         
         //Slot properties
         public bool isProductSlot;
@@ -1858,14 +1864,24 @@ namespace UniversalInventorySystem
         {
             if (op)
             {
-                ///slot._totalDurability += value - slot._durability;
                 slot._durability = value;
+                if (slot.itemInstance == null)
+                {
+                    if (slot.item != null) slot.itemInstance = UnityEngine.Object.Instantiate(slot.item);
+                    else return false;
+                }
+                slot.itemInstance.durability = value;
                 return true;
             }
-            if (slot.item == null || !slot.HasItem || value > slot.item.maxDurability || !slot.item.hasDurability)
+            if (slot.item == null || !slot.HasItem || value > slot.item.durability || !slot.item.hasDurability)
                 return false;
-            ///slot._totalDurability += value - slot._durability;
             slot._durability = value;
+            if (slot.itemInstance == null)
+            {
+                if (slot.item != null) slot.itemInstance = UnityEngine.Object.Instantiate(slot.item);
+                else return false;
+            }
+            slot.itemInstance.durability = value;
             return true;
         }
 
@@ -1915,7 +1931,7 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             _durability = slot.durability;
-            itemInstance = slot.itemInstance;
+            itemInstance = slot.item != null ? UnityEngine.Object.Instantiate(slot.item) : null;
             durability = slot.durability;
         }
 
@@ -1928,7 +1944,7 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = null;
             _durability = slot.durability;
-            itemInstance = slot.itemInstance;
+            itemInstance = slot.item != null ? UnityEngine.Object.Instantiate(slot.item) : null;
             durability = slot.durability;
         }
 
@@ -1941,7 +1957,7 @@ namespace UniversalInventorySystem
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
-            itemInstance = _item;
+            itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
             durability = 0;
         }
 
@@ -1954,7 +1970,7 @@ namespace UniversalInventorySystem
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
-            itemInstance = _item;
+            itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
             durability = 0;
         }
         
@@ -1967,7 +1983,7 @@ namespace UniversalInventorySystem
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
             this._durability = _durability;
-            itemInstance = _item;
+            itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
             durability = _durability;           
         }
 
@@ -1980,7 +1996,7 @@ namespace UniversalInventorySystem
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
-            itemInstance = _item;
+            itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
             durability = 0;
         }
         
@@ -1993,7 +2009,7 @@ namespace UniversalInventorySystem
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
             this._durability = _durability;
-            itemInstance = _item;
+            itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
             durability = _durability;
         }
 
@@ -2006,7 +2022,7 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = null;
             _durability = 0;
-            itemInstance = _item;
+            itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
             durability = 0;
         }
 
@@ -2019,7 +2035,7 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             _durability = 0;
-            itemInstance = _item;
+            itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
             durability = 0;
         }
         
@@ -2032,7 +2048,7 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             this._durability = _durability;
-            itemInstance = _itemInstance;
+            itemInstance = _itemInstance != null ? UnityEngine.Object.Instantiate(_itemInstance) : null;
             durability = _durability;
         }
         

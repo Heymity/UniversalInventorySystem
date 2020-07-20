@@ -18,10 +18,12 @@
  */ 
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace UniversalInventorySystem
 {
@@ -38,7 +40,7 @@ namespace UniversalInventorySystem
         public bool destroyOnUse;
         public int useHowManyWhenUsed;
         public bool stackable;
-        public int maxDurability;
+        public int durability;
         public bool hasDurability;
         public bool showAmount;
         /**public bool stackAlways;

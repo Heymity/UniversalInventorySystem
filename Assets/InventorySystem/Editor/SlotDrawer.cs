@@ -64,7 +64,7 @@ namespace UniversalInventorySystem.Editors
                 if (hasItem.boolValue && ((slotItem.objectReferenceValue as Item)?.hasDurability ?? false))
                 {
                     unfold[property.propertyPath].fieldAmount = 3.5f;
-                    EditorGUI.IntSlider(durRect, durability, 0, (int)(slotItem.objectReferenceValue as Item).maxDurability, "Durability");
+                    EditorGUI.IntSlider(durRect, durability, 0, (int)(slotItem.objectReferenceValue as Item).durability, "Durability");
                     ampos.y += ampos.height;
                 }
 

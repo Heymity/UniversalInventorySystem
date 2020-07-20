@@ -473,7 +473,7 @@ namespace UniversalInventorySystem
                                 {
                                     if (products.items[productIndex].durabilityImages.Count > 0)
                                     {
-                                        image.sprite = GetNearestSprite(products.items[productIndex], products.items[productIndex].maxDurability);
+                                        image.sprite = GetNearestSprite(products.items[productIndex], products.items[productIndex].durability);
                                         image.color = new Color(1, 1, 1, .7f);
                                     }
                                     else

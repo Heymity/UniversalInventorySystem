@@ -19,6 +19,9 @@
 using UnityEngine;
 using UnityEditor;
 using System.Diagnostics;
+using System.Reflection;
+using System;
+using System.Collections.Generic;
 
 namespace UniversalInventorySystem.Editors
 {
@@ -140,7 +143,7 @@ namespace UniversalInventorySystem.Editors
                         content = new GUIContent(s.itemInstance == null ? "" : s.itemInstance.itemName, EditorGUIUtility.IconContent("ScriptableObject Icon").image);
                         if (GUI.Button(auxRect, s.itemInstance == null ? new GUIContent("None") : content) && s.itemInstance != null)
                         {
-                            ItemInstanceInspector window = GetWindow<ItemInstanceInspector>(s.itemInstance.itemName);
+                            ItemInstanceInspector window = GetWindow<ItemInstanceInspector>("Item Inspector");
                             window.Show();
                             window.itemTarget = s.itemInstance;
                         }
@@ -179,7 +182,7 @@ namespace UniversalInventorySystem.Editors
             }
         }
 
-        public void DrawLine(Rect rect)
+        public static void DrawLine(Rect rect)
         {
             Handles.color = Color.gray;
             Handles.BeginGUI();
@@ -189,7 +192,7 @@ namespace UniversalInventorySystem.Editors
             Handles.EndGUI();
         }
 
-        public void HR(Rect rect)
+        public static void HR(Rect rect)
         {
             Handles.color = Color.gray;
             Handles.BeginGUI();
@@ -227,11 +230,149 @@ namespace UniversalInventorySystem.Editors
         public class ItemInstanceInspector : EditorWindow
         {
             public Item itemTarget;
+            Vector2 scrollPosItem;
 
             public void OnGUI()
             {
                 if (itemTarget == null) return;
                 EditorGUILayout.LabelField(itemTarget.itemName);
+
+                MemberTypes mt = MemberTypes.Field | MemberTypes.Property | MemberTypes.Method;
+                BindingFlags bf = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic;
+                MemberInfo[] members = itemTarget.GetType().FindMembers(mt, bf, (MemberInfo mi, object search) => true, null);
+
+                EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                scrollPosItem = EditorGUILayout.BeginScrollView(scrollPosItem);
+                foreach (MemberInfo mi in members)
+                {
+                    var rect = GUILayoutUtility.GetRect(100, 18);
+                    HR(rect);                    
+                    EditorGUI.LabelField(rect, mi.Name);
+                    rect.x += 200;
+                    DrawLine(rect);
+                    rect.width -= 205;
+                    try
+                    {
+                        switch (mi.MemberType)
+                        {
+                            case MemberTypes.Field:
+                                var field = (mi as FieldInfo).GetValue(itemTarget);
+                                if (field == null) break;
+                                EditorGUI.LabelField(rect, (mi as FieldInfo).GetValue(itemTarget).ToString());
+                                break;
+                            case MemberTypes.Property:
+                                var prop = (mi as PropertyInfo).GetValue(itemTarget);
+                                if (prop == null) break;
+                                EditorGUI.LabelField(rect, (mi as PropertyInfo).GetValue(itemTarget).ToString());
+                                break;
+                            case MemberTypes.Method:
+                                var method = (mi as MethodInfo);
+                                if (method == null) break;
+                                if (GUI.Button(rect, (mi as MethodInfo).Name))
+                                {
+                                    MethodExecutor window = GetWindow<MethodExecutor>("Invoker");
+                                    window.Show();
+                                    window.mi = method;
+                                    window.param = new List<object>();
+                                    window.obj = itemTarget;
+                                    window.returnValue = null;
+                                }
+                                break;
+                        }
+                    }
+                    catch (Exception) { }
+                }
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndScrollView();
+            }
+
+            Stopwatch stop;
+            public void Update()
+            {
+                if (stop == null)
+                {
+                    stop = new Stopwatch();
+                    stop.Start();
+                }
+                if (stop.ElapsedMilliseconds >= 500)
+                {
+                    stop.Restart();
+                    Repaint();
+                }
+            }
+        }
+
+        public class MethodExecutor : EditorWindow
+        {
+            public MethodInfo mi;
+            public List<object> param = new List<object>();
+            public object obj;
+            public object returnValue;
+
+            private void OnGUI()
+            {
+                bool hasAllParams = true;
+                if (mi == null) return;
+                ParameterInfo[] pis = mi.GetParameters();
+                for(int i = 0; i < pis.Length; i++)
+                {
+                    if (param.Count <= i) param.Add(null);
+                    HandleParam(pis[i], i);
+                }
+
+                if (hasAllParams)
+                {
+                    if (GUILayout.Button("Invoke"))
+                    {
+                        returnValue = mi.Invoke(obj, param.ToArray());
+                    }
+                    EditorGUILayout.LabelField($"Return Value: {returnValue}");
+                }
+
+                void HandleParam(ParameterInfo p, int index)
+                {
+                    if(p.ParameterType == typeof(int) || p.ParameterType == typeof(int?))
+                    {
+                        param[index] = EditorGUILayout.IntField(p.Name, (int)(param[index] ?? 0)); 
+                    }
+                    else if (p.ParameterType == typeof(float) || p.ParameterType == typeof(float?))
+                    {
+                        param[index] = EditorGUILayout.FloatField(p.Name, (float)(param[index] ?? 0));
+                    }
+                    else if(p.ParameterType == typeof(bool) || p.ParameterType == typeof(bool?))
+                    {
+                        param[index] = EditorGUILayout.Toggle(p.Name, (bool)(param[index] ?? false));
+                    }
+                    else if (p.ParameterType == typeof(string))
+                    {
+                        param[index] = EditorGUILayout.TextField(p.Name, (string)(param[index] ?? ""));
+                    }
+                    else if(p.ParameterType.IsSubclassOf(typeof(ScriptableObject)))
+                    {
+                        param[index] = EditorGUILayout.ObjectField(new GUIContent(p.Name), param[index] as ScriptableObject, p.ParameterType, true);
+                    }
+                    else if (p.ParameterType == typeof(Vector3) || p.ParameterType == typeof(Vector3?))
+                    {
+                        param[index] = EditorGUILayout.Vector3Field(p.Name, (Vector3)(param[index] ?? Vector3.zero));
+                    }
+                    else if (p.ParameterType == typeof(Vector3Int) || p.ParameterType == typeof(Vector3Int?))
+                    {
+                        param[index] = EditorGUILayout.Vector3IntField(p.Name, (Vector3Int)(param[index] ?? Vector3Int.zero));
+                    }
+                    else if (p.ParameterType == typeof(Vector2) || p.ParameterType == typeof(Vector2?))
+                    {
+                        param[index] = EditorGUILayout.Vector2Field(p.Name, (Vector2)(param[index] ?? Vector2.zero));
+                    }
+                    else if (p.ParameterType == typeof(Vector2Int) || p.ParameterType == typeof(Vector2Int?))
+                    {
+                        param[index] = EditorGUILayout.Vector2IntField(p.Name, (Vector2Int)(param[index] ?? Vector2Int.zero));
+                    }
+                    else
+                    {
+                        EditorGUILayout.LabelField($"The param {p.Name} is of type {p.ParameterType}, which has not been implemented yet");
+                        hasAllParams = false;
+                    }
+                }
             }
         }
     }
