@@ -1842,6 +1842,7 @@ namespace UniversalInventorySystem
             }
         }
         [SerializeField] private int _durability;     
+        public bool IsDurabilityValid => _durability <= (item?.maxDurability ?? 0);
         
         //Slot properties
         public bool isProductSlot;
@@ -1850,8 +1851,6 @@ namespace UniversalInventorySystem
 
         public readonly static Slot nullSlot = new Slot(null, 0, false, InventoryController.AllSlotFlags, null, 0, null);
 
-        public int GetDurability() => durability; 
-        public bool IsDurabilityValid => _durability <= (item?.maxDurability ?? 0);
 
         #region Setters
 

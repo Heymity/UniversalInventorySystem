@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace UniversalInventorySystem
+namespace UniversalInventorySystem.Editors
 {/*
     [CustomPropertyDrawer(typeof(ToolTipInfo))]
     public class TooltipDrawer : PropertyDrawer

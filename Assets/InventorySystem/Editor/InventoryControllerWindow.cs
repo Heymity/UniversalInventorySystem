@@ -18,185 +18,221 @@
 
 using UnityEngine;
 using UnityEditor;
-using UniversalInventorySystem;
 using System.Diagnostics;
 
-public class InventoryControllerWindow : EditorWindow
+namespace UniversalInventorySystem.Editors
 {
-    [MenuItem("InventorySystem/InventoryController")]
-    public static void Init()
+    public class InventoryControllerWindow : EditorWindow
     {
-        InventoryControllerWindow window = GetWindow<InventoryControllerWindow>("Controller");
-        window.Show();
-    }
-
-    bool inventory = true;
-    bool inventoryUI = false;
-    bool debug = false;
-    Vector2 scrollPos;
-
-    void OnGUI()
-    {
-        EditorGUILayout.BeginVertical("Toolbar", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-        EditorGUILayout.BeginHorizontal();
-
-        if (GUILayout.Button("Inventories", EditorStyles.miniButtonLeft))
+        [MenuItem("InventorySystem/InventoryController")]
+        public static void Init()
         {
-            inventory = true;
-            inventoryUI = false;
-            debug = false;
+            InventoryControllerWindow window = GetWindow<InventoryControllerWindow>("Controller");
+            window.Show();
         }
 
-        if (GUILayout.Button("InventoriesUI", EditorStyles.miniButtonMid))
-        {
-            inventory = false;
-            inventoryUI = true;
-            debug = false;
-        }
+        bool inventory = true;
+        bool inventoryUI = false;
+        bool debug = false;
+        Vector2 scrollPos;
 
-        if (GUILayout.Button("Debug", EditorStyles.miniButtonRight))
+        void OnGUI()
         {
-            inventory = false;
-            inventoryUI = false;
-            debug = true;
-        }
+            EditorGUILayout.BeginVertical("Toolbar", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+            EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.EndHorizontal();
-        EditorGUILayout.EndVertical();
-        EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-        scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
-
-        if (inventory)
-        {
-            EditorGUILayout.LabelField("Inventories");
-            for (int i = 0; i < InventoryController.inventories.Count; i++)
+            if (GUILayout.Button("Inventories", EditorStyles.miniButtonLeft))
             {
-                var a = InventoryController.inventories[i];
-                EditorGUILayout.BeginVertical();
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField($"{a.key} (id: {a.id})");
-                EditorGUILayout.EnumFlagsField(a.interactiable);
-                EditorGUILayout.EndHorizontal();
+                inventory = true;
+                inventoryUI = false;
+                debug = false;
+            }
 
-                EditorGUILayout.LabelField($"Size: {a.SlotAmount}");
+            if (GUILayout.Button("InventoriesUI", EditorStyles.miniButtonMid))
+            {
+                inventory = false;
+                inventoryUI = true;
+                debug = false;
+            }
 
-                MakeHeader();
+            if (GUILayout.Button("Debug", EditorStyles.miniButtonRight))
+            {
+                inventory = false;
+                inventoryUI = false;
+                debug = true;
+            }
 
-                for (int j = 0; j < a.slots.Count; j++)
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+            scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+
+            if (inventory)
+            {
+                EditorGUILayout.LabelField("Inventories");
+                for (int i = 0; i < InventoryController.inventories.Count; i++)
                 {
-                    Slot s = a.slots[j];
-
+                    var a = InventoryController.inventories[i];
+                    EditorGUILayout.BeginVertical();
                     EditorGUILayout.BeginHorizontal();
-                    var rect = GUILayoutUtility.GetRect(100, 18);
-                    HR(rect);
-
-                    if (s.HasItem) EditorGUI.LabelField(rect, new GUIContent(" Has Item   ", EditorGUIUtility.IconContent("TestPassed").image));
-                    else EditorGUI.LabelField(rect, new GUIContent(" Hasn't Item ", EditorGUIUtility.IconContent("TestFailed").image));
-
-                    rect.x += 100;
-
-                    DrawLine(rect);
-
-                    if (s.item != null)
-                    {
-                        EditorGUI.LabelField(rect, new GUIContent(s.item.itemName, EditorGUIUtility.IconContent("ScriptableObject Icon").image));
-                        rect.x += 100;
-                        DrawLine(rect);
-                        EditorGUI.LabelField(rect, s.amount.ToString());
-                        rect.x += 80;
-                        DrawLine(rect);
-                        EditorGUI.LabelField(rect, $"{s.durability} | {s.item.hasDurability}");
-                        rect.x += 110;
-                        DrawLine(rect);
-                    }
-                    else
-                    {
-                        EditorGUI.LabelField(rect, "None");
-                        rect.x += 100;
-                        DrawLine(rect);
-                        rect.x += 80;
-                        DrawLine(rect);
-                        rect.x += 110;
-                        DrawLine(rect);
-                    }
-                    EditorGUI.LabelField(rect, s.isProductSlot.ToString());
-                    rect.x += 100;
-                    DrawLine(rect);
-                    EditorGUI.LabelField(rect, s.whitelist == null ? "None" : s.whitelist.ToString());
-
+                    EditorGUILayout.LabelField($"{a.key} (id: {a.id})");
+                    EditorGUILayout.EnumFlagsField(a.interactiable);
                     EditorGUILayout.EndHorizontal();
-                }
 
-                EditorGUILayout.EndVertical();
+                    EditorGUILayout.LabelField($"Size: {a.SlotAmount}");
+
+                    MakeHeader();
+
+                    for (int j = 0; j < a.slots.Count; j++)
+                    {
+                        Slot s = a.slots[j];
+
+                        EditorGUILayout.BeginHorizontal();
+                        var rect = GUILayoutUtility.GetRect(100, 18);
+                        HR(rect);
+
+                        if (s.HasItem) EditorGUI.LabelField(rect, new GUIContent(" Has Item   ", EditorGUIUtility.IconContent("TestPassed").image));
+                        else EditorGUI.LabelField(rect, new GUIContent(" Hasn't Item ", EditorGUIUtility.IconContent("TestFailed").image));
+
+                        rect.x += 100;
+
+                        DrawLine(rect);
+
+                        if (s.item != null)
+                        {
+                            var soRect = rect;
+                            soRect.height = 16;
+                            EditorGUI.LabelField(soRect, new GUIContent(s.item.itemName, EditorGUIUtility.IconContent("ScriptableObject Icon").image));
+                            rect.x += 100;
+                            DrawLine(rect);
+                            EditorGUI.LabelField(rect, s.amount.ToString());
+                            rect.x += 80;
+                            DrawLine(rect);
+                            EditorGUI.LabelField(rect, $"{s.durability} | {s.item.hasDurability}");
+                            rect.x += 110;
+                            DrawLine(rect);
+                        }
+                        else
+                        {
+                            EditorGUI.LabelField(rect, "None");
+                            rect.x += 100;
+                            DrawLine(rect);
+                            rect.x += 80;
+                            DrawLine(rect);
+                            rect.x += 110;
+                            DrawLine(rect);
+                        }
+                        EditorGUI.LabelField(rect, s.isProductSlot.ToString());
+                        rect.x += 100;
+                        DrawLine(rect);
+
+                        var auxRect = rect;
+                        auxRect.height = 16;
+                        GUIContent content = new GUIContent(s.whitelist == null ? "" : s.whitelist.strId, EditorGUIUtility.IconContent("ScriptableObject Icon").image);
+                        EditorGUI.LabelField(auxRect, s.whitelist == null ? new GUIContent("None") : content);
+
+                        rect.x += 120;
+                        DrawLine(rect);
+
+                        auxRect = rect;
+                        auxRect.width = 130;
+                        auxRect.height = 16;
+                        content = new GUIContent(s.itemInstance == null ? "" : s.itemInstance.itemName, EditorGUIUtility.IconContent("ScriptableObject Icon").image);
+                        if (GUI.Button(auxRect, s.itemInstance == null ? new GUIContent("None") : content) && s.itemInstance != null)
+                        {
+                            ItemInstanceInspector window = GetWindow<ItemInstanceInspector>(s.itemInstance.itemName);
+                            window.Show();
+                            window.itemTarget = s.itemInstance;
+                        }
+
+                        EditorGUILayout.EndHorizontal();
+                    }
+
+                    EditorGUILayout.EndVertical();
+                }
+            }
+            else if (inventoryUI)
+            {
+                EditorGUILayout.LabelField("InventoriesUI");
+            }
+            else if (debug)
+            {
+                EditorGUILayout.LabelField("Debugging");
+            }
+
+            EditorGUILayout.EndScrollView();
+            EditorGUILayout.EndVertical();
+        }
+
+        Stopwatch stop;
+        public void Update()
+        {
+            if (stop == null)
+            {
+                stop = new Stopwatch();
+                stop.Start();
+            }
+            if (stop.ElapsedMilliseconds >= 1000)
+            {
+                stop.Restart();
+                Repaint();
             }
         }
-        else if (inventoryUI)
+
+        public void DrawLine(Rect rect)
         {
-            EditorGUILayout.LabelField("InventoriesUI");
+            Handles.color = Color.gray;
+            Handles.BeginGUI();
+            Handles.DrawLine(
+            new Vector3(rect.x - 5, rect.y),
+            new Vector3(rect.x - 5, rect.y + 18));
+            Handles.EndGUI();
         }
-        else if (debug)
+
+        public void HR(Rect rect)
         {
-            EditorGUILayout.LabelField("Debugging");
+            Handles.color = Color.gray;
+            Handles.BeginGUI();
+            Handles.DrawLine(
+            new Vector3(rect.x, rect.y),
+            new Vector3(rect.x + rect.width, rect.y));
+            Handles.EndGUI();
         }
 
-        EditorGUILayout.EndScrollView();
-        EditorGUILayout.EndVertical();
-    }
-
-    Stopwatch stop;
-    public void Update()
-    {
-        if (stop == null)
+        public void MakeHeader()
         {
-            stop = new Stopwatch();
-            stop.Start();
+            var header = GUILayoutUtility.GetRect(100, 18);
+            HR(header);
+            EditorGUI.LabelField(header, "Has Item:");
+            header.x += 100;
+            DrawLine(header);
+            EditorGUI.LabelField(header, "Item:");
+            header.x += 100;
+            DrawLine(header);
+            EditorGUI.LabelField(header, "Amount:");
+            header.x += 80;
+            DrawLine(header);
+            EditorGUI.LabelField(header, "Durability | Has");
+            header.x += 110;
+            DrawLine(header);
+            EditorGUI.LabelField(header, "Is Product Slot:");
+            header.x += 100;
+            DrawLine(header);
+            EditorGUI.LabelField(header, "Whitelist:");
+            header.x += 120;
+            DrawLine(header);
+            EditorGUI.LabelField(header, "Item Instance:");
         }
-        if(stop.ElapsedMilliseconds >= 1000)
+
+        public class ItemInstanceInspector : EditorWindow
         {
-            stop.Restart();
-            Repaint();
+            public Item itemTarget;
+
+            public void OnGUI()
+            {
+                if (itemTarget == null) return;
+                EditorGUILayout.LabelField(itemTarget.itemName);
+            }
         }
-    }
-
-    public void DrawLine(Rect rect)
-    {
-        Handles.color = Color.gray;
-        Handles.BeginGUI();
-        Handles.DrawLine(
-        new Vector3(rect.x - 5, rect.y),
-        new Vector3(rect.x - 5, rect.y + 18));
-        Handles.EndGUI();
-    }
-
-    public void HR(Rect rect)
-    {
-        Handles.color = Color.gray;
-        Handles.BeginGUI();
-        Handles.DrawLine(
-        new Vector3(rect.x, rect.y),
-        new Vector3(rect.x + rect.width, rect.y));
-        Handles.EndGUI();
-    }
-
-    public void MakeHeader()
-    {
-        var header = GUILayoutUtility.GetRect(100, 18);
-        HR(header);
-        EditorGUI.LabelField(header, "Has Item:");
-        header.x += 100;
-        DrawLine(header);
-        EditorGUI.LabelField(header, "Item:");
-        header.x += 100;
-        DrawLine(header);
-        EditorGUI.LabelField(header, "Amount:");
-        header.x += 80;
-        DrawLine(header);
-        EditorGUI.LabelField(header, "Durability | Has");
-        header.x += 110;
-        DrawLine(header);
-        EditorGUI.LabelField(header, "Is Product Slot:");
-        header.x += 100;
-        DrawLine(header);
-        EditorGUI.LabelField(header, "Whitelist:");
     }
 }

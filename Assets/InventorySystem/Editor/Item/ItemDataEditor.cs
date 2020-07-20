@@ -19,66 +19,69 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using UniversalInventorySystem;
 
-public class AssetHandler
+namespace UniversalInventorySystem.Editors
 {
-    [OnOpenAsset()]
-    public static bool OpenEditor(int instanceId, int line)
+    public class AssetHandler
     {
-        ItemGroup obj = EditorUtility.InstanceIDToObject(instanceId) as ItemGroup;
-        if(obj != null)
+        [OnOpenAsset()]
+        public static bool OpenEditor(int instanceId, int line)
         {
-            ItemDataEditorWindow.Open(obj);
-            return true;
-        }
-        return false;
-
-    }
-}
-
-
-[CustomEditor(typeof(ItemGroup))]
-public class ItemDataEditor : Editor
-{
-    SerializedProperty itemsListProp;
-    SerializedProperty strIdProp;
-    SerializedProperty idProp;
-
-    private void OnEnable()
-    {
-        itemsListProp = serializedObject.FindProperty("itemsList");
-        strIdProp = serializedObject.FindProperty("strId");
-        idProp = serializedObject.FindProperty("id");
-    }
-
-    public override void OnInspectorGUI()
-    {
-        serializedObject.Update();
-
-        itemsListProp.isExpanded = EditorGUILayout.Foldout(itemsListProp.isExpanded, new GUIContent("Items list"), true);
-        if (itemsListProp.isExpanded)
-        {
-            EditorGUI.indentLevel++;
-            itemsListProp.arraySize = EditorGUILayout.IntField(new GUIContent("Size"), itemsListProp.arraySize);
-            for (int i = 0; i < itemsListProp.arraySize;i++)
+            ItemGroup obj = EditorUtility.InstanceIDToObject(instanceId) as ItemGroup;
+            if (obj != null)
             {
-                EditorGUILayout.ObjectField(itemsListProp.GetArrayElementAtIndex(i), new GUIContent($"Item {i}"));
+                ItemDataEditorWindow.Open(obj);
+                return true;
             }
-            EditorGUI.indentLevel--;
+            return false;
+
         }
+    }
 
-        EditorGUILayout.Separator();
 
-        EditorGUILayout.PropertyField(strIdProp);
 
-        EditorGUILayout.PropertyField(idProp);
+    [CustomEditor(typeof(ItemGroup))]
+    public class ItemDataEditor : Editor
+    {
+        SerializedProperty itemsListProp;
+        SerializedProperty strIdProp;
+        SerializedProperty idProp;
 
-        if(GUILayout.Button("Open Editor"))
+        private void OnEnable()
         {
-            ItemDataEditorWindow.Open((ItemGroup)target);
+            itemsListProp = serializedObject.FindProperty("itemsList");
+            strIdProp = serializedObject.FindProperty("strId");
+            idProp = serializedObject.FindProperty("id");
         }
 
-        serializedObject.ApplyModifiedProperties();
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+
+            itemsListProp.isExpanded = EditorGUILayout.Foldout(itemsListProp.isExpanded, new GUIContent("Items list"), true);
+            if (itemsListProp.isExpanded)
+            {
+                EditorGUI.indentLevel++;
+                itemsListProp.arraySize = EditorGUILayout.IntField(new GUIContent("Size"), itemsListProp.arraySize);
+                for (int i = 0; i < itemsListProp.arraySize; i++)
+                {
+                    EditorGUILayout.ObjectField(itemsListProp.GetArrayElementAtIndex(i), new GUIContent($"Item {i}"));
+                }
+                EditorGUI.indentLevel--;
+            }
+
+            EditorGUILayout.Separator();
+
+            EditorGUILayout.PropertyField(strIdProp);
+
+            EditorGUILayout.PropertyField(idProp);
+
+            if (GUILayout.Button("Open Editor"))
+            {
+                ItemDataEditorWindow.Open((ItemGroup)target);
+            }
+
+            serializedObject.ApplyModifiedProperties();
+        }
     }
 }

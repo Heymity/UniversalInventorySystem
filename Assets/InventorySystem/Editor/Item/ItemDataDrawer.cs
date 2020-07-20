@@ -18,29 +18,32 @@
 
 using UnityEngine;
 using UnityEditor;
-using UniversalInventorySystem;
 
-[CustomPropertyDrawer(typeof(ItemGroup))]
-public class ItemDataDrawer : PropertyDrawer
+namespace UniversalInventorySystem.Editors
 {
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-    {
-        return 18f * 1;
-    }
 
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    [CustomPropertyDrawer(typeof(ItemGroup))]
+    public class ItemDataDrawer : PropertyDrawer
     {
-        EditorGUI.PropertyField(position, property);
-
-        var buttonRect = new Rect(position.x, position.y, 170, position.height);
-        if(property.objectReferenceValue != null)
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            if (GUI.Button(buttonRect, new GUIContent("Open Editor of " + label.text)))
-            {
-                ItemDataEditorWindow.Open(property.objectReferenceValue as ItemGroup);
-            }
+            return 18f * 1;
         }
-        
-        //base.OnGUI(position, property, label);
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.PropertyField(position, property);
+
+            var buttonRect = new Rect(position.x, position.y, 170, position.height);
+            if (property.objectReferenceValue != null)
+            {
+                if (GUI.Button(buttonRect, new GUIContent("Open Editor of " + label.text)))
+                {
+                    ItemDataEditorWindow.Open(property.objectReferenceValue as ItemGroup);
+                }
+            }
+
+            //base.OnGUI(position, property, label);
+        }
     }
 }

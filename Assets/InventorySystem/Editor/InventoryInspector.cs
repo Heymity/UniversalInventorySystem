@@ -20,7 +20,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 
-namespace UniversalInventorySystem
+namespace UniversalInventorySystem.Editors
 {
     [CustomEditor(typeof(Inventory))]
     public class InventoryInspector : Editor

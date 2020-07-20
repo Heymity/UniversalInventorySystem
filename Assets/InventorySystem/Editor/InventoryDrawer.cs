@@ -18,131 +18,134 @@
 
 using UnityEngine;
 using UnityEditor;
-using UniversalInventorySystem;
 
-[CustomPropertyDrawer(typeof(Inventory))]
-public class InventoryDrawer : PropertyDrawer
+namespace UniversalInventorySystem.Editors
 {
-    float baseAmount = 3f;
-    float amountOfFilds = 3f;
-    bool useObjValues;
-    float total = 0;
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    [CustomPropertyDrawer(typeof(Inventory))]
+    public class InventoryDrawer : PropertyDrawer
     {
-        return 18f * amountOfFilds;
-    }
-    bool unfold = false;
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-    {   
-        amountOfFilds = baseAmount + total;
-        total = 0;
-        SerializedObject serializedObject = null;
-        if (property.objectReferenceValue != null) serializedObject = new SerializedObject(property.objectReferenceValue);
-        if (serializedObject != null)
+        float baseAmount = 3f;
+        float amountOfFilds = 3f;
+        bool useObjValues;
+        float total = 0;
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            serializedObject.Update();
-            var id = serializedObject.FindProperty("_id");
-            var key = serializedObject.FindProperty("_key");
-            var slots = serializedObject.FindProperty("inventorySlots");
-            var inte = serializedObject.FindProperty("_interactiable");
-
-            EditorGUIUtility.wideMode = true;
-            EditorGUIUtility.labelWidth = 100;
-            position.height /= amountOfFilds;
-
-            //position.y += position.height;
-
-            EditorGUI.BeginProperty(position, label, property);
-
-            EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), new GUIContent($"{key.stringValue} (id: {id.intValue})"));
-            var tmpRect = position;
-            position.x += 110;
-            position.width = 140;
-            if (GUI.Button(position, useObjValues ? "Edit Values" : "Use Object Value")) useObjValues = !useObjValues;
-            position = tmpRect;
-
-            if (!useObjValues)
+            return 18f * amountOfFilds;
+        }
+        bool unfold = false;
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            amountOfFilds = baseAmount + total;
+            total = 0;
+            SerializedObject serializedObject = null;
+            if (property.objectReferenceValue != null) serializedObject = new SerializedObject(property.objectReferenceValue);
+            if (serializedObject != null)
             {
-                position.y += 18;
-                baseAmount = 3f;
+                serializedObject.Update();
+                var id = serializedObject.FindProperty("_id");
+                var key = serializedObject.FindProperty("_key");
+                var slots = serializedObject.FindProperty("inventorySlots");
+                var inte = serializedObject.FindProperty("_interactiable");
 
-                EditorGUI.PropertyField(position, inte);
+                EditorGUIUtility.wideMode = true;
+                EditorGUIUtility.labelWidth = 100;
+                position.height /= amountOfFilds;
 
-                position.y += position.height;
+                //position.y += position.height;
 
-                var foldRect = new Rect(position.x, position.y, 50, position.height);
-                unfold = EditorGUI.Foldout(foldRect, unfold, new GUIContent("Slots"), true);
+                EditorGUI.BeginProperty(position, label, property);
 
-                var slotAmountsRect = new Rect(position.x + 50, position.y, position.width - 150, position.height);
-                var tmpSize = EditorGUI.IntField(slotAmountsRect, new GUIContent("Amount of slots"), slots.arraySize);
-                if (tmpSize < 0) tmpSize = 0;
+                EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), new GUIContent($"{key.stringValue} (id: {id.intValue})"));
+                var tmpRect = position;
+                position.x += 110;
+                position.width = 140;
+                if (GUI.Button(position, useObjValues ? "Edit Values" : "Use Object Value")) useObjValues = !useObjValues;
+                position = tmpRect;
 
-                position.y += position.height;
-
-                var tmp = slots.arraySize;
-                slots.arraySize = tmpSize >= 0 ? tmpSize : slots.arraySize;
-                if (unfold)
+                if (!useObjValues)
                 {
-                    EditorGUI.indentLevel++;
-                    //amountOfFilds = baseAmount + 1;
-                    //position.y += position.height;
-                    if (slots != null)
+                    position.y += 18;
+                    baseAmount = 3f;
+
+                    EditorGUI.PropertyField(position, inte);
+
+                    position.y += position.height;
+
+                    var foldRect = new Rect(position.x, position.y, 50, position.height);
+                    unfold = EditorGUI.Foldout(foldRect, unfold, new GUIContent("Slots"), true);
+
+                    var slotAmountsRect = new Rect(position.x + 50, position.y, position.width - 150, position.height);
+                    var tmpSize = EditorGUI.IntField(slotAmountsRect, new GUIContent("Amount of slots"), slots.arraySize);
+                    if (tmpSize < 0) tmpSize = 0;
+
+                    position.y += position.height;
+
+                    var tmp = slots.arraySize;
+                    slots.arraySize = tmpSize >= 0 ? tmpSize : slots.arraySize;
+                    if (unfold)
                     {
-                        if (slots.arraySize > 0)
+                        EditorGUI.indentLevel++;
+                        //amountOfFilds = baseAmount + 1;
+                        //position.y += position.height;
+                        if (slots != null)
                         {
-                            float childHeight = 0;
-                            for (int i = 0; i < slots.arraySize; i++)
+                            if (slots.arraySize > 0)
                             {
-                                childHeight += EditorGUI.GetPropertyHeight(slots.GetArrayElementAtIndex(i)) / 18;
-                                EditorGUI.PropertyField(position, slots.GetArrayElementAtIndex(i));
-                                if (i > tmp - 1)
+                                float childHeight = 0;
+                                for (int i = 0; i < slots.arraySize; i++)
                                 {
-                                    slots.GetArrayElementAtIndex(i).FindPropertyRelative("interative").intValue = -1;
+                                    childHeight += EditorGUI.GetPropertyHeight(slots.GetArrayElementAtIndex(i)) / 18;
+                                    EditorGUI.PropertyField(position, slots.GetArrayElementAtIndex(i));
+                                    if (i > tmp - 1)
+                                    {
+                                        slots.GetArrayElementAtIndex(i).FindPropertyRelative("interative").intValue = -1;
+                                    }
+                                    position.y += EditorGUI.GetPropertyHeight(slots.GetArrayElementAtIndex(i));
                                 }
-                                position.y += EditorGUI.GetPropertyHeight(slots.GetArrayElementAtIndex(i));
+                                total += childHeight;
                             }
-                            total += childHeight;
                         }
+                        EditorGUI.indentLevel--;
                     }
-                    EditorGUI.indentLevel--;
+                    else
+                    {
+                        if (slots != null)
+                        {
+                            if (slots.arraySize > 0)
+                            {
+                                for (int i = tmp - 1; i < slots.arraySize; i++)
+                                {
+                                    if (i > tmp - 1)
+                                    {
+                                        slots.GetArrayElementAtIndex(i).FindPropertyRelative("interative").intValue = -1;
+                                    }
+                                }
+                            }
+                        }
+                        amountOfFilds = baseAmount;
+                    }
                 }
                 else
                 {
-                    if (slots != null)
-                    {
-                        if (slots.arraySize > 0)
-                        {
-                            for (int i = tmp - 1; i < slots.arraySize; i++)
-                            {
-                                if (i > tmp - 1)
-                                {
-                                    slots.GetArrayElementAtIndex(i).FindPropertyRelative("interative").intValue = -1;
-                                }
-                            }
-                        }
-                    }
-                    amountOfFilds = baseAmount;
+                    baseAmount = 1f;
+                    position.width -= 260;
+                    position.x += 260;
+                    EditorGUI.ObjectField(position, property, new GUIContent(""));
                 }
-            } else
-            {
-                baseAmount = 1f;
-                position.width -= 260;
-                position.x += 260;
-                EditorGUI.ObjectField(position, property, new GUIContent(""));
-            }
-            serializedObject.ApplyModifiedProperties();
-            EditorGUI.EndProperty();
-        }
-        else
-        {
-            amountOfFilds = 1;
-            baseAmount = 1;
-            EditorGUI.ObjectField(position, property);
-            if (property.objectReferenceValue != null)
-            {
-                serializedObject = new SerializedObject(property.objectReferenceValue);
                 serializedObject.ApplyModifiedProperties();
-                useObjValues = true;
+                EditorGUI.EndProperty();
+            }
+            else
+            {
+                amountOfFilds = 1;
+                baseAmount = 1;
+                EditorGUI.ObjectField(position, property);
+                if (property.objectReferenceValue != null)
+                {
+                    serializedObject = new SerializedObject(property.objectReferenceValue);
+                    serializedObject.ApplyModifiedProperties();
+                    useObjValues = true;
+                }
             }
         }
     }

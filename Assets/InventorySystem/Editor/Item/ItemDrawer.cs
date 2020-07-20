@@ -18,328 +18,331 @@
 
 using UnityEngine;
 using UnityEditor;
-using UniversalInventorySystem;
 
-[CustomPropertyDrawer(typeof(Item))]
-public class ItemDrawer : PropertyDrawer
+namespace UniversalInventorySystem.Editors
 {
-    bool itemFoldout;
-    bool storageFoldout;
-    bool usingFoldout;
-    bool behaviourFoldout;
-    bool tooltipFoldout;
+    [CustomPropertyDrawer(typeof(Item))]
+    public class ItemDrawer : PropertyDrawer
+    {
+        bool itemFoldout;
+        bool storageFoldout;
+        bool usingFoldout;
+        bool behaviourFoldout;
+        bool tooltipFoldout;
 
-    float baseAmount = 7;
-    float amountOfFilds = 21f;
-    float total;
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-    {
-        return 18f * amountOfFilds;
-    }
-    bool useObjValues;
-    bool unfold = true;
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-    {
-        amountOfFilds = baseAmount + total;
-        total = 0;
-        SerializedObject serializedObject = null;
-        if (property.objectReferenceValue != null) serializedObject = new SerializedObject(property.objectReferenceValue);
-        if(serializedObject != null)
+        float baseAmount = 7;
+        float amountOfFilds = 21f;
+        float total;
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            serializedObject.Update();
-            var itemNameProp = serializedObject.FindProperty("itemName");
-            var idProp = serializedObject.FindProperty("id");
-            var spriteProp = serializedObject.FindProperty("sprite");
-            var maxAmountProp = serializedObject.FindProperty("maxAmount");
-            var destroyOnUseProp = serializedObject.FindProperty("destroyOnUse");
-            var useHowManyWhenUsedProp = serializedObject.FindProperty("useHowManyWhenUsed");
-            var stackableProp = serializedObject.FindProperty("stackable");
-            var onUseFuncProp = serializedObject.FindProperty("onUseFunc");
-            var optionalOnDropBehaviour = serializedObject.FindProperty("optionalOnDropBehaviour");
-            var maxDurabilityProp = serializedObject.FindProperty("maxDurability");
-            var hasDurabilityProp = serializedObject.FindProperty("hasDurability");
-            /*var stackAlwaysProp = serializedObject.FindProperty("stackAlways");
-            var stackOnMaxDurabiliyProp = serializedObject.FindProperty("stackOnMaxDurabiliy");
-            var stackOnSpecifDurabilityProp = serializedObject.FindProperty("stackOnSpecifDurability");
-            var stackOptionsProp = serializedObject.FindProperty("stackOptions");
-            var stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");*/
-            var durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
-            var tooltipProp = serializedObject.FindProperty("tooltip");
-            var showAmountProp = serializedObject.FindProperty("showAmount");
-
-            EditorGUIUtility.wideMode = true;
-            EditorGUIUtility.labelWidth = 240;
-            EditorGUI.BeginProperty(position, null, property);
-            position.height /= amountOfFilds;
-
-            unfold = EditorGUI.Foldout(position, unfold, (property.objectReferenceValue as Item).name);
-            position.y += position.height;
-            position.x += 20;
-
-            if (unfold)
+            return 18f * amountOfFilds;
+        }
+        bool useObjValues;
+        bool unfold = true;
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            amountOfFilds = baseAmount + total;
+            total = 0;
+            SerializedObject serializedObject = null;
+            if (property.objectReferenceValue != null) serializedObject = new SerializedObject(property.objectReferenceValue);
+            if (serializedObject != null)
             {
-                var tmp = position.width;
-                position.width = 140;
-                if (GUI.Button(position, useObjValues ? "Edit Values" : "Use Object Value")) useObjValues = !useObjValues;
-                position.width = tmp;
+                serializedObject.Update();
+                var itemNameProp = serializedObject.FindProperty("itemName");
+                var idProp = serializedObject.FindProperty("id");
+                var spriteProp = serializedObject.FindProperty("sprite");
+                var maxAmountProp = serializedObject.FindProperty("maxAmount");
+                var destroyOnUseProp = serializedObject.FindProperty("destroyOnUse");
+                var useHowManyWhenUsedProp = serializedObject.FindProperty("useHowManyWhenUsed");
+                var stackableProp = serializedObject.FindProperty("stackable");
+                var onUseFuncProp = serializedObject.FindProperty("onUseFunc");
+                var optionalOnDropBehaviour = serializedObject.FindProperty("optionalOnDropBehaviour");
+                var maxDurabilityProp = serializedObject.FindProperty("maxDurability");
+                var hasDurabilityProp = serializedObject.FindProperty("hasDurability");
+                /*var stackAlwaysProp = serializedObject.FindProperty("stackAlways");
+                var stackOnMaxDurabiliyProp = serializedObject.FindProperty("stackOnMaxDurabiliy");
+                var stackOnSpecifDurabilityProp = serializedObject.FindProperty("stackOnSpecifDurability");
+                var stackOptionsProp = serializedObject.FindProperty("stackOptions");
+                var stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");*/
+                var durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
+                var tooltipProp = serializedObject.FindProperty("tooltip");
+                var showAmountProp = serializedObject.FindProperty("showAmount");
 
+                EditorGUIUtility.wideMode = true;
+                EditorGUIUtility.labelWidth = 240;
+                EditorGUI.BeginProperty(position, null, property);
+                position.height /= amountOfFilds;
 
+                unfold = EditorGUI.Foldout(position, unfold, (property.objectReferenceValue as Item).name);
                 position.y += position.height;
+                position.x += 20;
 
-                if (!useObjValues)
+                if (unfold)
                 {
-                    baseAmount = 7;
-                    itemFoldout = EditorGUI.Foldout(position, itemFoldout, new GUIContent("Item Configuration"), true);
+                    var tmp = position.width;
+                    position.width = 140;
+                    if (GUI.Button(position, useObjValues ? "Edit Values" : "Use Object Value")) useObjValues = !useObjValues;
+                    position.width = tmp;
+
+
                     position.y += position.height;
-                    if (itemFoldout)
+
+                    if (!useObjValues)
                     {
-                        position.x += 20;
-                        position.width -= 40;
-                        EditorGUIUtility.labelWidth -= 20;
-                        total += 3;
-                        EditorGUI.indentLevel++;
-
-                        itemNameProp.stringValue = EditorGUI.TextField(position, new GUIContent("Item name"), itemNameProp.stringValue);
+                        baseAmount = 7;
+                        itemFoldout = EditorGUI.Foldout(position, itemFoldout, new GUIContent("Item Configuration"), true);
                         position.y += position.height;
-
-                        idProp.intValue = EditorGUI.IntField(position, new GUIContent("Id"), idProp.intValue);
-                        position.y += position.height;
-
-                        showAmountProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Show Amount"), showAmountProp.boolValue);
-                        position.y += position.height;
-
-                        EditorGUI.ObjectField(position, spriteProp, new GUIContent("Item sprite"));
-                        position.y += position.height;
-
-                        EditorGUI.indentLevel--;
-                        position.width += 40;
-                        EditorGUIUtility.labelWidth += 20;
-                        position.x -= 20;
-                    }
-
-                    storageFoldout = EditorGUI.Foldout(position, storageFoldout, new GUIContent("Storage Configuration"), true);
-                    position.y += position.height;
-                    if (storageFoldout)
-                    {
-                        position.x += 20;
-                        position.width -= 40;
-                        EditorGUIUtility.labelWidth -= 20;
-                        total += 6;
-                        EditorGUI.indentLevel++;
-
-                        if (hasDurabilityProp.boolValue)
+                        if (itemFoldout)
                         {
-                            EditorGUI.HelpBox(position, "You can only have durability or stackable selected, not both", MessageType.Info);
+                            position.x += 20;
+                            position.width -= 40;
+                            EditorGUIUtility.labelWidth -= 20;
+                            total += 3;
+                            EditorGUI.indentLevel++;
+
+                            itemNameProp.stringValue = EditorGUI.TextField(position, new GUIContent("Item name"), itemNameProp.stringValue);
                             position.y += position.height;
+
+                            idProp.intValue = EditorGUI.IntField(position, new GUIContent("Id"), idProp.intValue);
+                            position.y += position.height;
+
+                            showAmountProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Show Amount"), showAmountProp.boolValue);
+                            position.y += position.height;
+
+                            EditorGUI.ObjectField(position, spriteProp, new GUIContent("Item sprite"));
+                            position.y += position.height;
+
+                            EditorGUI.indentLevel--;
+                            position.width += 40;
+                            EditorGUIUtility.labelWidth += 20;
+                            position.x -= 20;
                         }
-                        EditorGUI.BeginDisabledGroup(hasDurabilityProp.boolValue);
-                        stackableProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Stackable"), stackableProp.boolValue);
-                        EditorGUI.EndDisabledGroup();
-                        position.y += position.height;
 
-                        if (stackableProp.boolValue)
+                        storageFoldout = EditorGUI.Foldout(position, storageFoldout, new GUIContent("Storage Configuration"), true);
+                        position.y += position.height;
+                        if (storageFoldout)
                         {
-                            maxAmountProp.intValue = EditorGUI.IntField(position, new GUIContent("Max amount per slot"), maxAmountProp.intValue);
-                            position.y += position.height;
-                            hasDurabilityProp.boolValue = false;
-                        }
-                        /*if (hasDurabilityProp.boolValue && stackableProp.boolValue)
-                        {
-                            EditorGUI.PropertyField(position, serializedObject.FindProperty("stackOptions"), new GUIContent("On change durability action"));
-                            position.y += position.height;
-                            EditorGUI.PropertyField(position, stackAlwaysProp);
-                            position.y += position.height;
-                            EditorGUI.PropertyField(position, stackOnMaxDurabiliyProp);
-                            position.y += position.height;
-                            EditorGUI.PropertyField(position, stackOnSpecifDurabilityProp);
-                            position.y += position.height;
-                            if (stackOnSpecifDurabilityProp.boolValue)
+                            position.x += 20;
+                            position.width -= 40;
+                            EditorGUIUtility.labelWidth -= 20;
+                            total += 6;
+                            EditorGUI.indentLevel++;
+
+                            if (hasDurabilityProp.boolValue)
                             {
-                                total += 1;
-                                //EditorGUI.PropertyField(stackDurabilitiesProp);
-                                stackDurabilitiesProp.isExpanded = EditorGUI.Foldout(position, stackDurabilitiesProp.isExpanded, "Stack Durabilities");
+                                EditorGUI.HelpBox(position, "You can only have durability or stackable selected, not both", MessageType.Info);
                                 position.y += position.height;
-                                if (stackDurabilitiesProp.isExpanded)
+                            }
+                            EditorGUI.BeginDisabledGroup(hasDurabilityProp.boolValue);
+                            stackableProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Stackable"), stackableProp.boolValue);
+                            EditorGUI.EndDisabledGroup();
+                            position.y += position.height;
+
+                            if (stackableProp.boolValue)
+                            {
+                                maxAmountProp.intValue = EditorGUI.IntField(position, new GUIContent("Max amount per slot"), maxAmountProp.intValue);
+                                position.y += position.height;
+                                hasDurabilityProp.boolValue = false;
+                            }
+                            /*if (hasDurabilityProp.boolValue && stackableProp.boolValue)
+                            {
+                                EditorGUI.PropertyField(position, serializedObject.FindProperty("stackOptions"), new GUIContent("On change durability action"));
+                                position.y += position.height;
+                                EditorGUI.PropertyField(position, stackAlwaysProp);
+                                position.y += position.height;
+                                EditorGUI.PropertyField(position, stackOnMaxDurabiliyProp);
+                                position.y += position.height;
+                                EditorGUI.PropertyField(position, stackOnSpecifDurabilityProp);
+                                position.y += position.height;
+                                if (stackOnSpecifDurabilityProp.boolValue)
+                                {
+                                    total += 1;
+                                    //EditorGUI.PropertyField(stackDurabilitiesProp);
+                                    stackDurabilitiesProp.isExpanded = EditorGUI.Foldout(position, stackDurabilitiesProp.isExpanded, "Stack Durabilities");
+                                    position.y += position.height;
+                                    if (stackDurabilitiesProp.isExpanded)
+                                    {
+                                        EditorGUI.indentLevel++;
+                                        stackDurabilitiesProp.arraySize = EditorGUI.IntField(position, "Size", stackDurabilitiesProp.arraySize);
+                                        position.y += position.height;
+                                        total += 1;
+                                        for (int i = 0; i < stackDurabilitiesProp.arraySize; i++)
+                                        {
+                                            total += 2;
+                                            stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue = EditorGUI.IntField(position, "Durability", stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue);
+                                            position.y += position.height;
+                                            if (i >= (property.objectReferenceValue as Item).stackDurabilities.Count) continue;
+                                            uint dur = (property.objectReferenceValue as Item).stackDurabilities[i];
+                                            EditorGUI.ProgressBar(position, (float)dur / (float)maxDurabilityProp.intValue, "Durability");
+                                            position.y += position.height;
+                                        }
+                                        EditorGUI.indentLevel--;
+                                    }
+                                }
+                            }*/
+
+                            EditorGUI.indentLevel--;
+                            position.width += 40;
+                            EditorGUIUtility.labelWidth += 20;
+                            position.x -= 20;
+                        }
+
+                        usingFoldout = EditorGUI.Foldout(position, usingFoldout, new GUIContent("Using items Configuration"), true);
+                        position.y += position.height;
+                        if (usingFoldout)
+                        {
+                            position.x += 20;
+                            position.width -= 40;
+                            EditorGUIUtility.labelWidth -= 20;
+                            total += 3;
+                            EditorGUI.indentLevel++;
+
+                            destroyOnUseProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Remove item when finish using"), destroyOnUseProp.boolValue);
+                            position.y += position.height;
+
+                            useHowManyWhenUsedProp.intValue = EditorGUI.IntField(position, new GUIContent("The amount of item to remove"), useHowManyWhenUsedProp.intValue);
+                            position.y += position.height;
+
+                            if (stackableProp.boolValue)
+                            {
+                                EditorGUI.HelpBox(position, "You can only have durability or stackable selected, not both", MessageType.Info);
+                                position.y += position.height;
+                            }
+                            EditorGUI.BeginDisabledGroup(stackableProp.boolValue);
+                            hasDurabilityProp.boolValue = EditorGUI.Toggle(position, "Has durability", hasDurabilityProp.boolValue);
+                            EditorGUI.EndDisabledGroup();
+                            if (stackableProp.boolValue)
+                            {
+                                hasDurabilityProp.boolValue = false;
+                            }
+
+                            position.y += position.height;
+                            if (hasDurabilityProp.boolValue)
+                            {
+                                total += 2;
+                                EditorGUI.PropertyField(position, maxDurabilityProp, new GUIContent("Max durability"), true);
+                                position.y += position.height;
+
+                                var tmpBool = EditorGUI.Foldout(position, durabilityImagesProp.isExpanded, "Durability Images", true);
+                                position.y += position.height;
+
+                                if (tmpBool != durabilityImagesProp.isExpanded)
+                                    Item.SortDurabilityImages((property.objectReferenceValue as Item).durabilityImages);
+                                durabilityImagesProp.isExpanded = tmpBool;
+                                if (durabilityImagesProp.isExpanded)
                                 {
                                     EditorGUI.indentLevel++;
-                                    stackDurabilitiesProp.arraySize = EditorGUI.IntField(position, "Size", stackDurabilitiesProp.arraySize);
+                                    durabilityImagesProp.arraySize = EditorGUI.IntField(position, "Size", durabilityImagesProp.arraySize);
                                     position.y += position.height;
-                                    total += 1;
-                                    for (int i = 0; i < stackDurabilitiesProp.arraySize; i++)
+                                    serializedObject.ApplyModifiedProperties();
+                                    total += 2;
+
+                                    for (int i = 0; i < durabilityImagesProp.arraySize; i++)
                                     {
-                                        total += 2;
-                                        stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue = EditorGUI.IntField(position, "Durability", stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue);
-                                        position.y += position.height;
-                                        if (i >= (property.objectReferenceValue as Item).stackDurabilities.Count) continue;
-                                        uint dur = (property.objectReferenceValue as Item).stackDurabilities[i];
-                                        EditorGUI.ProgressBar(position, (float)dur / (float)maxDurabilityProp.intValue, "Durability");
+                                        var old = position.height;
+                                        position.height = EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i));
+                                        EditorGUI.PropertyField(position, durabilityImagesProp.GetArrayElementAtIndex(i));
+                                        position.y += EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i));
+                                        total += (EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i)) / 18f) + 1;
+                                        position.height = old;
+
+                                        DurabilityImage dur = (property.objectReferenceValue as Item).durabilityImages[i];
+
+                                        EditorGUI.ProgressBar(position, (float)dur.durability / (float)maxDurabilityProp.intValue, dur.imageName);
                                         position.y += position.height;
                                     }
+
                                     EditorGUI.indentLevel--;
-                                }
-                            }
-                        }*/
-
-                        EditorGUI.indentLevel--;
-                        position.width += 40;
-                        EditorGUIUtility.labelWidth += 20;
-                        position.x -= 20;
-                    }
-
-                    usingFoldout = EditorGUI.Foldout(position, usingFoldout, new GUIContent("Using items Configuration"), true);
-                    position.y += position.height;
-                    if (usingFoldout)
-                    {
-                        position.x += 20;
-                        position.width -= 40;
-                        EditorGUIUtility.labelWidth -= 20;
-                        total += 3;
-                        EditorGUI.indentLevel++;
-
-                        destroyOnUseProp.boolValue = EditorGUI.Toggle(position, new GUIContent("Remove item when finish using"), destroyOnUseProp.boolValue);
-                        position.y += position.height;
-
-                        useHowManyWhenUsedProp.intValue = EditorGUI.IntField(position, new GUIContent("The amount of item to remove"), useHowManyWhenUsedProp.intValue);
-                        position.y += position.height;
-
-                        if (stackableProp.boolValue)
-                        { 
-                            EditorGUI.HelpBox(position, "You can only have durability or stackable selected, not both", MessageType.Info);
-                            position.y += position.height;
-                        }
-                        EditorGUI.BeginDisabledGroup(stackableProp.boolValue);
-                        hasDurabilityProp.boolValue = EditorGUI.Toggle(position, "Has durability", hasDurabilityProp.boolValue);
-                        EditorGUI.EndDisabledGroup();
-                        if (stackableProp.boolValue)
-                        {
-                            hasDurabilityProp.boolValue = false;
-                        }
-
-                        position.y += position.height;
-                        if (hasDurabilityProp.boolValue)
-                        {
-                            total += 2;
-                            EditorGUI.PropertyField(position, maxDurabilityProp, new GUIContent("Max durability"), true);
-                            position.y += position.height;
-
-                            var tmpBool = EditorGUI.Foldout(position, durabilityImagesProp.isExpanded, "Durability Images", true);
-                            position.y += position.height;
-
-                            if (tmpBool != durabilityImagesProp.isExpanded)
-                                Item.SortDurabilityImages((property.objectReferenceValue as Item).durabilityImages);
-                            durabilityImagesProp.isExpanded = tmpBool;
-                            if (durabilityImagesProp.isExpanded)
-                            {
-                                EditorGUI.indentLevel++;
-                                durabilityImagesProp.arraySize = EditorGUI.IntField(position, "Size", durabilityImagesProp.arraySize);
-                                position.y += position.height;
-                                serializedObject.ApplyModifiedProperties();
-                                total += 2;
-
-                                for (int i = 0; i < durabilityImagesProp.arraySize; i++)
-                                {
-                                    var old = position.height;
-                                    position.height = EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i));
-                                    EditorGUI.PropertyField(position, durabilityImagesProp.GetArrayElementAtIndex(i));
-                                    position.y += EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i));
-                                    total += (EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i)) / 18f) + 1;
-                                    position.height = old;
-
-                                    DurabilityImage dur = (property.objectReferenceValue as Item).durabilityImages[i];
-
-                                    EditorGUI.ProgressBar(position, (float)dur.durability / (float)maxDurabilityProp.intValue, dur.imageName);
+                                    if (GUI.Button(position, "Sort"))
+                                        Item.SortDurabilityImages((property.objectReferenceValue as Item).durabilityImages);
                                     position.y += position.height;
                                 }
-
-                                EditorGUI.indentLevel--;
-                                if (GUI.Button(position, "Sort"))
-                                    Item.SortDurabilityImages((property.objectReferenceValue as Item).durabilityImages);
-                                position.y += position.height;
                             }
+
+                            EditorGUI.indentLevel--;
+                            position.width += 40;
+                            EditorGUIUtility.labelWidth += 20;
+                            position.x -= 20;
                         }
 
-                        EditorGUI.indentLevel--;
-                        position.width += 40;
-                        EditorGUIUtility.labelWidth += 20;
-                        position.x -= 20;
+                        behaviourFoldout = EditorGUI.Foldout(position, behaviourFoldout, new GUIContent("Behaviour Configuration"), true);
+                        position.y += position.height;
+                        if (behaviourFoldout)
+                        {
+                            position.x += 20;
+                            position.width -= 40;
+                            EditorGUIUtility.labelWidth -= 20;
+                            total += 5;
+                            EditorGUI.indentLevel++;
+                            EditorGUILayout.Separator();
+                            EditorGUI.HelpBox(position, "The field below accepts any script, but it will only work if the provided script has the OnUse function", MessageType.None);
+                            position.y += position.height;
+                            EditorGUI.ObjectField(position, onUseFuncProp, new GUIContent("On use item Behaviour"));
+                            position.y += 2 * (position.height);
+
+
+                            EditorGUI.HelpBox(position, "The field below accepts any script, but it will only work if the provided script has the OnDropItem function", MessageType.None);
+                            position.y += position.height;
+                            EditorGUI.ObjectField(position, optionalOnDropBehaviour, new GUIContent("On drop item optional Behaviour"));
+                            position.y += position.height;
+                            EditorGUI.indentLevel--;
+                            position.width += 40;
+                            EditorGUIUtility.labelWidth += 20;
+                            position.x -= 20;
+                        }
+
+                        tooltipFoldout = EditorGUI.Foldout(position, tooltipFoldout, new GUIContent("Tooltip Configuration"), true);
+                        position.y += position.height;
+                        if (tooltipFoldout)
+                        {
+                            position.x += 20;
+                            position.width -= 40;
+                            EditorGUIUtility.labelWidth -= 20;
+                            total += 5;
+                            EditorGUI.indentLevel++;
+
+                            var old = position.height;
+                            position.height = EditorGUI.GetPropertyHeight(tooltipProp);
+                            EditorGUI.PropertyField(position, tooltipProp, true);
+                            position.y += EditorGUI.GetPropertyHeight(tooltipProp);
+                            total += EditorGUI.GetPropertyHeight(tooltipProp) / 18f;
+
+                            position.height = old;
+
+
+                            EditorGUI.indentLevel--;
+                            position.width += 40;
+                            EditorGUIUtility.labelWidth += 20;
+                            position.x -= 20;
+                        }
                     }
-
-                    behaviourFoldout = EditorGUI.Foldout(position, behaviourFoldout, new GUIContent("Behaviour Configuration"), true);
-                    position.y += position.height;
-                    if (behaviourFoldout)
+                    else
                     {
-                        position.x += 20;
-                        position.width -= 40;
-                        EditorGUIUtility.labelWidth -= 20;
-                        total += 5;
-                        EditorGUI.indentLevel++;
-                        EditorGUILayout.Separator();
-                        EditorGUI.HelpBox(position, "The field below accepts any script, but it will only work if the provided script has the OnUse function", MessageType.None);
-                        position.y += position.height;
-                        EditorGUI.ObjectField(position, onUseFuncProp, new GUIContent("On use item Behaviour"));
-                        position.y += 2 * (position.height);
-
-
-                        EditorGUI.HelpBox(position, "The field below accepts any script, but it will only work if the provided script has the OnDropItem function", MessageType.None);
-                        position.y += position.height;
-                        EditorGUI.ObjectField(position, optionalOnDropBehaviour, new GUIContent("On drop item optional Behaviour"));
-                        position.y += position.height;
-                        EditorGUI.indentLevel--;
-                        position.width += 40;
-                        EditorGUIUtility.labelWidth += 20;
-                        position.x -= 20;
-                    }
-
-                    tooltipFoldout = EditorGUI.Foldout(position, tooltipFoldout, new GUIContent("Tooltip Configuration"), true);
-                    position.y += position.height;
-                    if (tooltipFoldout)
-                    {
-                        position.x += 20;
-                        position.width -= 40;
-                        EditorGUIUtility.labelWidth -= 20;
-                        total += 5;
-                        EditorGUI.indentLevel++;
-
-                        var old = position.height;
-                        position.height = EditorGUI.GetPropertyHeight(tooltipProp);
-                        EditorGUI.PropertyField(position, tooltipProp, true);
-                        position.y += EditorGUI.GetPropertyHeight(tooltipProp);
-                        total += EditorGUI.GetPropertyHeight(tooltipProp) / 18f;
-
-                        position.height = old;
-                        
-
-                        EditorGUI.indentLevel--;
-                        position.width += 40;
-                        EditorGUIUtility.labelWidth += 20;
-                        position.x -= 20;
+                        baseAmount = 3f;
+                        position.width -= 20;
+                        EditorGUI.ObjectField(position, property);
                     }
                 }
                 else
                 {
-                    baseAmount = 3f;
-                    position.width -= 20;
-                    EditorGUI.ObjectField(position, property);
+                    amountOfFilds = 1;
+                    baseAmount = 1;
                 }
+                position.x -= 20;
+                serializedObject.ApplyModifiedProperties();
+                EditorGUI.EndProperty();
             }
             else
             {
                 amountOfFilds = 1;
                 baseAmount = 1;
-            }
-            position.x -= 20;
-            serializedObject.ApplyModifiedProperties();
-            EditorGUI.EndProperty();
-        } else
-        {
-            amountOfFilds = 1;
-            baseAmount = 1;
-            EditorGUI.ObjectField(position, property);
-            if (property.objectReferenceValue != null)
-            {
-                serializedObject = new SerializedObject(property.objectReferenceValue);
-                serializedObject.ApplyModifiedProperties();
-                useObjValues = true;
+                EditorGUI.ObjectField(position, property);
+                if (property.objectReferenceValue != null)
+                {
+                    serializedObject = new SerializedObject(property.objectReferenceValue);
+                    serializedObject.ApplyModifiedProperties();
+                    useObjValues = true;
+                }
             }
         }
     }
