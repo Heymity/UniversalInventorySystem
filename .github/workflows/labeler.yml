@@ -1,8 +1,1 @@
-core:
-  - Assets/InventorySystem/Scripts/Inventory/*.cs
-  
-editor:
-  - Assets/InventorySystem/Editor/**/*
 
-source:
-  - Assets
