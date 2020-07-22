@@ -19,7 +19,7 @@ MonoBehaviour:
   destroyOnUse: 0
   useHowManyWhenUsed: 1
   stackable: 0
-  maxDurability: 8
+  durability: 8
   hasDurability: 1
   showAmount: 0
   _durabilityImages:

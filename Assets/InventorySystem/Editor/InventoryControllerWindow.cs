@@ -34,43 +34,24 @@ namespace UniversalInventorySystem.Editors
             window.Show();
         }
 
-        bool inventory = true;
-        bool inventoryUI = false;
-        bool debug = false;
+        int selected = 0;
         Vector2 scrollPos;
 
         void OnGUI()
         {
             EditorGUILayout.BeginVertical("Toolbar", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(500));
+            GUILayout.BeginArea(new Rect((Screen.width / 2) - 250, 1, 500, 18));
 
-            if (GUILayout.Button("Inventories", EditorStyles.miniButtonLeft))
-            {
-                inventory = true;
-                inventoryUI = false;
-                debug = false;
-            }
+            selected = GUILayout.Toolbar(selected, new string[3] { "Inventory", "InventoryUI", "Debug" });
 
-            if (GUILayout.Button("InventoriesUI", EditorStyles.miniButtonMid))
-            {
-                inventory = false;
-                inventoryUI = true;
-                debug = false;
-            }
-
-            if (GUILayout.Button("Debug", EditorStyles.miniButtonRight))
-            {
-                inventory = false;
-                inventoryUI = false;
-                debug = true;
-            }
-
+            GUILayout.EndArea();
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-            if (inventory)
+            if (selected == 0)
             {
                 EditorGUILayout.LabelField("Inventories");
                 for (int i = 0; i < InventoryController.inventories.Count; i++)
@@ -99,7 +80,7 @@ namespace UniversalInventorySystem.Editors
 
                         rect.x += 100;
 
-                        DrawLine(rect);
+                        DrawLine(rect, 18);
 
                         if (s.item != null)
                         {
@@ -107,27 +88,27 @@ namespace UniversalInventorySystem.Editors
                             soRect.height = 16;
                             EditorGUI.LabelField(soRect, new GUIContent(s.item.itemName, EditorGUIUtility.IconContent("ScriptableObject Icon").image));
                             rect.x += 100;
-                            DrawLine(rect);
+                            DrawLine(rect, 18);
                             EditorGUI.LabelField(rect, s.amount.ToString());
                             rect.x += 80;
-                            DrawLine(rect);
+                            DrawLine(rect, 18);
                             EditorGUI.LabelField(rect, $"{s.durability} | {s.item.hasDurability}");
                             rect.x += 110;
-                            DrawLine(rect);
+                            DrawLine(rect, 18);
                         }
                         else
                         {
                             EditorGUI.LabelField(rect, "None");
                             rect.x += 100;
-                            DrawLine(rect);
+                            DrawLine(rect, 18);
                             rect.x += 80;
-                            DrawLine(rect);
+                            DrawLine(rect, 18);
                             rect.x += 110;
-                            DrawLine(rect);
+                            DrawLine(rect, 18);
                         }
                         EditorGUI.LabelField(rect, s.isProductSlot.ToString());
                         rect.x += 100;
-                        DrawLine(rect);
+                        DrawLine(rect, 18);
 
                         var auxRect = rect;
                         auxRect.height = 16;
@@ -135,7 +116,7 @@ namespace UniversalInventorySystem.Editors
                         EditorGUI.LabelField(auxRect, s.whitelist == null ? new GUIContent("None") : content);
 
                         rect.x += 120;
-                        DrawLine(rect);
+                        DrawLine(rect, 18);
 
                         auxRect = rect;
                         auxRect.width = 130;
@@ -154,11 +135,11 @@ namespace UniversalInventorySystem.Editors
                     EditorGUILayout.EndVertical();
                 }
             }
-            else if (inventoryUI)
+            else if (selected == 1)
             {
                 EditorGUILayout.LabelField("InventoriesUI");
             }
-            else if (debug)
+            else if (selected == 2)
             {
                 EditorGUILayout.LabelField("Debugging");
             }
@@ -182,13 +163,13 @@ namespace UniversalInventorySystem.Editors
             }
         }
 
-        public static void DrawLine(Rect rect)
+        public static void DrawLine(Rect rect, float height)
         {
             Handles.color = Color.gray;
             Handles.BeginGUI();
             Handles.DrawLine(
             new Vector3(rect.x - 5, rect.y),
-            new Vector3(rect.x - 5, rect.y + 18));
+            new Vector3(rect.x - 5, rect.y + height));
             Handles.EndGUI();
         }
 
@@ -208,22 +189,22 @@ namespace UniversalInventorySystem.Editors
             HR(header);
             EditorGUI.LabelField(header, "Has Item:");
             header.x += 100;
-            DrawLine(header);
+            DrawLine(header, 18);
             EditorGUI.LabelField(header, "Item:");
             header.x += 100;
-            DrawLine(header);
+            DrawLine(header, 18);
             EditorGUI.LabelField(header, "Amount:");
             header.x += 80;
-            DrawLine(header);
+            DrawLine(header, 18);
             EditorGUI.LabelField(header, "Durability | Has");
             header.x += 110;
-            DrawLine(header);
+            DrawLine(header, 18);
             EditorGUI.LabelField(header, "Is Product Slot:");
             header.x += 100;
-            DrawLine(header);
+            DrawLine(header, 18);
             EditorGUI.LabelField(header, "Whitelist:");
             header.x += 120;
-            DrawLine(header);
+            DrawLine(header, 18);
             EditorGUI.LabelField(header, "Item Instance:");
         }
 
@@ -245,20 +226,21 @@ namespace UniversalInventorySystem.Editors
                 scrollPosItem = EditorGUILayout.BeginScrollView(scrollPosItem);
                 foreach (MemberInfo mi in members)
                 {
-                    var rect = GUILayoutUtility.GetRect(100, 18);
+                    var rect = GUILayoutUtility.GetRect(100, 20);
+                    rect.x += 10;
+                    rect.width -= 20;
                     HR(rect);                    
                     EditorGUI.LabelField(rect, mi.Name);
                     rect.x += 200;
-                    DrawLine(rect);
+                    DrawLine(rect, 20);
                     rect.width -= 205;
+                    rect.height = 18;
                     try
                     {
                         switch (mi.MemberType)
                         {
                             case MemberTypes.Field:
-                                var field = (mi as FieldInfo).GetValue(itemTarget);
-                                if (field == null) break;
-                                EditorGUI.LabelField(rect, (mi as FieldInfo).GetValue(itemTarget).ToString());
+                                HandleField(mi as FieldInfo, rect);
                                 break;
                             case MemberTypes.Property:
                                 var prop = (mi as PropertyInfo).GetValue(itemTarget);
@@ -284,6 +266,52 @@ namespace UniversalInventorySystem.Editors
                 }
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndScrollView();
+            }
+
+            public void HandleField(FieldInfo fi, Rect rect)
+            {
+                var field = fi.GetValue(itemTarget);
+                //if (field == null) return;
+                if (fi.FieldType == typeof(int) || fi.FieldType == typeof(int?))
+                {
+                    fi.SetValue(itemTarget, EditorGUI.IntField(rect, "", (int)(field ?? 0)));
+                }
+                else if (fi.FieldType == typeof(float) || fi.FieldType == typeof(float?))
+                {
+                    fi.SetValue(itemTarget, EditorGUI.FloatField(rect, "", (float)(field ?? 0)));
+                }
+                else if (fi.FieldType == typeof(bool) || fi.FieldType == typeof(bool?))
+                {
+                    fi.SetValue(itemTarget, EditorGUI.Toggle(rect, "", (bool)(field ?? false)));
+                }
+                else if (fi.FieldType == typeof(string))
+                {
+                    fi.SetValue(itemTarget, EditorGUI.TextField(rect, "", (string)(field ?? "")));
+                }
+                else if (fi.FieldType.IsSubclassOf(typeof(UnityEngine.Object)))
+                {
+                    fi.SetValue(itemTarget, EditorGUI.ObjectField(rect, "", field as UnityEngine.Object, fi.FieldType, true));
+                }
+                else if (fi.FieldType == typeof(Vector3) || fi.FieldType == typeof(Vector3?))
+                {
+                    fi.SetValue(itemTarget, EditorGUI.Vector3Field(rect, "", (Vector3)(field ?? Vector3.zero)));
+                }
+                else if (fi.FieldType == typeof(Vector3Int) || fi.FieldType == typeof(Vector3Int?))
+                {
+                    fi.SetValue(itemTarget, EditorGUI.Vector3IntField(rect, "", (Vector3Int)(field ?? Vector3Int.zero)));
+                }
+                else if (fi.FieldType == typeof(Vector2) || fi.FieldType == typeof(Vector2?))
+                {
+                    fi.SetValue(itemTarget, EditorGUI.Vector2Field(rect, "", (Vector2)(field ?? Vector2.zero)));
+                }
+                else if (fi.FieldType == typeof(Vector2Int) || fi.FieldType == typeof(Vector2Int?))
+                {
+                    fi.SetValue(itemTarget, EditorGUI.Vector2IntField(rect, "", (Vector2Int)(field ?? Vector2Int.zero)));
+                }
+                else
+                {
+                    EditorGUI.LabelField(rect, (fi as FieldInfo).GetValue(itemTarget).ToString());
+                }
             }
 
             Stopwatch stop;
@@ -313,6 +341,7 @@ namespace UniversalInventorySystem.Editors
             {
                 bool hasAllParams = true;
                 if (mi == null) return;
+                EditorGUILayout.LabelField(mi.Name);
                 ParameterInfo[] pis = mi.GetParameters();
                 for(int i = 0; i < pis.Length; i++)
                 {
@@ -327,6 +356,7 @@ namespace UniversalInventorySystem.Editors
                         returnValue = mi.Invoke(obj, param.ToArray());
                     }
                     EditorGUILayout.LabelField($"Return Value: {returnValue}");
+                    EditorGUILayout.LabelField($"({mi.ReturnType})");
                 }
 
                 void HandleParam(ParameterInfo p, int index)
@@ -347,9 +377,9 @@ namespace UniversalInventorySystem.Editors
                     {
                         param[index] = EditorGUILayout.TextField(p.Name, (string)(param[index] ?? ""));
                     }
-                    else if(p.ParameterType.IsSubclassOf(typeof(ScriptableObject)))
+                    else if(p.ParameterType.IsSubclassOf(typeof(UnityEngine.Object)))
                     {
-                        param[index] = EditorGUILayout.ObjectField(new GUIContent(p.Name), param[index] as ScriptableObject, p.ParameterType, true);
+                        param[index] = EditorGUILayout.ObjectField(new GUIContent(p.Name), param[index] as UnityEngine.Object, p.ParameterType, true);
                     }
                     else if (p.ParameterType == typeof(Vector3) || p.ParameterType == typeof(Vector3?))
                     {

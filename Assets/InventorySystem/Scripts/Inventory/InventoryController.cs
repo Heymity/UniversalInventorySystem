@@ -1834,13 +1834,30 @@ namespace UniversalInventorySystem
 
         public int durability
         {
-            get { return _durability; }
+            get 
+            { 
+                if(itemInstance == null)
+                {
+                    if (item != null)
+                    {
+                        itemInstance = UnityEngine.Object.Instantiate(item);
+                        itemInstance.name = item.name + "(Instance)";
+                    }
+                    else return 0;
+                }
+                _durability = itemInstance.durability;
+                return itemInstance.durability;
+            }
             set
             {
                 if (value > (item?.durability ?? int.MaxValue)) throw new Exception("The value provided for durability is greter than the max durablity\nIf your intentions are of using a durability greter then the max one, use the SetDurability function with op=true");
                 if(itemInstance == null)
                 {
-                    if (item != null) itemInstance = UnityEngine.Object.Instantiate(item);
+                    if (item != null)
+                    {
+                        itemInstance = UnityEngine.Object.Instantiate(item);
+                        itemInstance.name = item.name + "(Instance)";
+                    }
                     else return;
                 }
                 _durability = value;
@@ -1867,7 +1884,11 @@ namespace UniversalInventorySystem
                 slot._durability = value;
                 if (slot.itemInstance == null)
                 {
-                    if (slot.item != null) slot.itemInstance = UnityEngine.Object.Instantiate(slot.item);
+                    if (slot.item != null)
+                    {
+                        slot.itemInstance = UnityEngine.Object.Instantiate(slot.item);
+                        slot.itemInstance.name = slot.item.name + "(Instance)";
+                    }
                     else return false;
                 }
                 slot.itemInstance.durability = value;
@@ -1878,7 +1899,11 @@ namespace UniversalInventorySystem
             slot._durability = value;
             if (slot.itemInstance == null)
             {
-                if (slot.item != null) slot.itemInstance = UnityEngine.Object.Instantiate(slot.item);
+                if (slot.item != null)
+                {
+                    slot.itemInstance = UnityEngine.Object.Instantiate(slot.item);
+                    slot.itemInstance.name = slot.item.name + "(Instance)";
+                }
                 else return false;
             }
             slot.itemInstance.durability = value;
@@ -1932,6 +1957,7 @@ namespace UniversalInventorySystem
             whitelist = _whitelist;
             _durability = slot.durability;
             itemInstance = slot.item != null ? UnityEngine.Object.Instantiate(slot.item) : null;
+            if(itemInstance != null) itemInstance.name = slot.item.name + "(Instance)";
             durability = slot.durability;
         }
 
@@ -1945,6 +1971,7 @@ namespace UniversalInventorySystem
             whitelist = null;
             _durability = slot.durability;
             itemInstance = slot.item != null ? UnityEngine.Object.Instantiate(slot.item) : null;
+            if (itemInstance != null) itemInstance.name = slot.item.name + "(Instance)";
             durability = slot.durability;
         }
 
@@ -1958,6 +1985,7 @@ namespace UniversalInventorySystem
             whitelist = null;
             _durability = 0;
             itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
+            if (itemInstance != null) itemInstance.name = _item.name + "(Instance)";
             durability = 0;
         }
 
@@ -1971,6 +1999,7 @@ namespace UniversalInventorySystem
             whitelist = null;
             _durability = 0;
             itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
+            if (itemInstance != null) itemInstance.name = _item.name + "(Instance)";
             durability = 0;
         }
         
@@ -1984,6 +2013,7 @@ namespace UniversalInventorySystem
             whitelist = null;
             this._durability = _durability;
             itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
+            if (itemInstance != null) itemInstance.name = _item.name + "(Instance)";
             durability = _durability;           
         }
 
@@ -1997,6 +2027,7 @@ namespace UniversalInventorySystem
             whitelist = null;
             _durability = 0;
             itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
+            if (itemInstance != null) itemInstance.name = _item.name + "(Instance)";
             durability = 0;
         }
         
@@ -2010,6 +2041,7 @@ namespace UniversalInventorySystem
             whitelist = null;
             this._durability = _durability;
             itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
+            if (itemInstance != null) itemInstance.name = _item.name + "(Instance)";
             durability = _durability;
         }
 
@@ -2023,6 +2055,7 @@ namespace UniversalInventorySystem
             whitelist = null;
             _durability = 0;
             itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
+            if (itemInstance != null) itemInstance.name = _item.name + "(Instance)";
             durability = 0;
         }
 
@@ -2036,6 +2069,7 @@ namespace UniversalInventorySystem
             whitelist = _whitelist;
             _durability = 0;
             itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
+            if (itemInstance != null) itemInstance.name = _item.name + "(Instance)";
             durability = 0;
         }
         
@@ -2049,6 +2083,7 @@ namespace UniversalInventorySystem
             whitelist = _whitelist;
             this._durability = _durability;
             itemInstance = _itemInstance != null ? UnityEngine.Object.Instantiate(_itemInstance) : null;
+            if (itemInstance != null) itemInstance.name = _itemInstance.name;
             durability = _durability;
         }
         
