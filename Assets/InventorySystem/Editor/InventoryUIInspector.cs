@@ -76,7 +76,7 @@ namespace UniversalInventorySystem.Editors
             isCraftInventoryProp = serializedObject.FindProperty("isCraftInventory");
             gridSizeProp = serializedObject.FindProperty("gridSize");
             allowsPatternCraftingProp = serializedObject.FindProperty("allowsPatternCrafting");
-            productSlotsProp = serializedObject.FindProperty("productSlots");
+            productSlotsProp = serializedObject.FindProperty("productSlotsIndex");
             useOnClickProp = serializedObject.FindProperty("useOnClick");
             dropOnCloseCraftingProp = serializedObject.FindProperty("dropOnCloseCrafting");
             dropPosProp = serializedObject.FindProperty("dropPos");
@@ -206,7 +206,7 @@ namespace UniversalInventorySystem.Editors
                 {
                     EditorGUILayout.PropertyField(gridSizeProp, new GUIContent("Crafting grid size"));
                     EditorGUILayout.PropertyField(allowsPatternCraftingProp, new GUIContent("Allows pattern crafting"));
-                    EditorGUILayout.PropertyField(productSlotsProp, new GUIContent("Product slots"));
+                    EditorGUILayout.PropertyField(productSlotsProp, new GUIContent("Product slots indexes"));
 
                     EditorGUILayout.Separator();
 

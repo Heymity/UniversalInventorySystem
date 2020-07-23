@@ -92,7 +92,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: InventoryUI and craft product slots, Remake SwapItemThruInventories
+        ///TODO: Seeds, Debug, Remake SwapItemThruInventories
         #region Add
 
         /// <summary>
