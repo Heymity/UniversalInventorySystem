@@ -24,7 +24,7 @@ using UnityEngine;
 namespace UniversalInventorySystem
 {
     [
-        CreateAssetMenu(fileName = "Inventory", menuName = "UniversalInventorySystem/Inventory", order = 90),
+        CreateAssetMenu(fileName = "Inventory", menuName = "UniversalInventorySystem/Inventory", order = 81),
         Serializable
     ]
     public class Inventory : ScriptableObject
@@ -37,6 +37,10 @@ namespace UniversalInventorySystem
 
         [SerializeField] private InventoryProtection _interactiable = InventoryController.AllInventoryFlags;
 #pragma warning restore
+
+        [HideInInspector]
+        public Seed[] seeds;
+
         public List<Slot> slots;
         public int SlotAmount => slots.Count;
         public int id;
@@ -83,7 +87,7 @@ namespace UniversalInventorySystem
         /// This function must be called when a inventory is being created. It fills the inventory if null Slots if the list of slots is null or have less elments than inv.SlotAmount, give an id to the inventory and add it to the list of inventories in the InventoryController. This function dont need to be called if you are using an loading system;
         /// </summary>
         /// <returns>The initiaized inventory</returns>
-        public Inventory Initialize(BroadcastEventType e = BroadcastEventType.InitializeInventory)
+        public Inventory Initialize(bool loadSeeds = true, BroadcastEventType e = BroadcastEventType.InitializeInventory)
         {
             if (this == null)
             {
@@ -93,25 +97,37 @@ namespace UniversalInventorySystem
             //Debug.Log("Init");
             if (hasInitialized) return this;
 
-            if (slots == null) slots = new List<Slot>();
-            if (slots.Count != SlotAmount)
+            if (seeds.Length >= 1 && loadSeeds) 
+                LoadSeed(0);
+            else
             {
-                for (int i = 0; i < SlotAmount; i++)
+                if (slots == null) slots = new List<Slot>();
+                if (slots.Count != SlotAmount)
                 {
-                    if (i < slots.Count) continue;
-                    else
-                        slots.Add(Slot.nullSlot);
+                    for (int i = 0; i < SlotAmount; i++)
+                    {
+                        if (i < slots.Count) continue;
+                        else
+                            slots.Add(Slot.nullSlot);
+                    }
                 }
             }
 
             hasInitialized = true;
             if (!InventoryController.inventories.Contains(this)) 
                 InventoryController.inventories.Add(this);
-            //Debug.Log($"HI {InventoryController.inventories.Count}");
             InventoryHandler.InitializeInventoryEventArgs iea = new InventoryHandler.InitializeInventoryEventArgs(this);
             if (InventoryHandler.current != null)
                 InventoryHandler.current.Broadcast(e, iea: iea);
             return this;
+        }
+
+        public bool LoadSeed(int index)
+        {
+            Seed seed = seeds[index];
+            if (seed == null) return false;
+            slots = new List<Slot>(seed.seedSlots);
+            return true;
         }
     }
 }

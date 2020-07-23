@@ -92,7 +92,6 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Seeds
         #region Add
 
         /// <summary>

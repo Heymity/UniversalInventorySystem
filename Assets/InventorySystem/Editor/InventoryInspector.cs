@@ -33,9 +33,11 @@ namespace UniversalInventorySystem.Editors
         SerializedProperty runtimeInteractiableProp;
         SerializedProperty keyProp;
         SerializedProperty runtimeKeyProp;
+        SerializedProperty seedsProp;
 
         bool edit = false;
         AnimBool showSlots;
+        AnimBool showSeeds;
         AnimBool showRuntimeSlots;
 
         private void OnEnable()
@@ -44,11 +46,14 @@ namespace UniversalInventorySystem.Editors
             idProp = serializedObject.FindProperty("_id");
             interactiableProp = serializedObject.FindProperty("_interactiable");
             keyProp = serializedObject.FindProperty("_key");
+            seedsProp = serializedObject.FindProperty("seeds");
 
             showSlots = new AnimBool(true);
             showRuntimeSlots = new AnimBool(true);
+            showSeeds = new AnimBool(true);
             showSlots.valueChanged.AddListener(Repaint);
             showRuntimeSlots.valueChanged.AddListener(Repaint);
+            showSeeds.valueChanged.AddListener(Repaint);
         }
 
         public override void OnInspectorGUI()
@@ -121,13 +126,13 @@ namespace UniversalInventorySystem.Editors
             {
                 EditorGUI.indentLevel++;
 
-                var tmp = EditorGUILayout.IntField("Size", slotsProp.arraySize);
-                if (tmp >= 0) slotsProp.arraySize = tmp;
+                var tmpsize = EditorGUILayout.IntField("Size", slotsProp.arraySize);
+                if (tmpsize >= 0) slotsProp.arraySize = tmpsize;
 
                 for (int i = 0;i < slotsProp.arraySize; i++)
                 {
                     EditorGUILayout.PropertyField(slotsProp.GetArrayElementAtIndex(i));
-                    if (i > tmp - 1)
+                    if (i > tmpsize - 1)
                     {
                         slotsProp.GetArrayElementAtIndex(i).FindPropertyRelative("interative").intValue = -1;
                     }
@@ -136,6 +141,26 @@ namespace UniversalInventorySystem.Editors
                 EditorGUI.indentLevel--;
             }
             EditorGUILayout.EndFadeGroup();
+
+            seedsProp.isExpanded = EditorGUILayout.Foldout(seedsProp.isExpanded, "Seeds");
+            showSeeds.target = seedsProp.isExpanded;
+
+
+            if (EditorGUILayout.BeginFadeGroup(showSeeds.faded))
+            {
+                EditorGUI.indentLevel++;
+                var tmpseed = EditorGUILayout.IntField("Size", seedsProp.arraySize);
+                if (tmpseed >= 0) seedsProp.arraySize = tmpseed;
+
+                for (int i = 0; i < seedsProp.arraySize; i++)
+                {
+                    EditorGUILayout.PropertyField(seedsProp.GetArrayElementAtIndex(i));
+                }
+                EditorGUI.indentLevel--;
+            }
+            EditorGUILayout.EndFadeGroup();
+
+
 
             EditorGUILayout.EndVertical();
 

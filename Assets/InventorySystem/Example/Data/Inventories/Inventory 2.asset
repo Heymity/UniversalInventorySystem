@@ -15,6 +15,7 @@ MonoBehaviour:
   inventorySlots:
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -22,6 +23,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -29,6 +31,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -36,6 +39,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -43,6 +47,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -50,6 +55,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -57,6 +63,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -64,6 +71,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -73,9 +81,11 @@ MonoBehaviour:
   _id: 1
   _key: Inventory 2
   _interactiable: -1
+  seeds: []
   slots:
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -83,6 +93,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -90,6 +101,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -97,6 +109,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -104,6 +117,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -111,6 +125,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -118,6 +133,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
@@ -125,6 +141,7 @@ MonoBehaviour:
     whitelist: {fileID: 0}
   - amount: 0
     item: {fileID: 0}
+    _itemInstance: {fileID: 0}
     hasItem: 0
     _durability: 0
     isProductSlot: 0
