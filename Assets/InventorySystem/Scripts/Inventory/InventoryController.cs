@@ -92,7 +92,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Crafting Events, InventoryUI and craft product slots, Remake SwapItemThruInventories
+        ///TODO: InventoryUI and craft product slots, Remake SwapItemThruInventories
         #region Add
 
         /// <summary>
@@ -1149,7 +1149,7 @@ namespace UniversalInventorySystem
         /// <param name="pattern">The PatternRecipe to be checked</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, Vector2Int gridSize, bool craftItem, PatternRecipe pattern, int productSlots, BroadcastEventType e = BroadcastEventType.Craft)
         {
             if (pattern.pattern.Length > grid.items.Length) return CraftItemData.nullData;
             if (pattern.products.Length > productSlots) return CraftItemData.nullData;
@@ -1213,7 +1213,11 @@ namespace UniversalInventorySystem
                             }
                         }
                     }
-                    return new CraftItemData(pattern.products, pattern.amountProducts);
+
+                    var result = new CraftItemData(pattern.products, pattern.amountProducts);
+                    InventoryHandler.CraftItemEventArgs cia = new InventoryHandler.CraftItemEventArgs(inv, true, result, grid, craftItem, null, pattern);
+                    InventoryHandler.current.Broadcast(e, cia: cia);
+                    return result;
                 }
             }
             else if (pattern.pattern.Length < grid.items.Length)
@@ -1288,13 +1292,15 @@ namespace UniversalInventorySystem
                                             var index = (v * gridSize.x) + u;
                                             if (inv.slots[index].HasItem && index <= grid.items.Length - 1)
                                             {
-                                                Debug.Log(index + " " + " " + pattern.amountPattern.Length);
+                                                //Debug.Log(index + " " + " " + pattern.amountPattern.Length);
                                                 inv.RemoveItemInSlot(index, pattern.amountPattern[v * pattern.gridSize.x + u]);
                                             }
                                         }
                                     }
                                 }
                             }
+                            InventoryHandler.CraftItemEventArgs cia = new InventoryHandler.CraftItemEventArgs(inv, true, result, grid, craftItem, null, pattern);
+                            InventoryHandler.current.Broadcast(e, cia: cia);
                             return result;
                         }
                     }
@@ -1313,7 +1319,7 @@ namespace UniversalInventorySystem
         /// <param name="recipe">The Recipe to be checked</param>
         /// <param name="productSlots">The amount of slot to products</param>
         /// <returns>The products of the recipe matched</returns>
-        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, bool craftItem, Recipe recipe, int productSlots)
+        public static CraftItemData CraftItem(this Inventory inv, CraftItemData grid, bool craftItem, Recipe recipe, int productSlots, BroadcastEventType e = BroadcastEventType.Craft)
         {
             List<int> jumpIndexes = new List<int>();
             List<int> tmpjumpIndexes = new List<int>();
@@ -1411,7 +1417,10 @@ namespace UniversalInventorySystem
                         }
                     }
                 }
-                return new CraftItemData(recipe.products, recipe.amountProducts);
+                var result = new CraftItemData(recipe.products, recipe.amountProducts); 
+                InventoryHandler.CraftItemEventArgs cia = new InventoryHandler.CraftItemEventArgs(inv, true, result, grid, craftItem, recipe, null);
+                InventoryHandler.current.Broadcast(e, cia: cia);
+                return result;
             }
 
             return CraftItemData.nullData;
