@@ -12,26 +12,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  * 
- *  
- *  This is an Editor Script, it is responsible for drawing the inpector or drawer of the class in the attribute before the class
- */ 
- 
-using System.Collections;
+ * 
+ *  This code is the Scriptable object of the Seed
+ */
+
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
-namespace UniversalInventorySystem.Editors
-{/*
-    [CustomPropertyDrawer(typeof(ToolTipInfo))]
-    public class TooltipDrawer : PropertyDrawer
+namespace UniversalInventorySystem
+{
+    [CreateAssetMenu(fileName = "Seed", menuName = "UniversalInventorySystem/Seed", order = 82), System.Serializable]
+    public class Seed : ScriptableObject
     {
-
+        [SerializeField]
+        public List<Slot> seedSlots;
     }
-
-    [CustomPropertyDrawer(typeof(ToolTipInfo.TooltipText))]
-    public class TooltipTextDrawer : PropertyDrawer
-    {
-
-    }*/
 }

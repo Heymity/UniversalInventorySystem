@@ -38,6 +38,7 @@ public class DurabilityBarModifier : BaseUIModifier
 
     public void LateUpdate()
     {
+        if (target.GetInventory() == null) return;
         for(int i = 0; i < target.slots.Count; i++)
         {
             if (!target.GetInventory()[i]) continue;
@@ -79,7 +80,7 @@ public class DurabilityBarModifier : BaseUIModifier
         GoBack:
         for(int i = 0; i < gos.Count; i++)
         {
-            if (!target.GetInventory()[gos[i].index].hasItem)
+            if (!target.GetInventory()[gos[i].index].HasItem)
             {
                 Destroy(gos[i].go, 0.00000000001f);
                 gos.RemoveAt(i);
@@ -92,7 +93,7 @@ public class DurabilityBarModifier : BaseUIModifier
                 goto GoBack;
             }
 
-            float percentage = (float)target.GetInventory()[gos[i].index].durability / (float)target.GetInventory()[gos[i].index].item.maxDurability;
+            float percentage = (float)target.GetInventory()[gos[i].index].durability / (float)target.GetInventory()[gos[i].index].item.durability;
             var img = gos[i].go.GetComponent<Image>();
             img.sprite = null;
             img.material.SetFloat("_FillAmount", percentage);

@@ -193,6 +193,7 @@ namespace UniversalInventorySystem
         public event EventHandler<DropItemEventArgs> OnDropItem;
         public event EventHandler<AddItemEventArgs> OnPickUpItem;
         public event EventHandler<InitializeInventoryEventArgs> OnInitializeInventory;
+        public event EventHandler<CraftItemEventArgs> OnCraftItem;
 
         public event EventHandler<EventArgs> OnChange;
 
@@ -318,6 +319,27 @@ namespace UniversalInventorySystem
                 inventory = _inv;
             }
         }
+        public class CraftItemEventArgs : EventArgs
+        {
+            public Inventory inv;
+            public bool pattern;
+            public CraftItemData result;
+            public CraftItemData grid;
+            public bool wasCrafted;
+            public Recipe recipe;
+            public PatternRecipe patternRecipe;
+
+            public CraftItemEventArgs(Inventory inv, bool pattern, CraftItemData result, CraftItemData grid, bool wasCrafted, Recipe recipe, PatternRecipe patternRecipe)
+            {
+                this.inv = inv;
+                this.pattern = pattern;
+                this.result = result;
+                this.grid = grid;
+                this.wasCrafted = wasCrafted;
+                this.recipe = recipe;
+                this.patternRecipe = patternRecipe;
+            }
+        }
 
         public void Broadcast(BroadcastEventType e,
                               AddItemEventArgs aea = null,
@@ -326,7 +348,8 @@ namespace UniversalInventorySystem
                               SwapItemsTrhuInvEventArgs siea = null,
                               UseItemEventArgs uea = null,
                               DropItemEventArgs dea = null,
-                              InitializeInventoryEventArgs iea = null)
+                              InitializeInventoryEventArgs iea = null,
+                              CraftItemEventArgs cia = null)
         {
             //Debug.Log($"Broadcasting event {e}");
             switch (e)
@@ -362,6 +385,10 @@ namespace UniversalInventorySystem
                 case BroadcastEventType.InitializeInventory:
                     OnInitializeInventory?.Invoke(this, iea);
                     OnChange?.Invoke(this, iea);
+                    break;
+                case BroadcastEventType.Craft:
+                    OnCraftItem?.Invoke(this, cia);
+                    OnChange?.Invoke(this, cia);
                     break;
                 default:
                     break;
@@ -458,7 +485,8 @@ namespace UniversalInventorySystem
         UseItem = 7,
         InitializeInventory = 8,
         UIToggled = 9,
-        ItemDragged = 10
+        ItemDragged = 10,
+        Craft = 11
     }
 }
 

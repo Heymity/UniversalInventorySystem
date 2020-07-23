@@ -22,9 +22,7 @@ using UniversalInventorySystem;
 
 public class ExampleScript : MonoBehaviour
 {   
-    Inventory inventory;
-    public InventoryUI invUI;
-    public InventoryUI invUI2;
+    public Inventory inventory;
 
     // To test the item drawer in inspector
     public Item testItem;
@@ -32,14 +30,6 @@ public class ExampleScript : MonoBehaviour
 
     private void Start()
     {
-        //Inventory initialization
-        inventory = new Inventory(slotAmount, true, InventoryController.AllInventoryFlags, true);
-        inventory.Initialize();
-
-        //InventoryUI initialization
-        invUI.SetInventory(inventory);
-        invUI2.SetInventory(inventory);
-
         //Events
         InventoryHandler invEvent = InventoryHandler.current;
         invEvent.OnAddItem += OnAddItem;
@@ -57,7 +47,7 @@ public class ExampleScript : MonoBehaviour
             inventory.AddItem(InventoryHandler.current.GetItem(0, 1), 2);
 
         //Checks an item in a inventory
-        //Debug.Log(inventory.CheckItemInInventory(InventoryHandler.current.GetItem(0, 0), 4).hasItem);
+        //Debug.Log(inventory.CheckItemInInventory(InventoryHandler.current.GetItem(0, 0), 4).HasItem);
     }
 
     //Callback function for when an item is removed from any inventory

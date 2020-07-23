@@ -21,7 +21,7 @@ using UnityEngine;
 namespace UniversalInventorySystem
 {
 
-    [AddComponentMenu("UniversalInventorySystem/PatternRecipe"), CreateAssetMenu(fileName = "PatternRecipe", menuName = "UniversalInventorySystem/PatternRecipe", order = 1), System.Serializable]
+    [AddComponentMenu("UniversalInventorySystem/PatternRecipe"), CreateAssetMenu(fileName = "PatternRecipe", menuName = "UniversalInventorySystem/PatternRecipe", order = 134), System.Serializable]
     public class PatternRecipe : ScriptableObject
     {
         public int numberOfFactors;

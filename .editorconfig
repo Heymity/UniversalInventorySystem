@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS0649: Campo "Inventory._slots" nunca é atribuído e sempre terá seu valor padrão null
+dotnet_diagnostic.CS0649.severity = none
