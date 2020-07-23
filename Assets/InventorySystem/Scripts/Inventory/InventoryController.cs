@@ -92,7 +92,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Seeds, Debug, Remake SwapItemThruInventories
+        ///TODO: Seeds, Debug
         #region Add
 
         /// <summary>
@@ -367,7 +367,7 @@ namespace UniversalInventorySystem
 
             else if (item != null)
             {
-                return RemoveItem(inv, item, amount, e, dropPosition, overrideSlotProtecion);
+                return RemoveItem(inv, item, amount, false, null, e, dropPosition, overrideSlotProtecion);
             }
             else
             {
@@ -395,7 +395,7 @@ namespace UniversalInventorySystem
 
             if (slot >= 0 && slot < inv.slots.Count)
             {
-                return RemoveItemInSlot(inv, slot, amount, e, dropPosition, overrideSlotProtecion);
+                return RemoveItemInSlot(inv, slot, amount, false, null, e, dropPosition, overrideSlotProtecion);
             }
             else
             {
@@ -411,7 +411,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be removed in the inventory</param>
         /// <param name="amount">The amount of items to be removed</param>
         /// <returns>True if it was able to remove the items False if it wasnt</returns>
-        public static bool RemoveItem(this Inventory inv, Item item, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtection = false)
+        public static bool RemoveItem(this Inventory inv, Item item, int amount, bool ignoreInstance = false, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtection = false)
         {
             if (inv == null)
             {
@@ -425,11 +425,12 @@ namespace UniversalInventorySystem
             }
 
             if (!AcceptsInventoryProtection(inv, MethodType.Remove)) return false;
+            if (itemInstance == null) itemInstance = item;
 
             int total = 0;
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item == item && (AcceptsSlotProtection(inv.slots[i], MethodType.Remove) || overrideSlotProtection))
+                if (inv.slots[i].item == item && (AcceptsSlotProtection(inv.slots[i], MethodType.Remove) || overrideSlotProtection) && (!ignoreInstance && inv.slots[i].ItemInstance.ValueEqual(itemInstance)))
                 {
                     total += inv.slots[i].amount;
                 }
@@ -469,30 +470,34 @@ namespace UniversalInventorySystem
         }
 
         /// <summary>
-        /// Removes a item in a certain slot and amount from the first apearence in certain inventory. When a slot runs out of items it goes to the next one with that item
+        /// Removes a item in a certain slot and amount from the first apearence in certain inventory. When a slot runs out of items and there are still items to take out it returns false and does nothing
         /// </summary>
         /// <param name="inv">The inventory in witch the item will be removed</param>
         /// <param name="slot">The slot that will have item removed</param>
         /// <param name="amount">The amount of items to be removed</param>
         /// <returns>True if it was able to remove the items False if it wasnt</returns>
-        public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtecion = false)
+        public static bool RemoveItemInSlot(this Inventory inv, int slot, int amount, bool ignoreInstance = false, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtecion = false)
         {
             if (inv == null)
             {
                 Debug.LogError("Null inventory provided for RemoveItemInSlot");
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
+            if (inv.slots[slot].item == null) return false;
 
             if (!AcceptsInventoryProtection(inv, MethodType.Remove)) return false;
 
             if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Remove) && !overrideSlotProtecion) return false;
+
+            if (itemInstance == null) itemInstance = inv.slots[slot].ItemInstance;
+            if (!ignoreInstance && inv.slots[slot].ItemInstance.ValueEqual(itemInstance)) return false;
 
             dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
             InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
 
             if (inv.slots[slot].amount == amount)
             {
-                Item tmp = inv.slots[slot].item;
+                Item tmp = inv.slots[slot].ItemInstance;
                 inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], nullSlot);
 
                 if (e == BroadcastEventType.DropItem)
@@ -502,7 +507,7 @@ namespace UniversalInventorySystem
             }
             else if (inv.slots[slot].amount > amount)
             {
-                Item tmp = inv.slots[slot].item;
+                Item tmp = inv.slots[slot].ItemInstance;
                 inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], inv.slots[slot].item, inv.slots[slot].amount - amount, 0, inv.slots[slot].ItemInstance);
 
                 if (e == BroadcastEventType.DropItem)
@@ -514,6 +519,64 @@ namespace UniversalInventorySystem
             {
                 Debug.Log("There arent enought items to take out!");
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Removes a item in a certain slot and amount from the first apearence in certain inventory. When a slot runs out of items and there are still items to take out it removes the items and return the ramaining
+        /// </summary>
+        /// <param name="inv">The inventory in witch the item will be removed</param>
+        /// <param name="slot">The slot that will have item removed</param>
+        /// <param name="amount">The amount of items to be removed</param>
+        /// <returns>True if it was able to remove the items False if it wasnt</returns>
+        public static int RemoveItem(this Inventory inv, int slot, int amount, bool ignoreInstance = false, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtecion = false)
+        {
+            if (inv == null)
+            {
+                Debug.LogError("Null inventory provided for RemoveItemInSlot");
+                throw new ArgumentNullException("inv", "Null inventory provided");
+            }
+            if (inv.slots[slot].item == null) return amount;
+
+            if (!AcceptsInventoryProtection(inv, MethodType.Remove)) return amount;
+
+            if (!AcceptsSlotProtection(inv.slots[slot], MethodType.Remove) && !overrideSlotProtecion) return amount;
+
+            if (itemInstance == null) itemInstance = inv.slots[slot].ItemInstance;
+            if (!ignoreInstance && inv.slots[slot].ItemInstance.ValueEqual(itemInstance)) return amount;
+
+            dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
+            InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
+
+            if (inv.slots[slot].amount == amount)
+            {
+                Item tmp = inv.slots[slot].ItemInstance;
+                inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], nullSlot);
+
+                if (e == BroadcastEventType.DropItem)
+                    tmp?.OnDrop(inv, true, slot, amount, false, dropPosition);
+                else InventoryHandler.current.Broadcast(e, rea: rea);
+                return 0;
+            }
+            else if (inv.slots[slot].amount > amount)
+            {
+                Item tmp = inv.slots[slot].ItemInstance;
+                inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], inv.slots[slot].item, inv.slots[slot].amount - amount, 0, inv.slots[slot].ItemInstance);
+
+                if (e == BroadcastEventType.DropItem)
+                    tmp?.OnDrop(inv, true, slot, amount, false, dropPosition);
+                else InventoryHandler.current.Broadcast(e, rea: rea);
+                return 0;
+            }
+            else
+            {
+                var tmp = inv.slots[slot];
+                inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], nullSlot);
+
+                if (e == BroadcastEventType.DropItem)
+                    tmp.ItemInstance?.OnDrop(inv, true, slot, amount, false, dropPosition);
+                else InventoryHandler.current.Broadcast(e, rea: rea);
+                return amount - tmp.amount;
             }
         }
 
@@ -979,7 +1042,7 @@ namespace UniversalInventorySystem
         /// True => Basicly, every time it is not false
         /// False => When it was not able to remove the item from the nativeInv, that means the RemoveItem function returned false, that usually means there were not enought items in the inventory to take out (it is also false when it is not true btw)
         /// </returns>
-        public static bool SwapItemThruInventories(this Inventory nativeInv, Inventory targetInv, Item item, int amount, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
+        public static bool SwapItemThruInventories(this Inventory nativeInv, Inventory targetInv, Item item, int amount, bool shouldUseInstanceItem = true, Item itemInstance = null, bool overrideSlotProtection = false, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
         {
             if (nativeInv == null)
             {
@@ -991,16 +1054,63 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null target inventory provided for SwapItemThruInventories");
                 throw new ArgumentNullException("targetInv", "Null inventory provided");
             }
+            if (item == null) return false;
+
+            if (itemInstance == null) itemInstance = item;
 
             if (!AcceptsInventoryProtection(nativeInv, MethodType.Swap)) return false;
             if (!AcceptsInventoryProtection(targetInv, MethodType.Swap)) return false;
 
-            if (RemoveItem(nativeInv, item, amount))
+            /**if (RemoveItem(nativeInv, item, amount))
             {
                 int remaning = AddItem(targetInv, item, amount);
                 if (remaning > 0) AddItem(nativeInv, item, remaning);
             }
-            else return false;
+            else return false;*/
+
+            //Removing
+            int removingTotal = 0;
+            List<int> removeIndexes = new List<int>();
+            for(int i = 0; i < nativeInv.slots.Count; i++)
+            {
+                if (removingTotal >= amount) break;
+                if (!nativeInv.slots[i]) continue;
+                if (!nativeInv.slots[i].item != item) continue;
+                if (!(AcceptsSlotProtection(nativeInv.slots[i], MethodType.Swap) || overrideSlotProtection)) continue;
+                if (shouldUseInstanceItem && !nativeInv.slots[i].ItemInstance.ValueEqual(itemInstance)) continue;
+                
+                removingTotal += nativeInv.slots[i].amount;
+                removeIndexes.Add(i);
+            }
+            if (removingTotal < amount) return false;
+
+            //Adding
+            int addingTotal = 0;
+            List<int> addingIndexes = new List<int>();
+            for (int i = 0; i < targetInv.slots.Count; i++)
+            {
+                if (addingTotal >= amount) break;
+                if (targetInv.slots[i]) continue;
+                if (targetInv.slots[i].item != item) continue;
+                if (!(AcceptsSlotProtection(targetInv.slots[i], MethodType.Swap) || overrideSlotProtection)) continue;
+                if (shouldUseInstanceItem && !targetInv.slots[i].ItemInstance.ValueEqual(itemInstance)) continue;
+
+                addingTotal += item.maxAmount - targetInv.slots[i].amount;
+                addingIndexes.Add(i);
+            }
+            if (addingTotal < amount) return false;
+
+            foreach(int i in removeIndexes)
+            {
+                if (amount <= 0) break;
+                amount = nativeInv.RemoveItem(i, amount);
+            }
+
+            foreach (int i in addingIndexes)
+            {
+                if (amount <= 0) break;
+                amount = targetInv.AddItemToSlot(item, i, amount, itemInstance);
+            }
 
             InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, null, null, item, null, amount);
             InventoryHandler.current.Broadcast(e, siea: siea);
