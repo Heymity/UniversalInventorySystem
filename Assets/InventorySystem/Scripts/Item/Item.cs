@@ -18,12 +18,10 @@
  */ 
 
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace UniversalInventorySystem
 {
@@ -66,9 +64,6 @@ namespace UniversalInventorySystem
 
         [DontValidateOnValueEqual]
         public ToolTipInfo tooltip;
-
-        [ValidateOnValueEqual]
-        private string test;
 
         private void OnEnable()
         {
@@ -145,9 +140,11 @@ namespace UniversalInventorySystem
 
         public bool ValueEqual(Item second) => ValueEqual(this, second);
 
-        public static bool ValueEqual(object first, object second)
+        public static bool ValueEqual(Item first, Item second)
         {
+            if (first == null || second == null) return false;
             if (first.GetType() != second.GetType()) return false;
+            if (first == second) return true;
 
             BindingFlags bf = BindingFlags.Public | BindingFlags.Instance;
             MemberTypes mt = MemberTypes.Field | MemberTypes.Property;
@@ -200,7 +197,7 @@ namespace UniversalInventorySystem
             return true;
         }
 
-        public static string[] dontValidate = new string[1] { "name" };
+        protected static string[] dontValidate = new string[1] { "name" };
         static bool ValidationFunc(MemberInfo mi, object search)
         {
             foreach (string s in dontValidate)
@@ -231,14 +228,8 @@ namespace UniversalInventorySystem
     }
 
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class ValidateOnValueEqualAttribute : Attribute
-    {
-
-    }
+    public class ValidateOnValueEqualAttribute : Attribute { }
 
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class DontValidateOnValueEqualAttribute : Attribute
-    {
-
-    }
+    public class DontValidateOnValueEqualAttribute : Attribute { }
 }

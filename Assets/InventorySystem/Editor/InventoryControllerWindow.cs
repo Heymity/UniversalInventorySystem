@@ -128,12 +128,12 @@ namespace UniversalInventorySystem.Editors
                         auxRect = rect;
                         auxRect.width = 130;
                         auxRect.height = 16;
-                        content = new GUIContent(s.itemInstance == null ? "" : s.itemInstance.itemName, EditorGUIUtility.IconContent("ScriptableObject Icon").image);
-                        if (GUI.Button(auxRect, s.itemInstance == null ? new GUIContent("None") : content) && s.itemInstance != null)
+                        content = new GUIContent(s.ItemInstance == null ? "" : s.ItemInstance.itemName, EditorGUIUtility.IconContent("ScriptableObject Icon").image);
+                        if (GUI.Button(auxRect, s.ItemInstance == null ? new GUIContent("None") : content) && s.ItemInstance != null)
                         {
                             ItemInstanceInspector window = GetWindow<ItemInstanceInspector>("Item Inspector");
                             window.Show();
-                            window.itemTarget = s.itemInstance;
+                            window.itemTarget = s.ItemInstance;
                         }
 
                         EditorGUILayout.EndHorizontal();
