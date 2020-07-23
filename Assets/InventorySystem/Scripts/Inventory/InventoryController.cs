@@ -92,7 +92,7 @@ namespace UniversalInventorySystem
             return SaveInventoryData();
         }
 
-        ///TODO: Seeds, Debug
+        ///TODO: Seeds
         #region Add
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace UniversalInventorySystem
             if (itemInstance == null) itemInstance = item;
 
             //If the items is not marked as stackable it calls AddItemToNewSlot witch handles the rest
-            if (!item.stackable) return AddItemToNewSlot(inv, item, amount, e: e);
+            if (!item.stackable) return AddItemToNewSlot(inv, item, amount, e: e, itemInstance: itemInstance);
 
             for (int i = 0; i < inv.slots.Count; i++)
             {
@@ -264,7 +264,7 @@ namespace UniversalInventorySystem
             }
 
             //If there are still Items to add and there are no other slot with the same item it adds to a new slot
-            if (amount > 0) return AddItemToNewSlot(inv, item, amount, e: e);
+            if (amount > 0) return AddItemToNewSlot(inv, item, amount, e: e, itemInstance: itemInstance);
             InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, false, item, amount, null);
             InventoryHandler.current.Broadcast(e, aea);
             return 0;

@@ -169,6 +169,31 @@ namespace UniversalInventorySystem.Editors
             else if (selected == 2)
             {
                 EditorGUILayout.LabelField("Debugging");
+
+                if (Application.isPlaying)
+                {
+                    var bf = BindingFlags.Public | BindingFlags.Static;
+                    var mt = MemberTypes.Method;
+                    MemberInfo[] members = typeof(InventoryController).FindMembers(mt, bf, (MemberInfo mi, object search) => true, null);
+
+                    foreach (MemberInfo mi in members)
+                    {
+                        var method = mi as MethodInfo;
+                        if (GUILayout.Button(method.Name))
+                        {
+                            MethodExecutor window = GetWindow<MethodExecutor>("Invoker");
+                            window.Show();
+                            window.mi = method;
+                            window.param = new List<object>();
+                            window.obj = null;
+                            window.returnValue = null;
+                        }
+                    }
+                }
+                else
+                {
+                    EditorGUILayout.LabelField("This tool should only be used in play mode");
+                }
             }
 
             EditorGUILayout.EndScrollView();
@@ -318,6 +343,10 @@ namespace UniversalInventorySystem.Editors
             {
                 fi.SetValue(itemTarget, EditorGUI.TextField(rect, "", (string)(field ?? "")));
             }
+            else if (fi.FieldType.IsEnum)
+            {
+                fi.SetValue(itemTarget, EditorGUI.EnumPopup(rect, (Enum)Enum.Parse(fi.FieldType, field?.ToString() ?? "0")));
+            }
             else if (fi.FieldType.IsSubclassOf(typeof(UnityEngine.Object)))
             {
                 fi.SetValue(itemTarget, EditorGUI.ObjectField(rect, "", field as UnityEngine.Object, fi.FieldType, true));
@@ -366,6 +395,8 @@ namespace UniversalInventorySystem.Editors
         public List<object> param = new List<object>();
         public object obj;
         public object returnValue;
+        string[] options = new string[] { "string", "int", "float", "bool", "Object" };
+        int selected = 0;
 
         private void OnGUI()
         {
@@ -406,6 +437,37 @@ namespace UniversalInventorySystem.Editors
                 else if (p.ParameterType == typeof(string))
                 {
                     param[index] = EditorGUILayout.TextField(p.Name, (string)(param[index] ?? ""));
+                }
+                else if (p.ParameterType == typeof(object))
+                {
+                    selected = GUILayout.Toolbar(selected, options);
+                    switch (selected)
+                    {
+                        case 0:
+                            if (!(param[index] is string)) param[index] = null;
+                            param[index] = EditorGUILayout.TextField(p.Name, (string)(param[index] ?? ""));
+                            break;
+                        case 1:
+                            if (!(param[index] is int)) param[index] = 0;
+                            param[index] = EditorGUILayout.IntField(p.Name, (int)(param[index] ?? 0));
+                            break;
+                        case 2:
+                            if (!(param[index] is float)) param[index] = 0f;
+                            param[index] = EditorGUILayout.FloatField(p.Name, (float)(param[index] ?? 0f));
+                            break;
+                        case 3:
+                            if (!(param[index] is bool)) param[index] = false;
+                            param[index] = EditorGUILayout.Toggle(p.Name, (bool)(param[index] ?? false));
+                            break;
+                        case 4:
+                            if (!(param[index] is UnityEngine.Object)) param[index] = null;
+                            param[index] = EditorGUILayout.ObjectField(new GUIContent(p.Name), param[index] as UnityEngine.Object, p.ParameterType, true);
+                            break;
+                    }
+                }
+                else if (p.ParameterType.IsEnum)
+                {
+                    param[index] = EditorGUILayout.EnumPopup((Enum)Enum.Parse(p.ParameterType, param[index]?.ToString() ?? "0"));
                 }
                 else if (p.ParameterType.IsSubclassOf(typeof(UnityEngine.Object)))
                 {
