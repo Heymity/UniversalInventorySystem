@@ -118,7 +118,8 @@ namespace UniversalInventorySystem.Editors
                         GUIContent content = new GUIContent(s.whitelist == null ? "" : s.whitelist.strId, EditorGUIUtility.IconContent("ScriptableObject Icon").image);
                         if (GUI.Button(auxRect, s.whitelist == null ? new GUIContent("None") : content))
                         {
-                            ItemDataEditorWindow.Open(s.whitelist);
+                            if(s.whitelist != null)
+                                ItemDataEditorWindow.Open(s.whitelist);
                         }
 
                         rect.x += 140;

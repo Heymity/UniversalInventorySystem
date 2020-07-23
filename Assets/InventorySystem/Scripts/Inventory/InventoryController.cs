@@ -64,8 +64,6 @@ namespace UniversalInventorySystem
 
         public static InventoryData inventoryData = new InventoryData();
 
-        public static List<Inventory> GetInventories() => inventories;
-
         public static Inventory GetInventoryById(int id)
         {
             foreach (Inventory inv in inventories)
@@ -834,6 +832,7 @@ namespace UniversalInventorySystem
             }
             else if (inv.slots[nativeSlot].item == inv.slots[targetSlot].item)
             {
+                if (!inv.slots[nativeSlot].itemInstance.ValueEqual(inv.slots[targetSlot].itemInstance)) return _amount ?? inv.slots[nativeSlot].amount;
                 int remaning = AddItemToSlot(
                     inv,
                     inv.slots[nativeSlot].item,

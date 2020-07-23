@@ -36,18 +36,17 @@ namespace UniversalInventorySystem
         public string itemName;
         public int id;
         public Sprite sprite;
+
         public int maxAmount;
         public bool destroyOnUse;
         public int useHowManyWhenUsed;
+
         public bool stackable;
         public int durability;
         public bool hasDurability;
         public bool showAmount;
-        /**public bool stackAlways;
-        public bool stackOnMaxDurabiliy;
-        public bool stackOnSpecifDurability;
-        public StackOptions stackOptions;
-        public List<uint> stackDurabilities;*/
+
+        [DontValidateOnValueEqual]
         public List<DurabilityImage> durabilityImages
         {
             get
@@ -59,21 +58,35 @@ namespace UniversalInventorySystem
                 _durabilityImages = SortDurabilityImages(value);
             }
         }
-        [SerializeField]
+        [SerializeField, DontValidateOnValueEqual]
         private List<DurabilityImage> _durabilityImages;
+
         public MonoScript onUseFunc;
         public MonoScript optionalOnDropBehaviour;
+
+        [DontValidateOnValueEqual]
         public ToolTipInfo tooltip;
 
-        public void OnEnable()
+        [ValidateOnValueEqual]
+        private string test;
+
+        private void OnEnable()
         {
             _durabilityImages = SortDurabilityImages(_durabilityImages);
+            OnEnableCallback();
         }
 
-        public void OnUse(Inventory inv, int slot)
+        public virtual void OnEnableCallback() { }
+
+        public virtual void OnUse(Inventory inv, int slot)
         {
-            if (onUseFunc == null) return;
             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, this, slot);
+            if (onUseFunc == null)
+            {
+                InventoryHandler.current.Broadcast(BroadcastEventType.DropItem, uea: uea);
+                return;
+            }
+
             object[] tmp = new object[2] { this, uea };
 
             BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -82,21 +95,22 @@ namespace UniversalInventorySystem
             if (monoMethod == null) Debug.LogError($"The script provided ({onUseFunc.name}) on item {itemName} does not contain, or its not accesible, the expected function OnUse.\n Check if this function exists and if the provided script derives from IUsable");
             else monoMethod.Invoke(Activator.CreateInstance(onUseFunc.GetClass()), tmp);
 
+            InventoryHandler.current.Broadcast(BroadcastEventType.DropItem, uea: uea);
         }
 
-        public void OnDrop(Inventory inv, bool tss, int slot, int amount, bool dbui, Vector3? pos)
+        public virtual void OnDrop(Inventory inv, bool fromSpecificSlot, int slot, int amount, bool dbui, Vector3? pos)
         {
             if ((inv.interactiable & InventoryController.DropInvFlags) != InventoryController.DropInvFlags) return;
 
             if (optionalOnDropBehaviour == null)
             {
-                InventoryHandler.DropItemEventArgs dea = new InventoryHandler.DropItemEventArgs(inv, tss, slot, this, amount, dbui, pos.GetValueOrDefault(), true);
+                InventoryHandler.DropItemEventArgs dea = new InventoryHandler.DropItemEventArgs(inv, fromSpecificSlot, slot, this, amount, dbui, pos.GetValueOrDefault(), true);
 
                 InventoryHandler.current.Broadcast(BroadcastEventType.DropItem, dea: dea);
             }
             else
             {
-                InventoryHandler.DropItemEventArgs dea = new InventoryHandler.DropItemEventArgs(inv, tss, slot, this, amount, dbui, pos.GetValueOrDefault(), false);
+                InventoryHandler.DropItemEventArgs dea = new InventoryHandler.DropItemEventArgs(inv, fromSpecificSlot, slot, this, amount, dbui, pos.GetValueOrDefault(), false);
                 object[] tmp = new object[2] { this, dea };
 
                 BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -127,7 +141,85 @@ namespace UniversalInventorySystem
                 }
             }
             return inputArray;
-        }       
+        }
+
+        public bool ValueEqual(Item second) => ValueEqual(this, second);
+
+        public static bool ValueEqual(object first, object second)
+        {
+            if (first.GetType() != second.GetType()) return false;
+
+            BindingFlags bf = BindingFlags.Public | BindingFlags.Instance;
+            MemberTypes mt = MemberTypes.Field | MemberTypes.Property;
+            MemberInfo[] publicMembers = first.GetType().FindMembers(mt, bf, ValidatePublicFunc, null);
+            MemberInfo[] privateMembers = first.GetType().FindMembers(mt, BindingFlags.NonPublic | BindingFlags.Instance, ValidationFunc, null);
+
+            List<MemberInfo> members = new List<MemberInfo>();
+            members.AddRange(publicMembers);
+            members.AddRange(privateMembers);
+
+            foreach(MemberInfo mi in members)
+            {
+                switch (mi.MemberType)
+                {
+                    case MemberTypes.Field:
+                        var field = mi as FieldInfo;
+                        var firstField = field.GetValue(first);
+                        var secondField = field.GetValue(second);
+                        ///Debug.Log($"Bool: {!firstField.Equals(secondField)} Values: {firstField}, {secondField}"); //This line will give error when monoscripts are null. Just a note ;)
+                        if(firstField == null)
+                        {
+                            if(secondField == null)
+                            {
+                                break;
+                            }
+                            return false;
+                        }
+                        if (!firstField.Equals(secondField)) 
+                            return false;
+                        break;
+                    case MemberTypes.Property:
+                        var prop = mi as PropertyInfo;
+                        var firstProp = prop.GetValue(first);
+                        var secondProp = prop.GetValue(second);
+                        ///Debug.Log($"Bool: {!firstField.Equals(secondField)} Values: {firstField}, {secondField}"); //This line will give error when monoscripts are null. Just a note ;)
+                        if(firstProp == null)
+                        {
+                            if (secondProp == null)
+                            {
+                                break;
+                            }
+                            return false;
+                        }
+                        if (!firstProp.Equals(secondProp))
+                            return false;
+                        break;
+                }
+            }
+
+            return true;
+        }
+
+        public static string[] dontValidate = new string[1] { "name" };
+        static bool ValidationFunc(MemberInfo mi, object search)
+        {
+            foreach (string s in dontValidate)
+                if (mi.Name == s) return false;
+
+            if (mi.GetCustomAttribute<ValidateOnValueEqualAttribute>() != null)
+                return true;
+            return false;
+        }
+
+        static bool ValidatePublicFunc(MemberInfo mi, object search)
+        {
+            foreach(string s in dontValidate)
+                if (mi.Name == s) return false;
+
+            if (mi.GetCustomAttribute<DontValidateOnValueEqualAttribute>() != null)
+                return false;
+            return true;
+        }
     }
 
     [Serializable]
@@ -138,10 +230,15 @@ namespace UniversalInventorySystem
         [SerializeField] public int durability;
     }
 
-    /*public enum StackOptions
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class ValidateOnValueEqualAttribute : Attribute
     {
-        Split = 0,
-        TakeFromAll = 1,
-        Mantain = 2,
-    }*/
+
+    }
+
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class DontValidateOnValueEqualAttribute : Attribute
+    {
+
+    }
 }
