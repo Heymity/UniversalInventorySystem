@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: AIG
   m_EditorClassIdentifier: 
   itemsList:
-  - {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
   - {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+  - {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
   - {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
   strId: AIG
   id: 0

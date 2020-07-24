@@ -21,7 +21,7 @@ using UnityEngine;
 
 namespace UniversalInventorySystem.Editors
 {
-    [CustomEditor(typeof(Item))]
+    [CustomEditor(typeof(Item), true)]
     public class ItemInspector : Editor
     {
         //Item props
@@ -33,10 +33,6 @@ namespace UniversalInventorySystem.Editors
         SerializedProperty maxAmountProp;
         SerializedProperty stackableProp;
         SerializedProperty showAmountProp;
-        /**SerializedProperty stackAlwaysProp;
-        SerializedProperty stackOnMaxDurabiliyProp;
-        SerializedProperty stackOnSpecifDurabilityProp;
-        SerializedProperty stackDurabilitiesProp;**/
 
         //Using Props
         SerializedProperty destroyOnUseProp;
@@ -74,10 +70,6 @@ namespace UniversalInventorySystem.Editors
             hasDurabilityProp = serializedObject.FindProperty("hasDurability");
             durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
             showAmountProp = serializedObject.FindProperty("showAmount");
-            /**stackAlwaysProp = serializedObject.FindProperty("stackAlways");
-            stackOnMaxDurabiliyProp = serializedObject.FindProperty("stackOnMaxDurabiliy");
-            stackOnSpecifDurabilityProp = serializedObject.FindProperty("stackOnSpecifDurability");
-            stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");**/
         }
 
         public override void OnInspectorGUI()

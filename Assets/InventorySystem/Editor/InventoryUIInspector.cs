@@ -58,6 +58,12 @@ namespace UniversalInventorySystem.Editors
 
         bool invFold;
 
+        [MenuItem("InventorySystem/Instantiate Handler")]
+        static void InstantiatePrefab()
+        {
+            Selection.activeObject = PrefabUtility.InstantiatePrefab(Resources.Load("InventoryHandler"));
+        }
+
         private void OnEnable()
         {
             autoGenerateUI = serializedObject.FindProperty("generateUIFromSlotPrefab");

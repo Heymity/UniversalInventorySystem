@@ -50,6 +50,7 @@ namespace UniversalInventorySystem
         [Header("Items Handler")]
         public List<ItemGroup> itemAssets;
 
+
         public ItemGroup GetItemAssetAtIndex(int index) { return itemAssets[index]; }
 
         public ItemGroup GetItemAssetWithName(string _strId)
@@ -94,7 +95,13 @@ namespace UniversalInventorySystem
             return inputArray;
         }
 
-        public Item GetItem(int iAssetIndex, int itemIndex) { return GetItemAssetWithID(iAssetIndex).GetItemWithID(itemIndex); }
+        public Item GetItemById(int assetID, int itemID) { return GetItemAssetWithID(assetID).GetItemWithID(itemID); }
+
+        public Item GetItemByIdWithIndex(int assetIndex, int itemID) { return itemAssets[assetIndex].GetItemWithID(itemID); }
+
+        public Item GetItem(int assetIndex, int itemIndex) { return itemAssets[assetIndex].itemsList[itemIndex]; }
+
+        public Item GetItemInIndex(int assetID, int itemIndex) { return GetItemAssetWithID(assetID).itemsList[itemIndex]; }
 
         public Item GetItemWithName(int id, string itemName) { return GetItemAssetWithID(id).GetItemWithName(itemName); }
 
