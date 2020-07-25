@@ -53,6 +53,7 @@ namespace UniversalInventorySystem.Editors
         bool usingFoldout;
         bool behaviourFoldout;
         bool tooltipFoldout;
+        bool customFoldout;
 
         private void OnEnable()
         {
@@ -104,34 +105,6 @@ namespace UniversalInventorySystem.Editors
                     maxAmountProp.intValue = EditorGUILayout.IntField(new GUIContent("Max amount per slot"), maxAmountProp.intValue);
                     hasDurabilityProp.boolValue = false;
                 }
-                /**if (hasDurabilityProp.boolValue && stackableProp.boolValue)
-                {
-                    EditorGUILayout.PropertyField(serializedObject.FindProperty("stackOptions"), new GUIContent("On change durability action"));
-                    EditorGUILayout.PropertyField(stackAlwaysProp);
-                    EditorGUILayout.PropertyField(stackOnMaxDurabiliyProp);
-                    EditorGUILayout.PropertyField(stackOnSpecifDurabilityProp);
-                    if(stackOnSpecifDurabilityProp.boolValue)
-                    {
-                        //EditorGUILayout.PropertyField(stackDurabilitiesProp);
-                        stackDurabilitiesProp.isExpanded = EditorGUILayout.Foldout(stackDurabilitiesProp.isExpanded, "Stack Durabilities");
-                        if (stackDurabilitiesProp.isExpanded)
-                        {
-                            EditorGUI.indentLevel++;
-                            stackDurabilitiesProp.arraySize = EditorGUILayout.IntField("Size" ,stackDurabilitiesProp.arraySize);
-                            for(int i = 0;i < stackDurabilitiesProp.arraySize; i++)
-                            {
-                                stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue = EditorGUILayout.IntField("Durability", stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue);
-                                if (i >= (target as Item).stackDurabilities.Count) continue;
-                                uint dur = (target as Item).stackDurabilities[i];
-                                var progressRect = GUILayoutUtility.GetRect(38, 18);
-                                progressRect.x += 30;
-                                progressRect.width -= 30;
-                                EditorGUI.ProgressBar(progressRect, (float)dur / (float)maxDurabilityProp.intValue, "Durability");
-                            }
-                            EditorGUI.indentLevel--;
-                        }
-                    }
-                }*/
                 EditorGUI.indentLevel--;
             }
 
@@ -201,6 +174,22 @@ namespace UniversalInventorySystem.Editors
             if (tooltipFoldout)
             {
                 EditorGUILayout.PropertyField(tooltipProp);
+            }
+
+
+            SerializedProperty last = tooltipProp.Copy();
+            if (last.Next(false))
+            {
+                EditorGUILayout.Separator();
+                customFoldout = EditorGUILayout.Foldout(customFoldout, "Custom Attributes", true, EditorStyles.foldoutHeader);
+                if (customFoldout)
+                {
+                    do
+                    {
+                        EditorGUILayout.PropertyField(last);
+                    }
+                    while (last.Next(false));
+                }
             }
 
             serializedObject.ApplyModifiedProperties();

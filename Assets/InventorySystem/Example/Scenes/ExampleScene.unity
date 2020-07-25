@@ -1504,7 +1504,7 @@ MonoBehaviour:
   - {fileID: 641519604}
   showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
-  hideDragObj: 0
+  hideDragObj: 1
   useOnClick: 0
   outlineColor: {r: 0.2757876, g: 0.6981132, b: 0.25355998, a: 1}
   outlineSize: 5
@@ -1893,7 +1893,7 @@ PrefabInstance:
     - target: {fileID: 415101497773589926, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 415101497773589926, guid: e2ec85dcac666aa4587e5e46ec3a9f99,
         type: 3}
@@ -3926,7 +3926,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 955734dc528cdf3428fdddd0f015f49f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generateUIFromSlotPrefab: 1
+  generateUIFromSlotPrefab: 0
   generatedUIParent: {fileID: 1198337620}
   slotPrefab: {fileID: 4676626297327902047, guid: 190af5ce39ca9824191677bd7d614e99,
     type: 3}
@@ -3935,7 +3935,7 @@ MonoBehaviour:
   slots: []
   showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
-  hideDragObj: 0
+  hideDragObj: 1
   useOnClick: 1
   outlineColor: {r: 0.764151, g: 0.37030083, b: 0.2270826, a: 1}
   outlineSize: 5
@@ -4573,7 +4573,7 @@ MonoBehaviour:
   - {fileID: 1427973872}
   showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
-  hideDragObj: 0
+  hideDragObj: 1
   useOnClick: 1
   outlineColor: {r: 0.61933726, g: 0.2741189, b: 0.754717, a: 1}
   outlineSize: 5
@@ -5819,7 +5819,7 @@ MonoBehaviour:
   - {fileID: 363206676}
   showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
-  hideDragObj: 0
+  hideDragObj: 1
   useOnClick: 1
   outlineColor: {r: 0.1490196, g: 0.5592764, b: 0.77254903, a: 1}
   outlineSize: 5
@@ -6813,7 +6813,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1553839085 stripped
 GameObject:

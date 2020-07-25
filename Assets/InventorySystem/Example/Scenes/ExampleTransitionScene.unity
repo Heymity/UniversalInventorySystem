@@ -1015,7 +1015,7 @@ MonoBehaviour:
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}
   allowsPatternCrafting: 0
-  productSlots: []
+  productSlotsIndex: 
   isDraging: 0
   shouldSwap: 0
   pattern: []
@@ -1761,6 +1761,8 @@ MonoBehaviour:
   - {fileID: 616019045}
   - {fileID: 1615932106}
   - {fileID: 1943051579}
+  - {fileID: 1170643385}
+  - {fileID: 907056665}
   showAmount: 1
   dragObj: {fileID: 3097009595704270652, guid: ddbb2e07767f1b64482dd94fbc9202bd, type: 3}
   hideDragObj: 0
@@ -1777,9 +1779,7 @@ MonoBehaviour:
   isCraftInventory: 1
   gridSize: {x: 3, y: 3}
   allowsPatternCrafting: 1
-  productSlots:
-  - {fileID: 1170643385}
-  - {fileID: 907056665}
+  productSlotsIndex: 090000000a000000
   isDraging: 0
   shouldSwap: 0
   pattern: []
@@ -3959,7 +3959,7 @@ MonoBehaviour:
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}
   allowsPatternCrafting: 0
-  productSlots: []
+  productSlotsIndex: 
   isDraging: 0
   shouldSwap: 0
   pattern: []

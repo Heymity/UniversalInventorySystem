@@ -21,7 +21,7 @@ using UnityEditor;
 
 namespace UniversalInventorySystem.Editors
 {
-    [CustomEditor(typeof(InventoryUI))]
+    [CustomEditor(typeof(InventoryUI)), CanEditMultipleObjects]
     public class InventoryUIInspector : Editor
     {
 
