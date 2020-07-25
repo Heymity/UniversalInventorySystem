@@ -21,7 +21,7 @@ using UnityEditor;
 
 namespace UniversalInventorySystem.Editors
 {
-    [CustomEditor(typeof(InventoryUI))]
+    [CustomEditor(typeof(InventoryUI)), CanEditMultipleObjects]
     public class InventoryUIInspector : Editor
     {
 
@@ -57,6 +57,12 @@ namespace UniversalInventorySystem.Editors
         bool craftFold;
 
         bool invFold;
+
+        [MenuItem("InventorySystem/Instantiate Handler")]
+        static void InstantiatePrefab()
+        {
+            Selection.activeObject = PrefabUtility.InstantiatePrefab(Resources.Load("InventoryHandler"));
+        }
 
         private void OnEnable()
         {

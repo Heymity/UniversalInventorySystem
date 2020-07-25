@@ -29,6 +29,7 @@ namespace UniversalInventorySystem.Editors
         bool usingFoldout;
         bool behaviourFoldout;
         bool tooltipFoldout;
+        bool customFoldout;
 
         float baseAmount = 7;
         float amountOfFilds = 21f;
@@ -59,11 +60,6 @@ namespace UniversalInventorySystem.Editors
                 var optionalOnDropBehaviour = serializedObject.FindProperty("optionalOnDropBehaviour");
                 var maxDurabilityProp = serializedObject.FindProperty("durability");
                 var hasDurabilityProp = serializedObject.FindProperty("hasDurability");
-                /*var stackAlwaysProp = serializedObject.FindProperty("stackAlways");
-                var stackOnMaxDurabiliyProp = serializedObject.FindProperty("stackOnMaxDurabiliy");
-                var stackOnSpecifDurabilityProp = serializedObject.FindProperty("stackOnSpecifDurability");
-                var stackOptionsProp = serializedObject.FindProperty("stackOptions");
-                var stackDurabilitiesProp = serializedObject.FindProperty("stackDurabilities");*/
                 var durabilityImagesProp = serializedObject.FindProperty("_durabilityImages");
                 var tooltipProp = serializedObject.FindProperty("tooltip");
                 var showAmountProp = serializedObject.FindProperty("showAmount");
@@ -144,42 +140,6 @@ namespace UniversalInventorySystem.Editors
                                 position.y += position.height;
                                 hasDurabilityProp.boolValue = false;
                             }
-                            /*if (hasDurabilityProp.boolValue && stackableProp.boolValue)
-                            {
-                                EditorGUI.PropertyField(position, serializedObject.FindProperty("stackOptions"), new GUIContent("On change durability action"));
-                                position.y += position.height;
-                                EditorGUI.PropertyField(position, stackAlwaysProp);
-                                position.y += position.height;
-                                EditorGUI.PropertyField(position, stackOnMaxDurabiliyProp);
-                                position.y += position.height;
-                                EditorGUI.PropertyField(position, stackOnSpecifDurabilityProp);
-                                position.y += position.height;
-                                if (stackOnSpecifDurabilityProp.boolValue)
-                                {
-                                    total += 1;
-                                    //EditorGUI.PropertyField(stackDurabilitiesProp);
-                                    stackDurabilitiesProp.isExpanded = EditorGUI.Foldout(position, stackDurabilitiesProp.isExpanded, "Stack Durabilities");
-                                    position.y += position.height;
-                                    if (stackDurabilitiesProp.isExpanded)
-                                    {
-                                        EditorGUI.indentLevel++;
-                                        stackDurabilitiesProp.arraySize = EditorGUI.IntField(position, "Size", stackDurabilitiesProp.arraySize);
-                                        position.y += position.height;
-                                        total += 1;
-                                        for (int i = 0; i < stackDurabilitiesProp.arraySize; i++)
-                                        {
-                                            total += 2;
-                                            stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue = EditorGUI.IntField(position, "Durability", stackDurabilitiesProp.GetArrayElementAtIndex(i).intValue);
-                                            position.y += position.height;
-                                            if (i >= (property.objectReferenceValue as Item).stackDurabilities.Count) continue;
-                                            uint dur = (property.objectReferenceValue as Item).stackDurabilities[i];
-                                            EditorGUI.ProgressBar(position, (float)dur / (float)maxDurabilityProp.intValue, "Durability");
-                                            position.y += position.height;
-                                        }
-                                        EditorGUI.indentLevel--;
-                                    }
-                                }
-                            }*/
 
                             EditorGUI.indentLevel--;
                             position.width += 40;
@@ -314,6 +274,25 @@ namespace UniversalInventorySystem.Editors
                             position.width += 40;
                             EditorGUIUtility.labelWidth += 20;
                             position.x -= 20;
+                        }
+    
+                        
+                        SerializedProperty last = tooltipProp.Copy();
+                        if (last.Next(false))
+                        {
+                            customFoldout = EditorGUI.Foldout(position, customFoldout, "Custom Attributes", true);
+                            position.y += position.height;
+                            total++;
+                            if (customFoldout)
+                            {
+                                do
+                                {
+                                    EditorGUI.PropertyField(position, last);
+                                    position.y += position.height;
+                                    total++;
+                                }
+                                while (last.Next(false));
+                            }
                         }
                     }
                     else

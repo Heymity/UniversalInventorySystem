@@ -78,7 +78,7 @@ namespace UniversalInventorySystem
             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, this, slot);
             if (onUseFunc == null)
             {
-                InventoryHandler.current.Broadcast(BroadcastEventType.DropItem, uea: uea);
+                InventoryHandler.current.Broadcast(BroadcastEventType.UseItem, uea: uea);
                 return;
             }
 
@@ -90,7 +90,7 @@ namespace UniversalInventorySystem
             if (monoMethod == null) Debug.LogError($"The script provided ({onUseFunc.name}) on item {itemName} does not contain, or its not accesible, the expected function OnUse.\n Check if this function exists and if the provided script derives from IUsable");
             else monoMethod.Invoke(Activator.CreateInstance(onUseFunc.GetClass()), tmp);
 
-            InventoryHandler.current.Broadcast(BroadcastEventType.DropItem, uea: uea);
+            InventoryHandler.current.Broadcast(BroadcastEventType.UseItem, uea: uea);
         }
 
         public virtual void OnDrop(Inventory inv, bool fromSpecificSlot, int slot, int amount, bool dbui, Vector3? pos)
