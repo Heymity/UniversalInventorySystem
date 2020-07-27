@@ -79,7 +79,7 @@ namespace UniversalInventorySystem
             //SlotAmount = _slotAmounts;
             id = _id;
             interactiable = _interactiable;
-            if (String.IsNullOrEmpty(_key)) { key = name; _key = name; }
+            if (string.IsNullOrEmpty(_key)) { key = name; _key = name; }
             else key = _key;
         }
 
