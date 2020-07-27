@@ -97,6 +97,7 @@ namespace UniversalInventorySystem
             //Debug.Log("Init");
             if (hasInitialized) return this;
 
+            if (seeds == null) seeds = new Seed[] { };
             if (seeds.Length >= 1 && loadSeeds) 
                 LoadSeed(0);
             else
