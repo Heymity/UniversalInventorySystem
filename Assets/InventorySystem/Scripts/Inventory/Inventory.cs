@@ -78,7 +78,7 @@ namespace UniversalInventorySystem
             //SlotAmount = _slotAmounts;
             id = _id;
             interactiable = _interactiable;
-            if (String.IsNullOrEmpty(_key)) { key = name; _key = name; }
+            if (string.IsNullOrEmpty(_key)) { key = name; _key = name; }
             else key = _key;
         }
 
@@ -96,6 +96,7 @@ namespace UniversalInventorySystem
             //Debug.Log("Init");
             if (hasInitialized) return this;
 
+            if (seeds == null) seeds = new Seed[] { };
             if (seeds.Length >= 1 && loadSeeds) 
                 LoadSeed(0);
             else

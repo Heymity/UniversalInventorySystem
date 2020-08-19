@@ -2,6 +2,12 @@
 
 ![](image.png)
 
+## NOTE
+
+This project is still maintained, but there will be some time until next update.
+In the next version you shoud be able to properly save the inventories with no trouble at all.
+Also it should fix some bugs related to the unity editor version
+
 ## What is it?
 
 
