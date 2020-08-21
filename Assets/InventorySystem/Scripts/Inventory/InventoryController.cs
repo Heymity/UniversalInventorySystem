@@ -36,7 +36,6 @@ namespace UniversalInventorySystem
 
         public const InventoryProtection AllInventoryFlags = InventoryProtection.Add
             | InventoryProtection.InventoryToInventory
-            | InventoryProtection.Locked
             | InventoryProtection.Remove
             | InventoryProtection.Drop
             | InventoryProtection.SlotToSlot
@@ -49,8 +48,7 @@ namespace UniversalInventorySystem
         public const InventoryProtection SwapInvFlags = InventoryProtection.InventoryToInventory;
         public const InventoryProtection DropInvFlags = (InventoryProtection)0b_0010_1000;
 
-        public const SlotProtection AllSlotFlags = SlotProtection.Locked
-            | SlotProtection.Add
+        public const SlotProtection AllSlotFlags = SlotProtection.Add
             | SlotProtection.Remove
             | SlotProtection.Use
             | SlotProtection.Swap;
@@ -1920,6 +1918,75 @@ namespace UniversalInventorySystem
 
             if (!hasInitialized) Initialize(loadSeeds);
         }
+
+        public Inventory(List<Slot> _slots)
+        {
+            slots = _slots;
+
+            if (!hasInitialized) Initialize();
+        }
+
+        public Inventory(List<Slot> _slots, Seed[] _seeds, bool loadSeeds = true)
+        {
+            slots = _slots;
+            seeds = _seeds;
+
+            if (!hasInitialized) Initialize(loadSeeds);
+        }
+
+        public Inventory(List<Slot> _slots, int _id)
+        {
+            slots = _slots;
+            id = _id;
+
+            if (!hasInitialized) Initialize();
+        }
+
+        public Inventory(List<Slot> _slots, int _id, string _key)
+        {
+            slots = _slots;
+            id = _id;
+            key = _key;
+
+            if (!hasInitialized) Initialize();
+        }
+
+        public Inventory(List<Slot> _slots, Seed[] _seeds, int _id, string _key, bool loadSeeds = true)
+        {
+            slots = _slots;
+            id = _id;
+            key = _key;
+            seeds = _seeds;
+
+            if (!hasInitialized) Initialize(loadSeeds);
+        }
+
+        public Inventory(List<Slot> _slots, int _id, string _key, InventoryProtection _interactiable)
+        {
+            slots = _slots;
+            id = _id;
+            key = _key;
+            interactiable = _interactiable;
+
+            if (!hasInitialized) Initialize();
+        }
+
+        public Inventory(List<Slot> _slots, InventoryProtection _interactiable)
+        {
+            slots = _slots;
+            interactiable = _interactiable;
+
+            if (!hasInitialized) Initialize();
+        }
+
+        public Inventory(List<Slot> _slots, Seed[] _seeds, InventoryProtection _interactiable, bool loadSeeds = true)
+        {
+            slots = _slots;
+            interactiable = _interactiable;
+            seeds = _seeds;
+
+            if (!hasInitialized) Initialize(loadSeeds);
+        }
     }
 
     [Serializable]
@@ -2292,7 +2359,7 @@ namespace UniversalInventorySystem
     } 
 
     [Serializable, Flags]
-    public enum InventoryProtection
+    public enum InventoryProtection : short
     {
         Locked = 0,                                     //0b00000000
         InventoryToInventory = 1,                       //0b00000001
@@ -2300,7 +2367,7 @@ namespace UniversalInventorySystem
         Add = 4,                                        //0b00000100
         Remove = 8,                                     //0b00001000
         Use = 16,                                       //0b00010000
-        Drop = 32                                       //0b0010000
+        Drop = 32                                       //0b00100000
     }
 
     [Serializable, Flags]

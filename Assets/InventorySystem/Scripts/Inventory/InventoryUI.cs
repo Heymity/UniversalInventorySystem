@@ -276,7 +276,7 @@ namespace UniversalInventorySystem
                     pattern[i] = inv.slots[i].item;
                     amount[i] = inv.slots[i].amount;
                 }
-                if (i >= slots.Count) break;
+                if (i >= slots.Count) break;                                        // dont know why its here but I am afraid to remove it
 
                 // Rendering null Slot
                 Image image;
@@ -286,7 +286,7 @@ namespace UniversalInventorySystem
                     for (int j = 0; j < slots[i].transform.childCount; j++)
                     {
 
-                        if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                        if (slots[i].transform.GetChild(j).TryGetComponent(out image))
                         {
                             image.sprite = null;
                             image.color = new Color(0, 0, 0, 0);
@@ -300,7 +300,7 @@ namespace UniversalInventorySystem
                 // Rendering slot
                 for (int j = 0; j < slots[i].transform.childCount; j++)
                 {
-                    if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                    if (slots[i].transform.GetChild(j).TryGetComponent(out image))
                     {
                         if (inv.slots[i].ItemInstance.hasDurability)
                         {
@@ -334,7 +334,7 @@ namespace UniversalInventorySystem
                         for (int j = 0; j < slots[i].transform.childCount; j++)
                         {
 
-                            if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                            if (slots[i].transform.GetChild(j).TryGetComponent(out image))
                             {
                                 image.sprite = null;
                                 image.color = new Color(0, 0, 0, 0);

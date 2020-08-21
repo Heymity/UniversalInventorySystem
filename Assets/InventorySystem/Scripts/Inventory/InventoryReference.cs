@@ -22,7 +22,7 @@ using UnityEngine;
 namespace UniversalInventorySystem
 {
     [
-        CreateAssetMenu(fileName = "Inventory", menuName = "UniversalInventorySystem/Inventory", order = 81),
+        CreateAssetMenu(fileName = "Inventory", menuName = "UniversalInventorySystem/InventoryReference", order = 81),
         Serializable
     ]
     public class InventoryReference : ScriptableObject
@@ -35,7 +35,7 @@ namespace UniversalInventorySystem
         public void OnEnable()
         {
             if (!Application.isPlaying)
-            SetValues();
+                SetValues();
         }
 
         public void OnValidate()
