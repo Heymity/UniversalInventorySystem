@@ -66,6 +66,9 @@ namespace UniversalInventorySystem
         //Inv
         public Inventory inv;
 
+        public bool useReference;
+        public InventoryReference invref;
+
         //Craft
         public bool isCraftInventory;
 
@@ -91,6 +94,13 @@ namespace UniversalInventorySystem
 
         public void Start()
         {
+            if (useReference)
+            {
+                if (invref != null)
+                    inv = invref.value;              
+                else
+                    throw new System.NullReferenceException("The variable invref(Inventory reference) from InventoryUI is null \nwhile useReference is marked as true");
+            }
             if (inv == null) return;
 
             var b = Instantiate(dragObj, canvas.transform);

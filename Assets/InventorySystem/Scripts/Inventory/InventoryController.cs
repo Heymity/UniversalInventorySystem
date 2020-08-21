@@ -1831,6 +1831,79 @@ namespace UniversalInventorySystem
     }
 
     [Serializable]
+    public class Inventory
+    {
+        [HideInInspector]
+        public Seed[] seeds;
+
+        public List<Slot> slots;
+        public int SlotAmount => slots.Count;
+        public int id;
+        public string key;
+
+        public InventoryProtection interactiable;
+
+        public bool HasInitialized => hasInitialized;
+        private bool hasInitialized;
+
+        public Slot this[int i]
+        {
+            get { return slots[i]; }
+            set { slots[i] = value; }
+        }
+        public static bool operator true(Inventory inv) => inv?.slots != null;
+        public static bool operator false(Inventory inv) => inv?.slots == null;
+
+        /// <summary>
+        /// This function must be called when a inventory is being created. It fills the inventory if null Slots if the list of slots is null or have less elments than inv.SlotAmount, give an id to the inventory and add it to the list of inventories in the InventoryController. This function dont need to be called if you are using an loading system;
+        /// </summary>
+        /// <returns>The initiaized inventory</returns>
+        public Inventory Initialize(bool loadSeeds = true, BroadcastEventType e = BroadcastEventType.InitializeInventory)
+        {
+            if (this == null)
+            {
+                Debug.LogError("Null inventory provided for Initialize");
+                throw new ArgumentNullException("inv", "Null inventory provided");
+            }
+            //Debug.Log("Init");
+            if (hasInitialized) return this;
+
+            if (seeds == null) seeds = new Seed[] { };
+            if (seeds.Length >= 1 && loadSeeds)
+                LoadSeed(0);
+            else
+            {
+                if (slots == null) slots = new List<Slot>();
+                if (slots.Count != SlotAmount)
+                {
+                    for (int i = 0; i < SlotAmount; i++)
+                    {
+                        if (i < slots.Count) continue;
+                        else
+                            slots.Add(Slot.nullSlot);
+                    }
+                }
+            }
+
+            hasInitialized = true;
+            if (!InventoryController.inventories.Contains(this))
+                InventoryController.inventories.Add(this);
+            InventoryHandler.InitializeInventoryEventArgs iea = new InventoryHandler.InitializeInventoryEventArgs(this);
+            if (InventoryHandler.current != null)
+                InventoryHandler.current.Broadcast(e, iea: iea);
+            return this;
+        }
+
+        public bool LoadSeed(int index)
+        {
+            Seed seed = seeds[index];
+            if (seed == null) return false;
+            slots = new List<Slot>(seed.seedSlots);
+            return true;
+        }
+    }
+
+    [Serializable]
     public struct Slot
     {
         //Item properties

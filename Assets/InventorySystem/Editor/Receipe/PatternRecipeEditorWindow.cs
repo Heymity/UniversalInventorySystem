@@ -24,9 +24,6 @@ namespace UniversalInventorySystem.Editors
 {
     public class PatternRecipeEditorWindow : ExtendEditorWindow
     {
-        bool patternRecipe = true;
-        bool patternConfg = false;
-        bool patternCreation = false;
         bool allowBigValues;
 
         Vector2 scrollPos;
