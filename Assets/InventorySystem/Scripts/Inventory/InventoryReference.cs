@@ -17,7 +17,6 @@
  */
 
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace UniversalInventorySystem
@@ -35,26 +34,19 @@ namespace UniversalInventorySystem
 
         public void OnEnable()
         {
-            //if (!Application.isPlaying)
-            //SetValues();
-            //hasInitialized = false;
-            //Initialize();
+            if (!Application.isPlaying)
+            SetValues();
         }
 
         public void OnValidate()
         {
-            //if (!Application.isPlaying)
-            //    SetValues();
+            if (!Application.isPlaying)
+                SetValues();
         }
 
         void SetValues()
         {
-            //slots = new List<Slot>(inventorySlots);
-            //SlotAmount = _slotAmounts;
-            //id = _id;
-            //interactiable = _interactiable;
-            //if (string.IsNullOrEmpty(_key)) { key = name; _key = name; }
-            //else key = _key;
+            value = _value;
         }
     }
 }

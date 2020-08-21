@@ -226,6 +226,13 @@ namespace UniversalInventorySystem
         bool hasGenerated = false;
         public void Update()
         {
+            if (useReference)
+            {
+                if (invref != null)
+                    inv = invref.value;
+                else
+                    throw new System.NullReferenceException("The variable invref(Inventory reference) from InventoryUI is null \nwhile useReference is marked as true");
+            }
             if (inv == null) return;
             //Initialize if not yet
             if (!inv.HasInitialized)

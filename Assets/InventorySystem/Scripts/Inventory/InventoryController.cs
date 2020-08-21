@@ -1901,6 +1901,25 @@ namespace UniversalInventorySystem
             slots = new List<Slot>(seed.seedSlots);
             return true;
         }
+
+        public bool LoadSeed(Seed seed)
+        {
+            if (seed == null) return false;
+            slots = new List<Slot>(seed.seedSlots);
+            return true;
+        }
+
+        public Inventory(Inventory inv, bool loadSeeds = true)
+        {
+            seeds = inv.seeds;
+            slots = new List<Slot>(inv.slots);
+            id = inv.id;
+            key = inv.key;
+            interactiable = inv.interactiable;
+            hasInitialized = inv.hasInitialized;
+
+            if (!hasInitialized) Initialize(loadSeeds);
+        }
     }
 
     [Serializable]

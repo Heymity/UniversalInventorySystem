@@ -1514,7 +1514,102 @@ MonoBehaviour:
   dropOnCloseCrafting: 0
   dropPos: {x: 0, y: 0, z: 0}
   randomFactor: {x: 1, y: 1, z: 0}
-  inv: {fileID: 11400000, guid: 3790736a552e0644da5724c0ac7b9d21, type: 2}
+  inv:
+    seeds: []
+    slots:
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    id: 0
+    key: 
+    interactiable: -1
+  useReference: 0
+  invref: {fileID: 0}
   isCraftInventory: 1
   gridSize: {x: 3, y: 3}
   allowsPatternCrafting: 1
@@ -3926,7 +4021,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 955734dc528cdf3428fdddd0f015f49f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generateUIFromSlotPrefab: 0
+  generateUIFromSlotPrefab: 1
   generatedUIParent: {fileID: 1198337620}
   slotPrefab: {fileID: 4676626297327902047, guid: 190af5ce39ca9824191677bd7d614e99,
     type: 3}
@@ -3945,7 +4040,78 @@ MonoBehaviour:
   dropOnCloseCrafting: 0
   dropPos: {x: 0, y: 0, z: 0}
   randomFactor: {x: 0, y: 0, z: 0}
-  inv: {fileID: 11400000, guid: c040294a07fd2a64387d1d83bcf31b55, type: 2}
+  inv:
+    seeds: []
+    slots:
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    id: 0
+    key: 
+    interactiable: -1
+  useReference: 0
+  invref: {fileID: 0}
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}
   allowsPatternCrafting: 0
@@ -4583,7 +4749,14 @@ MonoBehaviour:
   dropOnCloseCrafting: 0
   dropPos: {x: 0, y: 0, z: 0}
   randomFactor: {x: 0, y: 0, z: 0}
-  inv: {fileID: 11400000, guid: b454f7e4246ea4341bdeb4dc5c9fb7a4, type: 2}
+  inv:
+    seeds: []
+    slots: []
+    id: 0
+    key: 
+    interactiable: 0
+  useReference: 1
+  invref: {fileID: 11400000, guid: af7772ff830397941bdf93b49f80fe00, type: 2}
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}
   allowsPatternCrafting: 0
@@ -5829,7 +6002,94 @@ MonoBehaviour:
   dropOnCloseCrafting: 0
   dropPos: {x: 0, y: 0, z: 0}
   randomFactor: {x: 0, y: 0, z: 0}
-  inv: {fileID: 11400000, guid: b454f7e4246ea4341bdeb4dc5c9fb7a4, type: 2}
+  inv:
+    seeds: []
+    slots:
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    id: 0
+    key: 
+    interactiable: -1
+  useReference: 1
+  invref: {fileID: 11400000, guid: af7772ff830397941bdf93b49f80fe00, type: 2}
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}
   allowsPatternCrafting: 0
@@ -5864,7 +6124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ac0707fd66611846838e9c9b6a98c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: {fileID: 11400000, guid: b454f7e4246ea4341bdeb4dc5c9fb7a4, type: 2}
+  invRef: {fileID: 11400000, guid: af7772ff830397941bdf93b49f80fe00, type: 2}
   testItem: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
   slotAmount: 10
 --- !u!114 &1140438009

@@ -22,18 +22,11 @@ using UnityEditor.AnimatedValues;
 
 namespace UniversalInventorySystem.Editors
 {
-    [CustomEditor(typeof(Inventory)), CanEditMultipleObjects]
+    [CustomEditor(typeof(InventoryReference)), CanEditMultipleObjects]
     public class InventoryInspector : Editor
     {
-        SerializedProperty slotsProp;
-        SerializedProperty runtimeSlotsProp;
-        SerializedProperty idProp;
-        SerializedProperty runtimeIdProp;
-        SerializedProperty interactiableProp;
-        SerializedProperty runtimeInteractiableProp;
-        SerializedProperty keyProp;
-        SerializedProperty runtimeKeyProp;
-        SerializedProperty seedsProp;
+        SerializedProperty inventoryProp;
+        SerializedProperty _inventoryProp;
 
         bool edit = false;
         AnimBool showSlots;
@@ -42,11 +35,8 @@ namespace UniversalInventorySystem.Editors
 
         private void OnEnable()
         {
-            slotsProp = serializedObject.FindProperty("inventorySlots");
-            idProp = serializedObject.FindProperty("_id");
-            interactiableProp = serializedObject.FindProperty("_interactiable");
-            keyProp = serializedObject.FindProperty("_key");
-            seedsProp = serializedObject.FindProperty("seeds");
+            inventoryProp = serializedObject.FindProperty("value");
+            _inventoryProp = serializedObject.FindProperty("_value");
 
             showSlots = new AnimBool(true);
             showRuntimeSlots = new AnimBool(true);
@@ -68,10 +58,10 @@ namespace UniversalInventorySystem.Editors
                 EditorGUILayout.HelpBox("Here is where you change runtime values", MessageType.None);
                 EditorGUILayout.LabelField("Runtime Values: ");
 
-                runtimeSlotsProp = serializedObject.FindProperty("slots");
-                runtimeIdProp = serializedObject.FindProperty("id");
-                runtimeInteractiableProp = serializedObject.FindProperty("interactiable");
-                runtimeKeyProp = serializedObject.FindProperty("key");
+                var runtimeSlotsProp = inventoryProp.FindPropertyRelative("slots");
+                var runtimeIdProp = inventoryProp.FindPropertyRelative("id");
+                var runtimeInteractiableProp = inventoryProp.FindPropertyRelative("interactiable");
+                var runtimeKeyProp = inventoryProp.FindPropertyRelative("key");
 
                 runtimeIdProp.intValue = EditorGUILayout.IntField("Id", runtimeIdProp.intValue);
                 runtimeKeyProp.stringValue = EditorGUILayout.TextField("Key", runtimeKeyProp.stringValue);
@@ -111,6 +101,12 @@ namespace UniversalInventorySystem.Editors
             }
 
             EditorGUI.BeginDisabledGroup(!edit && Application.isPlaying);
+
+            var idProp = _inventoryProp.FindPropertyRelative("id");
+            var keyProp = _inventoryProp.FindPropertyRelative("key");
+            var interactiableProp = _inventoryProp.FindPropertyRelative("interactiable");
+            var slotsProp = _inventoryProp.FindPropertyRelative("slots");
+            var seedsProp = _inventoryProp.FindPropertyRelative("seeds");
 
             idProp.intValue = EditorGUILayout.IntField("Id", idProp.intValue);
             keyProp.stringValue = EditorGUILayout.TextField("Key", keyProp.stringValue);

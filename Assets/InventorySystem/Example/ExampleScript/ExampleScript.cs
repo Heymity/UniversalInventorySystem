@@ -22,7 +22,8 @@ using UniversalInventorySystem;
 
 public class ExampleScript : MonoBehaviour
 {   
-    public Inventory inventory;
+    public InventoryReference invRef;
+    private Inventory inventory;
 
     // To test the item drawer in inspector
     public Item testItem;
@@ -34,6 +35,9 @@ public class ExampleScript : MonoBehaviour
         InventoryHandler invEvent = InventoryHandler.current;
         invEvent.OnAddItem += OnAddItem;
         invEvent.OnRemoveItem += OnRemoveItem;
+
+        // Setting inventory to the reference
+        inventory = invRef.value;
     }
 
     private void Update()

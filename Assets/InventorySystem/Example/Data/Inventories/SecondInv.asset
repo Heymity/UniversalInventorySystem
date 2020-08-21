@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b278c471a3efbda41a30ef8f936d20a0, type: 3}
-  m_Name: Inventory1
+  m_Name: SecondInv
   m_EditorClassIdentifier: 
   value:
     seeds: []
@@ -23,8 +23,16 @@ MonoBehaviour:
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
-    - amount: 2
-      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 1
+      item: {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
       _itemInstance: {fileID: 0}
       hasItem: 1
       _durability: 0
@@ -87,16 +95,8 @@ MonoBehaviour:
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
-    - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    id: 0
-    key: Inv
+    id: 1
+    key: Second
     interactiable: -1
   _value:
     seeds: []
@@ -109,8 +109,16 @@ MonoBehaviour:
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
-    - amount: 2
-      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 1
+      item: {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
       _itemInstance: {fileID: 0}
       hasItem: 1
       _durability: 0
@@ -173,14 +181,6 @@ MonoBehaviour:
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
-    - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    id: 0
-    key: Inv
+    id: 1
+    key: Second
     interactiable: -1
