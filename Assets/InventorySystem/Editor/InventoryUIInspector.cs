@@ -47,8 +47,6 @@ namespace UniversalInventorySystem.Editors
         SerializedProperty dropPosProp;
         SerializedProperty randomFactorProp;
         SerializedProperty ShowAmountProp;
-        SerializedProperty useReferenceProp;
-        SerializedProperty invrefProp;
 
         bool autoGenUI;
 
@@ -90,8 +88,6 @@ namespace UniversalInventorySystem.Editors
             dropPosProp = serializedObject.FindProperty("dropPos");
             randomFactorProp = serializedObject.FindProperty("randomFactor");
             ShowAmountProp = serializedObject.FindProperty("showAmount");
-            useReferenceProp = serializedObject.FindProperty("useReference");
-            invrefProp = serializedObject.FindProperty("invref");
         }
 
         public override void OnInspectorGUI()
@@ -196,11 +192,7 @@ namespace UniversalInventorySystem.Editors
 
             if (invFold)
             {
-                useReferenceProp.boolValue = EditorGUILayout.ToggleLeft("Use reference to Inventory", useReferenceProp.boolValue);
-                if(useReferenceProp.boolValue)
-                    EditorGUILayout.PropertyField(invrefProp, new GUIContent("Inventory Reference"));
-                else
-                    EditorGUILayout.PropertyField(invProp);
+                EditorGUILayout.PropertyField(invProp);
             }
 
             EditorGUILayout.Separator();

@@ -21,9 +21,9 @@ using UnityEngine;
 using UniversalInventorySystem;
 
 public class ExampleScript : MonoBehaviour
-{   
+{
     public InventoryReference invRef;
-    private Inventory inventory;
+    Inventory inventory;
 
     // To test the item drawer in inspector.
     // This variable does nothing on the code.
@@ -37,7 +37,7 @@ public class ExampleScript : MonoBehaviour
         invEvent.OnRemoveItem += OnRemoveItem;
 
         // Setting inventory to the reference
-        inventory = invRef.value;
+        inventory = invRef.Value;
     }
 
     private void Update()

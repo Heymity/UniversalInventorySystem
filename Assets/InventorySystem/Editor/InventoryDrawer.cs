@@ -51,24 +51,24 @@ namespace UniversalInventorySystem.Editors
             EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), new GUIContent($"{key.stringValue} (id: {id.intValue})"));
 
 
-                position.y += 18;
-                baseAmount = 3f;
+            position.y += 18;
+            baseAmount = 3f;
 
-                EditorGUI.PropertyField(position, inte);
+            EditorGUI.PropertyField(position, inte);
 
-                position.y += position.height;
+            position.y += position.height;
 
-                var foldRect = new Rect(position.x, position.y, 50, position.height);
-                unfold = EditorGUI.Foldout(foldRect, unfold, new GUIContent("Slots"), true);
+            var foldRect = new Rect(position.x, position.y, 50, position.height);
+            unfold = EditorGUI.Foldout(foldRect, unfold, new GUIContent("Slots"), true);
 
-                var slotAmountsRect = new Rect(position.x + 50, position.y, position.width - 150, position.height);
-                var tmpSize = EditorGUI.IntField(slotAmountsRect, new GUIContent("Amount of slots"), slots.arraySize);
-                if (tmpSize < 0) tmpSize = 0;
+            var slotAmountsRect = new Rect(position.x + 50, position.y, position.width - 150, position.height);
+            var tmpSize = EditorGUI.IntField(slotAmountsRect, new GUIContent("Amount of slots"), slots.arraySize);
+            if (tmpSize < 0) tmpSize = 0;
 
-                position.y += position.height;
+            position.y += position.height;
 
-                var tmp = slots.arraySize;
-                slots.arraySize = tmpSize >= 0 ? tmpSize : slots.arraySize;
+            var tmp = slots.arraySize;
+            slots.arraySize = tmpSize >= 0 ? tmpSize : slots.arraySize;
             if (unfold)
             {
                 EditorGUI.indentLevel++;
@@ -113,6 +113,61 @@ namespace UniversalInventorySystem.Editors
             }
 
             EditorGUI.EndProperty();
+        }
+    }
+
+    [CustomPropertyDrawer(typeof(InventoryReference))]
+    public class InventoryReferenceDrawer : PropertyDrawer
+    {
+        public string[] options = new string[] { "Use Value", "Use Reference" };
+        public int index = 0;
+        private GUIStyle popupStyle;
+        private float fields = 0;
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return 18f + fields;
+        }
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+
+            if (popupStyle == null)
+            {
+                popupStyle = new GUIStyle(GUI.skin.GetStyle("PaneOptions"));
+                popupStyle.imagePosition = ImagePosition.ImageOnly;
+            }
+
+            var useC = property.FindPropertyRelative("useConstant");
+
+            if (useC.boolValue) index = 0;
+            else index = 1;
+
+            var tmp = position.width;
+            position.width = 20;
+            var tmph = position.height;
+            position.height = 18;
+            index = EditorGUI.Popup(position, index, options, popupStyle);
+            position.x += 20;
+            position.width = tmp - 20;
+            position.height = tmph;
+
+            var tmpr = position;
+            position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+
+            if (index == 0)
+            {
+                position = tmpr;
+                position.y += 18;
+                useC.boolValue = true;
+                var prop = property.FindPropertyRelative("constantValue");
+                EditorGUI.PropertyField(position, prop);
+                fields = EditorGUI.GetPropertyHeight(prop);
+            }
+            else
+            {
+                useC.boolValue = false;
+                EditorGUI.ObjectField(position, property.FindPropertyRelative("variable"), new GUIContent(""));
+                fields = 0;
+            }
         }
     }
 }

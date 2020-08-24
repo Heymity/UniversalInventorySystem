@@ -22,7 +22,7 @@ using UnityEditor.AnimatedValues;
 
 namespace UniversalInventorySystem.Editors
 {
-    [CustomEditor(typeof(InventoryReference)), CanEditMultipleObjects]
+    [CustomEditor(typeof(InventoryVarialbe)), CanEditMultipleObjects]
     public class InventoryInspector : Editor
     {
         SerializedProperty inventoryProp;

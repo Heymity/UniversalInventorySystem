@@ -21,16 +21,32 @@ using UnityEngine;
 
 namespace UniversalInventorySystem
 {
-    [Serializable]
-    public class InventoryReference
+    [
+        CreateAssetMenu(fileName = "Inventory", menuName = "UniversalInventorySystem/InventoryVarialbe", order = 81),
+        Serializable
+    ]
+    public class InventoryVarialbe : ScriptableObject
     {
-        public bool useConstant = true;
-        public Inventory constantValue;
-        public InventoryVarialbe variable;
+        public Inventory value;
+#pragma warning disable
+        [SerializeField] private Inventory _value;
+#pragma warning restore
 
-        public Inventory Value
+        public void OnEnable()
         {
-            get => useConstant ? constantValue : variable.value;
+            if (!Application.isPlaying)
+                SetValues();
+        }
+
+        public void OnValidate()
+        {
+            if (!Application.isPlaying)
+                SetValues();
+        }
+
+        void SetValues()
+        {
+            value = _value;
         }
     }
 }

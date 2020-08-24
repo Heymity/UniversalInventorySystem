@@ -61,13 +61,13 @@ namespace UniversalInventorySystem
                                     index = i;
                                 }
                             }
-                            InventoryController.SwapItemThruInventoriesSlotToSlot(nativeInvUI.inv, invUI.inv, nativeInvUI.dragSlotNumber ?? -1, index, nativeInvUI.dragObj.GetComponent<DragSlot>().GetAmount());
+                            InventoryController.SwapItemThruInventoriesSlotToSlot(nativeInvUI.GetInventory(), invUI.GetInventory(), nativeInvUI.dragSlotNumber ?? -1, index, nativeInvUI.dragObj.GetComponent<DragSlot>().GetAmount());
                             return;
                         }
                     }
-                    Slot s = nativeInvUI.inv.slots[nativeInvUI.dragSlotNumber.GetValueOrDefault()];
+                    Slot s = nativeInvUI.GetInventory().slots[nativeInvUI.dragSlotNumber.GetValueOrDefault()];
 
-                    s.item.OnDrop(nativeInvUI.inv, true, nativeInvUI.dragSlotNumber.GetValueOrDefault(), nativeInvUI.dragObj.GetComponent<DragSlot>().amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    s.item.OnDrop(nativeInvUI.GetInventory(), true, nativeInvUI.dragSlotNumber.GetValueOrDefault(), nativeInvUI.dragObj.GetComponent<DragSlot>().amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
                 }
                 else nativeInvUI.shouldSwap = true;

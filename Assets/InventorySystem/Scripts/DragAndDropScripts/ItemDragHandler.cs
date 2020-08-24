@@ -42,10 +42,10 @@ namespace UniversalInventorySystem
         {
             if (invUI.togglableObject.activeInHierarchy)
             {
-                if (invUI.inv.interactiable != InventoryProtection.Locked && invUI.GetInventory().slots[index].HasItem && invUI.GetInventory().slots[index].amount > 0 && !(Mathf.RoundToInt(invUI.GetInventory().slots[index].amount / 2) <= 0 && eventData.button == PointerEventData.InputButton.Right))
+                if (invUI.GetInventory().interactiable != InventoryProtection.Locked && invUI.GetInventory().slots[index].HasItem && invUI.GetInventory().slots[index].amount > 0 && !(Mathf.RoundToInt(invUI.GetInventory().slots[index].amount / 2) <= 0 && eventData.button == PointerEventData.InputButton.Right))
                 {
                     invUI.dragObj.GetComponent<RectTransform>().anchoredPosition += eventData.delta / canvas.scaleFactor;
-                    InventoryHandler.OnDragItemEventArgs odi = new InventoryHandler.OnDragItemEventArgs(invUI.inv, rectTransform.anchoredPosition, invUI.slots[int.Parse(transform.parent.name)]);
+                    InventoryHandler.OnDragItemEventArgs odi = new InventoryHandler.OnDragItemEventArgs(invUI.GetInventory(), rectTransform.anchoredPosition, invUI.slots[int.Parse(transform.parent.name)]);
                     InventoryHandler.current.BroadcastUIEvent(BroadcastEventType.ItemDragged, odi: odi);
                     invUI.isDraging = true;
                 }
@@ -74,7 +74,7 @@ namespace UniversalInventorySystem
                     }
                 }
                 if (invUI.dragObj.GetComponent<DragSlot>().GetAmount() >= 0)
-                    invUI.inv.SwapItemsInCertainAmountInSlots(int.Parse(transform.parent.name), index, invUI.dragObj.GetComponent<DragSlot>().GetAmount());
+                    invUI.GetInventory().SwapItemsInCertainAmountInSlots(int.Parse(transform.parent.name), index, invUI.dragObj.GetComponent<DragSlot>().GetAmount());
             }
             invUI.dragObj.SetActive(false);
         }
@@ -148,17 +148,17 @@ namespace UniversalInventorySystem
                 int amountToTransfer;
                 if (eventData.button == PointerEventData.InputButton.Left)
                 {
-                    amountToTransfer = invUI.inv.slots[index].amount;
+                    amountToTransfer = invUI.GetInventory().slots[index].amount;
                     dragSlot.SetAmount(amountToTransfer);
                 }
                 if (eventData.button == PointerEventData.InputButton.Right)
                 {
-                    amountToTransfer = Mathf.RoundToInt(invUI.inv.slots[index].amount / 2f);
+                    amountToTransfer = Mathf.RoundToInt(invUI.GetInventory().slots[index].amount / 2f);
                     dragSlot.SetAmount(amountToTransfer);
                 }
                 else
                 {
-                    amountToTransfer = invUI.inv.slots[index].amount;
+                    amountToTransfer = invUI.GetInventory().slots[index].amount;
                     dragSlot.SetAmount(amountToTransfer);
                 }
                 dragSlot.SetInventory(invUI.GetInventory());
@@ -176,7 +176,7 @@ namespace UniversalInventorySystem
                 {
                     var image = o.GetComponentInChildren<Image>();
                     image.color = new Color(1, 1, 1, 1);
-                    image.sprite = invUI.inv.slots[index].item.sprite;
+                    image.sprite = invUI.GetInventory().slots[index].item.sprite;
                 }
                 if (invUI.showAmount && invUI.GetInventory()[index].item.showAmount) o.GetComponentInChildren<TextMeshProUGUI>().text = amountToTransfer.ToString();
                 else o.GetComponentInChildren<TextMeshProUGUI>().text = "";
