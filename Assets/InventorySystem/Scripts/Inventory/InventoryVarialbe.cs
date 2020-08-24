@@ -46,7 +46,7 @@ namespace UniversalInventorySystem
 
         void SetValues()
         {
-            value = _value;
+            value = new Inventory(_value);
         }
     }
 }

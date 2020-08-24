@@ -14,13 +14,173 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   value:
     seeds: []
-    slots: []
-    id: 0
-    key: 
-    interactiable: 0
+    slots:
+    - amount: 4
+      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+      _itemInstance: {fileID: 0}
+      hasItem: 1
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 8
+      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+      _itemInstance: {fileID: 0}
+      hasItem: 1
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 2
+      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+      _itemInstance: {fileID: 0}
+      hasItem: 1
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 1
+      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+      _itemInstance: {fileID: 0}
+      hasItem: 1
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    id: 1
+    key: sec
+    interactiable: -1
   _value:
     seeds: []
-    slots: []
-    id: 0
-    key: 
-    interactiable: 0
+    slots:
+    - amount: 4
+      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+      _itemInstance: {fileID: 0}
+      hasItem: 1
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 8
+      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+      _itemInstance: {fileID: 0}
+      hasItem: 1
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 2
+      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+      _itemInstance: {fileID: 0}
+      hasItem: 1
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 1
+      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+      _itemInstance: {fileID: 0}
+      hasItem: 1
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    id: 1
+    key: sec
+    interactiable: -1

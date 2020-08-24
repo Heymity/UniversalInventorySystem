@@ -1518,10 +1518,98 @@ MonoBehaviour:
     useConstant: 1
     constantValue:
       seeds: []
-      slots: []
+      slots:
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
       id: 0
       key: 
-      interactiable: 0
+      interactiable: -1
     variable: {fileID: 0}
   isCraftInventory: 1
   gridSize: {x: 3, y: 3}
@@ -3957,10 +4045,74 @@ MonoBehaviour:
     useConstant: 1
     constantValue:
       seeds: []
-      slots: []
+      slots:
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
+      - amount: 0
+        item: {fileID: 0}
+        _itemInstance: {fileID: 0}
+        hasItem: 0
+        _durability: 0
+        isProductSlot: 0
+        interative: -1
+        whitelist: {fileID: 0}
       id: 0
       key: 
-      interactiable: 0
+      interactiable: -1
     variable: {fileID: 0}
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}
@@ -4600,14 +4752,14 @@ MonoBehaviour:
   dropPos: {x: 0, y: 0, z: 0}
   randomFactor: {x: 0, y: 0, z: 0}
   inv:
-    useConstant: 1
+    useConstant: 0
     constantValue:
       seeds: []
       slots: []
       id: 0
       key: 
       interactiable: 0
-    variable: {fileID: 0}
+    variable: {fileID: 11400000, guid: 513e47bcdaa4f9242a1cb139594ea056, type: 2}
   isCraftInventory: 0
   gridSize: {x: 0, y: 0}
   allowsPatternCrafting: 0
@@ -5976,7 +6128,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ac0707fd66611846838e9c9b6a98c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  invRef: {fileID: 0}
+  invRef:
+    useConstant: 0
+    constantValue:
+      seeds: []
+      slots: []
+      id: 0
+      key: 
+      interactiable: 0
+    variable: {fileID: 11400000, guid: 513e47bcdaa4f9242a1cb139594ea056, type: 2}
   testItem: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
 --- !u!114 &1140438009
 MonoBehaviour:
