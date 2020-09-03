@@ -25,6 +25,7 @@ using UnityEngine;
 
 namespace UniversalInventorySystem
 {
+    [Serializable]
     public class Item
     {
         public string name;

@@ -29,5 +29,60 @@ namespace UniversalInventorySystem
         {
             get => useConstant ? constantValue : variable.value;
         }
+
+        public void SetInventory(Inventory inv)
+        {
+            constantValue = inv;
+            variable = null;
+            useConstant = true;
+        }
+
+        public void SetInventory(InventoryVarialbe inv)
+        {
+            variable = inv;
+            constantValue = null;
+            useConstant = false;
+        }
+
+        public InventoryReference(Inventory inv)
+        {
+            constantValue = inv;
+            variable = null;
+            useConstant = true;
+        }
+
+        public InventoryReference(InventoryVarialbe inv)
+        {
+            variable = inv;
+            constantValue = null;
+            useConstant = false;
+        }
+
+        public InventoryReference(Inventory inv, InventoryVarialbe invVariable, bool _useConstant)
+        {
+            variable = invVariable;
+            constantValue = inv;
+            useConstant = _useConstant;
+        }
+
+        public InventoryReference()
+        {
+            variable = null;
+            constantValue = null;
+            useConstant = true;
+        }
+
+        public static bool operator ==(InventoryReference a, InventoryReference b) => a.Value == b.Value;
+        public static bool operator ==(InventoryReference a, Inventory b) => a.Value == b;
+        public static bool operator !=(InventoryReference a, Inventory b) => a.Value != b;
+        public static bool operator !=(InventoryReference a, InventoryReference b) => a.Value != b.Value;
+
+        public override bool Equals(object obj) => Value.Equals((obj as InventoryReference).Value);
+
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public override string ToString() => $"UseConstant: {useConstant}; ConstantV: {constantValue}; ReferenceV: {variable}";
+
+        public static implicit operator Inventory(InventoryReference a) => a.Value;
     }
 }

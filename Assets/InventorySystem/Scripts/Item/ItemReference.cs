@@ -17,10 +17,9 @@
  *  This is one of the most important base classes, its the item, as both scriptable object and normal class.
  */
 
-using UnityEngine;
-
 namespace UniversalInventorySystem
 {
+    [System.Serializable]
     public class ItemReference
     {
         public bool useConstant;
