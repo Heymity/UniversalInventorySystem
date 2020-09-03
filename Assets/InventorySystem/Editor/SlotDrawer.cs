@@ -88,7 +88,7 @@ namespace UniversalInventorySystem.Editors
                     bool useItemAsset = EditorPrefs.GetBool(property.propertyPath, true);
 
                     Rect uia = new Rect(foldPos.x, foldPos.y, 120, foldPos.height);
-                    bool tmp = EditorGUI.Toggle(uia, "Use ItemGroup", useItemAsset);
+                    bool tmp = EditorGUI.Toggle(uia, "Use ItemDatabase", useItemAsset);
                     foldPos.x += 120;
 
                     if ((tmp != useItemAsset || !unfold[property.propertyPath].executeOnce) && amTmp == amBool) 
@@ -116,7 +116,7 @@ namespace UniversalInventorySystem.Editors
                         {
                             if (whitelistProp.objectReferenceValue != null)
                             {
-                                var ia = whitelistProp.objectReferenceValue as ItemGroup;
+                                var ia = whitelistProp.objectReferenceValue as ItemDatabase;
 
                                 if (unfold[property.propertyPath].editorAssignSize < ia.itemsList.Count) unfold[property.propertyPath].editorAssignSize = ia.itemsList.Count;
                                 for (int i = 0; i < ia.itemsList.Count; i++)
@@ -181,11 +181,11 @@ namespace UniversalInventorySystem.Editors
 
                         if (amBool != amTmp)
                         {
-                            ItemGroup newAsset = ScriptableObject.CreateInstance<ItemGroup>();
+                            ItemGroup newAsset = ScriptableObject.CreateInstance<ItemDatabase>();
 
                             foreach (Object iaobj in unfold[property.propertyPath].objs)
                             {
-                                ItemGroup ia = iaobj as ItemGroup;
+                                ItemDatabase ia = iaobj as ItemDatabase;
                                 if (ia == null) continue;
                                 newAsset.name += ia.name + " ";
                                 foreach (Item item in ia.itemsList)
@@ -194,7 +194,7 @@ namespace UniversalInventorySystem.Editors
                                 }
                             }
 
-                            if ((whitelistProp.objectReferenceValue as ItemGroup) == null)
+                            if ((whitelistProp.objectReferenceValue as ItemDatabase) == null)
                             {
                                 newAsset.strId = newAsset.name;
                                 newAsset.id = Random.Range(10000, int.MaxValue);
@@ -203,7 +203,7 @@ namespace UniversalInventorySystem.Editors
                             }
                             else
                             {
-                                if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList) && newAsset.itemsList.Count > 0)
+                                if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemDatabase).itemsList, newAsset.itemsList) && newAsset.itemsList.Count > 0)
                                 {
                                     newAsset.strId = newAsset.name;
                                     newAsset.id = Random.Range(10000, int.MaxValue);
@@ -265,9 +265,9 @@ namespace UniversalInventorySystem.Editors
 
                         if (amBool != amTmp)
                         {
-                            ItemGroup newAsset = ScriptableObject.CreateInstance<ItemGroup>();
+                            ItemGroup newAsset = ScriptableObject.CreateInstance<ItemDatabase>();
 
-                            newAsset.name += "Custom ItemGroup";
+                            newAsset.name += "Custom ItemDatabase";
                             foreach (Object itemobj in unfold[property.propertyPath].objs)
                             {
                                 Item item = itemobj as Item;
@@ -276,7 +276,7 @@ namespace UniversalInventorySystem.Editors
                                 if (!newAsset.itemsList.Contains(item))
                                 {
                                     newAsset.itemsList.Add(item);
-                                    newAsset.strId += item.itemName;
+                                    newAsset.strId += item.name;
                                 }
                                 
                             }
@@ -286,7 +286,7 @@ namespace UniversalInventorySystem.Editors
                            
                             if (whitelistProp.objectReferenceValue != null && newAsset.itemsList.Count > 0)
                             {
-                                if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemGroup).itemsList, newAsset.itemsList) && newAsset.itemsList.Count > 0)
+                                if (!Enumerable.SequenceEqual((whitelistProp.objectReferenceValue as ItemDatabase).itemsList, newAsset.itemsList) && newAsset.itemsList.Count > 0)
                                 {
                                     newAsset.id = Random.Range(10000, int.MaxValue);
                                     AssetDatabase.RemoveObjectFromAsset(whitelistProp.objectReferenceValue);

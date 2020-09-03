@@ -67,7 +67,7 @@ namespace UniversalInventorySystem
                     }
                     Slot s = nativeInvUI.GetInventory().slots[nativeInvUI.dragSlotNumber.GetValueOrDefault()];
 
-                    s.item.OnDrop(nativeInvUI.GetInventory(), true, nativeInvUI.dragSlotNumber.GetValueOrDefault(), nativeInvUI.dragObj.GetComponent<DragSlot>().amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    s.Item.OnDrop(nativeInvUI.GetInventory(), true, nativeInvUI.dragSlotNumber.GetValueOrDefault(), nativeInvUI.dragObj.GetComponent<DragSlot>().amount, true, Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
                 }
                 else nativeInvUI.shouldSwap = true;

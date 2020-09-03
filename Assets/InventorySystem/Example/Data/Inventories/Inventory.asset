@@ -15,58 +15,58 @@ MonoBehaviour:
   value:
     seeds: []
     slots:
-    - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 5
-      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
-      _itemInstance: {fileID: 0}
-      hasItem: 1
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
     - amount: 1
-      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+      item: {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
       _itemInstance: {fileID: 0}
       hasItem: 1
+      _durability: 8
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
-    - amount: 5
-      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+    - amount: 0
+      item: {fileID: 0}
       _itemInstance: {fileID: 0}
-      hasItem: 1
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
@@ -101,58 +101,58 @@ MonoBehaviour:
   _value:
     seeds: []
     slots:
-    - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 5
-      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
-      _itemInstance: {fileID: 0}
-      hasItem: 1
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
-      hasItem: 0
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
     - amount: 1
-      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
+      item: {fileID: 11400000, guid: 5e31591f363c6064e82e01bb211d7c50, type: 2}
       _itemInstance: {fileID: 0}
       hasItem: 1
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
-    - amount: 5
-      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
+    - amount: 0
+      item: {fileID: 0}
       _itemInstance: {fileID: 0}
-      hasItem: 1
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      item: {fileID: 0}
+      _itemInstance: {fileID: 0}
+      hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1

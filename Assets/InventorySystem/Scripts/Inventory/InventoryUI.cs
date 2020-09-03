@@ -82,7 +82,7 @@ namespace UniversalInventorySystem
         [HideInInspector]
         public bool shouldSwap;
         [HideInInspector]
-        public List<Item> pattern = new List<Item>();
+        public List<ItemReference> pattern = new List<ItemReference>();
         [HideInInspector]
         public List<int> amount = new List<int>();
 
@@ -258,7 +258,7 @@ namespace UniversalInventorySystem
                 // Create pattern grid
                 if (isCraftInventory && i < pattern.Count)
                 {
-                    pattern[i] = inv.Value.slots[i].item;
+                    pattern[i] = inv.Value.slots[i].itemValue;
                     amount[i] = inv.Value.slots[i].amount;
                 }
                 if (i >= slots.Count) break;                                        // dont know why its here but I am afraid to remove it
@@ -266,7 +266,7 @@ namespace UniversalInventorySystem
                 // Rendering null Slot
                 Image image;
                 TextMeshProUGUI text;
-                if (inv.Value.slots[i].item == null)
+                if (inv.Value.slots[i].Item == null)
                 {
                     for (int j = 0; j < slots[i].transform.childCount; j++)
                     {
@@ -358,27 +358,27 @@ namespace UniversalInventorySystem
             {
                 CraftItemData products = inv.Value.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, false, true, productSlotsIndex.Length);
 
-                List<Item> productsItem = new List<Item>();
+                List<ItemReference> productsItem = new List<ItemReference>();
                 if (products != CraftItemData.nullData && products.items.Length <= productSlotsIndex.Length)
                 {
                     if (products.items.Length == productSlotsIndex.Length)
                     {
                         for (int k = 0; k < products.items.Length; k++)
                         {
-                            productsItem.Add(inv.Value.slots[gridSize.x * gridSize.y + k].item ?? products.items[k]);
+                            productsItem.Add(inv.Value.slots[gridSize.x * gridSize.y + k].itemValue ?? products.items[k]);
                         }
                     }
                     else
                     {
                         for(int i = 0; i < productSlotsIndex.Length - products.items.Length + 1; i++)
                         {
-                            productsItem = new List<Item>();
+                            productsItem = new List<ItemReference>();
                             for (int k = 0; k < products.items.Length; k++)
                             {
                                 if (gridSize.x * gridSize.y + k + i >= inv.Value.slots.Count) break;
-                                if (inv.Value.slots[gridSize.x * gridSize.y + k + i].item == products.items[k] || inv.Value.slots[gridSize.x * gridSize.y + k + i].item == null)
+                                if (inv.Value.slots[gridSize.x * gridSize.y + k + i].Item == products.items[k] || inv.Value.slots[gridSize.x * gridSize.y + k + i].Item == null)
                                 {
-                                    productsItem.Add(inv.Value.slots[gridSize.x * gridSize.y + k + i].item ?? products.items[k]);
+                                    productsItem.Add(inv.Value.slots[gridSize.x * gridSize.y + k + i].itemValue ?? products.items[k]);
                                     if (Enumerable.SequenceEqual(products.items, productsItem.ToArray()))
                                     {
                                         i = int.MaxValue - 1;
@@ -431,8 +431,8 @@ namespace UniversalInventorySystem
                         }
 
                         if(products != null && products != CraftItemData.nullData)
-                            if (inv.Value[productSlotsIndex[i]].item == (products?.items[productIndex] ?? null) && 
-                                inv.Value[productSlotsIndex[i]].amount + (products?.amounts[productIndex] ?? int.MaxValue) <= inv.Value[productSlotsIndex[i]].item?.maxAmount
+                            if (inv.Value[productSlotsIndex[i]].Item == (products?.items[productIndex] ?? null) && 
+                                inv.Value[productSlotsIndex[i]].amount + (products?.amounts[productIndex] ?? int.MaxValue) <= inv.Value[productSlotsIndex[i]].Item?.maxAmount
                                 ) 
                                 productIndex++;
 
@@ -460,28 +460,28 @@ namespace UniversalInventorySystem
                             // Iterating the childs
                             if (slots[productSlotsIndex[i]].transform.GetChild(j).TryGetComponent(out Image image))
                             {
-                                if (products.items[productIndex].hasDurability)
+                                if (products.items[productIndex].Value.hasDurability)
                                 {
-                                    if (products.items[productIndex].durabilityImages.Count > 0)
+                                    if (products.items[productIndex].Value.durabilityImages.Count > 0)
                                     {
-                                        image.sprite = GetNearestSprite(products.items[productIndex], products.items[productIndex].durability);
+                                        image.sprite = GetNearestSprite(products.items[productIndex], products.items[productIndex].Value.durability);
                                         image.color = new Color(1, 1, 1, .7f);
                                     }
                                     else
                                     {
-                                        image.sprite = products.items[productIndex].sprite;
+                                        image.sprite = products.items[productIndex].Value.sprite;
                                         image.color = new Color(1, 1, 1, .7f);
                                     }
                                     nextIndex = true;
                                 }
                                 else
                                 {
-                                    image.sprite = products.items[productIndex].sprite;
+                                    image.sprite = products.items[productIndex].Value.sprite;
                                     image.color = new Color(1, 1, 1, .7f);
                                     nextIndex = true;
                                 }
                             }
-                            else if (slots[productSlotsIndex[i]].transform.GetChild(j).TryGetComponent(out TextMeshProUGUI text) && showAmount && products.items[productIndex].showAmount)
+                            else if (slots[productSlotsIndex[i]].transform.GetChild(j).TryGetComponent(out TextMeshProUGUI text) && showAmount && products.items[productIndex].Value.showAmount)
                             {
                                 text.text = products.amounts[productIndex].ToString();
                                 nextIndex = true;
@@ -537,9 +537,9 @@ namespace UniversalInventorySystem
         {
             var minDif = int.MaxValue;
             var index = 0;
-            for(int i = inv.slots[slot].item.durabilityImages.Count - 1; i >= 0;i--)
+            for(int i = inv.slots[slot].Item.durabilityImages.Count - 1; i >= 0;i--)
             {
-                int dif = inv.slots[slot].item.durabilityImages[i].durability - durability;
+                int dif = inv.slots[slot].Item.durabilityImages[i].durability - durability;
                 if (dif < 0) break;
                 if (dif < minDif)
                 {
@@ -547,7 +547,7 @@ namespace UniversalInventorySystem
                     index = i;
                 }
             }
-            return inv.slots[slot].item.durabilityImages[index].sprite;
+            return inv.slots[slot].Item.durabilityImages[index].sprite;
         }
 
         /// <summary>

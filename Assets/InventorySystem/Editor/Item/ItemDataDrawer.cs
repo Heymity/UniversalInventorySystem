@@ -22,7 +22,7 @@ using UnityEditor;
 namespace UniversalInventorySystem.Editors
 {
 
-    [CustomPropertyDrawer(typeof(ItemGroup))]
+    [CustomPropertyDrawer(typeof(ItemDatabase))]
     public class ItemDataDrawer : PropertyDrawer
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -39,7 +39,7 @@ namespace UniversalInventorySystem.Editors
             {
                 if (GUI.Button(buttonRect, new GUIContent("Open Editor of " + label.text)))
                 {
-                    ItemDataEditorWindow.Open(property.objectReferenceValue as ItemGroup);
+                    ItemDataEditorWindow.Open(property.objectReferenceValue as ItemDatabase);
                 }
             }
 

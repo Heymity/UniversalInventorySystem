@@ -49,7 +49,7 @@ namespace UniversalInventorySystem.Editors
             if (serializedObject != null)
             {
                 serializedObject.Update();
-                var itemNameProp = serializedObject.FindProperty("itemName");
+                var itemNameProp = serializedObject.FindProperty("name");
                 var idProp = serializedObject.FindProperty("id");
                 var spriteProp = serializedObject.FindProperty("sprite");
                 var maxAmountProp = serializedObject.FindProperty("maxAmount");

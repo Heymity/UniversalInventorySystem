@@ -57,7 +57,7 @@ namespace UniversalInventorySystem.Editors
 
         private void OnEnable()
         {
-            itemNameProp = serializedObject.FindProperty("itemName");
+            itemNameProp = serializedObject.FindProperty("name");
             idProp = serializedObject.FindProperty("id");
             spriteProp = serializedObject.FindProperty("sprite");
             maxAmountProp = serializedObject.FindProperty("maxAmount");

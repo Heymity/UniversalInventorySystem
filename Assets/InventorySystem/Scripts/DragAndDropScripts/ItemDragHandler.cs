@@ -163,10 +163,10 @@ namespace UniversalInventorySystem
                 }
                 dragSlot.SetInventory(invUI.GetInventory());
                 dragSlot.SetInventoryUI(invUI);
-                dragSlot.SetItem(invUI.GetInventory().slots[index].item);
+                dragSlot.SetItem(invUI.GetInventory().slots[index].Item);
                 dragSlot.SetSlotNumber(index);
                 dragSlot.SetDurability(invUI.GetInventory().slots[index].durability);
-                if (invUI.GetInventory().slots[index].item.hasDurability && invUI.GetInventory().slots[index].item.durabilityImages.Count > 0)
+                if (invUI.GetInventory().slots[index].Item.hasDurability && invUI.GetInventory().slots[index].Item.durabilityImages.Count > 0)
                 {
                     var image = o.GetComponentInChildren<Image>();
                     image.color = new Color(1, 1, 1, 1);
@@ -176,9 +176,9 @@ namespace UniversalInventorySystem
                 {
                     var image = o.GetComponentInChildren<Image>();
                     image.color = new Color(1, 1, 1, 1);
-                    image.sprite = invUI.GetInventory().slots[index].item.sprite;
+                    image.sprite = invUI.GetInventory().slots[index].Item.sprite;
                 }
-                if (invUI.showAmount && invUI.GetInventory()[index].item.showAmount) o.GetComponentInChildren<TextMeshProUGUI>().text = amountToTransfer.ToString();
+                if (invUI.showAmount && invUI.GetInventory()[index].Item.showAmount) o.GetComponentInChildren<TextMeshProUGUI>().text = amountToTransfer.ToString();
                 else o.GetComponentInChildren<TextMeshProUGUI>().text = "";
 
             }

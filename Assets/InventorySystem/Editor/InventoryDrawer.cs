@@ -44,12 +44,16 @@ namespace UniversalInventorySystem.Editors
 
             EditorGUIUtility.wideMode = true;
             EditorGUIUtility.labelWidth = 100;
-            position.height /= amountOfFilds;
+            position.height = 18;
 
             EditorGUI.BeginProperty(position, label, property);
 
-            EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), new GUIContent($"{key.stringValue} (id: {id.intValue})"));
-
+            position.width /= 2;
+            key.stringValue = EditorGUI.TextField(position, "Key", key.stringValue);
+            position.x += position.width;
+            id.intValue = EditorGUI.IntField(position, "Id", id.intValue);
+            position.x -= position.width;
+            position.width *= 2;
 
             position.y += 18;
             baseAmount = 3f;

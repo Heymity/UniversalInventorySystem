@@ -27,7 +27,7 @@ namespace UniversalInventorySystem.Editors
         [OnOpenAsset()]
         public static bool OpenEditor(int instanceId, int line)
         {
-            ItemGroup obj = EditorUtility.InstanceIDToObject(instanceId) as ItemGroup;
+            ItemDatabase obj = EditorUtility.InstanceIDToObject(instanceId) as ItemDatabase;
             if (obj != null)
             {
                 ItemDataEditorWindow.Open(obj);
@@ -40,7 +40,7 @@ namespace UniversalInventorySystem.Editors
 
 
 
-    [CustomEditor(typeof(ItemGroup))]
+    [CustomEditor(typeof(ItemDatabase))]
     public class ItemDataEditor : Editor
     {
         SerializedProperty itemsListProp;
@@ -78,7 +78,7 @@ namespace UniversalInventorySystem.Editors
 
             if (GUILayout.Button("Open Editor"))
             {
-                ItemDataEditorWindow.Open((ItemGroup)target);
+                ItemDataEditorWindow.Open((ItemDatabase)target);
             }
 
             serializedObject.ApplyModifiedProperties();

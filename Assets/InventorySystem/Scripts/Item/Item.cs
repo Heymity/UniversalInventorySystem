@@ -25,13 +25,9 @@ using UnityEngine;
 
 namespace UniversalInventorySystem
 {
-    [ 
-        CreateAssetMenu(fileName = "Item", menuName = "UniversalInventorySystem/Item", order = 115), 
-        Serializable
-    ]
-    public class Item : ScriptableObject
+    public class Item
     {
-        public string itemName;
+        public string name;
         public int id;
         public Sprite sprite;
 
@@ -49,7 +45,7 @@ namespace UniversalInventorySystem
         {
             get
             {
-                return _durabilityImages;
+                return SortDurabilityImages(_durabilityImages);
             }
             set
             {
@@ -65,14 +61,6 @@ namespace UniversalInventorySystem
         [DontValidateOnValueEqual]
         public ToolTipInfo tooltip;
 
-        private void OnEnable()
-        {
-            _durabilityImages = SortDurabilityImages(_durabilityImages);
-            OnEnableCallback();
-        }
-
-        public virtual void OnEnableCallback() { }
-
         public virtual void OnUse(Inventory inv, int slot)
         {
             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, this, slot);
@@ -87,7 +75,7 @@ namespace UniversalInventorySystem
             BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
             MethodInfo monoMethod = onUseFunc.GetClass().GetMethod("OnUse", flags);
-            if (monoMethod == null) Debug.LogError($"The script provided ({onUseFunc.name}) on item {itemName} does not contain, or its not accesible, the expected function OnUse.\n Check if this function exists and if the provided script derives from IUsable");
+            if (monoMethod == null) Debug.LogError($"The script provided ({onUseFunc.name}) on item {name} does not contain, or its not accesible, the expected function OnUse.\n Check if this function exists and if the provided script derives from IUsable");
             else monoMethod.Invoke(Activator.CreateInstance(onUseFunc.GetClass()), tmp);
 
             InventoryHandler.current.Broadcast(BroadcastEventType.UseItem, uea: uea);
@@ -112,7 +100,7 @@ namespace UniversalInventorySystem
 
                 MethodInfo monoMethod = optionalOnDropBehaviour.GetClass().GetMethod("OnDropItem", flags);
 
-                if (monoMethod == null) Debug.LogError($"The script provided ({optionalOnDropBehaviour.name}) on item {itemName} does not contain, or its not accesible, the expected function OnDropItem.\n Check if this function exists and if the provided script derives from DropBehaviour");
+                if (monoMethod == null) Debug.LogError($"The script provided ({optionalOnDropBehaviour.name}) on item {name} does not contain, or its not accesible, the expected function OnDropItem.\n Check if this function exists and if the provided script derives from DropBehaviour");
                 else monoMethod.Invoke(Activator.CreateInstance(optionalOnDropBehaviour.GetClass()), tmp);
             }
         }
@@ -217,8 +205,31 @@ namespace UniversalInventorySystem
                 return false;
             return true;
         }
+
+        public Item(Item _item)
+        {
+
+        }
+
+        public static bool operator false(Item item) => item == null;
+        public static bool operator !(Item item) => item == null;
+        public static bool operator true(Item item) => item != null;
+
+        public static bool operator ==(Item a, ItemReference b) => a == b.Value;
+        public static bool operator !=(Item a, ItemReference b) => a != b.Value;
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
+    
     [Serializable]
     public class DurabilityImage : object
     {

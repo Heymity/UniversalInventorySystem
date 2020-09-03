@@ -16,12 +16,9 @@
  *  This code is the Scriptable object of the inventory
  */
 
-using System;
-using UnityEngine;
-
 namespace UniversalInventorySystem
 {
-    [Serializable]
+    [System.Serializable]
     public class InventoryReference
     {
         public bool useConstant = true;

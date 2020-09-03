@@ -99,7 +99,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be stored in the inventory</param>
         /// <param name="amount">The amount of items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null)
+        public static int AddItemToNewSlot(this Inventory inv, ItemReference item, int amount, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null)
         {
             if (inv == null)
             {
@@ -109,15 +109,15 @@ namespace UniversalInventorySystem
             if (item == null)
             {
                 Debug.LogError("Null item provided for AddItemToNewSlot");
-                throw new ArgumentNullException("inv", "Null item provided");
+                throw new ArgumentNullException("item", "Null item provided");
             }
 
             if (!AcceptsInventoryProtection(inv, MethodType.Add)) return amount;
 
-            if (durability == null) durability = item.durability;
+            if (durability == null) durability = item.Value.durability;
             if (itemInstance == null) itemInstance = item;
 
-            if (!item.stackable)
+            if (!item.Value.stackable)
             {
                 for (int i = 0; i < inv.slots.Count; i++)
                 {
@@ -140,7 +140,7 @@ namespace UniversalInventorySystem
                         if (amount > 0)
                         {
                             Debug.Log($"Not enougth room for {amount} items");
-                            InventoryHandler.AddItemEventArgs aea1 = new InventoryHandler.AddItemEventArgs(inv, true, false, item, amount, null);
+                            InventoryHandler.AddItemEventArgs aea1 = new InventoryHandler.AddItemEventArgs(inv, true, false, item.Value, amount, null);
                             InventoryHandler.current.Broadcast(e, aea1);
                             return amount;
                         }
@@ -151,7 +151,7 @@ namespace UniversalInventorySystem
                         return amount;
                     }
                 }
-                InventoryHandler.AddItemEventArgs aea2 = new InventoryHandler.AddItemEventArgs(inv, true, false, item, amount, null);
+                InventoryHandler.AddItemEventArgs aea2 = new InventoryHandler.AddItemEventArgs(inv, true, false, item.Value, amount, null);
                 InventoryHandler.current.Broadcast(e, aea2);
                 return 0;
             }
@@ -164,7 +164,7 @@ namespace UniversalInventorySystem
 
                 else if (i < inv.slots.Count - 1)
                 {
-                    var maxAmount = item.maxAmount;
+                    var maxAmount = item.Value.maxAmount;
 
                     if (amount <= maxAmount)
                         inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, amount, durability.GetValueOrDefault(), itemInstance);
@@ -180,10 +180,10 @@ namespace UniversalInventorySystem
                 }
                 else if (!inv.slots[i].HasItem)
                 {
-                    InventoryHandler.AddItemEventArgs aea2 = new InventoryHandler.AddItemEventArgs(inv, true, false, item, amount, null);
+                    InventoryHandler.AddItemEventArgs aea2 = new InventoryHandler.AddItemEventArgs(inv, true, false, item.Value, amount, null);
                     var newSlot = inv.slots[i].amount;
-                    amount -= item.maxAmount - newSlot;
-                    newSlot = item.maxAmount;
+                    amount -= item.Value.maxAmount - newSlot;
+                    newSlot = item.Value.maxAmount;
                     inv.slots[i] = Slot.SetItemProperties(inv.slots[i], item, newSlot, durability.GetValueOrDefault(), itemInstance);
                     if (amount > 0)
                     {
@@ -198,7 +198,7 @@ namespace UniversalInventorySystem
                     return amount;
                 }
             }
-            InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, true, false, item, amount, null);
+            InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, true, false, item.Value, amount, null);
             InventoryHandler.current.Broadcast(e, aea);
             return 0;
         }
@@ -210,7 +210,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be stored in the inventory</param>
         /// <param name="amount">The amount of items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null)
+        public static int AddItem(this Inventory inv, ItemReference item, int amount, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null)
         {
             //Validating Arguments
             if (!AcceptsInventoryProtection(inv, MethodType.Add)) return amount;
@@ -226,17 +226,17 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("item", "Null Item was provided");
             }
             
-            if (durability == null) durability = item.durability;
-            if (itemInstance == null) itemInstance = item;
+            if (durability == null) durability = item.Value.durability;
+            if (itemInstance == null) itemInstance = item.Value;
 
             //If the items is not marked as stackable it calls AddItemToNewSlot witch handles the rest
-            if (!item.stackable) return AddItemToNewSlot(inv, item, amount, e: e, itemInstance: itemInstance);
+            if (!item.Value.stackable) return AddItemToNewSlot(inv, item, amount, e: e, itemInstance: itemInstance);
 
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item != item) continue;                                         // Must be same item
+                if (inv.slots[i].Item != item) continue;                                         // Must be same item
                 if (!inv.slots[i].ItemInstance.ValueEqual(itemInstance)) continue;               // Must be same item instance
-                if (inv.slots[i].amount == inv.slots[i].item.maxAmount) continue;                // Must fit at least one
+                if (inv.slots[i].amount == inv.slots[i].Item.maxAmount) continue;                // Must fit at least one
                 if (!AcceptsSlotProtection(inv.slots[i], MethodType.Add) && !overrideSlotProtection) 
                     continue;                                                                    // Must have a acceptable protection level
 
@@ -244,17 +244,17 @@ namespace UniversalInventorySystem
 
                 var newSlot = inv.slots[i];                                                      // Tmp var
 
-                if (newSlot.amount + amount <= item.maxAmount)                                   // If the entire amount fits on the slot
+                if (newSlot.amount + amount <= item.Value.maxAmount)                                   // If the entire amount fits on the slot
                 {
                     newSlot.amount += amount;
                     amount = 0;
                     inv.slots[i] = newSlot;
                     break;
                 }
-                else if (newSlot.amount + amount > item.maxAmount)                               // If the entire amount doesn`t fit on the slot
+                else if (newSlot.amount + amount > item.Value.maxAmount)                               // If the entire amount doesn`t fit on the slot
                 {
-                    amount -= item.maxAmount - newSlot.amount;
-                    newSlot.amount = item.maxAmount;
+                    amount -= item.Value.maxAmount - newSlot.amount;
+                    newSlot.amount = item.Value.maxAmount;
                     inv.slots[i] = newSlot;
                     if (amount > 0) continue;
                 }
@@ -262,7 +262,7 @@ namespace UniversalInventorySystem
 
             //If there are still Items to add and there are no other slot with the same item it adds to a new slot
             if (amount > 0) return AddItemToNewSlot(inv, item, amount, e: e, itemInstance: itemInstance);
-            InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, false, item, amount, null);
+            InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, false, item.Value, amount, null);
             InventoryHandler.current.Broadcast(e, aea);
             return 0;
         }
@@ -275,7 +275,7 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null)
+        public static int AddItemToSlot(this Inventory inv, ItemReference item, int amount, int slotNumber, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.AddItem, bool overrideSlotProtection = false, int? durability = null)
         {
             if (inv == null)
             {
@@ -294,44 +294,44 @@ namespace UniversalInventorySystem
 
             if (!inv.slots[slotNumber].whitelist?.itemsList.Contains(item) ?? false) return amount;
 
-            if (durability == null) durability = item.durability;
-            if (itemInstance == null) itemInstance = item;
+            if (durability == null) durability = item.Value.durability;
+            if (itemInstance == null) itemInstance = item.Value;
 
-            if (!item.stackable)
+            if (!item.Value.stackable)
             {
                 if (inv.slots[slotNumber].HasItem) return amount;
                 inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, 1, durability.GetValueOrDefault() / amount, itemInstance);
-                InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
+                InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item.Value, amount, slotNumber);
                 InventoryHandler.current.Broadcast(e, aea);
                 return amount - 1 > 0 ? amount - 1 : 0;
             }
 
             if (!inv.slots[slotNumber].HasItem)
             {
-                if (amount < item.maxAmount)
+                if (amount < item.Value.maxAmount)
                     inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, amount, durability.GetValueOrDefault(), itemInstance);
                 else
                 {
-                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.maxAmount, durability.GetValueOrDefault(), itemInstance);
-                    return amount - item.maxAmount;
+                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.Value.maxAmount, durability.GetValueOrDefault(), itemInstance);
+                    return amount - item.Value.maxAmount;
                 }
-                InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
+                InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item.Value, amount, slotNumber);
                 InventoryHandler.current.Broadcast(e, aea);
                 return 0;
             }
-            else if (inv.slots[slotNumber].item == item)
+            else if (inv.slots[slotNumber].Item == item)
             {
                 if (!inv.slots[slotNumber].ItemInstance.ValueEqual(itemInstance)) return amount;
 
-                if (inv.slots[slotNumber].amount + amount < item.maxAmount)
+                if (inv.slots[slotNumber].amount + amount < item.Value.maxAmount)
                     inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, amount + inv.slots[slotNumber].amount, inv.slots[slotNumber].durability, itemInstance);
                 else
                 {
-                    int valueToReeturn = amount + inv.slots[slotNumber].amount - item.maxAmount;
-                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.maxAmount, inv.slots[slotNumber].durability, itemInstance);
+                    int valueToReeturn = amount + inv.slots[slotNumber].amount - item.Value.maxAmount;
+                    inv.slots[slotNumber] = Slot.SetItemProperties(inv.slots[slotNumber], item, item.Value.maxAmount, inv.slots[slotNumber].durability, itemInstance);
                     return valueToReeturn;
                 }
-                InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item, amount, slotNumber);
+                InventoryHandler.AddItemEventArgs aea = new InventoryHandler.AddItemEventArgs(inv, false, true, item.Value, amount, slotNumber);
                 InventoryHandler.current.Broadcast(e, aea);
                 return 0;
             }
@@ -352,7 +352,7 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be removed</param>
         /// <param name="item">The item that will be removed in the inventory</param>
         /// <returns>The RemoveItem or RemoveItemInSlot function return value</returns>
-        public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, Item item, BroadcastEventType e = BroadcastEventType.DropItem, bool overrideSlotProtecion = true)
+        public static bool DropItem(this Inventory inv, int amount, Vector3 dropPosition, ItemReference item, BroadcastEventType e = BroadcastEventType.DropItem, bool overrideSlotProtecion = true)
         {
             if (inv == null)
             {
@@ -408,7 +408,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be removed in the inventory</param>
         /// <param name="amount">The amount of items to be removed</param>
         /// <returns>True if it was able to remove the items False if it wasnt</returns>
-        public static bool RemoveItem(this Inventory inv, Item item, int amount, bool ignoreInstance = false, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtection = false)
+        public static bool RemoveItem(this Inventory inv, ItemReference item, int amount, bool ignoreInstance = false, Item itemInstance = null, BroadcastEventType e = BroadcastEventType.RemoveItem, Vector3? dropPosition = null, bool overrideSlotProtection = false)
         {
             if (inv == null)
             {
@@ -422,12 +422,12 @@ namespace UniversalInventorySystem
             }
 
             if (!AcceptsInventoryProtection(inv, MethodType.Remove)) return false;
-            if (itemInstance == null) itemInstance = item;
+            if (itemInstance == null) itemInstance = item.Value;
 
             int total = 0;
             for (int i = 0; i < inv.slots.Count; i++)
             {
-                if (inv.slots[i].item == item && (AcceptsSlotProtection(inv.slots[i], MethodType.Remove) || overrideSlotProtection) && (!ignoreInstance && inv.slots[i].ItemInstance.ValueEqual(itemInstance)))
+                if (inv.slots[i].Item == item && (AcceptsSlotProtection(inv.slots[i], MethodType.Remove) || overrideSlotProtection) && (!ignoreInstance && inv.slots[i].ItemInstance.ValueEqual(itemInstance)))
                 {
                     total += inv.slots[i].amount;
                 }
@@ -438,7 +438,7 @@ namespace UniversalInventorySystem
             {
                 for (int i = 0; i < inv.slots.Count; i++)
                 {
-                    if (inv.slots[i].item == item && (AcceptsSlotProtection(inv.slots[i], MethodType.Remove) || overrideSlotProtection))
+                    if (inv.slots[i].Item == item && (AcceptsSlotProtection(inv.slots[i], MethodType.Remove) || overrideSlotProtection))
                     {
                         int prevAmount = inv.slots[i].amount;
                         Slot slot = inv.slots[i];
@@ -458,10 +458,10 @@ namespace UniversalInventorySystem
                 return false;
             }
             dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
-            InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, item, null);
+            InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, item.Value, null);
 
             if (e == BroadcastEventType.DropItem)
-                item.OnDrop(inv, false, index, amount, false, dropPosition);
+                item.Value.OnDrop(inv, false, index, amount, false, dropPosition);
             else InventoryHandler.current.Broadcast(e, rea: rea);
             return true;
         }
@@ -480,7 +480,7 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null inventory provided for RemoveItemInSlot");
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
-            if (inv.slots[slot].item == null) return false;
+            if (inv.slots[slot].Item == null) return false;
 
             if (!AcceptsInventoryProtection(inv, MethodType.Remove)) return false;
 
@@ -490,7 +490,7 @@ namespace UniversalInventorySystem
             if (!ignoreInstance && inv.slots[slot].ItemInstance.ValueEqual(itemInstance)) return false;
 
             dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
-            InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
+            InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].Item, slot);
 
             if (inv.slots[slot].amount == amount)
             {
@@ -505,7 +505,7 @@ namespace UniversalInventorySystem
             else if (inv.slots[slot].amount > amount)
             {
                 Item tmp = inv.slots[slot].ItemInstance;
-                inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], inv.slots[slot].item, inv.slots[slot].amount - amount, 0, inv.slots[slot].ItemInstance);
+                inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], inv.slots[slot].itemValue, inv.slots[slot].amount - amount, 0, inv.slots[slot].ItemInstance);
 
                 if (e == BroadcastEventType.DropItem)
                     tmp?.OnDrop(inv, true, slot, amount, false, dropPosition);
@@ -533,7 +533,7 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null inventory provided for RemoveItemInSlot");
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
-            if (inv.slots[slot].item == null) return amount;
+            if (inv.slots[slot].Item == null) return amount;
 
             if (!AcceptsInventoryProtection(inv, MethodType.Remove)) return amount;
 
@@ -543,7 +543,7 @@ namespace UniversalInventorySystem
             if (!ignoreInstance && inv.slots[slot].ItemInstance.ValueEqual(itemInstance)) return amount;
 
             dropPosition = (dropPosition ?? new Vector3(0, 0, 0));
-            InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].item, slot);
+            InventoryHandler.RemoveItemEventArgs rea = new InventoryHandler.RemoveItemEventArgs(inv, false, amount, inv.slots[slot].Item, slot);
 
             if (inv.slots[slot].amount == amount)
             {
@@ -558,7 +558,7 @@ namespace UniversalInventorySystem
             else if (inv.slots[slot].amount > amount)
             {
                 Item tmp = inv.slots[slot].ItemInstance;
-                inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], inv.slots[slot].item, inv.slots[slot].amount - amount, 0, inv.slots[slot].ItemInstance);
+                inv.slots[slot] = Slot.SetItemProperties(inv.slots[slot], inv.slots[slot].itemValue, inv.slots[slot].amount - amount, 0, inv.slots[slot].ItemInstance);
 
                 if (e == BroadcastEventType.DropItem)
                     tmp?.OnDrop(inv, true, slot, amount, false, dropPosition);
@@ -599,9 +599,9 @@ namespace UniversalInventorySystem
 
             if (inv.slots[slot].HasItem)
             {
-                if (inv.slots[slot].item.destroyOnUse)
+                if (inv.slots[slot].Item.destroyOnUse)
                 {
-                    Item it = inv.slots[slot].item;
+                    Item it = inv.slots[slot].Item;
                     if (it.hasDurability)
                     {
                         if(inv.slots[slot].durability > 0)
@@ -612,7 +612,7 @@ namespace UniversalInventorySystem
                             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, slot);
                             if (inv.slots[slot].durability == 0)
                             {
-                                if (RemoveItemInSlot(inv, slot, inv.slots[slot].item.useHowManyWhenUsed))
+                                if (RemoveItemInSlot(inv, slot, inv.slots[slot].Item.useHowManyWhenUsed))
                                 {
                                     it.OnUse(inv, slot);
                                     InventoryHandler.current.Broadcast(e, uea: uea);
@@ -627,7 +627,7 @@ namespace UniversalInventorySystem
                     }
                     else
                     {
-                        if (RemoveItemInSlot(inv, slot, inv.slots[slot].item.useHowManyWhenUsed))
+                        if (RemoveItemInSlot(inv, slot, inv.slots[slot].Item.useHowManyWhenUsed))
                         {
                             it.OnUse(inv, slot);
                             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, slot);
@@ -636,25 +636,25 @@ namespace UniversalInventorySystem
                     }
                     return;
                 }
-                else if (!inv.slots[slot].item.destroyOnUse)
+                else if (!inv.slots[slot].Item.destroyOnUse)
                 {
-                    if (inv.slots[slot].item.hasDurability)
+                    if (inv.slots[slot].Item.hasDurability)
                     {
                         if (inv.slots[slot].durability > 0)
                         {
                             var tmp = inv.slots[slot];
                             Slot.SetDurability(ref tmp, inv.slots[slot].durability - 1);
                             inv.slots[slot] = tmp;
-                            InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[slot].item, slot);
-                            inv.slots[slot].item.OnUse(inv, slot);
+                            InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[slot].Item, slot);
+                            inv.slots[slot].Item.OnUse(inv, slot);
                             InventoryHandler.current.Broadcast(e, uea: uea);
 
                         }
                     }
                     else
                     {
-                        inv.slots[slot].item.OnUse(inv, slot);
-                        InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[slot].item, slot);
+                        inv.slots[slot].Item.OnUse(inv, slot);
+                        InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[slot].Item, slot);
                         InventoryHandler.current.Broadcast(e, uea: uea);
                     }
                 }
@@ -666,7 +666,7 @@ namespace UniversalInventorySystem
         /// </summary>
         /// <param name="inv">The inventory in witch the item will be used</param>
         /// <param name="item">The item that will be used</param>
-        public static void UseItem(this Inventory inv, Item item, BroadcastEventType e = BroadcastEventType.UseItem, bool overrideSlotProtection = false)
+        public static void UseItem(this Inventory inv, ItemReference item, BroadcastEventType e = BroadcastEventType.UseItem, bool overrideSlotProtection = false)
         {
             if (inv == null)
             {
@@ -679,11 +679,11 @@ namespace UniversalInventorySystem
             for(int i = 0; i < inv.slots.Count; i++)
             {
                 if (!inv.slots[i].HasItem) continue;
-                if (inv.slots[i].item != item) continue;
+                if (inv.slots[i].Item.ValueEqual(item.Value)) continue;
                 if (!AcceptsSlotProtection(inv.slots[i], MethodType.Use) && !overrideSlotProtection) continue;
-                if (inv.slots[i].item.destroyOnUse)
+                if (inv.slots[i].Item.destroyOnUse)
                 {
-                    Item it = inv.slots[i].item;
+                    Item it = inv.slots[i].Item;
                     if (it.hasDurability)
                     {
                         if (inv.slots[i].durability > 0)
@@ -694,7 +694,7 @@ namespace UniversalInventorySystem
                             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, i);
                             if (inv.slots[i].durability == 0)
                             {
-                                if (RemoveItemInSlot(inv, i, inv.slots[i].item.useHowManyWhenUsed))
+                                if (RemoveItemInSlot(inv, i, inv.slots[i].Item.useHowManyWhenUsed))
                                 {
                                     it.OnUse(inv, i);
                                     InventoryHandler.current.Broadcast(e, uea: uea);
@@ -709,7 +709,7 @@ namespace UniversalInventorySystem
                     }
                     else
                     {
-                        if (RemoveItemInSlot(inv, i, inv.slots[i].item.useHowManyWhenUsed))
+                        if (RemoveItemInSlot(inv, i, inv.slots[i].Item.useHowManyWhenUsed))
                         {
                             it.OnUse(inv, i);
                             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, it, i);
@@ -718,25 +718,25 @@ namespace UniversalInventorySystem
                     }
                     return;
                 }
-                else if (!inv.slots[i].item.destroyOnUse)
+                else if (!inv.slots[i].Item.destroyOnUse)
                 {
-                    if (inv.slots[i].item.hasDurability)
+                    if (inv.slots[i].Item.hasDurability)
                     {
                         if (inv.slots[i].durability > 0)
                         {
                             var tmp = inv.slots[i];
                             Slot.SetDurability(ref tmp, inv.slots[i].durability - 1);
                             inv.slots[i] = tmp;
-                            InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[i].item, i);
-                            inv.slots[i].item.OnUse(inv, i);
+                            InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[i].Item, i);
+                            inv.slots[i].Item.OnUse(inv, i);
                             InventoryHandler.current.Broadcast(e, uea: uea);
 
                         }
                     }
                     else
                     {
-                        inv.slots[i].item.OnUse(inv, i);
-                        InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[i].item, i);
+                        inv.slots[i].Item.OnUse(inv, i);
+                        InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, inv.slots[i].Item, i);
                         InventoryHandler.current.Broadcast(e, uea: uea);
                     }
                 }
@@ -761,7 +761,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (inv[nativeSlot].item == null)
+            if (inv[nativeSlot].Item == null)
             {
                 Debug.LogError("Null item provided for SwapItemsInCertainAmountInSlots");
                 return;
@@ -778,13 +778,13 @@ namespace UniversalInventorySystem
 
             //Verifys if the items to be swaped are in the whitelists
             bool whitelist =
-            (inv.slots[nativeSlot].whitelist?.itemsList.ContainsWNull(inv.slots[targetSlot].item)
+            (inv.slots[nativeSlot].whitelist?.itemsList.ContainsWNull(inv.slots[targetSlot].Item)
             ??
-            (inv.slots[targetSlot].whitelist == null ? true : inv.slots[targetSlot].whitelist.itemsList.ContainsWNull(inv.slots[nativeSlot].item)))
+            (inv.slots[targetSlot].whitelist == null ? true : inv.slots[targetSlot].whitelist.itemsList.ContainsWNull(inv.slots[nativeSlot].Item)))
             &&
-            (inv.slots[targetSlot].whitelist?.itemsList.ContainsWNull(inv.slots[nativeSlot].item)
+            (inv.slots[targetSlot].whitelist?.itemsList.ContainsWNull(inv.slots[nativeSlot].Item)
             ??
-            (inv.slots[nativeSlot].whitelist == null ? true : inv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(inv.slots[targetSlot].item)));
+            (inv.slots[nativeSlot].whitelist == null ? true : inv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(inv.slots[targetSlot].Item)));
 
             if (!whitelist) return;
 
@@ -793,12 +793,12 @@ namespace UniversalInventorySystem
 
             if (inv.slots[nativeSlot].isProductSlot || inv.slots[targetSlot].isProductSlot)
             {
-                if (tmpSlot.item == null)
+                if (tmpSlot.Item == null)
                 {
                     inv.slots[targetSlot] = Slot.SetItemProperties(inv.slots[targetSlot], inv.slots[nativeSlot]);
                     inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], tmpSlot);
 
-                    InventoryHandler.SwapItemsEventArgs sea2 = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
+                    InventoryHandler.SwapItemsEventArgs sea2 = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].Item, tmpSlot.Item, null);
                     InventoryHandler.current.Broadcast(e, sea: sea2);
                     return;
                 }
@@ -809,7 +809,7 @@ namespace UniversalInventorySystem
 
             inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], tmpSlot);
 
-            InventoryHandler.SwapItemsEventArgs sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, tmpSlot.item, null);
+            InventoryHandler.SwapItemsEventArgs sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].Item, tmpSlot.Item, null);
             InventoryHandler.current.Broadcast(e, sea: sea);
 
         }
@@ -831,7 +831,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
 
-            if (!inv[nativeSlot].item?.stackable ?? false)
+            if (!inv[nativeSlot].Item?.stackable ?? false)
             {
                 inv.SwapItemsInSlots(nativeSlot, targetSlot);
                 return 0;
@@ -848,13 +848,13 @@ namespace UniversalInventorySystem
 
             //Verifys if the items to be swaped are in the whitelists
             bool whitelist =
-            (inv.slots[nativeSlot].whitelist?.itemsList.ContainsWNull(inv.slots[targetSlot].item)
+            (inv.slots[nativeSlot].whitelist?.itemsList.ContainsWNull(inv.slots[targetSlot].Item)
             ??
-            (inv.slots[targetSlot].whitelist == null ? true : inv.slots[targetSlot].whitelist.itemsList.ContainsWNull(inv.slots[nativeSlot].item)))
+            (inv.slots[targetSlot].whitelist == null ? true : inv.slots[targetSlot].whitelist.itemsList.ContainsWNull(inv.slots[nativeSlot].Item)))
             &&
-            (inv.slots[targetSlot].whitelist?.itemsList.ContainsWNull(inv.slots[nativeSlot].item)
+            (inv.slots[targetSlot].whitelist?.itemsList.ContainsWNull(inv.slots[nativeSlot].Item)
             ??
-            (inv.slots[nativeSlot].whitelist == null ? true : inv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(inv.slots[targetSlot].item)));
+            (inv.slots[nativeSlot].whitelist == null ? true : inv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(inv.slots[targetSlot].Item)));
 
             if (!whitelist) return (_amount ?? inv.slots[nativeSlot].amount);
 
@@ -863,11 +863,11 @@ namespace UniversalInventorySystem
             if (amount <= 0) return amount;
             InventoryHandler.SwapItemsEventArgs sea;
             if (amount > inv.slots[nativeSlot].amount) return amount;
-            else if (inv.slots[targetSlot].item == null)
+            else if (inv.slots[targetSlot].Item == null)
             {
                 inv.slots[targetSlot] = Slot.SetItemProperties(
                     inv.slots[targetSlot],
-                    inv.slots[nativeSlot].item,
+                    inv.slots[nativeSlot].itemValue,
                     amount,
                     inv.slots[nativeSlot].durability,
                     inv.slots[nativeSlot].ItemInstance
@@ -875,7 +875,7 @@ namespace UniversalInventorySystem
 
                 inv.slots[nativeSlot] = Slot.SetItemProperties(
                     inv.slots[nativeSlot],
-                    inv.slots[nativeSlot].item,
+                    inv.slots[nativeSlot].itemValue,
                     inv.slots[nativeSlot].amount - amount,
                     inv.slots[nativeSlot].durability,
                     inv.slots[nativeSlot].ItemInstance
@@ -883,12 +883,12 @@ namespace UniversalInventorySystem
 
                 if (inv.slots[nativeSlot].amount <= 0) inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], nullSlot);
             }
-            else if (inv.slots[nativeSlot].item == inv.slots[targetSlot].item)
+            else if (inv.slots[nativeSlot].Item == inv.slots[targetSlot].Item)
             {
                 if (!inv.slots[nativeSlot].ItemInstance.ValueEqual(inv.slots[targetSlot].ItemInstance)) return _amount ?? inv.slots[nativeSlot].amount;
                 int remaning = AddItemToSlot(
                     inv,
-                    inv.slots[nativeSlot].item,
+                    inv.slots[nativeSlot].itemValue,
                     amount,
                     targetSlot,
                     inv.slots[nativeSlot].ItemInstance
@@ -896,7 +896,7 @@ namespace UniversalInventorySystem
 
                 inv.slots[nativeSlot] = Slot.SetItemProperties(
                     inv.slots[nativeSlot],
-                    inv.slots[nativeSlot].item,
+                    inv.slots[nativeSlot].itemValue,
                     inv.slots[nativeSlot].amount - amount + remaning,
                     inv.slots[nativeSlot].durability,
                     inv.slots[nativeSlot].ItemInstance
@@ -905,13 +905,13 @@ namespace UniversalInventorySystem
                 if (inv.slots[nativeSlot].amount <= 0)
                     inv.slots[nativeSlot] = Slot.SetItemProperties(inv.slots[nativeSlot], nullSlot);
 
-                sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount - remaning);
+                sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].Item, inv.slots[nativeSlot].Item, amount - remaning);
                 InventoryHandler.current.Broadcast(e, sea: sea);
                 return remaning;
             }
             else SwapItemsInSlots(inv, nativeSlot, targetSlot);
 
-            sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].item, inv.slots[nativeSlot].item, amount);
+            sea = new InventoryHandler.SwapItemsEventArgs(inv, nativeSlot, targetSlot, inv.slots[targetSlot].Item, inv.slots[nativeSlot].Item, amount);
             InventoryHandler.current.Broadcast(e, sea: sea);
             return 0;
         }
@@ -938,7 +938,7 @@ namespace UniversalInventorySystem
                 throw new ArgumentNullException("targetInv", "Null inventory provided");
             }
 
-            if (!nativeInv[nativeSlotNumber].item?.stackable ?? false)
+            if (!nativeInv[nativeSlotNumber].Item?.stackable ?? false)
             {
                 nativeInv.SwapItemsThruInventoriesInSlots(targetInv, nativeSlotNumber, targetSlotNumber);
                 return 0;
@@ -954,29 +954,29 @@ namespace UniversalInventorySystem
 
             //Verifys if the items to be swaped are in the whitelists
             bool whitelist =
-            (nativeInv.slots[nativeSlotNumber].whitelist?.itemsList.ContainsWNull(targetInv.slots[targetSlotNumber].item)
+            (nativeInv.slots[nativeSlotNumber].whitelist?.itemsList.ContainsWNull(targetInv.slots[targetSlotNumber].Item)
             ??
-            (targetInv.slots[targetSlotNumber].whitelist == null ? true : targetInv.slots[targetSlotNumber].whitelist.itemsList.ContainsWNull(nativeInv.slots[nativeSlotNumber].item)))
+            (targetInv.slots[targetSlotNumber].whitelist == null ? true : targetInv.slots[targetSlotNumber].whitelist.itemsList.ContainsWNull(nativeInv.slots[nativeSlotNumber].Item)))
             &&
-            (targetInv.slots[targetSlotNumber].whitelist?.itemsList.ContainsWNull(nativeInv.slots[nativeSlotNumber].item)
+            (targetInv.slots[targetSlotNumber].whitelist?.itemsList.ContainsWNull(nativeInv.slots[nativeSlotNumber].Item)
             ??
-            (nativeInv.slots[nativeSlotNumber].whitelist == null ? true : nativeInv.slots[nativeSlotNumber].whitelist.itemsList.ContainsWNull(targetInv.slots[targetSlotNumber].item)));
+            (nativeInv.slots[nativeSlotNumber].whitelist == null ? true : nativeInv.slots[nativeSlotNumber].whitelist.itemsList.ContainsWNull(targetInv.slots[targetSlotNumber].Item)));
 
             if (!whitelist) return amount;
 
             InventoryHandler.SwapItemsTrhuInvEventArgs siea;
             if (amount > nativeInv.slots[nativeSlotNumber].amount) return amount;
-            else if (targetInv.slots[targetSlotNumber].item == null)
+            else if (targetInv.slots[targetSlotNumber].Item == null)
             {
                 targetInv.slots[targetSlotNumber] = Slot.SetItemProperties(targetInv.slots[targetSlotNumber],
-                    nativeInv.slots[nativeSlotNumber].item,
+                    nativeInv.slots[nativeSlotNumber].itemValue,
                     amount,
                     nativeInv.slots[nativeSlotNumber].durability,
                     nativeInv.slots[nativeSlotNumber].ItemInstance
                 );
 
                 nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(nativeInv.slots[nativeSlotNumber],
-                    nativeInv.slots[nativeSlotNumber].item,
+                    nativeInv.slots[nativeSlotNumber].itemValue,
                     nativeInv.slots[nativeSlotNumber].amount - amount,
                     nativeInv.slots[nativeSlotNumber].durability,
                     nativeInv.slots[nativeSlotNumber].ItemInstance
@@ -987,19 +987,19 @@ namespace UniversalInventorySystem
                     nullSlot
                 );
             }
-            else if (nativeInv.slots[nativeSlotNumber].item == targetInv.slots[targetSlotNumber].item)
+            else if (nativeInv.slots[nativeSlotNumber].Item == targetInv.slots[targetSlotNumber].Item)
             {
                 if (!nativeInv.slots[nativeSlotNumber].ItemInstance.ValueEqual(targetInv.slots[targetSlotNumber].ItemInstance)) return amount;
                 int remaning = AddItemToSlot(
                     targetInv,
-                    nativeInv.slots[nativeSlotNumber].item,
+                    nativeInv.slots[nativeSlotNumber].itemValue,
                     amount,
                     targetSlotNumber,
                     nativeInv.slots[nativeSlotNumber].ItemInstance);
 
                 nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(
                     nativeInv.slots[nativeSlotNumber],
-                    nativeInv.slots[nativeSlotNumber].item,
+                    nativeInv.slots[nativeSlotNumber].itemValue,
                     nativeInv.slots[nativeSlotNumber].amount - amount + remaning,
                     nativeInv.slots[nativeSlotNumber].durability,
                     nativeInv.slots[nativeSlotNumber].ItemInstance);
@@ -1009,7 +1009,7 @@ namespace UniversalInventorySystem
                         nativeInv.slots[nativeSlotNumber],
                         nullSlot);
 
-                siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount - remaning);
+                siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].Item, nativeInv.slots[nativeSlotNumber].Item, amount - remaning);
                 InventoryHandler.current.Broadcast(e, siea: siea);
 
                 return remaning;
@@ -1023,7 +1023,7 @@ namespace UniversalInventorySystem
                 nativeInv.slots[nativeSlotNumber] = Slot.SetItemProperties(nativeInv.slots[nativeSlotNumber], tmpSlot);
             }
 
-            siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].item, nativeInv.slots[nativeSlotNumber].item, amount);
+            siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlotNumber, targetSlotNumber, targetInv.slots[targetSlotNumber].Item, nativeInv.slots[nativeSlotNumber].Item, amount);
             InventoryHandler.current.Broadcast(e, siea: siea);
             return 0;
         }
@@ -1039,7 +1039,7 @@ namespace UniversalInventorySystem
         /// True => Basicly, every time it is not false
         /// False => When it was not able to remove the item from the nativeInv, that means the RemoveItem function returned false, that usually means there were not enought items in the inventory to take out (it is also false when it is not true btw)
         /// </returns>
-        public static bool SwapItemThruInventories(this Inventory nativeInv, Inventory targetInv, Item item, int amount, bool shouldUseInstanceItem = true, Item itemInstance = null, bool overrideSlotProtection = false, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
+        public static bool SwapItemThruInventories(this Inventory nativeInv, Inventory targetInv, ItemReference item, int amount, bool shouldUseInstanceItem = true, Item itemInstance = null, bool overrideSlotProtection = false, BroadcastEventType e = BroadcastEventType.SwapTrhuInventory)
         {
             if (nativeInv == null)
             {
@@ -1053,7 +1053,7 @@ namespace UniversalInventorySystem
             }
             if (item == null) return false;
 
-            if (itemInstance == null) itemInstance = item;
+            if (itemInstance == null) itemInstance = item.Value;
 
             if (!AcceptsInventoryProtection(nativeInv, MethodType.Swap)) return false;
             if (!AcceptsInventoryProtection(targetInv, MethodType.Swap)) return false;
@@ -1072,7 +1072,7 @@ namespace UniversalInventorySystem
             {
                 if (removingTotal >= amount) break;
                 if (!nativeInv.slots[i]) continue;
-                if (!nativeInv.slots[i].item != item) continue;
+                if (nativeInv.slots[i].Item != item) continue;
                 if (!(AcceptsSlotProtection(nativeInv.slots[i], MethodType.Swap) || overrideSlotProtection)) continue;
                 if (shouldUseInstanceItem && !nativeInv.slots[i].ItemInstance.ValueEqual(itemInstance)) continue;
                 
@@ -1088,11 +1088,11 @@ namespace UniversalInventorySystem
             {
                 if (addingTotal >= amount) break;
                 if (targetInv.slots[i]) continue;
-                if (targetInv.slots[i].item != item) continue;
+                if (targetInv.slots[i].Item != item) continue;
                 if (!(AcceptsSlotProtection(targetInv.slots[i], MethodType.Swap) || overrideSlotProtection)) continue;
                 if (shouldUseInstanceItem && !targetInv.slots[i].ItemInstance.ValueEqual(itemInstance)) continue;
 
-                addingTotal += item.maxAmount - targetInv.slots[i].amount;
+                addingTotal += item.Value.maxAmount - targetInv.slots[i].amount;
                 addingIndexes.Add(i);
             }
             if (addingTotal < amount) return false;
@@ -1109,7 +1109,7 @@ namespace UniversalInventorySystem
                 amount = targetInv.AddItemToSlot(item, i, amount, itemInstance);
             }
 
-            InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, null, null, item, null, amount);
+            InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, null, null, item.Value, null, amount);
             InventoryHandler.current.Broadcast(e, siea: siea);
             return true;
 
@@ -1141,13 +1141,13 @@ namespace UniversalInventorySystem
 
             //Verifys if the items to be swaped are in the whitelists
             bool whitelist =
-            (nativeInv.slots[nativeSlot].whitelist?.itemsList.ContainsWNull(targetInv.slots[targetSlot].item)
+            (nativeInv.slots[nativeSlot].whitelist?.itemsList.ContainsWNull(targetInv.slots[targetSlot].Item)
             ??
-            (targetInv.slots[targetSlot].whitelist == null ? true : targetInv.slots[targetSlot].whitelist.itemsList.ContainsWNull(nativeInv.slots[nativeSlot].item)))
+            (targetInv.slots[targetSlot].whitelist == null ? true : targetInv.slots[targetSlot].whitelist.itemsList.ContainsWNull(nativeInv.slots[nativeSlot].Item)))
             &&
-            (targetInv.slots[targetSlot].whitelist?.itemsList.ContainsWNull(nativeInv.slots[nativeSlot].item)
+            (targetInv.slots[targetSlot].whitelist?.itemsList.ContainsWNull(nativeInv.slots[nativeSlot].Item)
             ??
-            (nativeInv.slots[nativeSlot].whitelist == null ? true : nativeInv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(targetInv.slots[targetSlot].item)));
+            (nativeInv.slots[nativeSlot].whitelist == null ? true : nativeInv.slots[nativeSlot].whitelist.itemsList.ContainsWNull(targetInv.slots[targetSlot].Item)));
 
             if (!whitelist) return;
 
@@ -1156,12 +1156,12 @@ namespace UniversalInventorySystem
 
             if (nativeInv.slots[nativeSlot].isProductSlot || targetInv.slots[targetSlot].isProductSlot)
             {
-                if (tmpSlot.item == null)
+                if (tmpSlot.Item == null)
                 {
                     targetInv.slots[targetSlot] = Slot.SetItemProperties(targetInv.slots[targetSlot], nativeInv.slots[nativeSlot]);
                     nativeInv.slots[nativeSlot] = Slot.SetItemProperties(nativeInv.slots[nativeSlot], tmpSlot);
 
-                    InventoryHandler.SwapItemsTrhuInvEventArgs siea2 = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[targetSlot].item, tmpSlot.item, null);
+                    InventoryHandler.SwapItemsTrhuInvEventArgs siea2 = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[targetSlot].Item, tmpSlot.Item, null);
                     InventoryHandler.current.Broadcast(e, siea: siea2);
                     return;
                 }
@@ -1172,7 +1172,7 @@ namespace UniversalInventorySystem
 
             nativeInv.slots[nativeSlot] = Slot.SetItemProperties(nativeInv.slots[nativeSlot], tmpSlot);
 
-            InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[nativeSlot].item, tmpSlot.item, null);
+            InventoryHandler.SwapItemsTrhuInvEventArgs siea = new InventoryHandler.SwapItemsTrhuInvEventArgs(nativeInv, targetInv, nativeSlot, targetSlot, nativeInv.slots[nativeSlot].Item, tmpSlot.Item, null);
             InventoryHandler.current.Broadcast(e, siea: siea);
 
         }
@@ -1273,9 +1273,9 @@ namespace UniversalInventorySystem
                             if (!inv.slots[h].HasItem) { tmp++; continue; }
                             for (int index = 0; index < pattern.products.Count(); index++)
                             {
-                                if (inv.slots[h].item == pattern.products[index])
+                                if (inv.slots[h].Item == pattern.products[index].Value)
                                 {
-                                    if (inv.slots[h].amount + pattern.amountProducts[index] > inv.slots[h].item.maxAmount) { continue; }
+                                    if (inv.slots[h].amount + pattern.amountProducts[index] > inv.slots[h].Item.maxAmount) { continue; }
                                     tmp++; 
                                     continue; 
                                 }
@@ -1297,9 +1297,9 @@ namespace UniversalInventorySystem
                                     AddOffset:
                                     if (k + offset >= inv.slots.Count) return CraftItemData.nullData;
                                     if (inv[k + offset].HasItem &&
-                                            (inv[k + offset].item != pattern.products[k - grid.items.Length] ||
-                                            (inv[k + offset].item == pattern.products[k - grid.items.Length] &&
-                                            inv[k + offset].amount + pattern.amountProducts[k - grid.items.Length] > inv[k + offset].item.maxAmount)))
+                                            (inv[k + offset].Item != pattern.products[k - grid.items.Length].Value ||
+                                            (inv[k + offset].Item == pattern.products[k - grid.items.Length].Value &&
+                                            inv[k + offset].amount + pattern.amountProducts[k - grid.items.Length] > inv[k + offset].Item.maxAmount)))
                                     {
                                         offset++;
                                         goto AddOffset;
@@ -1354,9 +1354,9 @@ namespace UniversalInventorySystem
                                     if (!inv.slots[h].HasItem) { tmp++; continue; }
                                     for (int index = 0; index < pattern.products.Count(); index++)
                                     {
-                                        if (inv.slots[h].item == pattern.products[index])
+                                        if (inv.slots[h].Item == pattern.products[index])
                                         {
-                                            if (inv.slots[h].amount + pattern.amountProducts[index] > inv.slots[h].item.maxAmount) { continue; }
+                                            if (inv.slots[h].amount + pattern.amountProducts[index] > inv.slots[h].Item.maxAmount) { continue; }
                                             tmp++;
                                             continue;
                                         }
@@ -1378,9 +1378,9 @@ namespace UniversalInventorySystem
                                             AddOffset:
                                             if (k + offset >= inv.slots.Count) return CraftItemData.nullData;
                                             if (inv[k + offset].HasItem &&
-                                                    (inv[k + offset].item != pattern.products[k - grid.items.Length] ||
-                                                    (inv[k + offset].item == pattern.products[k - grid.items.Length] &&
-                                                    inv[k + offset].amount + pattern.amountProducts[k - grid.items.Length] > inv[k + offset].item.maxAmount)))
+                                                    (inv[k + offset].Item != pattern.products[k - grid.items.Length].Value ||
+                                                    (inv[k + offset].Item == pattern.products[k - grid.items.Length].Value &&
+                                                    inv[k + offset].amount + pattern.amountProducts[k - grid.items.Length] > inv[k + offset].Item.maxAmount)))
                                             {
                                                 offset++;
                                                 goto AddOffset;
@@ -1475,9 +1475,9 @@ namespace UniversalInventorySystem
                         if (!inv.slots[h].HasItem) { tmp++; continue; }
                         for (int index = 0; index < recipe.products.Count(); index++)
                         {
-                            if (inv.slots[h].item == recipe.products[index])
+                            if (inv.slots[h].Item == recipe.products[index])
                             {
-                                if (inv.slots[h].amount + recipe.amountProducts[index] > inv.slots[h].item.maxAmount) { continue; }
+                                if (inv.slots[h].amount + recipe.amountProducts[index] > inv.slots[h].Item.maxAmount) { continue; }
                                 tmp++;
                                 continue;
                             }
@@ -1499,9 +1499,9 @@ namespace UniversalInventorySystem
                                 AddOffset:
                                 if(k + offset >= inv.slots.Count) return CraftItemData.nullData;
                                 if (inv[k + offset].HasItem &&
-                                        (inv[k + offset].item != recipe.products[k - grid.items.Length] ||
-                                        (inv[k + offset].item == recipe.products[k - grid.items.Length] &&
-                                        inv[k + offset].amount + recipe.amountProducts[k - grid.items.Length] > inv[k + offset].item.maxAmount)))
+                                        (inv[k + offset].Item != recipe.products[k - grid.items.Length] ||
+                                        (inv[k + offset].Item == recipe.products[k - grid.items.Length] &&
+                                        inv[k + offset].amount + recipe.amountProducts[k - grid.items.Length] > inv[k + offset].Item.maxAmount)))
                                 {
                                     offset++;
                                     goto AddOffset;
@@ -1544,7 +1544,7 @@ namespace UniversalInventorySystem
         /// <returns>a new grid that is a section from the original one</returns>
         public static CraftItemData GetSectionFromGrid(CraftItemData originalGrid, Vector2Int originalGridSize, Vector2Int sectionSize, int offsetIndex, out List<int> usedIndexes)
         {
-            Item[] returnGrid = new Item[sectionSize.x * sectionSize.y];
+            ItemReference[] returnGrid = new ItemReference[sectionSize.x * sectionSize.y];
             int[] returnIntGrid = new int[sectionSize.x * sectionSize.y];
             usedIndexes = new List<int>();
 
@@ -1651,7 +1651,7 @@ namespace UniversalInventorySystem
 
                 if (!acceptableSlotProtections.HasFlag(inv.slots[slot].interative)) continue;
 
-                if (inv.slots[slot].item == itemToCheck)
+                if (inv.slots[slot].Item == itemToCheck)
                 {
                     if (!ignoreItemInstance && !inv.slots[slot].ItemInstance.ValueEqual(itemInstance)) continue;
                     if (mustBeOnSameSlot)
@@ -1697,7 +1697,7 @@ namespace UniversalInventorySystem
                 return null;
             }
 
-            return inv.slots[slot].item.tooltip;
+            return inv.slots[slot].Item.tooltip;
         }
 
         #endregion
@@ -1712,7 +1712,7 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="durability">The durability of the items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToNewSlot(this Inventory inv, Item item, int amount, int durability)
+        public static int AddItemToNewSlot(this Inventory inv, ItemReference item, int amount, int durability)
         {
             return AddItemToNewSlot(inv, item, amount, durability: durability, e: BroadcastEventType.AddItem);
         }
@@ -1724,7 +1724,7 @@ namespace UniversalInventorySystem
         /// <param name="item">The item that will be stored in the inventory</param>
         /// <param name="amount">The amount of items to be stored</param>
         /// <returns>If the inventory gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, int durability)
+        public static int AddItem(this Inventory inv, ItemReference item, int amount, int durability)
         {
             return AddItem(inv, item, amount, durability: durability, e: BroadcastEventType.AddItem);
         }
@@ -1737,7 +1737,7 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber)
+        public static int AddItemToSlot(this Inventory inv, ItemReference item, int amount, int slotNumber)
         {
             return AddItemToSlot(inv, item, amount, slotNumber, e: BroadcastEventType.AddItem);
         }
@@ -1750,7 +1750,7 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItem(this Inventory inv, Item item, int amount, int slotNumber, int durability)
+        public static int AddItem(this Inventory inv, ItemReference item, int amount, int slotNumber, int durability)
         {
             return AddItemToSlot(inv, item, amount, slotNumber, durability: durability);
         }
@@ -1763,7 +1763,7 @@ namespace UniversalInventorySystem
         /// <param name="amount">The amount of items to be stored</param>
         /// <param name="slotNumber">The index of the slot to store the items</param>
         /// <returns>If the slot gets full and there are still items to store it will return the number of items remaining</returns>
-        public static int AddItemToSlot(this Inventory inv, Item item, int amount, int slotNumber, int durability)
+        public static int AddItemToSlot(this Inventory inv, ItemReference item, int amount, int slotNumber, int durability)
         {
             return AddItemToSlot(inv, item, amount, slotNumber, durability: durability, e: BroadcastEventType.AddItem);
         }
@@ -1994,17 +1994,42 @@ namespace UniversalInventorySystem
     {
         //Item properties
         public int amount;
-        public Item item;
+
+        public ItemReference itemValue;
+
+        public Item Item 
+        {
+            get
+            {
+                if (itemValue == null) itemValue = new ItemReference();
+                return itemValue.Value;
+            }
+        }
+
+        public void SetItem(Item item)
+        {
+            if (itemValue == null) itemValue = new ItemReference();
+            itemValue.SetItem(item);
+        }
+
+        public void SetItem(ItemVariable item)
+        {
+            if (itemValue == null) itemValue = new ItemReference();
+            itemValue.SetItem(item);
+        }
+
+        public void SetItem(ItemReference item) => itemValue = item;
+
         public Item ItemInstance
         {
             get
             {
                 if (_itemInstance == null)
                 {
-                    if (item != null)
+                    if (Item != null)
                     {
-                        _itemInstance = UnityEngine.Object.Instantiate(item);
-                        _itemInstance.name = item.name + "(Instance)";
+                        _itemInstance = new Item(Item);
+                        _itemInstance.name = Item.name + "(Instance)";
                     }
                     else return null;
                 }
@@ -2014,10 +2039,10 @@ namespace UniversalInventorySystem
             {
                 if (_itemInstance == null)
                 {
-                    if (item != null)
+                    if (Item != null)
                     {
-                        _itemInstance = UnityEngine.Object.Instantiate(item);
-                        _itemInstance.name = item.name + "(Instance)";
+                        _itemInstance = new Item(Item);
+                        _itemInstance.name = Item.name + "(Instance)";
                     }
                     else return;
                 }
@@ -2030,7 +2055,7 @@ namespace UniversalInventorySystem
         {
             get
             {
-                if(item != null)
+                if(Item != null)
                 {
                     hasItem = true;
                     return true;
@@ -2047,10 +2072,10 @@ namespace UniversalInventorySystem
             { 
                 if(ItemInstance == null)
                 {
-                    if (item != null)
+                    if (Item != null)
                     {
-                        ItemInstance = UnityEngine.Object.Instantiate(item);
-                        ItemInstance.name = item.name + "(Instance)";
+                        ItemInstance = new Item(Item);
+                        ItemInstance.name = Item.name + "(Instance)";
                     }
                     else return 0;
                 }
@@ -2059,13 +2084,13 @@ namespace UniversalInventorySystem
             }
             set
             {
-                if (value > (item?.durability ?? int.MaxValue)) throw new Exception("The value provided for durability is greter than the max durablity\nIf your intentions are of using a durability greter then the max one, use the SetDurability function with op=true");
+                if (value > (Item?.durability ?? int.MaxValue)) throw new Exception("The value provided for durability is greter than the max durablity\nIf your intentions are of using a durability greter then the max one, use the SetDurability function with op=true");
                 if(ItemInstance == null)
                 {
-                    if (item != null)
+                    if (Item != null)
                     {
-                        ItemInstance = UnityEngine.Object.Instantiate(item);
-                        ItemInstance.name = item.name + "(Instance)";
+                        ItemInstance = new Item(Item);
+                        ItemInstance.name = Item.name + "(Instance)";
                     }
                     else return;
                 }
@@ -2074,12 +2099,12 @@ namespace UniversalInventorySystem
             }
         }
         [SerializeField] private int _durability;     
-        public bool IsDurabilityValid => _durability <= (item?.durability ?? 0);
+        public bool IsDurabilityValid => _durability <= (Item?.durability ?? 0);
 
         //Slot properties
         public bool isProductSlot;
         public SlotProtection interative;
-        public ItemGroup whitelist;
+        public ItemDatabase whitelist;
 
         public readonly static Slot nullSlot = new Slot(null, 0, false, InventoryController.AllSlotFlags, null, 0, null);
 
@@ -2093,25 +2118,25 @@ namespace UniversalInventorySystem
                 slot._durability = value;
                 if (slot.ItemInstance == null)
                 {
-                    if (slot.item != null)
+                    if (slot.Item != null)
                     {
-                        slot.ItemInstance = UnityEngine.Object.Instantiate(slot.item);
-                        slot.ItemInstance.name = slot.item.name + "(Instance)";
+                        slot.ItemInstance = new Item(slot.Item);
+                        slot.ItemInstance.name = slot.Item.name + "(Instance)";
                     }
                     else return false;
                 }
                 slot.ItemInstance.durability = value;
                 return true;
             }
-            if (slot.item == null || !slot.HasItem || value > slot.item.durability || !slot.item.hasDurability)
+            if (slot.Item == null || !slot.HasItem || value > slot.Item.durability || !slot.Item.hasDurability)
                 return false;
             slot._durability = value;
             if (slot.ItemInstance == null)
             {
-                if (slot.item != null)
+                if (slot.Item != null)
                 {
-                    slot.ItemInstance = UnityEngine.Object.Instantiate(slot.item);
-                    slot.ItemInstance.name = slot.item.name + "(Instance)";
+                    slot.ItemInstance = new Item(slot.Item);
+                    slot.ItemInstance.name = slot.Item.name + "(Instance)";
                 }
                 else return false;
             }
@@ -2119,179 +2144,204 @@ namespace UniversalInventorySystem
             return true;
         }
 
-        public static Slot Set(ref Slot slot, Item _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, int _durability, Item itemInstance)
+        public static Slot Set(ref Slot slot, ItemReference _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemDatabase _whitelist, int _durability, Item itemInstance)
             => slot = new Slot(_item, _amount, _isProductSlot, _interactive, _whitelist, _durability, itemInstance);   
 
         public static Slot Set(ref Slot slot, Slot _slot)
-            => slot = new Slot(_slot.item, _slot.amount, _slot.isProductSlot, _slot.interative, _slot.whitelist, _slot.durability, _slot.ItemInstance);
+            => slot = new Slot(_slot.itemValue, _slot.amount, _slot.isProductSlot, _slot.interative, _slot.whitelist, _slot.durability, _slot.ItemInstance);
 
-        public static Slot Set(Item _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, int _durability, Item itemInstance)
+        public static Slot Set(ItemReference _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemDatabase _whitelist, int _durability, Item itemInstance)
             => new Slot(_item, _amount, _isProductSlot, _interactive, _whitelist, _durability, itemInstance);
 
 
         public static Slot SetSlotProperties(ref Slot slot, Slot _slot)
-            => slot = new Slot(slot.item, slot.amount, _slot.isProductSlot, _slot.interative, _slot.whitelist, slot.durability, slot.ItemInstance);
+            => slot = new Slot(slot.itemValue, slot.amount, _slot.isProductSlot, _slot.interative, _slot.whitelist, slot.durability, slot.ItemInstance);
 
-        public static Slot SetSlotProperties(ref Slot slot, bool _isProductSlot, SlotProtection _interative, ItemGroup _whitelist) 
-            => slot = new Slot(slot.item, slot.amount, _isProductSlot, _interative, _whitelist, slot.durability, slot.ItemInstance);
+        public static Slot SetSlotProperties(ref Slot slot, bool _isProductSlot, SlotProtection _interative, ItemDatabase _whitelist) 
+            => slot = new Slot(slot.itemValue, slot.amount, _isProductSlot, _interative, _whitelist, slot.durability, slot.ItemInstance);
 
         public static Slot SetSlotProperties(Slot slot, Slot _slot)
-            => new Slot(slot.item, slot.amount, _slot.isProductSlot, _slot.interative, _slot.whitelist, slot.durability, slot.ItemInstance);
+            => new Slot(slot.itemValue, slot.amount, _slot.isProductSlot, _slot.interative, _slot.whitelist, slot.durability, slot.ItemInstance);
 
-        public static Slot SetSlotProperties(Slot slot, bool _isProductSlot, SlotProtection _interative, ItemGroup _whitelist)
-            => new Slot(slot.item, slot.amount, _isProductSlot, _interative, _whitelist, slot.durability, slot.ItemInstance);
+        public static Slot SetSlotProperties(Slot slot, bool _isProductSlot, SlotProtection _interative, ItemDatabase _whitelist)
+            => new Slot(slot.itemValue, slot.amount, _isProductSlot, _interative, _whitelist, slot.durability, slot.ItemInstance);
 
 
         public static Slot SetItemProperties(ref Slot slot, Slot _slot)
-            => slot = new Slot(_slot.item, _slot.amount, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability, _slot.ItemInstance);
+            => slot = new Slot(_slot.itemValue, _slot.amount, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability, _slot.ItemInstance);
         
-        public static Slot SetItemProperties(ref Slot slot, Item _item, int _amount, int _durability, Item itemInstance)
+        public static Slot SetItemProperties(ref Slot slot, ItemReference _item, int _amount, int _durability, Item itemInstance)
             => slot = new Slot(_item, _amount, slot.isProductSlot, slot.interative, slot.whitelist, _durability, itemInstance);
 
         public static Slot SetItemProperties(Slot slot, Slot _slot)
-            => new Slot(_slot.item, _slot.amount, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability, _slot.ItemInstance);
+            => new Slot(_slot.itemValue, _slot.amount, slot.isProductSlot, slot.interative, slot.whitelist, _slot.durability, _slot.ItemInstance);
 
-        public static Slot SetItemProperties(Slot slot, Item _item, int _amount, int _durability, Item itemInstance)
+        public static Slot SetItemProperties(Slot slot, ItemReference _item, int _amount, int _durability, Item itemInstance)
             => new Slot(_item, _amount, slot.isProductSlot, slot.interative, slot.whitelist, _durability, itemInstance);
 
         #endregion
 
-        public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist)
+        public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive, ItemDatabase _whitelist)
         {
-            item = slot.item;
+            itemValue = new ItemReference();
             amount = slot.amount;
             hasItem = slot.HasItem;
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = _whitelist;
             _durability = slot.durability;
-            _itemInstance = slot.item != null ? UnityEngine.Object.Instantiate(slot.item) : null;
-            if(ItemInstance != null) ItemInstance.name = slot.item.name + "(Instance)";
+            _itemInstance = slot.Item != null ? new Item(slot.Item) : null;
+            if(ItemInstance != null) ItemInstance.name = slot.Item.name + "(Instance)";
             durability = slot.durability;
+            SetItem(slot.itemValue);
         }
 
         public Slot(Slot slot, bool _isProductSlot, SlotProtection _interactive)
         {
-            item = slot.item;
+            itemValue = new ItemReference();
             amount = slot.amount;
             hasItem = slot.HasItem;
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = null;
             _durability = slot.durability;
-            _itemInstance = slot.item != null ? UnityEngine.Object.Instantiate(slot.item) : null;
-            if (ItemInstance != null) ItemInstance.name = slot.item.name + "(Instance)";
+            _itemInstance = slot.Item != null ? new Item(slot.Item) : null;
+            if (ItemInstance != null) ItemInstance.name = slot.Item.name + "(Instance)";
             durability = slot.durability;
+            SetItem(slot.itemValue);
         }
 
-        public Slot(Item _item)
+        public Slot(ItemReference _item)
         {
-            item = _item;
+            itemValue = new ItemReference();
             amount = 1;
             hasItem = _item != null;
             isProductSlot = false;
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
-            _itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.name + "(Instance)";
+            _itemInstance = null;
+
+            SetItem(_item);
+            _itemInstance = _item != null ? new Item(Item) : null;
+            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = 0;
         }
 
-        public Slot(Item _item, int _amount)
+        public Slot(ItemReference _item, int _amount)
         {
-            item = _item;
+            itemValue = new ItemReference();
             amount = _amount;
             hasItem = _item != null;
             isProductSlot = false;
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
-            _itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.name + "(Instance)";
+            _itemInstance = null;
+
+            SetItem(_item);
+            _itemInstance = _item != null ? new Item(Item) : null;
+            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = 0;
         }
         
-        public Slot(Item _item, int _amount, int _durability)
+        public Slot(ItemReference _item, int _amount, int _durability)
         {
-            item = _item;
+            itemValue = new ItemReference();
             amount = _amount;
             hasItem = _item != null;
             isProductSlot = false;
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
             this._durability = _durability;
-            _itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.name + "(Instance)";
+            _itemInstance = null;
+
+            SetItem(_item);
+            _itemInstance = _item != null ? new Item(Item) : null;
+            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = _durability;           
         }
 
-        public Slot(Item _item, int _amount, bool _isProductSlot)
+        public Slot(ItemReference _item, int _amount, bool _isProductSlot)
         {
-            item = _item;
+            itemValue = new ItemReference();
             amount = _amount;
             hasItem = _item != null;
             isProductSlot = _isProductSlot;
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
             _durability = 0;
-            _itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.name + "(Instance)";
+            _itemInstance = null;
+
+            SetItem(_item);
+            _itemInstance = _item != null ? new Item(Item) : null;
+            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = 0;
         }
         
-        public Slot(Item _item, int _amount, bool _isProductSlot, int _durability)
+        public Slot(ItemReference _item, int _amount, bool _isProductSlot, int _durability)
         {
-            item = _item;
+            itemValue = new ItemReference();
             amount = _amount;
             hasItem = _item != null;
             isProductSlot = _isProductSlot;
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
             this._durability = _durability;
-            _itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.name + "(Instance)";
+            _itemInstance = null;
+
+            SetItem(_item);
+            _itemInstance = _item != null ? new Item(Item) : null;
+            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = _durability;
         }
 
-        public Slot(Item _item, int _amount, bool _isProductSlot, SlotProtection _interactive)
+        public Slot(ItemReference _item, int _amount, bool _isProductSlot, SlotProtection _interactive)
         {
-            item = _item;
+            itemValue = new ItemReference();
             amount = _amount;
             hasItem = _item != null;
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = null;
             _durability = 0;
-            _itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.name + "(Instance)";
+            _itemInstance = null;
+
+            SetItem(_item);
+            _itemInstance = _item != null ? new Item(Item) : null;
+            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = 0;
         }
 
-        public Slot(Item _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist)
+        public Slot(ItemReference _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemDatabase _whitelist)
         {
-            item = _item;
+            itemValue = new ItemReference();
             amount = _amount;
             hasItem = _item != null;
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = _whitelist;
             _durability = 0;
-            _itemInstance = _item != null ? UnityEngine.Object.Instantiate(_item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.name + "(Instance)";
+            _itemInstance = null;
+
+            SetItem(_item);
+            _itemInstance = _item != null ? new Item(Item) : null;
+            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = 0;
         }
         
-        public Slot(Item _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemGroup _whitelist, int _durability, Item _itemInstance)
+        public Slot(ItemReference _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemDatabase _whitelist, int _durability, Item _itemInstance)
         {
-            item = _item;
+            itemValue = new ItemReference();
             amount = _amount;
             hasItem = _item != null;
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = _whitelist;
             this._durability = _durability;
-            this._itemInstance = _itemInstance != null ? UnityEngine.Object.Instantiate(_itemInstance) : null;
+            this._itemInstance = _itemInstance != null ? new Item(_itemInstance) : null;
+
+            SetItem(_item);
             if (ItemInstance != null) ItemInstance.name = _itemInstance.name;
             durability = _durability;
         }
@@ -2343,10 +2393,10 @@ namespace UniversalInventorySystem
     [Serializable]
     public class CraftItemData
     {
-        public Item[] items;
+        public ItemReference[] items;
         public int[] amounts;
 
-        public CraftItemData(Item[] _items, int[] _amounts)
+        public CraftItemData(ItemReference[] _items, int[] _amounts)
         {
             items = _items;
             amounts = _amounts;
@@ -2354,7 +2404,7 @@ namespace UniversalInventorySystem
 
         public readonly static CraftItemData nullData = new CraftItemData(null, null);
 
-        public static bool operator true(CraftItemData c) => c.items != null || c.amounts != null;
+        public static bool operator true(CraftItemData c) => c.items != null && c.amounts != null;
         public static bool operator false(CraftItemData c) => c.items == null || c.amounts == null;
     } 
 
