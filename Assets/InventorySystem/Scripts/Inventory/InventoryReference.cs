@@ -84,5 +84,7 @@ namespace UniversalInventorySystem
         public override string ToString() => $"UseConstant: {useConstant}; ConstantV: {constantValue}; ReferenceV: {variable}";
 
         public static implicit operator Inventory(InventoryReference a) => a.Value;
+        public static explicit operator InventoryReference(Inventory a) => new InventoryReference(a);
+        public static explicit operator InventoryReference(InventoryVarialbe a) => new InventoryReference(a);
     }
 }

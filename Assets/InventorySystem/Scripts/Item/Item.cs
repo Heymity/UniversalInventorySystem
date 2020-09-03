@@ -131,9 +131,9 @@ namespace UniversalInventorySystem
 
         public static bool ValueEqual(Item first, Item second)
         {
-            if (first == null || second == null) return false;
+            if (first.Equals(null) || second.Equals(null)) return false;
             if (first.GetType() != second.GetType()) return false;
-            if (first == second) return true;
+            if (first.Equals(second)) return true;
 
             BindingFlags bf = BindingFlags.Public | BindingFlags.Instance;
             MemberTypes mt = MemberTypes.Field | MemberTypes.Property;
@@ -153,9 +153,9 @@ namespace UniversalInventorySystem
                         var firstField = field.GetValue(first);
                         var secondField = field.GetValue(second);
                         ///Debug.Log($"Bool: {!firstField.Equals(secondField)} Values: {firstField}, {secondField}"); //This line will give error when monoscripts are null. Just a note ;)
-                        if(firstField == null)
+                        if (firstField == null)
                         {
-                            if(secondField == null)
+                            if (secondField == null)
                             {
                                 break;
                             }
@@ -169,7 +169,7 @@ namespace UniversalInventorySystem
                         var firstProp = prop.GetValue(first);
                         var secondProp = prop.GetValue(second);
                         ///Debug.Log($"Bool: {!firstField.Equals(secondField)} Values: {firstField}, {secondField}"); //This line will give error when monoscripts are null. Just a note ;)
-                        if(firstProp == null)
+                        if (firstProp == null)
                         {
                             if (secondProp == null)
                             {
@@ -212,12 +212,39 @@ namespace UniversalInventorySystem
 
         }
 
+        public Item()
+        {
+            name = "New Item";
+            id = name.GetHashCode() + UnityEngine.Random.Range(0, 1000);
+            sprite = null;
+
+            maxAmount = 0;
+            destroyOnUse = false;
+            useHowManyWhenUsed = 0;
+
+            stackable = false;
+            durability = 0;
+            hasDurability = false;
+            showAmount = false;
+            _durabilityImages = null;
+            durabilityImages = null;
+
+
+            onUseFunc = null;
+            optionalOnDropBehaviour = null;
+
+            tooltip = null;
+        }
+
         public static bool operator false(Item item) => item == null;
         public static bool operator !(Item item) => item == null;
         public static bool operator true(Item item) => item != null;
 
         public static bool operator ==(Item a, ItemReference b) => a == b.Value;
         public static bool operator !=(Item a, ItemReference b) => a != b.Value;
+
+        public static bool operator ==(Item a, Item b) => a.ValueEqual(b);
+        public static bool operator !=(Item a, Item b) => !a.ValueEqual(b);
 
         public override bool Equals(object obj)
         {
