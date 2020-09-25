@@ -13,19 +13,21 @@ MonoBehaviour:
   m_Name: Box
   m_EditorClassIdentifier: 
   value:
-    name: 
+    name: PaperBox
     id: 0
-    sprite: {fileID: 0}
-    maxAmount: 0
-    destroyOnUse: 0
-    useHowManyWhenUsed: 0
-    stackable: 0
+    sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6,
+      type: 3}
+    maxAmount: 10
+    destroyOnUse: 1
+    useHowManyWhenUsed: 1
+    stackable: 1
     durability: 0
     hasDurability: 0
-    showAmount: 0
+    showAmount: 1
     _durabilityImages: []
-    onUseFunc: {fileID: 0}
-    optionalOnDropBehaviour: {fileID: 0}
+    onUseFunc: {fileID: 11500000, guid: fbc6a140bc2ae644788371b67a162054, type: 3}
+    optionalOnDropBehaviour: {fileID: 11500000, guid: ac3d774d6006c4c46a1a396545055f49,
+      type: 3}
     tooltip:
       useTooltip: 0
       usePrefab: 0
@@ -48,19 +50,21 @@ MonoBehaviour:
       maxWidth: 0
       texts: []
   _value:
-    name: New Item
-    id: 672229549
-    sprite: {fileID: 0}
-    maxAmount: 0
-    destroyOnUse: 0
-    useHowManyWhenUsed: 0
-    stackable: 0
+    name: PaperBox
+    id: 0
+    sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6,
+      type: 3}
+    maxAmount: 10
+    destroyOnUse: 1
+    useHowManyWhenUsed: 1
+    stackable: 1
     durability: 0
     hasDurability: 0
-    showAmount: 0
+    showAmount: 1
     _durabilityImages: []
-    onUseFunc: {fileID: 0}
-    optionalOnDropBehaviour: {fileID: 0}
+    onUseFunc: {fileID: 11500000, guid: fbc6a140bc2ae644788371b67a162054, type: 3}
+    optionalOnDropBehaviour: {fileID: 11500000, guid: ac3d774d6006c4c46a1a396545055f49,
+      type: 3}
     tooltip:
       useTooltip: 0
       usePrefab: 0

@@ -328,17 +328,19 @@ namespace UniversalInventorySystem.Editors
             var amountRect = new Rect(position.x + 135 + (position.width / 2) - 130, position.y, 50, position.height);
             var interactsRect = new Rect(position.x + 245 + (position.width / 2) - 130, position.y, (position.width / 2) - 130, position.height);
 
-
             var hasItemProp = property.FindPropertyRelative("hasItem");
-            var itemProp = property.FindPropertyRelative("item");
-            hasItemProp.boolValue = itemProp != null;
+            var itemProp = property.FindPropertyRelative("itemValue");
+            var variable = itemProp.FindPropertyRelative("variable");
+            var constantValue = itemProp.FindPropertyRelative("constantValue");
+
+            hasItemProp.boolValue = variable.objectReferenceValue == null && constantValue == null;
             hasItemRect.height = 17;
             hasItemRect.width = 17;
             if (hasItemProp.boolValue) EditorGUI.LabelField(hasItemRect, EditorGUIUtility.IconContent("TestPassed"));
             else EditorGUI.LabelField(hasItemRect, EditorGUIUtility.IconContent("TestFailed"));
 
             EditorGUI.LabelField(labelHIRect, new GUIContent(" Has item"));
-            EditorGUI.ObjectField(nameRect, itemProp, GUIContent.none);
+            EditorGUI.PropertyField(nameRect, itemProp, GUIContent.none);
             EditorGUI.LabelField(labelAmRect, new GUIContent("In Amount"));
             EditorGUI.PropertyField(amountRect, property.FindPropertyRelative("amount"), GUIContent.none);//interative
             EditorGUI.LabelField(labelInteracts, new GUIContent("Interacts"));

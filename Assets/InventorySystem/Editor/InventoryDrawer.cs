@@ -136,8 +136,10 @@ namespace UniversalInventorySystem.Editors
 
             if (popupStyle == null)
             {
+                var menu = (Texture2D)Resources.Load("Menu");
                 popupStyle = new GUIStyle(GUI.skin.GetStyle("PaneOptions"));
                 popupStyle.imagePosition = ImagePosition.ImageOnly;
+                popupStyle.normal.background = menu;
             }
 
             var useC = property.FindPropertyRelative("useConstant");
