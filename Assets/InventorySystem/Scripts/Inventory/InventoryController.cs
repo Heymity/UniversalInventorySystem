@@ -2076,7 +2076,7 @@ namespace UniversalInventorySystem
                 {
                     if (Item != null)
                     {
-                        ItemInstance = new Item(Item);
+                        ItemInstance = Item.ShallowCopy();
                         ItemInstance.name = Item.name + "(Instance)";
                     }
                     else return 0;
@@ -2091,7 +2091,7 @@ namespace UniversalInventorySystem
                 {
                     if (Item != null)
                     {
-                        ItemInstance = new Item(Item);
+                        ItemInstance = Item.ShallowCopy();
                         ItemInstance.name = Item.name + "(Instance)";
                     }
                     else return;
@@ -2192,7 +2192,7 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             _durability = slot.durability;
-            _itemInstance = slot.Item != null ? new Item(slot.Item) : null;
+            _itemInstance = slot.Item != null ? slot.Item.ShallowCopy() : null;
             if(ItemInstance != null) ItemInstance.name = slot.Item.name + "(Instance)";
             durability = slot.durability;
             SetItem(slot.itemValue);

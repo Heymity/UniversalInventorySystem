@@ -45,7 +45,7 @@ namespace UniversalInventorySystem
 
         void SetValues()
         {
-            value = new Item(_value);
+            value = _value.ShallowCopy();
         }
 
     }
