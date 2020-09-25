@@ -47,5 +47,6 @@ namespace UniversalInventorySystem
         {
             value = new Item(_value);
         }
+
     }
 }

@@ -42,7 +42,7 @@ namespace UniversalInventorySystem.Editors
             productsProp = serializedObject.FindProperty("products");
             productsAmountProp = serializedObject.FindProperty("amountProducts");
         }
-
+        /*
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -155,6 +155,6 @@ namespace UniversalInventorySystem.Editors
             EditorGUILayout.EndHorizontal();
 
             serializedObject.ApplyModifiedProperties();
-        }
+        }*/
     }
 }

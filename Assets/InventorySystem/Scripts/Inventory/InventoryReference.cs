@@ -72,10 +72,10 @@ namespace UniversalInventorySystem
             useConstant = true;
         }
 
-        public static bool operator ==(InventoryReference a, InventoryReference b) => a.Value == b.Value;
-        public static bool operator ==(InventoryReference a, Inventory b) => a.Value == b;
-        public static bool operator !=(InventoryReference a, Inventory b) => a.Value != b;
-        public static bool operator !=(InventoryReference a, InventoryReference b) => a.Value != b.Value;
+        public static bool operator ==(InventoryReference a, InventoryReference b) => (a?.Value ?? null) == (b?.Value ?? null);
+        public static bool operator ==(InventoryReference a, Inventory b) => (a?.Value ?? null) == b;
+        public static bool operator !=(InventoryReference a, Inventory b) => (a?.Value ?? null) != b;
+        public static bool operator !=(InventoryReference a, InventoryReference b) => (a?.Value ?? null) != (b?.Value ?? null);
 
         public override bool Equals(object obj) => Value.Equals((obj as InventoryReference).Value);
 

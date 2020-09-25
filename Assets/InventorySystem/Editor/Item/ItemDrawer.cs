@@ -40,7 +40,7 @@ namespace UniversalInventorySystem.Editors
         }
         bool useObjValues;
         bool unfold = true;
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        /**public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             amountOfFilds = baseAmount + total;
             total = 0;
@@ -323,6 +323,6 @@ namespace UniversalInventorySystem.Editors
                     useObjValues = true;
                 }
             }
-        }
+        }*/
     }
 }

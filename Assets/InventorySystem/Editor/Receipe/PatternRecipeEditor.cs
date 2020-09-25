@@ -24,7 +24,7 @@ namespace UniversalInventorySystem.Editors
     [CustomEditor(typeof(PatternRecipe))]
     public class PatternRecipeEditor : Editor
     {
-        public override void OnInspectorGUI()
+        /**public override void OnInspectorGUI()
         {
             if (GUILayout.Button("Open Editor"))
             {
@@ -89,6 +89,6 @@ namespace UniversalInventorySystem.Editors
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.SelectableLabel($"id: {serializedObject.FindProperty("id").intValue}, key: {serializedObject.FindProperty("key").stringValue}");
             EditorGUILayout.EndVertical();
-        }
+        }*/
     }
 }

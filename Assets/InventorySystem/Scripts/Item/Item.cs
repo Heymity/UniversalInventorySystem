@@ -131,7 +131,8 @@ namespace UniversalInventorySystem
 
         public static bool ValueEqual(Item first, Item second)
         {
-            if (first.Equals(null) || second.Equals(null)) return false;
+            if ((first?.Equals(null) ?? true) ^ (second?.Equals(null) ?? true)) return false;
+            else if ((first?.Equals(null) ?? true) && (second?.Equals(null) ?? true)) return true;
             if (first.GetType() != second.GetType()) return false;
             if (first.Equals(second)) return true;
 
@@ -215,7 +216,7 @@ namespace UniversalInventorySystem
         public Item()
         {
             name = "New Item";
-            id = name.GetHashCode() + UnityEngine.Random.Range(0, 1000);
+            id = name.GetHashCode();
             sprite = null;
 
             maxAmount = 0;
@@ -240,11 +241,11 @@ namespace UniversalInventorySystem
         public static bool operator !(Item item) => item == null;
         public static bool operator true(Item item) => item != null;
 
-        public static bool operator ==(Item a, ItemReference b) => a == b.Value;
-        public static bool operator !=(Item a, ItemReference b) => a != b.Value;
+        public static bool operator ==(Item a, ItemReference b) => a == (b?.Value ?? null);
+        public static bool operator !=(Item a, ItemReference b) => a != (b?.Value ?? null);
 
-        public static bool operator ==(Item a, Item b) => a.ValueEqual(b);
-        public static bool operator !=(Item a, Item b) => !a.ValueEqual(b);
+        public static bool operator ==(Item a, Item b) => ValueEqual(a, b);
+        public static bool operator !=(Item a, Item b) => !ValueEqual(a, b);
 
         public override bool Equals(object obj)
         {

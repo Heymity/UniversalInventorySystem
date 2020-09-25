@@ -106,7 +106,7 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null inventory provided for AddItemToNewSlot");
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
-            if (item == null)
+            if (item.IsItemNull)
             {
                 Debug.LogError("Null item provided for AddItemToNewSlot");
                 throw new ArgumentNullException("item", "Null item provided");
@@ -220,7 +220,7 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null inventory provided for AddItem");
                 throw new ArgumentNullException("inv", "Null Inventory was provided");
             }
-            if (item == null)
+            if (item.IsItemNull)
             {
                 Debug.LogError("Null item provided for AddItem");
                 throw new ArgumentNullException("item", "Null Item was provided");
@@ -282,7 +282,7 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null inventory provided for AddItemToSlot");
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
-            if (item == null)
+            if (item.IsItemNull)
             {
                 Debug.LogError("Null item provided for AddItemToSlot");
                 throw new ArgumentNullException("item", "Null item provided");
@@ -362,7 +362,7 @@ namespace UniversalInventorySystem
 
             if (!AcceptsInventoryProtection(inv, MethodType.Drop)) return false;
 
-            else if (item != null)
+            else if (!item.IsItemNull)
             {
                 return RemoveItem(inv, item, amount, false, null, e, dropPosition, overrideSlotProtecion);
             }
@@ -415,7 +415,7 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null inventory provided for RemoveItem");
                 throw new ArgumentNullException("inv", "Null inventory provided");
             }
-            if (item == null)
+            if (item.IsItemNull)
             {
                 Debug.LogError("Null item provided for RemoveItem");
                 throw new ArgumentNullException("item", "Null item provided");
@@ -1051,7 +1051,7 @@ namespace UniversalInventorySystem
                 Debug.LogError("Null target inventory provided for SwapItemThruInventories");
                 throw new ArgumentNullException("targetInv", "Null inventory provided");
             }
-            if (item == null) return false;
+            if (item.IsItemNull) return false;
 
             if (itemInstance == null) itemInstance = item.Value;
 
@@ -1341,7 +1341,7 @@ namespace UniversalInventorySystem
                         for (int j = 0; j < grid.items.Length; j++)
                         {
                             if (indexes.Contains(j)) continue;
-                            if (grid.items[j] != null) canReturn = false;
+                            if (!grid.items[j].IsItemNull) canReturn = false;
                         }
                         if (canReturn)
                         {
@@ -1450,7 +1450,7 @@ namespace UniversalInventorySystem
             if (jumpIndexes.Count != recipe.numberOfFactors) return CraftItemData.nullData;
             for (int j = 0; j < grid.items.Length; j++)
             {
-                if (grid.items[j] != null && !jumpIndexes.Contains(j))
+                if (!grid.items[j].IsItemNull && !jumpIndexes.Contains(j))
                 {
                     canReturn = false;
                 }
@@ -1770,6 +1770,8 @@ namespace UniversalInventorySystem
 
         #endregion
 
+        public static bool IsNull(this ItemReference refe) => refe?.IsItemNull ?? true;
+
         [Serializable]
         protected enum MethodType
         {
@@ -2001,20 +2003,20 @@ namespace UniversalInventorySystem
         {
             get
             {
-                if (itemValue == null) itemValue = new ItemReference();
+                if (itemValue.IsNull()) itemValue = new ItemReference();
                 return itemValue.Value;
             }
         }
 
         public void SetItem(Item item)
         {
-            if (itemValue == null) itemValue = new ItemReference();
+            if (itemValue.IsNull()) itemValue = new ItemReference();
             itemValue.SetItem(item);
         }
 
         public void SetItem(ItemVariable item)
         {
-            if (itemValue == null) itemValue = new ItemReference();
+            if (itemValue.IsNull()) itemValue = new ItemReference();
             itemValue.SetItem(item);
         }
 
@@ -2215,7 +2217,7 @@ namespace UniversalInventorySystem
         {
             itemValue = new ItemReference();
             amount = 1;
-            hasItem = _item != null;
+            hasItem = !_item.IsNull();
             isProductSlot = false;
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
@@ -2223,7 +2225,7 @@ namespace UniversalInventorySystem
             _itemInstance = null;
 
             SetItem(_item);
-            _itemInstance = _item != null ? new Item(Item) : null;
+            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
             if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = 0;
         }
@@ -2232,7 +2234,7 @@ namespace UniversalInventorySystem
         {
             itemValue = new ItemReference();
             amount = _amount;
-            hasItem = _item != null;
+            hasItem = !_item.IsNull();
             isProductSlot = false;
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
@@ -2240,7 +2242,7 @@ namespace UniversalInventorySystem
             _itemInstance = null;
 
             SetItem(_item);
-            _itemInstance = _item != null ? new Item(Item) : null;
+            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
             if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = 0;
         }
@@ -2249,7 +2251,7 @@ namespace UniversalInventorySystem
         {
             itemValue = new ItemReference();
             amount = _amount;
-            hasItem = _item != null;
+            hasItem = !_item.IsNull();
             isProductSlot = false;
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
@@ -2257,7 +2259,7 @@ namespace UniversalInventorySystem
             _itemInstance = null;
 
             SetItem(_item);
-            _itemInstance = _item != null ? new Item(Item) : null;
+            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
             if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = _durability;           
         }
@@ -2266,7 +2268,7 @@ namespace UniversalInventorySystem
         {
             itemValue = new ItemReference();
             amount = _amount;
-            hasItem = _item != null;
+            hasItem = !_item.IsNull();
             isProductSlot = _isProductSlot;
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
@@ -2274,7 +2276,7 @@ namespace UniversalInventorySystem
             _itemInstance = null;
 
             SetItem(_item);
-            _itemInstance = _item != null ? new Item(Item) : null;
+            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
             if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = 0;
         }
@@ -2283,7 +2285,7 @@ namespace UniversalInventorySystem
         {
             itemValue = new ItemReference();
             amount = _amount;
-            hasItem = _item != null;
+            hasItem = !_item.IsNull();
             isProductSlot = _isProductSlot;
             interative = InventoryController.AllSlotFlags;
             whitelist = null;
@@ -2291,8 +2293,9 @@ namespace UniversalInventorySystem
             _itemInstance = null;
 
             SetItem(_item);
-            _itemInstance = _item != null ? new Item(Item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
+            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
+            if (ItemInstance != null) 
+                ItemInstance.name = _item.Value.name + "(Instance)";
             durability = _durability;
         }
 
@@ -2300,7 +2303,7 @@ namespace UniversalInventorySystem
         {
             itemValue = new ItemReference();
             amount = _amount;
-            hasItem = _item != null;
+            hasItem = !_item.IsNull();
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = null;
@@ -2308,7 +2311,7 @@ namespace UniversalInventorySystem
             _itemInstance = null;
 
             SetItem(_item);
-            _itemInstance = _item != null ? new Item(Item) : null;
+            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
             if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = 0;
         }
@@ -2317,7 +2320,7 @@ namespace UniversalInventorySystem
         {
             itemValue = new ItemReference();
             amount = _amount;
-            hasItem = _item != null;
+            hasItem = !_item.IsNull();
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = _whitelist;
@@ -2325,7 +2328,7 @@ namespace UniversalInventorySystem
             _itemInstance = null;
 
             SetItem(_item);
-            _itemInstance = _item != null ? new Item(Item) : null;
+            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
             if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
             durability = 0;
         }
@@ -2334,7 +2337,7 @@ namespace UniversalInventorySystem
         {
             itemValue = new ItemReference();
             amount = _amount;
-            hasItem = _item != null;
+            hasItem = !_item.IsNull();
             isProductSlot = _isProductSlot;
             interative = _interactive;
             whitelist = _whitelist;
@@ -2423,11 +2426,11 @@ namespace UniversalInventorySystem
     [Serializable, Flags]
     public enum SlotProtection : short
     {
-        Locked = 0,
-        Add = 1,
-        Remove = 2,
-        Swap = 4,
-        Use = 8
-    }
-
+        Locked = 0,                                     //0b00000000
+        Add = 1,                                        //0b00000001
+        Remove = 2,                                     //0b00000010
+        Swap = 4,                                       //0b00000100
+        Use = 8                                         //0b00001000
+    }                                                   
+                                                        
 }

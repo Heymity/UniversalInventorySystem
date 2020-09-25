@@ -35,7 +35,7 @@ namespace UniversalInventorySystem.Editors
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorGUIUtility.wideMode = true;
+            /*EditorGUIUtility.wideMode = true;
 
             position.height /= amount;
 
@@ -125,8 +125,8 @@ namespace UniversalInventorySystem.Editors
                     else amount = baseAmount;
                 }
             }
-
-            //base.OnGUI(position, property, label);
+            */
+            base.OnGUI(position, property, label);
         }
     }
 }

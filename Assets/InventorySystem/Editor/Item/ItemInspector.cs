@@ -73,7 +73,7 @@ namespace UniversalInventorySystem.Editors
             showAmountProp = serializedObject.FindProperty("showAmount");
         }
 
-        public override void OnInspectorGUI()
+        /**public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
@@ -193,6 +193,6 @@ namespace UniversalInventorySystem.Editors
             }
 
             serializedObject.ApplyModifiedProperties();
-        }
+        }*/
     }
 }

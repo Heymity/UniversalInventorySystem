@@ -34,7 +34,7 @@ namespace UniversalInventorySystem.Editors
 
         int selectedIndex;
         int selected;
-
+        /**
         public static void Open(PatternRecipe dataObject)
         {
             PatternRecipeEditorWindow window = GetWindow<PatternRecipeEditorWindow>("Item Data Editor");
@@ -292,6 +292,6 @@ namespace UniversalInventorySystem.Editors
             EditorGUILayout.EndVertical();
 
             serializedObject.ApplyModifiedProperties();
-        }
+        }*/
     }
 }

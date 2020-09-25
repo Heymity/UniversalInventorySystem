@@ -61,10 +61,10 @@ namespace UniversalInventorySystem.Editors
                 var durability = property.FindPropertyRelative("_durability");
                 var hasItem = property.FindPropertyRelative("hasItem");
                 var slotItem = property.FindPropertyRelative("item");
-                if (hasItem.boolValue && ((slotItem.objectReferenceValue as Item)?.hasDurability ?? false))
+                if (hasItem.boolValue && slotItem.FindPropertyRelative("hasDurability").boolValue)
                 {
                     unfold[property.propertyPath].fieldAmount = 3.5f;
-                    EditorGUI.IntSlider(durRect, durability, 0, (int)(slotItem.objectReferenceValue as Item).durability, "Durability");
+                    EditorGUI.IntSlider(durRect, durability, 0, slotItem.FindPropertyRelative("durability").intValue, "Durability");
                     ampos.y += ampos.height;
                 }
 
@@ -331,7 +331,7 @@ namespace UniversalInventorySystem.Editors
 
             var hasItemProp = property.FindPropertyRelative("hasItem");
             var itemProp = property.FindPropertyRelative("item");
-            hasItemProp.boolValue = (itemProp.objectReferenceValue as Item) != null;
+            hasItemProp.boolValue = itemProp != null;
             hasItemRect.height = 17;
             hasItemRect.width = 17;
             if (hasItemProp.boolValue) EditorGUI.LabelField(hasItemRect, EditorGUIUtility.IconContent("TestPassed"));

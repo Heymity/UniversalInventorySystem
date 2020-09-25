@@ -26,10 +26,8 @@ namespace UniversalInventorySystem
         public ItemVariable variable;
         public Item constantValue;
 
-        public Item Value
-        {
-            get => useConstant ? constantValue : variable.value;
-        }
+        public Item Value => useConstant ? constantValue : variable.value;
+        public bool IsItemNull => variable?.value == null && constantValue == null;
 
         public void SetItem(Item item)
         {
@@ -73,10 +71,12 @@ namespace UniversalInventorySystem
             useConstant = true;
         }
 
-        public static bool operator ==(ItemReference a, ItemReference b) => a.Value == b.Value;
-        public static bool operator ==(ItemReference a, Item b) => a.Value == b;
-        public static bool operator !=(ItemReference a, Item b) => a.Value != b;
-        public static bool operator !=(ItemReference a, ItemReference b) => a.Value != b.Value;
+        public static bool operator ==(ItemReference a, ItemReference b) => (a?.Value ?? null) == (b?.Value ?? null);
+        public static bool operator ==(ItemReference a, Item b) => (a?.Value ?? null) == b;
+        public static bool operator ==(ItemReference a, ItemVariable b) => (a?.Value ?? null) == (b?.value ?? null);
+        public static bool operator !=(ItemReference a, ItemVariable b) => (a?.Value ?? null) != (b?.value ?? null);
+        public static bool operator !=(ItemReference a, Item b) => (a?.Value ?? null) != b;
+        public static bool operator !=(ItemReference a, ItemReference b) => (a?.Value ?? null) != (b?.Value ?? null);
 
         public override bool Equals(object obj) => Value.Equals((obj as ItemReference).Value);
 
@@ -85,6 +85,7 @@ namespace UniversalInventorySystem
         public override string ToString() => $"UseConstant: {useConstant}; ConstantV: {constantValue}; ReferenceV: {variable}";
 
         public static implicit operator Item(ItemReference a) => a.Value;
+        public static explicit operator ItemVariable(ItemReference a) => a.variable;
 
         public static explicit operator ItemReference(Item a) => new ItemReference(a);
         public static explicit operator ItemReference(ItemVariable a) => new ItemReference(a);
