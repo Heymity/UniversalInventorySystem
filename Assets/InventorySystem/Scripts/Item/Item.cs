@@ -188,7 +188,7 @@ namespace UniversalInventorySystem
         }
 
         protected static string[] dontValidate = new string[1] { "name" };
-        static bool ValidationFunc(MemberInfo mi, object search)
+        protected static bool ValidationFunc(MemberInfo mi, object search)
         {
             foreach (string s in dontValidate)
                 if (mi.Name == s) return false;
@@ -198,7 +198,7 @@ namespace UniversalInventorySystem
             return false;
         }
 
-        static bool ValidatePublicFunc(MemberInfo mi, object search)
+        protected static bool ValidatePublicFunc(MemberInfo mi, object search)
         {
             foreach(string s in dontValidate)
                 if (mi.Name == s) return false;
@@ -208,10 +208,7 @@ namespace UniversalInventorySystem
             return true;
         }
 
-        public Item(Item _item)
-        {
-
-        }
+        public Item ShallowCopy() => (Item)MemberwiseClone();
 
         public Item()
         {

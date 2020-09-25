@@ -2030,7 +2030,7 @@ namespace UniversalInventorySystem
                 {
                     if (Item != null)
                     {
-                        _itemInstance = new Item(Item);
+                        _itemInstance = Item.ShallowCopy();
                         _itemInstance.name = Item.name + "(Instance)";
                     }
                     else return null;
@@ -2043,7 +2043,7 @@ namespace UniversalInventorySystem
                 {
                     if (Item != null)
                     {
-                        _itemInstance = new Item(Item);
+                        _itemInstance = Item.ShallowCopy();
                         _itemInstance.name = Item.name + "(Instance)";
                     }
                     else return;
@@ -2122,7 +2122,7 @@ namespace UniversalInventorySystem
                 {
                     if (slot.Item != null)
                     {
-                        slot.ItemInstance = new Item(slot.Item);
+                        slot.ItemInstance = slot.Item.ShallowCopy();
                         slot.ItemInstance.name = slot.Item.name + "(Instance)";
                     }
                     else return false;
@@ -2137,7 +2137,7 @@ namespace UniversalInventorySystem
             {
                 if (slot.Item != null)
                 {
-                    slot.ItemInstance = new Item(slot.Item);
+                    slot.ItemInstance = slot.Item.ShallowCopy();
                     slot.ItemInstance.name = slot.Item.name + "(Instance)";
                 }
                 else return false;
@@ -2207,131 +2207,32 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = null;
             _durability = slot.durability;
-            _itemInstance = slot.Item != null ? new Item(slot.Item) : null;
+            _itemInstance = slot.Item != null ? slot.Item.ShallowCopy() : null;
             if (ItemInstance != null) ItemInstance.name = slot.Item.name + "(Instance)";
             durability = slot.durability;
             SetItem(slot.itemValue);
         }
 
         public Slot(ItemReference _item)
-        {
-            itemValue = new ItemReference();
-            amount = 1;
-            hasItem = !_item.IsNull();
-            isProductSlot = false;
-            interative = InventoryController.AllSlotFlags;
-            whitelist = null;
-            _durability = 0;
-            _itemInstance = null;
-
-            SetItem(_item);
-            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
-            durability = 0;
-        }
+            : this(_item, 1, false, InventoryController.AllSlotFlags, null, 0, null) { }
 
         public Slot(ItemReference _item, int _amount)
-        {
-            itemValue = new ItemReference();
-            amount = _amount;
-            hasItem = !_item.IsNull();
-            isProductSlot = false;
-            interative = InventoryController.AllSlotFlags;
-            whitelist = null;
-            _durability = 0;
-            _itemInstance = null;
-
-            SetItem(_item);
-            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
-            durability = 0;
-        }
+            : this(_item, _amount, false, InventoryController.AllSlotFlags, null, 0, null) { }
         
         public Slot(ItemReference _item, int _amount, int _durability)
-        {
-            itemValue = new ItemReference();
-            amount = _amount;
-            hasItem = !_item.IsNull();
-            isProductSlot = false;
-            interative = InventoryController.AllSlotFlags;
-            whitelist = null;
-            this._durability = _durability;
-            _itemInstance = null;
-
-            SetItem(_item);
-            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
-            durability = _durability;           
-        }
+            : this(_item, _amount, false, InventoryController.AllSlotFlags, null, _durability, null) { }       
 
         public Slot(ItemReference _item, int _amount, bool _isProductSlot)
-        {
-            itemValue = new ItemReference();
-            amount = _amount;
-            hasItem = !_item.IsNull();
-            isProductSlot = _isProductSlot;
-            interative = InventoryController.AllSlotFlags;
-            whitelist = null;
-            _durability = 0;
-            _itemInstance = null;
+             : this(_item, _amount, _isProductSlot, InventoryController.AllSlotFlags, null, 0, null) { }
 
-            SetItem(_item);
-            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
-            durability = 0;
-        }
-        
         public Slot(ItemReference _item, int _amount, bool _isProductSlot, int _durability)
-        {
-            itemValue = new ItemReference();
-            amount = _amount;
-            hasItem = !_item.IsNull();
-            isProductSlot = _isProductSlot;
-            interative = InventoryController.AllSlotFlags;
-            whitelist = null;
-            this._durability = _durability;
-            _itemInstance = null;
-
-            SetItem(_item);
-            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
-            if (ItemInstance != null) 
-                ItemInstance.name = _item.Value.name + "(Instance)";
-            durability = _durability;
-        }
+             : this(_item, _amount, _isProductSlot, InventoryController.AllSlotFlags, null, _durability, null) { }
 
         public Slot(ItemReference _item, int _amount, bool _isProductSlot, SlotProtection _interactive)
-        {
-            itemValue = new ItemReference();
-            amount = _amount;
-            hasItem = !_item.IsNull();
-            isProductSlot = _isProductSlot;
-            interative = _interactive;
-            whitelist = null;
-            _durability = 0;
-            _itemInstance = null;
+             : this(_item, _amount, _isProductSlot, _interactive, null, 0, null) { }
 
-            SetItem(_item);
-            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
-            durability = 0;
-        }
-
-        public Slot(ItemReference _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemDatabase _whitelist)
-        {
-            itemValue = new ItemReference();
-            amount = _amount;
-            hasItem = !_item.IsNull();
-            isProductSlot = _isProductSlot;
-            interative = _interactive;
-            whitelist = _whitelist;
-            _durability = 0;
-            _itemInstance = null;
-
-            SetItem(_item);
-            _itemInstance = !_item.IsNull() ? new Item(Item) : null;
-            if (ItemInstance != null) ItemInstance.name = _item.Value.name + "(Instance)";
-            durability = 0;
-        }
+        public Slot(ItemReference _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemDatabase _whitelist) 
+            : this(_item, _amount, _isProductSlot, _interactive, _whitelist, 0, null) { }
         
         public Slot(ItemReference _item, int _amount, bool _isProductSlot, SlotProtection _interactive, ItemDatabase _whitelist, int _durability, Item _itemInstance)
         {
@@ -2342,9 +2243,10 @@ namespace UniversalInventorySystem
             interative = _interactive;
             whitelist = _whitelist;
             this._durability = _durability;
-            this._itemInstance = _itemInstance != null ? new Item(_itemInstance) : null;
+            this._itemInstance = _itemInstance;
 
             SetItem(_item);
+            if(this._itemInstance == null) _itemInstance = !_item.IsNull() ? Item.ShallowCopy() : null;
             if (ItemInstance != null) ItemInstance.name = _itemInstance.name;
             durability = _durability;
         }

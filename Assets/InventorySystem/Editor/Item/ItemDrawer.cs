@@ -21,10 +21,10 @@ using UnityEditor;
 
 namespace UniversalInventorySystem.Editors
 {
-    [CustomPropertyDrawer(typeof(Item))]
+    /**[CustomPropertyDrawer(typeof(Item))]
     public class ItemDrawer : PropertyDrawer
     {
-        bool itemFoldout;
+        /**bool itemFoldout;
         bool storageFoldout;
         bool usingFoldout;
         bool behaviourFoldout;
@@ -40,7 +40,7 @@ namespace UniversalInventorySystem.Editors
         }
         bool useObjValues;
         bool unfold = true;
-        /**public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             amountOfFilds = baseAmount + total;
             total = 0;
@@ -323,6 +323,6 @@ namespace UniversalInventorySystem.Editors
                     useObjValues = true;
                 }
             }
-        }*/
-    }
+        }
+    }*/
 }
