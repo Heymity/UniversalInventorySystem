@@ -21,10 +21,10 @@ using UnityEditor;
 
 namespace UniversalInventorySystem.Editors
 {
-    /**[CustomPropertyDrawer(typeof(Item))]
+    [CustomPropertyDrawer(typeof(ItemVariable))]
     public class ItemDrawer : PropertyDrawer
     {
-        /**bool itemFoldout;
+        bool itemFoldout;
         bool storageFoldout;
         bool usingFoldout;
         bool behaviourFoldout;
@@ -45,7 +45,8 @@ namespace UniversalInventorySystem.Editors
             amountOfFilds = baseAmount + total;
             total = 0;
             SerializedObject serializedObject = null;
-            if (property.objectReferenceValue != null) serializedObject = new SerializedObject(property.objectReferenceValue);
+            if (property.objectReferenceValue != null) 
+                serializedObject = new SerializedObject(property.objectReferenceValue);
             if (serializedObject != null)
             {
                 serializedObject.Update();
@@ -69,7 +70,7 @@ namespace UniversalInventorySystem.Editors
                 EditorGUI.BeginProperty(position, null, property);
                 position.height /= amountOfFilds;
 
-                unfold = EditorGUI.Foldout(position, unfold, (property.objectReferenceValue as Item).name);
+                unfold = EditorGUI.Foldout(position, unfold, itemNameProp.stringValue);
                 position.y += position.height;
                 position.x += 20;
 
@@ -186,8 +187,8 @@ namespace UniversalInventorySystem.Editors
                                 var tmpBool = EditorGUI.Foldout(position, durabilityImagesProp.isExpanded, "Durability Images", true);
                                 position.y += position.height;
 
-                                if (tmpBool != durabilityImagesProp.isExpanded)
-                                    Item.SortDurabilityImages((property.objectReferenceValue as Item).durabilityImages);
+                                //if (tmpBool != durabilityImagesProp.isExpanded)
+                                  //  Item.SortDurabilityImages((property.objectReferenceValue as Item).durabilityImages);
                                 durabilityImagesProp.isExpanded = tmpBool;
                                 if (durabilityImagesProp.isExpanded)
                                 {
@@ -206,15 +207,15 @@ namespace UniversalInventorySystem.Editors
                                         total += (EditorGUI.GetPropertyHeight(durabilityImagesProp.GetArrayElementAtIndex(i)) / 18f) + 1;
                                         position.height = old;
 
-                                        DurabilityImage dur = (property.objectReferenceValue as Item).durabilityImages[i];
+                                        var dur = durabilityImagesProp.GetArrayElementAtIndex(i);
 
-                                        EditorGUI.ProgressBar(position, (float)dur.durability / (float)maxDurabilityProp.intValue, dur.imageName);
+                                        EditorGUI.ProgressBar(position, (float)dur.FindPropertyRelative("durability").floatValue / (float)maxDurabilityProp.intValue, dur.FindPropertyRelative("imageName").stringValue);
                                         position.y += position.height;
                                     }
 
                                     EditorGUI.indentLevel--;
-                                    if (GUI.Button(position, "Sort"))
-                                        Item.SortDurabilityImages((property.objectReferenceValue as Item).durabilityImages);
+                                    //if (GUI.Button(position, "Sort"))
+                                        //Item.SortDurabilityImages((property.objectReferenceValue as Item).durabilityImages);
                                     position.y += position.height;
                                 }
                             }
@@ -324,5 +325,5 @@ namespace UniversalInventorySystem.Editors
                 }
             }
         }
-    }*/
+    }
 }

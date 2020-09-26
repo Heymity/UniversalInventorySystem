@@ -1911,6 +1911,7 @@ namespace UniversalInventorySystem
 
         public Inventory(Inventory inv, bool loadSeeds = true)
         {
+            if (inv == null) return;
             seeds = inv.seeds;
             slots = new List<Slot>(inv.slots);
             id = inv.id;

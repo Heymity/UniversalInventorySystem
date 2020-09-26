@@ -26,7 +26,7 @@ namespace UniversalInventorySystem
         public ItemVariable variable;
         public Item constantValue;
 
-        public Item Value => useConstant ? constantValue : variable.value;
+        public Item Value => useConstant ? constantValue : (variable == null ? null : variable.value);
         public bool IsItemNull => variable?.value == null && constantValue == null;
 
         public void SetItem(Item item)

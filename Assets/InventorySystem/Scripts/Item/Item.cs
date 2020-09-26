@@ -257,7 +257,7 @@ namespace UniversalInventorySystem
 
     
     [Serializable]
-    public class DurabilityImage : object
+    public class DurabilityImage
     {
         [SerializeField] public string imageName;
         [SerializeField] public Sprite sprite;
