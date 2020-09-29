@@ -8,6 +8,8 @@ This project is still maintained, but there will be some time until next update.
 In the next version you shoud be able to properly save the inventories with no trouble at all.
 Also it should fix some bugs related to the unity editor version
 
+All updates are being done on the v4 branch, feel free to test it out. As I am writing this it is all working, just missing some extra features that will be implemented in the near future
+
 ## What is it?
 
 
