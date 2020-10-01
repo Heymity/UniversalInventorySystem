@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: BUG
 labels: bug
 assignees: ''
 
@@ -21,6 +21,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Specs**
  - Unity Version [e.g. 2019.3.0f3]
+ - UIS Version [e.g. v4-branch; 3.0.1; 2.0.0]
 
 **Additional context**
 Add any other context about the problem here.
