@@ -26,11 +26,11 @@ namespace UniversalInventorySystem
     public class Recipe : ScriptableObject
     {
         public int numberOfFactors;
-        public Item[] factors;
+        public ItemReference[] factors;
         public int[] amountFactors;
 
         public int numberOfProducts;
-        public Item[] products;
+        public ItemReference[] products;
         public int[] amountProducts;
 
         public int id;

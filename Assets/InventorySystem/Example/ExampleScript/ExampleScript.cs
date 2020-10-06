@@ -21,48 +21,52 @@ using UnityEngine;
 using UniversalInventorySystem;
 
 public class ExampleScript : MonoBehaviour
-{   
-    public Inventory inventory;
+{
+    public InventoryReference invRef;
+    Inventory inventory;
 
-    // To test the item drawer in inspector
+    // To test the item drawer in inspector.
+    // This variable does nothing on the code.
     public Item testItem;
-    public int slotAmount;
 
     private void Start()
     {
-        //Events
+        // Events
         InventoryHandler invEvent = InventoryHandler.current;
         invEvent.OnAddItem += OnAddItem;
         invEvent.OnRemoveItem += OnRemoveItem;
+
+        // Setting inventory to the reference
+        inventory = invRef.Value;
     }
 
     private void Update()
     {
-        //Adds a item
+        // Adds a item
         if (Input.GetKeyDown(KeyCode.A))
             inventory.AddItem(InventoryHandler.current.GetItem(0, 0), 2);
 
-        //Adds another type of item
+        // Adds another type of item
         if (Input.GetKeyDown(KeyCode.D))
             inventory.AddItem(InventoryHandler.current.GetItem(0, 1), 2);
 
-        //Checks an item in a inventory
+        // Checks an item in a inventory
         //Debug.Log(inventory.CheckItemInInventory(InventoryHandler.current.GetItem(0, 0), 4).HasItem);
     }
 
-    //Callback function for when an item is removed from any inventory
+    // Callback function for when an item is removed from any inventory
     private void OnRemoveItem(object sender, InventoryHandler.RemoveItemEventArgs e)
     {
         Debug.Log("Remove (ExampleScript)");
     }
 
-    //Callback function for when an item is added from any inventory
+    // Callback function for when an item is added from any inventory
     private void OnAddItem(object sender, InventoryHandler.AddItemEventArgs e)
     {
         Debug.Log($"The item {e.itemAdded.name} was added (ExampleScript)");
     }
 
-    //Unsubscribing the events if this object gets destoyed (better use the OnDisable func if your gameobj can be set inactive in hireachy)
+    // Unsubscribing the events if this object gets destoyed (better use the OnDisable func if your gameobj can be set inactive in hireachy)
     private void OnDestroy()
     {
         InventoryHandler.current.OnAddItem -= OnAddItem;

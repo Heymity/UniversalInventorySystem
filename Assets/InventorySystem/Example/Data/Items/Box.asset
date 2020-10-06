@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 112d32faaacff8345bd53ddd232b0f68, type: 3}
+  m_Name: Box
+  m_EditorClassIdentifier: 
+  value:
+    name: PaperBox
+    id: 0
+    sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6,
+      type: 3}
+    maxAmount: 10
+    destroyOnUse: 1
+    useHowManyWhenUsed: 1
+    stackable: 1
+    durability: 0
+    hasDurability: 0
+    showAmount: 1
+    _durabilityImages: []
+    onUseFunc: {fileID: 11500000, guid: fbc6a140bc2ae644788371b67a162054, type: 3}
+    optionalOnDropBehaviour: {fileID: 11500000, guid: ac3d774d6006c4c46a1a396545055f49,
+      type: 3}
+    tooltip:
+      useTooltip: 0
+      usePrefab: 0
+      tooltipPrefab: {fileID: 0}
+      sprite: {fileID: 0}
+      xAligmentOption: 0
+      xAlign: 0
+      xPixelOrPercentage: 0
+      yAligmentOption: 0
+      yAlign: 0
+      yPixelOrPercentage: 0
+      autoReAlign: 0
+      autoRealignOptions: 0
+      snapMargin: {x: 0, y: 0}
+      snapTo: {x: 0, y: 0}
+      backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+      size: {x: 0, y: 0}
+      padding: {x: 0, y: 0}
+      margin: {x: 0, y: 0}
+      maxWidth: 0
+      texts: []
+  _value:
+    name: PaperBox
+    id: 0
+    sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6,
+      type: 3}
+    maxAmount: 10
+    destroyOnUse: 1
+    useHowManyWhenUsed: 1
+    stackable: 1
+    durability: 0
+    hasDurability: 0
+    showAmount: 1
+    _durabilityImages: []
+    onUseFunc: {fileID: 11500000, guid: fbc6a140bc2ae644788371b67a162054, type: 3}
+    optionalOnDropBehaviour: {fileID: 11500000, guid: ac3d774d6006c4c46a1a396545055f49,
+      type: 3}
+    tooltip:
+      useTooltip: 0
+      usePrefab: 0
+      tooltipPrefab: {fileID: 0}
+      sprite: {fileID: 0}
+      xAligmentOption: 0
+      xAlign: 0
+      xPixelOrPercentage: 0
+      yAligmentOption: 0
+      yAlign: 0
+      yPixelOrPercentage: 0
+      autoReAlign: 0
+      autoRealignOptions: 0
+      snapMargin: {x: 0, y: 0}
+      snapTo: {x: 0, y: 0}
+      backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+      size: {x: 0, y: 0}
+      padding: {x: 0, y: 0}
+      margin: {x: 0, y: 0}
+      maxWidth: 0
+      texts: []

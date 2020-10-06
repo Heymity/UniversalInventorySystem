@@ -28,7 +28,7 @@ namespace UniversalInventorySystem.Editors
         int baseAmount = 1;
         int amount = 1;
         float basey;
-
+        /**
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return 18f * amount;
@@ -134,6 +134,6 @@ namespace UniversalInventorySystem.Editors
             }
 
             //base.OnGUI(position, property, label);
-        }
+        }*/
     }
 }

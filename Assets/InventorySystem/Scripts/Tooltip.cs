@@ -38,7 +38,7 @@ namespace UniversalInventorySystem
             if (invUI.GetInventory() == null) return;
             if (RectTransformUtility.RectangleContainsScreenPoint(transform as RectTransform, Camera.main.ScreenToWorldPoint(Input.mousePosition)))
             {
-                var item = invUI.GetInventory().slots[slotNum].item;
+                var item = invUI.GetInventory().slots[slotNum].Item;
                 if (item == null) return;
                 if (item.tooltip == null) return;
                 if (!item.tooltip.useTooltip) return;
@@ -375,7 +375,7 @@ namespace UniversalInventorySystem
         void OnDrawGizmos()
         {
             if (!toolTip) return;
-            var item = invUI.GetInventory().slots[slotNum].item;
+            var item = invUI.GetInventory().slots[slotNum].Item;
             if (item == null) return;
             if (item.tooltip == null) return;
 

@@ -25,15 +25,15 @@ namespace UniversalInventorySystem
     public class PatternRecipe : ScriptableObject
     {
         public int numberOfFactors;
-        public Item[] factors;
+        public ItemReference[] factors;
 
         public int numberOfProducts;
-        public Item[] products;
+        public ItemReference[] products;
         public int[] amountProducts;
 
         public Vector2Int gridSize;
 
-        public Item[] pattern;
+        public ItemReference[] pattern;
         public int[] amountPattern;
 
         public int id;

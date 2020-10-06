@@ -68,7 +68,7 @@ namespace UniversalInventorySystem.Editors
 
             foreach (SerializedProperty p in prop)
             {
-                if (GUILayout.Button((p.objectReferenceValue as Item).name))
+                if (GUILayout.Button(p.FindPropertyRelative("name").stringValue))
                 {
                     showItemAssets = false;
                     selectedPropertyPath = p.propertyPath;
@@ -92,10 +92,10 @@ namespace UniversalInventorySystem.Editors
     public class CreateScriptableObjectAsset : EditorWindow
     {
         public SerializedProperty property;
-        public static Item CreateItemAsset(string path, string iname, SerializedProperty prop)
+        public static ItemReference CreateItemAsset(string path, string iname, SerializedProperty prop)
         {
-            Item asset = ScriptableObject.CreateInstance<Item>();
-
+            ItemVariable asset = ScriptableObject.CreateInstance<ItemVariable>();
+            var refe = new ItemReference(asset);
             path += $"/{iname}.asset";
 
             AssetDatabase.CreateAsset(asset, path);
@@ -105,7 +105,7 @@ namespace UniversalInventorySystem.Editors
             prop.arraySize++;
             prop.GetArrayElementAtIndex(prop.arraySize - 1).objectReferenceValue = asset;
 
-            return asset;
+            return refe;
         }
 
         string itemName;

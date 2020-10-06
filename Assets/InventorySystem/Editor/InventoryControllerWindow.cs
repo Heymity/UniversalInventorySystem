@@ -84,17 +84,17 @@ namespace UniversalInventorySystem.Editors
 
                         DrawLine(rect, 18);
 
-                        if (s.item != null)
+                        if (s.Item != null)
                         {
                             var soRect = rect;
                             soRect.height = 16;
-                            EditorGUI.LabelField(soRect, new GUIContent(s.item.itemName, EditorGUIUtility.IconContent("ScriptableObject Icon").image));
+                            EditorGUI.LabelField(soRect, new GUIContent(s.Item.name, EditorGUIUtility.IconContent("ScriptableObject Icon").image));
                             rect.x += 100;
                             DrawLine(rect, 18);
                             EditorGUI.LabelField(rect, s.amount.ToString());
                             rect.x += 80;
                             DrawLine(rect, 18);
-                            EditorGUI.LabelField(rect, $"{s.durability} | {s.item.hasDurability}");
+                            EditorGUI.LabelField(rect, $"{s.durability} | {s.Item.hasDurability}");
                             rect.x += 110;
                             DrawLine(rect, 18);
                         }
@@ -128,7 +128,7 @@ namespace UniversalInventorySystem.Editors
                         auxRect = rect;
                         auxRect.width = 130;
                         auxRect.height = 16;
-                        content = new GUIContent(s.ItemInstance == null ? "" : s.ItemInstance.itemName, EditorGUIUtility.IconContent("ScriptableObject Icon").image);
+                        content = new GUIContent(s.ItemInstance == null ? "" : s.ItemInstance.name, EditorGUIUtility.IconContent("ScriptableObject Icon").image);
                         if (GUI.Button(auxRect, s.ItemInstance == null ? new GUIContent("None") : content) && s.ItemInstance != null)
                         {
                             ItemInstanceInspector window = GetWindow<ItemInstanceInspector>("Item Inspector");
@@ -271,7 +271,7 @@ namespace UniversalInventorySystem.Editors
         public void OnGUI()
         {
             if (itemTarget == null) return;
-            EditorGUILayout.LabelField(itemTarget.itemName);
+            EditorGUILayout.LabelField(itemTarget.name);
 
             MemberTypes mt = MemberTypes.Field | MemberTypes.Property | MemberTypes.Method;
             BindingFlags bf = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic;

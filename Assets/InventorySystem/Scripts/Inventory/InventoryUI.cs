@@ -64,7 +64,7 @@ namespace UniversalInventorySystem
         public Vector3 randomFactor = Vector3.zero;
 
         //Inv
-        public Inventory inv;
+        public InventoryReference inv;
 
         //Craft
         public bool isCraftInventory;
@@ -82,16 +82,16 @@ namespace UniversalInventorySystem
         [HideInInspector]
         public bool shouldSwap;
         [HideInInspector]
-        public List<Item> pattern = new List<Item>();
+        public List<ItemReference> pattern = new List<ItemReference>();
         [HideInInspector]
         public List<int> amount = new List<int>();
 
-        public void SetInventory(Inventory _inv) => inv = _inv;
-        public Inventory GetInventory() => inv;
+        public Inventory GetInventory() => inv.Value;
 
         public void Start()
         {
             if (inv == null) return;
+            if (inv.Value == null) return;
 
             var b = Instantiate(dragObj, canvas.transform);
             b.name = $"DRAGITEMOBJ_{name}_{UnityEngine.Random.Range(int.MinValue, int.MaxValue)}";
@@ -154,7 +154,7 @@ namespace UniversalInventorySystem
 
                 for (int i = 0; i < productSlotsIndex.Length; i++)
                 { 
-                    inv.slots[productSlotsIndex[i]] = Slot.SetSlotProperties(inv[i], true, SlotProtection.Remove | SlotProtection.Swap, null);
+                    inv.Value.slots[productSlotsIndex[i]] = Slot.SetSlotProperties(inv.Value[i], true, SlotProtection.Remove | SlotProtection.Swap, null);
                 }
 
             }
@@ -217,14 +217,16 @@ namespace UniversalInventorySystem
         public void Update()
         {
             if (inv == null) return;
+            if (inv.Value == null) return;
+
             //Initialize if not yet
-            if (!inv.HasInitialized)
-                inv.Initialize();
+            if (!inv.Value.HasInitialized)
+                inv.Value.Initialize();
             
             //Create UI
             if (generateUIFromSlotPrefab && !hasGenerated)
             {
-                GenerateUI(inv.SlotAmount);
+                GenerateUI(inv.Value.SlotAmount);
                 hasGenerated = true;
             }
 
@@ -236,14 +238,14 @@ namespace UniversalInventorySystem
                 {
                     if (isCraftInventory && dropOnCloseCrafting)
                     {
-                        for (int i = 0; i < inv.slots.Count; i++)
+                        for (int i = 0; i < inv.Value.slots.Count; i++)
                         {
-                            var item = inv.slots[i];
+                            var item = inv.Value.slots[i];
                             Vector3 finalDropPos = dropPos;
                             finalDropPos.x += Random.Range(-randomFactor.x, randomFactor.x);
                             finalDropPos.y += Random.Range(-randomFactor.y, randomFactor.y);
                             finalDropPos.z += Random.Range(-randomFactor.z, randomFactor.z);
-                            inv.DropItem(item.amount, finalDropPos, slot: i);
+                            inv.Value.DropItem(item.amount, finalDropPos, slot: i);
                         }
                     }
                     togglableObject.SetActive(!togglableObject.activeInHierarchy);
@@ -251,25 +253,25 @@ namespace UniversalInventorySystem
             }
 
             //Iterating slots go
-            for (int i = 0; i < inv.slots.Count; i++)
+            for (int i = 0; i < inv.Value.slots.Count; i++)
             {
                 // Create pattern grid
                 if (isCraftInventory && i < pattern.Count)
                 {
-                    pattern[i] = inv.slots[i].item;
-                    amount[i] = inv.slots[i].amount;
+                    pattern[i] = inv.Value.slots[i].itemValue;
+                    amount[i] = inv.Value.slots[i].amount;
                 }
-                if (i >= slots.Count) break;
+                if (i >= slots.Count) break;                                        // dont know why its here but I am afraid to remove it
 
                 // Rendering null Slot
                 Image image;
                 TextMeshProUGUI text;
-                if (inv.slots[i].item == null)
+                if (inv.Value.slots[i].Item == null)
                 {
                     for (int j = 0; j < slots[i].transform.childCount; j++)
                     {
 
-                        if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                        if (slots[i].transform.GetChild(j).TryGetComponent(out image))
                         {
                             image.sprite = null;
                             image.color = new Color(0, 0, 0, 0);
@@ -283,41 +285,41 @@ namespace UniversalInventorySystem
                 // Rendering slot
                 for (int j = 0; j < slots[i].transform.childCount; j++)
                 {
-                    if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                    if (slots[i].transform.GetChild(j).TryGetComponent(out image))
                     {
-                        if (inv.slots[i].ItemInstance.hasDurability)
+                        if (inv.Value.slots[i].ItemInstance.hasDurability)
                         {
-                            if (inv.slots[i].ItemInstance.durabilityImages.Count > 0)
+                            if (inv.Value.slots[i].ItemInstance.durabilityImages.Count > 0)
                             {
-                                image.sprite = GetNearestSprite(inv, inv.slots[i].durability, i);
+                                image.sprite = GetNearestSprite(inv.Value, inv.Value.slots[i].durability, i);
                                 image.color = new Color(1, 1, 1, 1);
                             }
                             else
                             {
-                                image.sprite = inv.slots[i].ItemInstance.sprite;
+                                image.sprite = inv.Value.slots[i].ItemInstance.sprite;
                                 image.color = new Color(1, 1, 1, 1);
                             }
                         }
                         else
                         {
-                            image.sprite = inv.slots[i].ItemInstance.sprite;
+                            image.sprite = inv.Value.slots[i].ItemInstance.sprite;
                             image.color = new Color(1, 1, 1, 1);
                         }
                     }
-                    else if (slots[i].transform.GetChild(j).TryGetComponent(out text) && showAmount && inv[i].ItemInstance.showAmount)
-                        text.text = inv.slots[i].amount.ToString();
+                    else if (slots[i].transform.GetChild(j).TryGetComponent(out text) && showAmount && inv.Value[i].ItemInstance.showAmount)
+                        text.text = inv.Value.slots[i].amount.ToString();
                     else if (slots[i].transform.GetChild(j).TryGetComponent(out text))
                         text.text = "";
                 }
 
                 if (dragObj.GetComponent<DragSlot>().GetSlotNumber() == i && isDraging)
                 {
-                    if (inv.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount() == 0)
+                    if (inv.Value.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount() == 0)
                     {
                         for (int j = 0; j < slots[i].transform.childCount; j++)
                         {
 
-                            if (slots[i].transform.GetChild(j).TryGetComponent<Image>(out image))
+                            if (slots[i].transform.GetChild(j).TryGetComponent(out image))
                             {
                                 image.sprite = null;
                                 image.color = new Color(0, 0, 0, 0);
@@ -330,8 +332,8 @@ namespace UniversalInventorySystem
                     {
                         for (int j = 0; j < slots[i].transform.childCount; j++)
                         {
-                            if (slots[i].transform.GetChild(j).TryGetComponent(out text) && showAmount && inv[i].ItemInstance.showAmount)
-                                text.text = (inv.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount()).ToString();
+                            if (slots[i].transform.GetChild(j).TryGetComponent(out text) && showAmount && inv.Value[i].ItemInstance.showAmount)
+                                text.text = (inv.Value.slots[i].amount - dragObj.GetComponent<DragSlot>().GetAmount()).ToString();
                             else if (slots[i].transform.GetChild(j).TryGetComponent(out text))
                                 text.text = "";
                         }
@@ -346,7 +348,7 @@ namespace UniversalInventorySystem
                     {
                     //Debug.Log($"Slot {slots[index].name} was clicked");
                         if (useOnClick)
-                            inv.UseItemInSlot(index);
+                            inv.Value.UseItemInSlot(index);
                     });
                 }
             }
@@ -354,29 +356,29 @@ namespace UniversalInventorySystem
             //Dont use on click if is crafting inventory
             if (isCraftInventory)
             {
-                CraftItemData products = inv.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, false, true, productSlotsIndex.Length);
+                CraftItemData products = inv.Value.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, false, true, productSlotsIndex.Length);
 
-                List<Item> productsItem = new List<Item>();
+                List<ItemReference> productsItem = new List<ItemReference>();
                 if (products != CraftItemData.nullData && products.items.Length <= productSlotsIndex.Length)
                 {
                     if (products.items.Length == productSlotsIndex.Length)
                     {
                         for (int k = 0; k < products.items.Length; k++)
                         {
-                            productsItem.Add(inv.slots[gridSize.x * gridSize.y + k].item ?? products.items[k]);
+                            productsItem.Add(inv.Value.slots[gridSize.x * gridSize.y + k].itemValue ?? products.items[k]);
                         }
                     }
                     else
                     {
                         for(int i = 0; i < productSlotsIndex.Length - products.items.Length + 1; i++)
                         {
-                            productsItem = new List<Item>();
+                            productsItem = new List<ItemReference>();
                             for (int k = 0; k < products.items.Length; k++)
                             {
-                                if (gridSize.x * gridSize.y + k + i >= inv.slots.Count) break;
-                                if (inv.slots[gridSize.x * gridSize.y + k + i].item == products.items[k] || inv.slots[gridSize.x * gridSize.y + k + i].item == null)
+                                if (gridSize.x * gridSize.y + k + i >= inv.Value.slots.Count) break;
+                                if (inv.Value.slots[gridSize.x * gridSize.y + k + i].Item == products.items[k] || inv.Value.slots[gridSize.x * gridSize.y + k + i].Item == null)
                                 {
-                                    productsItem.Add(inv.slots[gridSize.x * gridSize.y + k + i].item ?? products.items[k]);
+                                    productsItem.Add(inv.Value.slots[gridSize.x * gridSize.y + k + i].itemValue ?? products.items[k]);
                                     if (Enumerable.SequenceEqual(products.items, productsItem.ToArray()))
                                     {
                                         i = int.MaxValue - 1;
@@ -393,7 +395,7 @@ namespace UniversalInventorySystem
                 for (int i = 0; i < productSlotsIndex.Length; i++)
                 {
                     // If there is a item in the product slot it renders it and go to the next one
-                    if (inv.slots[productSlotsIndex[i]].HasItem)
+                    if (inv.Value.slots[productSlotsIndex[i]].HasItem)
                     {
                         // Iterating the childs
                         for (int j = 0; j < slots[productSlotsIndex[i]].transform.childCount; j++)
@@ -401,36 +403,36 @@ namespace UniversalInventorySystem
                             if (slots[productSlotsIndex[i]].transform.GetChild(j).TryGetComponent(out Image image))
                             {
                                 // Having durability it renders the corresponding durability image
-                                if (inv.slots[productSlotsIndex[i]].ItemInstance.hasDurability)
+                                if (inv.Value.slots[productSlotsIndex[i]].ItemInstance.hasDurability)
                                 {
-                                    if (inv.slots[productSlotsIndex[i]].ItemInstance.durabilityImages.Count > 0)
+                                    if (inv.Value.slots[productSlotsIndex[i]].ItemInstance.durabilityImages.Count > 0)
                                     {
-                                        image.sprite = GetNearestSprite(inv, inv.slots[productSlotsIndex[i]].durability, productSlotsIndex[i]);
+                                        image.sprite = GetNearestSprite(inv.Value, inv.Value.slots[productSlotsIndex[i]].durability, productSlotsIndex[i]);
                                         image.color = new Color(1, 1, 1, 1);
                                     }
                                     else
                                     {
-                                        image.sprite = inv.slots[productSlotsIndex[i]].ItemInstance.sprite;
+                                        image.sprite = inv.Value.slots[productSlotsIndex[i]].ItemInstance.sprite;
                                         image.color = new Color(1, 1, 1, 1);
                                     }
                                     //productIndex++;
                                 }
                                 else
                                 {
-                                    image.sprite = inv.slots[productSlotsIndex[i]].ItemInstance.sprite;
+                                    image.sprite = inv.Value.slots[productSlotsIndex[i]].ItemInstance.sprite;
                                     image.color = new Color(1, 1, 1, 1);
                                     //productIndex++;
                                 }
                             }
-                            else if (slots[productSlotsIndex[i]].transform.GetChild(j).TryGetComponent(out TextMeshProUGUI text) && showAmount && inv[productSlotsIndex[i]].ItemInstance.showAmount)
-                                text.text = inv.slots[productSlotsIndex[i]].amount.ToString();
+                            else if (slots[productSlotsIndex[i]].transform.GetChild(j).TryGetComponent(out TextMeshProUGUI text) && showAmount && inv.Value[productSlotsIndex[i]].ItemInstance.showAmount)
+                                text.text = inv.Value.slots[productSlotsIndex[i]].amount.ToString();
                             else if (slots[productSlotsIndex[i]].transform.GetChild(j).TryGetComponent(out text))
                                 text.text = "";
                         }
 
                         if(products != null && products != CraftItemData.nullData)
-                            if (inv[productSlotsIndex[i]].item == (products?.items[productIndex] ?? null) && 
-                                inv[productSlotsIndex[i]].amount + (products?.amounts[productIndex] ?? int.MaxValue) <= inv[productSlotsIndex[i]].item?.maxAmount
+                            if (inv.Value[productSlotsIndex[i]].Item == (products?.items[productIndex] ?? null) && 
+                                inv.Value[productSlotsIndex[i]].amount + (products?.amounts[productIndex] ?? int.MaxValue) <= inv.Value[productSlotsIndex[i]].Item?.maxAmount
                                 ) 
                                 productIndex++;
 
@@ -445,7 +447,7 @@ namespace UniversalInventorySystem
                                 // List have the same items, not the same sequence.
                                 if (Enumerable.SequenceEqual(products.items, productsItem.ToArray()))
                                 {
-                                    inv.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlotsIndex.Length);
+                                    inv.Value.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlotsIndex.Length);
                                 }
                             }
                         });
@@ -458,28 +460,28 @@ namespace UniversalInventorySystem
                             // Iterating the childs
                             if (slots[productSlotsIndex[i]].transform.GetChild(j).TryGetComponent(out Image image))
                             {
-                                if (products.items[productIndex].hasDurability)
+                                if (products.items[productIndex].Value.hasDurability)
                                 {
-                                    if (products.items[productIndex].durabilityImages.Count > 0)
+                                    if (products.items[productIndex].Value.durabilityImages.Count > 0)
                                     {
-                                        image.sprite = GetNearestSprite(products.items[productIndex], products.items[productIndex].durability);
+                                        image.sprite = GetNearestSprite(products.items[productIndex], products.items[productIndex].Value.durability);
                                         image.color = new Color(1, 1, 1, .7f);
                                     }
                                     else
                                     {
-                                        image.sprite = products.items[productIndex].sprite;
+                                        image.sprite = products.items[productIndex].Value.sprite;
                                         image.color = new Color(1, 1, 1, .7f);
                                     }
                                     nextIndex = true;
                                 }
                                 else
                                 {
-                                    image.sprite = products.items[productIndex].sprite;
+                                    image.sprite = products.items[productIndex].Value.sprite;
                                     image.color = new Color(1, 1, 1, .7f);
                                     nextIndex = true;
                                 }
                             }
-                            else if (slots[productSlotsIndex[i]].transform.GetChild(j).TryGetComponent(out TextMeshProUGUI text) && showAmount && products.items[productIndex].showAmount)
+                            else if (slots[productSlotsIndex[i]].transform.GetChild(j).TryGetComponent(out TextMeshProUGUI text) && showAmount && products.items[productIndex].Value.showAmount)
                             {
                                 text.text = products.amounts[productIndex].ToString();
                                 nextIndex = true;
@@ -500,13 +502,13 @@ namespace UniversalInventorySystem
                         slots[productSlotsIndex[i]].GetComponent<Button>().onClick.AddListener(() =>
                         {
                             //Debug.Log($"Product slot {slots[index].name} was clicked");
-                            inv.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlotsIndex.Length);
+                            inv.Value.CraftItem(new CraftItemData(pattern.ToArray(), amount.ToArray()), gridSize, true, true, productSlotsIndex.Length);
                         });
 
                     }
                     else
                     {
-                        if (!inv.slots[productSlotsIndex[i]].HasItem)
+                        if (!inv.Value.slots[productSlotsIndex[i]].HasItem)
                         {
                             for (int j = 0; j < slots[i].transform.childCount; j++)
                             {
@@ -535,9 +537,9 @@ namespace UniversalInventorySystem
         {
             var minDif = int.MaxValue;
             var index = 0;
-            for(int i = inv.slots[slot].item.durabilityImages.Count - 1; i >= 0;i--)
+            for(int i = inv.slots[slot].Item.durabilityImages.Count - 1; i >= 0;i--)
             {
-                int dif = inv.slots[slot].item.durabilityImages[i].durability - durability;
+                int dif = inv.slots[slot].Item.durabilityImages[i].durability - durability;
                 if (dif < 0) break;
                 if (dif < minDif)
                 {
@@ -545,7 +547,7 @@ namespace UniversalInventorySystem
                     index = i;
                 }
             }
-            return inv.slots[slot].item.durabilityImages[index].sprite;
+            return inv.slots[slot].Item.durabilityImages[index].sprite;
         }
 
         /// <summary>

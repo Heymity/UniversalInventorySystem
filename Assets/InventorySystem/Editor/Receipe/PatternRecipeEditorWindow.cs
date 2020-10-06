@@ -24,9 +24,6 @@ namespace UniversalInventorySystem.Editors
 {
     public class PatternRecipeEditorWindow : ExtendEditorWindow
     {
-        bool patternRecipe = true;
-        bool patternConfg = false;
-        bool patternCreation = false;
         bool allowBigValues;
 
         Vector2 scrollPos;
@@ -36,7 +33,8 @@ namespace UniversalInventorySystem.Editors
         Vector2Int gridSize;
 
         int selectedIndex;
-
+        int selected;
+        /**
         public static void Open(PatternRecipe dataObject)
         {
             PatternRecipeEditorWindow window = GetWindow<PatternRecipeEditorWindow>("Item Data Editor");
@@ -53,40 +51,27 @@ namespace UniversalInventorySystem.Editors
 
             serializedObject.Update();
 
-            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.BeginVertical();
             currentProperty = serializedObject.FindProperty("");
-            EditorGUILayout.BeginVertical("box", GUILayout.MaxWidth(150), GUILayout.MinWidth(100), GUILayout.ExpandHeight(true));
+            EditorGUILayout.BeginVertical("Toolbar", GUILayout.ExpandWidth(true));
+            EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(500));
+            GUILayout.BeginArea(new Rect((Screen.width / 2) - 250, 1, 500, 18));
 
-            if (GUILayout.Button("Pattern Recipe"))
-            {
-                patternRecipe = true;
-                patternConfg = false;
-                patternCreation = false;
-            }
-            if (GUILayout.Button("Pattern Config"))
-            {
-                patternRecipe = false;
-                patternConfg = true;
-                patternCreation = false;
-            }
-            if (GUILayout.Button("Pattern Creation"))
-            {
-                patternRecipe = false;
-                patternConfg = false;
-                patternCreation = true;
-            }
+            selected = GUILayout.Toolbar(selected, new string[3] { "Pattern Recipe", "Pattern Config", "Pattern Creation" });
 
+            GUILayout.EndArea();
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
 
-            EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+            EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 
-            if (patternRecipe)
+            if (selected == 0)
             {
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("id"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("key"));
             }
 
-            if (patternConfg)
+            if (selected == 1)
             {
                 scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
@@ -146,7 +131,7 @@ namespace UniversalInventorySystem.Editors
                 EditorGUILayout.EndScrollView();
             }
 
-            if (patternCreation)
+            if (selected == 2)
             {
                 EditorGUILayout.BeginHorizontal();
                 //----SELECTION-------//
@@ -304,9 +289,9 @@ namespace UniversalInventorySystem.Editors
 
             EditorGUILayout.EndVertical();
 
-            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
 
             serializedObject.ApplyModifiedProperties();
-        }
+        }*/
     }
 }

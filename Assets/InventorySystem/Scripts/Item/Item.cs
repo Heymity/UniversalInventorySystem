@@ -25,13 +25,10 @@ using UnityEngine;
 
 namespace UniversalInventorySystem
 {
-    [ 
-        CreateAssetMenu(fileName = "Item", menuName = "UniversalInventorySystem/Item", order = 115), 
-        Serializable
-    ]
-    public class Item : ScriptableObject
+    [Serializable]
+    public class Item
     {
-        public string itemName;
+        public string name;
         public int id;
         public Sprite sprite;
 
@@ -49,7 +46,7 @@ namespace UniversalInventorySystem
         {
             get
             {
-                return _durabilityImages;
+                return SortDurabilityImages(_durabilityImages);
             }
             set
             {
@@ -65,14 +62,6 @@ namespace UniversalInventorySystem
         [DontValidateOnValueEqual]
         public ToolTipInfo tooltip;
 
-        private void OnEnable()
-        {
-            _durabilityImages = SortDurabilityImages(_durabilityImages);
-            OnEnableCallback();
-        }
-
-        public virtual void OnEnableCallback() { }
-
         public virtual void OnUse(Inventory inv, int slot)
         {
             InventoryHandler.UseItemEventArgs uea = new InventoryHandler.UseItemEventArgs(inv, this, slot);
@@ -87,7 +76,7 @@ namespace UniversalInventorySystem
             BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
             MethodInfo monoMethod = onUseFunc.GetClass().GetMethod("OnUse", flags);
-            if (monoMethod == null) Debug.LogError($"The script provided ({onUseFunc.name}) on item {itemName} does not contain, or its not accesible, the expected function OnUse.\n Check if this function exists and if the provided script derives from IUsable");
+            if (monoMethod == null) Debug.LogError($"The script provided ({onUseFunc.name}) on item {name} does not contain, or its not accesible, the expected function OnUse.\n Check if this function exists and if the provided script derives from IUsable");
             else monoMethod.Invoke(Activator.CreateInstance(onUseFunc.GetClass()), tmp);
 
             InventoryHandler.current.Broadcast(BroadcastEventType.UseItem, uea: uea);
@@ -112,7 +101,7 @@ namespace UniversalInventorySystem
 
                 MethodInfo monoMethod = optionalOnDropBehaviour.GetClass().GetMethod("OnDropItem", flags);
 
-                if (monoMethod == null) Debug.LogError($"The script provided ({optionalOnDropBehaviour.name}) on item {itemName} does not contain, or its not accesible, the expected function OnDropItem.\n Check if this function exists and if the provided script derives from DropBehaviour");
+                if (monoMethod == null) Debug.LogError($"The script provided ({optionalOnDropBehaviour.name}) on item {name} does not contain, or its not accesible, the expected function OnDropItem.\n Check if this function exists and if the provided script derives from DropBehaviour");
                 else monoMethod.Invoke(Activator.CreateInstance(optionalOnDropBehaviour.GetClass()), tmp);
             }
         }
@@ -142,9 +131,10 @@ namespace UniversalInventorySystem
 
         public static bool ValueEqual(Item first, Item second)
         {
-            if (first == null || second == null) return false;
+            if ((first?.Equals(null) ?? true) ^ (second?.Equals(null) ?? true)) return false;
+            else if ((first?.Equals(null) ?? true) && (second?.Equals(null) ?? true)) return true;
             if (first.GetType() != second.GetType()) return false;
-            if (first == second) return true;
+            if (first.Equals(second)) return true;
 
             BindingFlags bf = BindingFlags.Public | BindingFlags.Instance;
             MemberTypes mt = MemberTypes.Field | MemberTypes.Property;
@@ -164,9 +154,9 @@ namespace UniversalInventorySystem
                         var firstField = field.GetValue(first);
                         var secondField = field.GetValue(second);
                         ///Debug.Log($"Bool: {!firstField.Equals(secondField)} Values: {firstField}, {secondField}"); //This line will give error when monoscripts are null. Just a note ;)
-                        if(firstField == null)
+                        if (firstField == null)
                         {
-                            if(secondField == null)
+                            if (secondField == null)
                             {
                                 break;
                             }
@@ -180,7 +170,7 @@ namespace UniversalInventorySystem
                         var firstProp = prop.GetValue(first);
                         var secondProp = prop.GetValue(second);
                         ///Debug.Log($"Bool: {!firstField.Equals(secondField)} Values: {firstField}, {secondField}"); //This line will give error when monoscripts are null. Just a note ;)
-                        if(firstProp == null)
+                        if (firstProp == null)
                         {
                             if (secondProp == null)
                             {
@@ -198,7 +188,7 @@ namespace UniversalInventorySystem
         }
 
         protected static string[] dontValidate = new string[1] { "name" };
-        static bool ValidationFunc(MemberInfo mi, object search)
+        protected static bool ValidationFunc(MemberInfo mi, object search)
         {
             foreach (string s in dontValidate)
                 if (mi.Name == s) return false;
@@ -208,7 +198,7 @@ namespace UniversalInventorySystem
             return false;
         }
 
-        static bool ValidatePublicFunc(MemberInfo mi, object search)
+        protected static bool ValidatePublicFunc(MemberInfo mi, object search)
         {
             foreach(string s in dontValidate)
                 if (mi.Name == s) return false;
@@ -217,10 +207,57 @@ namespace UniversalInventorySystem
                 return false;
             return true;
         }
+
+        public Item ShallowCopy() => (Item)MemberwiseClone();
+
+        public Item()
+        {
+            name = "New Item";
+            id = name.GetHashCode();
+            sprite = null;
+
+            maxAmount = 0;
+            destroyOnUse = false;
+            useHowManyWhenUsed = 0;
+
+            stackable = false;
+            durability = 0;
+            hasDurability = false;
+            showAmount = false;
+            _durabilityImages = null;
+            durabilityImages = null;
+
+
+            onUseFunc = null;
+            optionalOnDropBehaviour = null;
+
+            tooltip = null;
+        }
+
+        public static bool operator false(Item item) => item == null;
+        public static bool operator !(Item item) => item == null;
+        public static bool operator true(Item item) => item != null;
+
+        public static bool operator ==(Item a, ItemReference b) => a == (b?.Value ?? null);
+        public static bool operator !=(Item a, ItemReference b) => a != (b?.Value ?? null);
+
+        public static bool operator ==(Item a, Item b) => ValueEqual(a, b);
+        public static bool operator !=(Item a, Item b) => !ValueEqual(a, b);
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
+    
     [Serializable]
-    public class DurabilityImage : object
+    public class DurabilityImage
     {
         [SerializeField] public string imageName;
         [SerializeField] public Sprite sprite;

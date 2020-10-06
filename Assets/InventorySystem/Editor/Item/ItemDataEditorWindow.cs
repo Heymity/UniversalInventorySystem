@@ -26,7 +26,7 @@ namespace UniversalInventorySystem.Editors
         Vector2 sideBar;
         Vector2 content;
 
-        public static void Open(ItemGroup dataObject)
+        public static void Open(ItemDatabase dataObject)
         {
             ItemDataEditorWindow window = GetWindow<ItemDataEditorWindow>("Item Group Editor");
             window.serializedObject = new SerializedObject(dataObject);
