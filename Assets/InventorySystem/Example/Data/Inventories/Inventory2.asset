@@ -15,81 +15,792 @@ MonoBehaviour:
   value:
     seeds: []
     slots:
-    - amount: 4
-      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
-      _itemInstance: {fileID: 0}
-      hasItem: 1
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 8
-      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
-      _itemInstance: {fileID: 0}
-      hasItem: 1
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 2
-      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
-      _itemInstance: {fileID: 0}
-      hasItem: 1
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 1
-      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
-      _itemInstance: {fileID: 0}
-      hasItem: 1
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: 123
+        id: 12312312
+        sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6,
+          type: 3}
+        maxAmount: 15
+        destroyOnUse: 0
+        useHowManyWhenUsed: 1
+        stackable: 1
+        durability: 0
+        hasDurability: 0
+        showAmount: 1
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
@@ -101,81 +812,792 @@ MonoBehaviour:
   _value:
     seeds: []
     slots:
-    - amount: 4
-      item: {fileID: 11400000, guid: 66afe602a9207284f85d380a8f01c58c, type: 2}
-      _itemInstance: {fileID: 0}
-      hasItem: 1
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 8
-      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
-      _itemInstance: {fileID: 0}
-      hasItem: 1
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 2
-      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
-      _itemInstance: {fileID: 0}
-      hasItem: 1
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
-    - amount: 1
-      item: {fileID: 11400000, guid: 7f72c09990ec85f4b8ad361d8201daaa, type: 2}
-      _itemInstance: {fileID: 0}
-      hasItem: 1
-      _durability: 0
-      isProductSlot: 0
-      interative: -1
-      whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: 123
+        id: 12312312
+        sprite: {fileID: -2276342835723864672, guid: 76989e9c2eb59ec418488253b8dd6ec6,
+          type: 3}
+        maxAmount: 15
+        destroyOnUse: 0
+        useHowManyWhenUsed: 1
+        stackable: 1
+        durability: 0
+        hasDurability: 0
+        showAmount: 1
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
       interative: -1
       whitelist: {fileID: 0}
     - amount: 0
-      item: {fileID: 0}
-      _itemInstance: {fileID: 0}
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
+      hasItem: 0
+      _durability: 0
+      isProductSlot: 0
+      interative: -1
+      whitelist: {fileID: 0}
+    - amount: 0
+      itemValue:
+        useConstant: 1
+        variable: {fileID: 0}
+        constantValue:
+          name: New Item
+          id: 672229549
+          sprite: {fileID: 0}
+          maxAmount: 0
+          destroyOnUse: 0
+          useHowManyWhenUsed: 0
+          stackable: 0
+          durability: 0
+          hasDurability: 0
+          showAmount: 0
+          _durabilityImages: []
+          onUseFunc: {fileID: 0}
+          optionalOnDropBehaviour: {fileID: 0}
+          tooltip:
+            useTooltip: 0
+            usePrefab: 0
+            tooltipPrefab: {fileID: 0}
+            sprite: {fileID: 0}
+            xAligmentOption: 0
+            xAlign: 0
+            xPixelOrPercentage: 0
+            yAligmentOption: 0
+            yAlign: 0
+            yPixelOrPercentage: 0
+            autoReAlign: 0
+            autoRealignOptions: 0
+            snapMargin: {x: 0, y: 0}
+            snapTo: {x: 0, y: 0}
+            backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+            size: {x: 0, y: 0}
+            padding: {x: 0, y: 0}
+            margin: {x: 0, y: 0}
+            maxWidth: 0
+            texts: []
+      _itemInstance:
+        name: New Item
+        id: 672229549
+        sprite: {fileID: 0}
+        maxAmount: 0
+        destroyOnUse: 0
+        useHowManyWhenUsed: 0
+        stackable: 0
+        durability: 0
+        hasDurability: 0
+        showAmount: 0
+        _durabilityImages: []
+        onUseFunc: {fileID: 0}
+        optionalOnDropBehaviour: {fileID: 0}
+        tooltip:
+          useTooltip: 0
+          usePrefab: 0
+          tooltipPrefab: {fileID: 0}
+          sprite: {fileID: 0}
+          xAligmentOption: 0
+          xAlign: 0
+          xPixelOrPercentage: 0
+          yAligmentOption: 0
+          yAlign: 0
+          yPixelOrPercentage: 0
+          autoReAlign: 0
+          autoRealignOptions: 0
+          snapMargin: {x: 0, y: 0}
+          snapTo: {x: 0, y: 0}
+          backgroudColor: {r: 0, g: 0, b: 0, a: 0}
+          size: {x: 0, y: 0}
+          padding: {x: 0, y: 0}
+          margin: {x: 0, y: 0}
+          maxWidth: 0
+          texts: []
       hasItem: 0
       _durability: 0
       isProductSlot: 0
