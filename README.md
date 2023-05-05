@@ -1,14 +1,12 @@
-# Universal Inventory System  · [![GitHub license](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)](https://github.com/Heymity/UniversalInventorySystem/blob/master/LICENSE) [![Unity 2019.3 or later](https://img.shields.io/badge/unity-2019.3%20or%20later-brigthgreen.svg?logo=unity&cacheSeconds=2592000&style=flat)](https://unity3d.com/get-unity/download/archive) [![Version](https://img.shields.io/github/v/release/Heymity/UniversalInventorySystem?label=stable%20release)](https://github.com/Heymity/UniversalInventorySystem/releases)
+# Universal Inventory System  · [![GitHub license](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)](https://github.com/Heymity/UniversalInventorySystem/blob/master/LICENSE) [![Unity 2020.3 or later](https://img.shields.io/badge/unity-2019.3%20or%20later-brigthgreen.svg?logo=unity&cacheSeconds=2592000&style=flat)](https://unity3d.com/get-unity/download/archive) [![Version](https://img.shields.io/github/v/release/Heymity/UniversalInventorySystem?label=stable%20release)](https://github.com/Heymity/UniversalInventorySystem/releases)
 
 ![](image.png)
 
 ## NOTE
 
-This project is still maintained, but there will be some time until next update.
-In the next version you shoud be able to properly save the inventories with no trouble at all.
-Also it should fix some bugs related to the unity editor version
+This project is being recreated in the 'main' branch, if you wish to use the older but incomplete and currently unsupported version, change to branch 'legacy'. Branch 'v4' is mostly broken, though it has some advancements on the 'legacy' branch, still not recommended for anything.
 
-All updates are being done on the v4 branch, feel free to test it out. As I am writing this it is all working, just missing some extra features that will be implemented in the near future
+Everything about the usage of the project in this file is, for now, FALSE, as it has not been implemented, but the goal is to make the project so that it resembles the legacy usage, which is showed here in this file.
 
 ## What is it?
 
