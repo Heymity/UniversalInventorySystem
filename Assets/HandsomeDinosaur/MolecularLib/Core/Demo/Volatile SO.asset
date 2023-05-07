@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d5f408d2df495d90dd6f555abdeed1, type: 3}
+  m_Name: Volatile SO
+  m_EditorClassIdentifier: 
+  runtimeValue:
+    myString: 'Hello, this is a volatile scriptable object: the values edited in
+      play mode DO NOT remain when leaving play mode. Go ahed and test it! Enter
+      play mode, edit some values, leave play mode, and compare the values you changed
+      with what you have now!'
+    myBehaviour: {fileID: 0}
+    myInt: 1533
+    myFloat: -139.37
+    myList:
+    - aergr
+    - asd
+    - asdfsdgsfd
+    - ert
+    myOptionalDictionary:
+      value:
+        keys: 
+        values: []
+      useValue: 0
+    myScriptableObject: {fileID: 0}
+  editorSavedValue:
+    myString: 'Hello, this is a volatile scriptable object: the values edited in
+      play mode DO NOT remain when leaving play mode. Go ahed and test it! Enter
+      play mode, edit some values, leave play mode, and compare the values you changed
+      with what you have now!'
+    myBehaviour: {fileID: 0}
+    myInt: -177
+    myFloat: 19.78
+    myList:
+    - aergr
+    - asd
+    - asdfsdgsfd
+    - ert
+    myOptionalDictionary:
+      value:
+        keys: 765edf011b0000002a000000ffffff7f
+        values:
+        - 10000000 times Pi
+        - 10 timer e
+        - The meaning of life
+        - Int32 max value (2^31 - 1)
+      useValue: 1
+    myScriptableObject: {fileID: 0}

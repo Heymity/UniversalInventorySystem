@@ -1,0 +1,19 @@
+{
+    "name": "MolecularEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e0e168214d33d19489de2c3ad4339c12",
+        "GUID:9e5a0ec676ae0684c98f3cc02d1c6c30"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

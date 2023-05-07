@@ -1,7 +1,9 @@
 {
     "name": "MolecularLib.InventorySystem",
     "rootNamespace": "MolecularLib.InventorySystem",
-    "references": [],
+    "references": [
+        "GUID:9e5a0ec676ae0684c98f3cc02d1c6c30"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

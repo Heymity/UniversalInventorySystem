@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac8e073a38f0e224494ec152af863c78, type: 3}
+  m_Name: TestItemRegister
+  m_EditorClassIdentifier: 
+  _registerId: test
+  _items:
+  - id: 
+    itemData:
+      selectedPolymorphicType:
+        typeName: MolecularLib.InventorySystem.ItemData
+        assemblyName: MolecularLib.InventorySystem
+      polymorphicData:
+        fields:
+        - fieldName: ItemIcon
+          fieldType:
+            typeName: UnityEngine.Sprite
+            assemblyName: UnityEngine.CoreModule
+          serializedValue: --UNITYOBJECT--
+          unityObjectValue: {fileID: 21300000, guid: 70632ddfe8e71b04b8f90ef7e29a9e98,
+            type: 3}
+        - fieldName: DisplayName
+          fieldType:
+            typeName: System.String
+            assemblyName: mscorlib
+          serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+            <string>ASGfea</string>'
+          unityObjectValue: {fileID: 0}
+  - id: 
+    itemData:
+      selectedPolymorphicType:
+        typeName: MolecularLib.InventorySystem.ItemData
+        assemblyName: MolecularLib.InventorySystem
+      polymorphicData:
+        fields:
+        - fieldName: ItemIcon
+          fieldType:
+            typeName: UnityEngine.Sprite
+            assemblyName: UnityEngine.CoreModule
+          serializedValue: --UNITYOBJECT--
+          unityObjectValue: {fileID: 21300000, guid: f9161c6c9e06dc445ada3ee16d991f90,
+            type: 3}
+        - fieldName: DisplayName
+          fieldType:
+            typeName: System.String
+            assemblyName: mscorlib
+          serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+            <string>!@#$</string>'
+          unityObjectValue: {fileID: 0}
+  a:
+    selectedPolymorphicType:
+      typeName: MolecularLib.InventorySystem.ItemData
+      assemblyName: MolecularLib.InventorySystem
+    polymorphicData:
+      fields:
+      - fieldName: ItemIcon
+        fieldType:
+          typeName: UnityEngine.Sprite
+          assemblyName: UnityEngine.CoreModule
+        serializedValue: --UNITYOBJECT--
+        unityObjectValue: {fileID: 21300000, guid: ddf2e76e8a1f88f46ae1e42277850b48,
+          type: 3}
+      - fieldName: DisplayName
+        fieldType:
+          typeName: System.String
+          assemblyName: mscorlib
+        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+          <string>13564</string>'
+        unityObjectValue: {fileID: 0}
