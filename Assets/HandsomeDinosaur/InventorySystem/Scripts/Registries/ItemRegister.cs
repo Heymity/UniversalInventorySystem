@@ -1,17 +1,21 @@
 using System.Collections.Generic;
-using MolecularLib.PolymorphismSupport;
+using System.Linq;
 using UnityEngine;
 
-namespace MolecularLib.InventorySystem
+namespace MolecularLib.InventorySystem.Items
 {
-    [CreateAssetMenu(menuName = "Molecular Lib/New ItemRegister", order = 1, fileName = "UnnamedItemRegister")]
+    [CreateAssetMenu(menuName = "Inventory System/New ItemRegister", order = 1, fileName = "UnnamedItemRegister")]
     public class ItemRegister : ScriptableObject
     {
-        [SerializeField] private string _registerId;
-        [SerializeField] private List<Item> _items;
+        [SerializeField] private string registerId;
+        [SerializeField] private SerializableDictionary<string, Item> items;
 
-        public PolymorphicVariable<ItemData> a;
+        public string RegisterId => registerId;
 
-        public string RegisterId => _registerId;
+        public IEnumerable<Item> Items => items.Values.AsEnumerable();
+
+        public Item GetItemOfId(string id) => items[id];
+
+        public bool TryGetItemOfId(string id, out Item item) => items.TryGetValue(id, out item);
     }
 }

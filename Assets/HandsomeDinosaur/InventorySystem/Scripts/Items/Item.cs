@@ -2,18 +2,17 @@ using System;
 using MolecularLib.PolymorphismSupport;
 using UnityEngine;
 
-namespace MolecularLib.InventorySystem
+namespace MolecularLib.InventorySystem.Items
 {
     [Serializable]
-    public sealed class Item
+    public sealed class Item : IItem
     {
         [SerializeField] private string id;
 
-        [SerializeField] private PolymorphicVariable<ItemData> itemData;
+        [SerializeField] private PolymorphicVariable<IItemData> itemData;
 
         public string Id => id;
-        public Sprite ItemIcon => itemData.Value.ItemIcon;
-        public string DisplayName => itemData.Value.DisplayName;
-        public ItemData ModelItemData => itemData.Value;
+        public IItemData ModelItemData => itemData.Value;
+        
     }
 }
