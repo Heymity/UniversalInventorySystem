@@ -9,5 +9,8 @@ namespace MolecularLib.InventorySystem.Items
     public interface IItemStack<out T> : IItemStack
     {
         public T Amount { get; }
+        
+        public bool Merge(ref IItemStack other);
+        
     }
 }

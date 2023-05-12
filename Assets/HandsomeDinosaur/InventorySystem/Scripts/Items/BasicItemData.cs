@@ -29,5 +29,17 @@ namespace MolecularLib.InventorySystem.Items
                 DisplayName = this.DisplayName
             };
         }
+
+        public bool CanCombine(in IItemData other)
+        {
+            return other.GetType() == typeof(BasicItemData) && other.DisplayName == this.DisplayName && ((BasicItemData)other).ItemIcon == this.ItemIcon;
+        }
+
+        public bool Combine(ref IItemData other)
+        {
+            if (!CanCombine(other)) return false;
+
+            return true;
+        }
     }
 }

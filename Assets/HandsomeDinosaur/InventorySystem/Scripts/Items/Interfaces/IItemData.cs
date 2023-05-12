@@ -5,5 +5,9 @@ namespace MolecularLib.InventorySystem.Items
         public string DisplayName { get; }
         
         public IItemData Clone();
+        
+        public bool CanCombine(in IItemData other);
+        
+        public bool Combine(ref IItemData other);
     }
 }
