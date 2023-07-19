@@ -1,4 +1,5 @@
 using System;
+using MolecularLib.Helpers;
 using UnityEngine;
 
 namespace MolecularLib.InventorySystem.Items
@@ -8,7 +9,16 @@ namespace MolecularLib.InventorySystem.Items
     {
         private string _displayName;
         private Sprite _itemIcon;
-
+        private Optional<int> _maxStackSize;
+        
+        public IItem ItemModel { get; set; }
+        
+        public Optional<int> MaxStackSize
+        {
+            get => _maxStackSize;
+            set => _maxStackSize = value;
+        }
+        
         public Sprite ItemIcon
         {
             get => _itemIcon;
@@ -25,21 +35,23 @@ namespace MolecularLib.InventorySystem.Items
         {
             return new BasicItemData
             {
+                ItemModel = this.ItemModel,
                 ItemIcon = this.ItemIcon,
                 DisplayName = this.DisplayName
             };
         }
-
+        
         public bool CanCombine(in IItemData other)
         {
-            return other.GetType() == typeof(BasicItemData) && other.DisplayName == this.DisplayName && ((BasicItemData)other).ItemIcon == this.ItemIcon;
+            return other is BasicItemData data && 
+                   data.ItemModel.Id == this.ItemModel.Id &&
+                   other.DisplayName == this.DisplayName && 
+                   data.ItemIcon == this.ItemIcon;
         }
 
-        public bool Combine(ref IItemData other)
+        public bool Combine(IItemData other)
         {
-            if (!CanCombine(other)) return false;
-
-            return true;
+            return CanCombine(other);
         }
     }
 }

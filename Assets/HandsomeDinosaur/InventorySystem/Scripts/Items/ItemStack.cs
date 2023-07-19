@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace MolecularLib.InventorySystem.Items
 {
@@ -24,13 +25,38 @@ namespace MolecularLib.InventorySystem.Items
         public bool Merge(ref IItemStack other)
         {
             if (!(other is IItemStack<int> stack)) return false;
-            if (stack.ItemModel != ItemModel) return false;
-            // TODO this needs to change because not always will two data fully merge, maybe the combine will give two datas.
-            var stackData = stack.Data;
-            if (!stack.Data.Combine(ref stackData)) return false;
+            if (!Data.Combine(stack.Data)) return false;
             
+            var toAdd = stack.Amount + Amount > MaxStackSize() ? MaxStackSize() - Amount : stack.Amount;
+            var toRemove = stack.Amount - toAdd;
+           
+            Add(toAdd);
+            stack.Remove(toRemove);
+           
             return true;
         }
 
+        public bool Add(int amount)
+        {
+            if (Amount + amount > MaxStackSize()) return false;
+            Amount += amount;
+            return true;
+        }
+
+        public bool Remove(int amount)
+        {
+            if (Amount - amount < 0) return false;
+            Amount -= amount;
+            return true;
+        }
+
+        public int MaxStackSize()
+        {
+            // TODO when implementing slots, or equivalent, use the min between the slot max items or item max items
+            if (Data.MaxStackSize.UseValue)
+                return Data.MaxStackSize;
+
+            return int.MaxValue;
+        }
     }
 }

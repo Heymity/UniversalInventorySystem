@@ -6,11 +6,17 @@ namespace MolecularLib.InventorySystem.Items
         public IItemData Data { get; }
     }
     
-    public interface IItemStack<out T> : IItemStack
+    public interface IItemStack<T> : IItemStack
     {
         public T Amount { get; }
         
         public bool Merge(ref IItemStack other);
+
+        public bool Add(T amount);
         
+        public bool Remove(T amount);
+        
+        public T MaxStackSize();
+
     }
 }
