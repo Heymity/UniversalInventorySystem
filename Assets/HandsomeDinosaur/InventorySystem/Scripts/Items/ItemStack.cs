@@ -10,17 +10,14 @@ namespace MolecularLib.InventorySystem.Items
         public int Amount { get; private set; }
         public IItemData Data { get; private set; }
 
-        public ItemStack(Item model, int count, IItemData data) : this(model, count)
-        {
-            Data = data;
-        }
-
-        public ItemStack(Item model, int count = 1)
+        public ItemStack(Item model, int count, IItemData data)
         {
             ItemModel = model;
             Amount = count;
-            Data = model.ModelItemData.Clone();
+            Data = data;
         }
+
+        public ItemStack(Item model, int count = 1) : this(model, count, model.ModelItemData.Clone()) { }
 
         public bool Merge(ref IItemStack other)
         {
