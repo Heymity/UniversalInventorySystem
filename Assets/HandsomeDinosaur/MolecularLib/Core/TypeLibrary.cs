@@ -8,10 +8,41 @@ namespace MolecularLib
 {
     public static class TypeLibrary
     {
-        public static IEnumerable<Type> AllAssembliesTypes { get; private set; }
-        public static IEnumerable<Type> AllNonUnityAssembliesTypes { get; private set; }
+        public static bool IsInitialized { get; private set; } = false;
         
-        public static IDictionary<string, Assembly> AllAssemblies { get; private set; }
+        private static IEnumerable<Type> _allNonUnityAssembliesTypes;
+        private static IEnumerable<Type> _allAssembliesTypes;
+        private static IDictionary<string, Assembly> _allAssemblies;
+
+        public static IEnumerable<Type> AllAssembliesTypes
+        {
+            get
+            {
+                if (_allAssembliesTypes is null) Bootstrap();
+                return _allAssembliesTypes;
+            }
+            private set => _allAssembliesTypes = value;
+        }
+
+        public static IEnumerable<Type> AllNonUnityAssembliesTypes
+        {
+            get
+            {
+                if (_allNonUnityAssembliesTypes is null) Bootstrap();
+                return _allNonUnityAssembliesTypes;
+            }
+            private set => _allNonUnityAssembliesTypes = value;
+        }
+
+        public static IDictionary<string, Assembly> AllAssemblies
+        {
+            get
+            {
+                if (_allAssemblies is null) Bootstrap();
+                return _allAssemblies;
+            }
+            private set => _allAssemblies = value;
+        }
 
         /*public static IEnumerable<Type> AllAssembliesTypes
         {
@@ -23,10 +54,12 @@ namespace MolecularLib
             get => throw new Exception("The USE_TYPE_LIBRARY precompiler symbol is disabled, therefore this feature is no enabled. To enable it add USE_TYPE_LIBRARY to the script define symbols in unity project settings");
             set => throw new Exception("The USE_TYPE_LIBRARY precompiler symbol is disabled, therefore this feature is no enabled. To enable it add USE_TYPE_LIBRARY to the script define symbols in unity project settings");
         }*/
-        
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         private static void Bootstrap()
         {
+            if (IsInitialized) return;
+            
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             
             AllAssembliesTypes = assemblies
@@ -56,9 +89,11 @@ namespace MolecularLib
                        || assemblyName.Contains("UnityEngineInternal")
                        || assemblyName.Contains("UnityEditorInternal");
             }
+
+            IsInitialized = true;
         }
-        
-        #if UNITY_EDITOR
+
+#if UNITY_EDITOR
         [UnityEditor.InitializeOnLoadMethod]
         public static void BootstrapEditor()
         {

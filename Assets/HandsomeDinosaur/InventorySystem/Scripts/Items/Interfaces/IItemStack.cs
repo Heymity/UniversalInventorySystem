@@ -5,6 +5,7 @@ namespace MolecularLib.InventorySystem.Items
         public IItem ItemModel { get; }
         public IItemData Data { get; }
         public bool Merge(ref IItemStack other);
+        public bool IsEmpty();
     }
     
     public interface IItemStack<T> : IItemStack

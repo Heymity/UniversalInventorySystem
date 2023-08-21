@@ -8,6 +8,7 @@ namespace MolecularLib.InventorySystem
         
         public TStack Stack { get; }
         
+        public bool IsEmpty();
         
     }
 }

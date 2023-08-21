@@ -10,14 +10,14 @@ namespace MolecularLib.InventorySystem.Items
         public int Amount { get; private set; }
         public IItemData Data { get; private set; }
 
-        public ItemStack(Item model, int count, IItemData data)
+        public ItemStack(IItem model, int count, IItemData data)
         {
             ItemModel = model;
             Amount = count;
             Data = data;
         }
 
-        public ItemStack(Item model, int count = 1) : this(model, count, model.ModelItemData.Clone()) { }
+        public ItemStack(IItem model, int count = 1) : this(model, count, model.ModelItemData.Clone()) { }
 
         public bool Merge(ref IItemStack other)
         {
@@ -25,12 +25,16 @@ namespace MolecularLib.InventorySystem.Items
             if (!Data.Combine(stack.Data)) return false;
             
             var toAdd = stack.Amount + Amount > MaxStackSize() ? MaxStackSize() - Amount : stack.Amount;
-            var toRemove = stack.Amount - toAdd;
-           
+            
             Add(toAdd);
-            stack.Remove(toRemove);
+            stack.Remove(toAdd);
            
             return true;
+        }
+
+        public bool IsEmpty()
+        {
+            return Amount > 0 || Data == null || ItemModel == null;
         }
 
         public bool Add(int amount)

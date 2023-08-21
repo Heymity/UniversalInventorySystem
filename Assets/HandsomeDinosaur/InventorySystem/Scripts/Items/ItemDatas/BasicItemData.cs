@@ -1,34 +1,35 @@
 using System;
 using MolecularLib.Helpers;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MolecularLib.InventorySystem.Items
 {
     [Serializable]
     public class BasicItemData : IItemData
     {
-        private string _displayName;
-        private Sprite _itemIcon;
-        private Optional<int> _maxStackSize;
+        [SerializeField] private string displayName;
+        [SerializeField] private Sprite itemIcon;
+        [SerializeField] private Optional<int> maxStackSize;
         
         public IItem ItemModel { get; set; }
         
         public Optional<int> MaxStackSize
         {
-            get => _maxStackSize;
-            set => _maxStackSize = value;
+            get => maxStackSize;
+            set => maxStackSize = value;
         }
         
         public Sprite ItemIcon
         {
-            get => _itemIcon;
-            set => _itemIcon = value;
+            get => itemIcon;
+            set => itemIcon = value;
         }
 
         public string DisplayName
         {
-            get => _displayName;
-            set => _displayName = value;
+            get => displayName;
+            set => displayName = value;
         }
 
         public IItemData Clone()

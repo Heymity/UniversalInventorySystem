@@ -38,7 +38,7 @@ namespace MolecularLib.AutoAssign
         
         private static readonly Dictionary<string, List<AutoAssignData>> autoAssignData = new Dictionary<string, List<AutoAssignData>>();
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Start()
         {
             foreach (var t in TypeLibrary.AllNonUnityAssembliesTypes)
@@ -203,8 +203,8 @@ namespace MolecularLib.AutoAssign
 
                 return list;
             }
-            
-            if (!currentValue.GetType().IsArray) return currentValue;
+
+            if (currentValue is null || !currentValue.GetType().IsArray) return currentValue;
 
             var valuePropElementType = currentValue.GetType().GetElementType();
             var propElementType = targetType.GetArrayOrListElementType();

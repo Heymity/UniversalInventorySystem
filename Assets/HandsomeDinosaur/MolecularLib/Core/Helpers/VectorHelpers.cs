@@ -496,5 +496,82 @@ namespace MolecularLib.Helpers
         public static bool IsWithin(this Vector4 vec4, Vector4 min, Vector4 max) => vec4.x.IsWithin(min.x, max.x) && vec4.y.IsWithin(min.y, max.y) && vec4.z.IsWithin(min.z, max.z) && vec4.w.IsWithin(min.w, max.w);
 
         #endregion
+        #region Deconstruct
+
+        public static void Deconstruct(this Vector2 vec, out float x, out float y)
+        {
+            x = vec.x;
+            y = vec.y;
+        }
+        
+        public static void Deconstruct(this Vector3 vec, out float x, out float y)
+        {
+            x = vec.x;
+            y = vec.y;
+        }
+        
+        public static void Deconstruct(this Vector3 vec, out float x, out float y, out float z)
+        {
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
+        }
+        
+        public static void Deconstruct(this Vector4 vec, out float x, out float y)
+        {
+            x = vec.x;
+            y = vec.y;
+        }
+        
+        public static void Deconstruct(this Vector4 vec, out float x, out float y, out float z)
+        {
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
+        }
+        
+        public static void Deconstruct(this Vector4 vec, out float x, out float y, out float z, out float w)
+        {
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
+            w = vec.w;
+        }
+        
+        public static void Deconstruct(this Vector2Int vec, out int x, out int y)
+        {
+            x = vec.x;
+            y = vec.y;
+        }
+        
+        public static void Deconstruct(this Vector3Int vec, out int x, out int y)
+        {
+            x = vec.x;
+            y = vec.y;
+        }
+        
+        public static void Deconstruct(this Vector3Int vec, out int x, out int y, out int z)
+        {
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
+        }
+        
+        #endregion
+        #region XYZ
+
+        public static Vector2 XY(this Vector3 vec) => new Vector2(vec.x, vec.y);
+
+        public static Vector2 XZ(this Vector3 vec) => new Vector2(vec.x, vec.z);
+
+        public static Vector2 YZ(this Vector3 vec) => new Vector2(vec.y, vec.z);
+
+        public static Vector2Int XY(this Vector3Int vec) => new Vector2Int(vec.x, vec.y);
+
+        public static Vector2Int XZ(this Vector3Int vec) => new Vector2Int(vec.x, vec.z);
+
+        public static Vector2Int YZ(this Vector3Int vec) => new Vector2Int(vec.y, vec.z);
+
+        #endregion
     }
 }

@@ -48,6 +48,9 @@ namespace MolecularEditor
                 var keyHeight = EditorGUI.GetPropertyHeight(keyProp);
                 var valueHeight = EditorGUI.GetPropertyHeight(valueProp);
                 var maxHeight = Mathf.Max(keyHeight, valueHeight);
+
+                if (valueProp.isExpanded) maxHeight += ElementHeight;
+                if (keyProp.isExpanded) maxHeight = keyHeight + valueHeight;
                 
                 var elementHeight = maxHeight <= ElementHeight ? ElementHeight : maxHeight;
 
@@ -144,6 +147,9 @@ namespace MolecularEditor
                 var valueHeight = EditorGUI.GetPropertyHeight(valueProp);
                 var maxHeight = Mathf.Max(keyHeight, valueHeight);
 
+                if (valueProp.isExpanded) maxHeight += ElementHeight;
+                if (keyProp.isExpanded) maxHeight = keyHeight + valueHeight;
+                
                 var elementHeight = maxHeight <= ElementHeight ? ElementHeight : maxHeight;
                 var elementAreaRect = new Rect(boxRect.x + 1, boxRect.y + cumulativeHeight, boxRect.width - 2, elementHeight);
                 var elementRect = new Rect(
@@ -177,10 +183,16 @@ namespace MolecularEditor
 
         private static void DrawDictionaryElement(Rect position, SerializedProperty keyProp, SerializedProperty valueProp, bool duplicatedKey, int index)
         {
-            var keyRect = new Rect(position.x, position.y + 2, position.width * 0.5f - Padding, ElementHeight - 4);
-            var valueRect = new Rect(position.x + position.width * 0.5f + Padding,
-                position.y + 2, position.width * 0.5f - Padding, ElementHeight - 4);
+            var useFullWidthForValue = valueProp.isExpanded;
+            var useFullWidthForKey = keyProp.isExpanded;
             
+            var keyRect = new Rect(position.x, position.y + 2, position.width * (useFullWidthForKey ? 1.0f : 0.5f) - Padding, ElementHeight - 4);
+            var valueRect = new Rect(
+                position.x + (useFullWidthForValue || useFullWidthForKey ? Padding : position.width * 0.5f + Padding),
+                position.y + (useFullWidthForValue && !useFullWidthForKey ? ElementHeight : 2) + (useFullWidthForKey ? EditorGUI.GetPropertyHeight(keyProp) : 0), 
+                position.width * (useFullWidthForValue ? 1f : 0.5f) - Padding, 
+                ElementHeight - 4);
+
             if (duplicatedKey)
             {
                 var duplicatedKeyRect = keyRect;
