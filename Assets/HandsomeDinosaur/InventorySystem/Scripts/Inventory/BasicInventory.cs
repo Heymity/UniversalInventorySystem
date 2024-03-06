@@ -9,12 +9,12 @@ namespace MolecularLib.InventorySystem.Inventory
             throw new System.NotImplementedException();
         }
 
-        public bool AddItem(IItemStack item)
+        public bool AddItem(ItemStack item)
         {
             throw new System.NotImplementedException();
         }
 
-        public bool AddItem(BasicSlot slot, IItemStack item)
+        public bool AddItem(BasicSlot slot, ItemStack item)
         {
             throw new System.NotImplementedException();
         }
@@ -24,7 +24,7 @@ namespace MolecularLib.InventorySystem.Inventory
             throw new System.NotImplementedException();
         }
 
-        public bool AddItem(int slotId, IItemStack item)
+        public bool AddItem(int slotId, ItemStack item)
         {
             throw new System.NotImplementedException();
         }
@@ -33,14 +33,13 @@ namespace MolecularLib.InventorySystem.Inventory
         {
             throw new System.NotImplementedException();
         }
-        
-        
+
         public bool RemoveItem(IItem item)
         {
             throw new System.NotImplementedException();
         }
 
-        public bool RemoveItem(IItemStack item)
+        public bool RemoveItem(ItemStack item)
         {
             throw new System.NotImplementedException();
         }

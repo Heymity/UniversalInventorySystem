@@ -1,3 +1,4 @@
+using MolecularLib.Helpers;
 using MolecularLib.InventorySystem.Items;
 
 namespace MolecularLib.InventorySystem.Inventory

@@ -11,19 +11,19 @@ namespace MolecularLib.InventorySystem.Items
     public class ItemRegistry : IItemRegistry
     {
         [SerializeField] private string registerId;
-        [SerializeField] private SerializableDictionary<string, Item> items;
+        [SerializeField] private SerializableDictionary<string, IItem> items;
 
-        public Item this[string id] => items[id];
+        public IItem this[string id] => items[id];
         
         public string RegisterId => registerId;
 
-        public IEnumerable<Item> Items => items.Values.AsEnumerable();
+        public IEnumerable<IItem> Items => items.Values.AsEnumerable();
 
-        public Item GetItemOfId(string id) => items[id];
+        public IItem GetItemOfId(string id) => items[id];
 
-        public bool TryGetItemOfId(string id, out Item item) => items.TryGetValue(id, out item);
+        public bool TryGetItemOfId(string id, out IItem item) => items.TryGetValue(id, out item);
 
-        public bool RegisterItem(string id, Item item)
+        public bool RegisterItem(string id, IItem item)
         {
             if (items.ContainsKey(id)) return false;
             items.Add(id, item);
@@ -37,7 +37,7 @@ namespace MolecularLib.InventorySystem.Items
             {
                 var itemDef = itemDefinitionKp.Value;
                 if (itemDef == null) continue;
-                itemDef.Id = itemDefinitionKp.Key;
+                //TODO TODO TODO FIX THIS MERGE //itemDef.Id = itemDefinitionKp.Key;
             }
         }
 
