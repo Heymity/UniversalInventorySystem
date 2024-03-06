@@ -10,13 +10,18 @@ namespace MolecularLib.InventorySystem.Items
         private string _displayName;
         private Sprite _itemIcon;
         private Optional<int> _maxStackSize;
-        
-        public IItem ItemModel { get; set; }
-        
+        private Optional<int> _minStackSize;
+
         public Optional<int> MaxStackSize
         {
             get => _maxStackSize;
             set => _maxStackSize = value;
+        }
+        
+        public Optional<int> MinStackSize
+        {
+            get => _minStackSize;
+            set => _minStackSize = value;
         }
         
         public Sprite ItemIcon
@@ -35,7 +40,6 @@ namespace MolecularLib.InventorySystem.Items
         {
             return new BasicItemData
             {
-                ItemModel = this.ItemModel,
                 ItemIcon = this.ItemIcon,
                 DisplayName = this.DisplayName
             };
@@ -44,7 +48,6 @@ namespace MolecularLib.InventorySystem.Items
         public bool CanCombine(in IItemData other)
         {
             return other is BasicItemData data && 
-                   data.ItemModel.Id == this.ItemModel.Id &&
                    other.DisplayName == this.DisplayName && 
                    data.ItemIcon == this.ItemIcon;
         }

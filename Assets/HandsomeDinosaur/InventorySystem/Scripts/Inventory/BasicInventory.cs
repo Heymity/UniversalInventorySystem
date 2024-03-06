@@ -24,6 +24,16 @@ namespace MolecularLib.InventorySystem.Inventory
             throw new System.NotImplementedException();
         }
 
+        public bool AddItem(int slotId, IItemStack item)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool AddItem(int slotId, IItem item)
+        {
+            throw new System.NotImplementedException();
+        }
+        
         
         public bool RemoveItem(IItem item)
         {

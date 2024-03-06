@@ -1,11 +1,13 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MolecularLib.InventorySystem.Items.Interfaces;
 using UnityEngine;
 
 namespace MolecularLib.InventorySystem.Items
 {
-    [CreateAssetMenu(menuName = "Inventory System/New ItemRegister", order = 1, fileName = "UnnamedItemRegister")]
-    public class ItemRegister : ScriptableObject
+    [System.Serializable]
+    public class ItemRegistry : IItemRegistry
     {
         [SerializeField] private string registerId;
         [SerializeField] private SerializableDictionary<string, Item> items;
@@ -26,6 +28,10 @@ namespace MolecularLib.InventorySystem.Items
             items.Add(id, item);
 
             return true;
-        } 
+        }
+
+        public IEnumerator<IItem> GetEnumerator() => items.Values.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
