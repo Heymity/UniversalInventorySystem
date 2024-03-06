@@ -11,5 +11,8 @@ namespace MolecularLib.InventorySystem
 
         public Optional<int> MaxSlotCapacity();
         public Optional<int> MinSlotCapacity();
+        
+        public bool IsEmpty();
+        
     }
 }

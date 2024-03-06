@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MolecularLib.InventorySystem.Items.Interfaces;
@@ -28,6 +29,16 @@ namespace MolecularLib.InventorySystem.Items
             items.Add(id, item);
 
             return true;
+        }
+
+        public void OnValidate()
+        {
+            foreach (var itemDefinitionKp in items)
+            {
+                var itemDef = itemDefinitionKp.Value;
+                if (itemDef == null) continue;
+                itemDef.Id = itemDefinitionKp.Key;
+            }
         }
 
         public IEnumerator<IItem> GetEnumerator() => items.Values.GetEnumerator();

@@ -8,6 +8,8 @@ namespace MolecularLib.InventorySystem.Items
         public bool Merge(ref IItemStack other, int amount);
         public int Amount { get; }
         
+        public bool IsEmpty();
+        
         public bool Add(int amount);
         public bool CanAdd(int amount);
         

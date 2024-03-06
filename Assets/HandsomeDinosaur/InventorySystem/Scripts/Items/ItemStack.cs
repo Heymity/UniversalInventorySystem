@@ -44,6 +44,11 @@ namespace MolecularLib.InventorySystem.Items
             return Merge(ref stack, toAdd);
         }
 
+        public bool IsEmpty()
+        {
+            return Amount > 0 || Data == null || ItemModel == null;
+        }
+
         public bool CanAdd(int amount) => Amount + amount <= MaxStackSize();
         public bool CanRemove(int amount) => Amount - amount >= MinStackSize();
         

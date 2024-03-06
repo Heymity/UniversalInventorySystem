@@ -1,4 +1,3 @@
-using MolecularLib.Helpers;
 using MolecularLib.InventorySystem.Items;
 
 namespace MolecularLib.InventorySystem.Inventory
@@ -19,5 +18,7 @@ namespace MolecularLib.InventorySystem.Inventory
         {
             return 0;
         }
+
+        public bool IsEmpty() => Stack is null || Stack.IsEmpty();
     }
 }

@@ -107,7 +107,7 @@ namespace MolecularEditor
             if (valueType == typeof(float)) return EditorGUI.FloatField(rect, label, value is float i ? i : 0);
             if (valueType == typeof(double)) return EditorGUI.DoubleField(rect, label, value is double i ? i : 0);
             if (valueType == typeof(bool)) return EditorGUI.Toggle(rect, label, value is bool i && i);
-            if (valueType == typeof(string)) return EditorGUI.TextField(rect, label, value is string i ? i : "");
+            if (valueType == typeof(string)) return EditorGUI.TextField(rect, label, value as string ?? "");
             if (valueType == typeof(Vector4)) return EditorGUI.Vector4Field(rect, label, value is Vector4 vector4 ? vector4 : Vector4.zero);
             if (valueType == typeof(Vector3)) return EditorGUI.Vector3Field(rect, label, value is Vector3 vec3 ? vec3 : Vector3.zero);
             if (valueType == typeof(Vector3Int)) return EditorGUI.Vector3IntField(rect, label, value is Vector3Int vec3Int ? vec3Int : Vector3Int.zero);
@@ -120,8 +120,8 @@ namespace MolecularEditor
             if (valueType == typeof(Color)) return EditorGUI.ColorField(rect, label, value is Color color ? color : Color.white);
             if (valueType == typeof(Color32)) return EditorGUI.ColorField(rect, label, value is Color32 color32 ? color32 : Color.white.ToColor32());
             if (valueType == typeof(LayerMask)) return EditorGUI.LayerField(rect, label, value is LayerMask layerMask ? layerMask : (LayerMask)0);
-            if (valueType == typeof(AnimationCurve)) return EditorGUI.CurveField(rect, label, value is AnimationCurve curve ? curve : AnimationCurve.Linear(0, 0, 1, 1));
-            if (valueType == typeof(Gradient)) return EditorGUI.GradientField(rect, label, value is Gradient gradient ? gradient : new Gradient());
+            if (valueType == typeof(AnimationCurve)) return EditorGUI.CurveField(rect, label, value as AnimationCurve ?? AnimationCurve.Linear(0, 0, 1, 1));
+            if (valueType == typeof(Gradient)) return EditorGUI.GradientField(rect, label, value as Gradient ?? new Gradient());
             
             if (valueType == typeof(Quaternion))
             {
@@ -149,21 +149,23 @@ namespace MolecularEditor
                 To use them, we need a serializedProperty, which we dont have, that's the whole purpose of this function.
                 So what this code does is that it creates a runtime type deriving from ScriptableObject with only one field,
                 the value. Than a instance of this scriptable object is created and the value is assigned to it.
-                Now, all we do is create a new SerializedObject from this scriptable object, and call PropertyField on its property.
+                Now, all we do is create a new SerializedObject from this scriptable object, and get the PropertyField of its value property.
                 This works for all types marked with the Serializable attribute. The reason this is not the whole method is that it
-                is considerably slower than just converting the value and calling the EditorGUI.TYPEField(...) like it is done above.
+                is slower and uses more memory than just converting the value and calling the EditorGUI.TYPEField(...) like it is done above.
                 */
 
                 var runtimeTypeName = $"RuntimeSerializableObjectFor{valueType.FullName?.Replace('.', '_') ?? valueType.Name.Replace('.', '_')}";
 
+                var id = runtimeTypeName + uniqueIdentifier;
+                
                 SerializedObject serializedObject;
                 ScriptableObject so = null;
-                if (!CachedRuntimeTypesForAutoTypeField.TryGetValue(runtimeTypeName + uniqueIdentifier, out var dynamicType))
+                if (!CachedRuntimeTypesForAutoTypeField.TryGetValue(id, out var dynamicType))
                 {
                     var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
                         new AssemblyName("RuntimeSerializableObjectAssembly"), AssemblyBuilderAccess.Run);
                     var moduleBuilder = assemblyBuilder.DefineDynamicModule("RuntimeSerializableObjectModule");
-                    var typeBuilder = moduleBuilder.DefineType(runtimeTypeName + uniqueIdentifier, TypeAttributes.Public,
+                    var typeBuilder = moduleBuilder.DefineType(id, TypeAttributes.Public,
                         typeof(ScriptableObject));
 
                     var fieldBuilder = typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
@@ -180,12 +182,12 @@ namespace MolecularEditor
 
                     dynamicType = typeBuilder.CreateType();
                     
-                    CachedRuntimeTypesForAutoTypeField.Add(runtimeTypeName + uniqueIdentifier, dynamicType);
+                    CachedRuntimeTypesForAutoTypeField.Add(id, dynamicType);
                 }
                 
-                (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName + uniqueIdentifier, dynamicType, value);
+                (serializedObject, so) = GetSerializedObjectAndScriptableObject(id, dynamicType, value);
                 
-                if (so == null) so = GetScriptableObject(runtimeTypeName + uniqueIdentifier, dynamicType);
+                if (so == null) so = GetScriptableObject(id, dynamicType);
                 var property = serializedObject.GetIterator();
                 
                 property.NextVisible(true); // Move to first property
@@ -264,15 +266,15 @@ namespace MolecularEditor
             if (valueType.GetCustomAttribute<SerializableAttribute>() != null || typeof(Object).IsAssignableFrom(valueType))
             {
                 var runtimeTypeName = $"RuntimeSerializableObjectFor{valueType.FullName?.Replace('.', '_') ?? valueType.Name.Replace('.', '_')}";
-
+                var id = runtimeTypeName + uniqueIdentifier;
                 SerializedObject serializedObject;
                 ScriptableObject so = null;
-                if (!CachedRuntimeTypesForAutoTypeField.TryGetValue(runtimeTypeName + uniqueIdentifier, out var dynamicType))
+                if (!CachedRuntimeTypesForAutoTypeField.TryGetValue(id, out var dynamicType))
                 {
                     var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
                         new AssemblyName("RuntimeSerializableObjectAssembly"), AssemblyBuilderAccess.Run);
                     var moduleBuilder = assemblyBuilder.DefineDynamicModule("RuntimeSerializableObjectModule");
-                    var typeBuilder = moduleBuilder.DefineType(runtimeTypeName + uniqueIdentifier, TypeAttributes.Public,
+                    var typeBuilder = moduleBuilder.DefineType(id, TypeAttributes.Public,
                         typeof(ScriptableObject));
 
                     var fieldBuilder = typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
@@ -289,12 +291,12 @@ namespace MolecularEditor
                     
                     dynamicType = typeBuilder.CreateType();
                     
-                    CachedRuntimeTypesForAutoTypeField.Add(runtimeTypeName + uniqueIdentifier, dynamicType);
+                    CachedRuntimeTypesForAutoTypeField.Add(id, dynamicType);
                 }
                 
-                (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName + uniqueIdentifier, dynamicType, value);
+                (serializedObject, so) = GetSerializedObjectAndScriptableObject(id, dynamicType, value);
 
-                if (so == null) so = GetScriptableObject(runtimeTypeName + uniqueIdentifier, dynamicType);
+                if (so == null) so = GetScriptableObject(id, dynamicType);
                 
                 var property = serializedObject.GetIterator();
                 
