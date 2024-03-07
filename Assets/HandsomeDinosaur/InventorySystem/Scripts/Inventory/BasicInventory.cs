@@ -16,12 +16,25 @@ namespace MolecularLib.InventorySystem.Inventory
                 Slots.Add(new BasicSlot());
             }
         }
-
+        //TODO Change the return type  of all the add methods to return something like (bool, ItemStack, FailReason)
         public bool AddItem(IItem item) => AddItem(new ItemStack(item));
 
         public bool AddItem(ItemStack item)
         {
-            Slots.First(s => s.IsEmpty()).Stack = item;
+            BasicSlot slot = null;
+            foreach (var s in Slots)
+            {
+                if (s.Stack.CanMerge(item))
+                {
+                    slot = s; 
+                    break;
+                }
+                if (slot is null && s.IsEmpty()) slot = s;
+            }
+            if (slot is null) return false;
+            
+            slot.Stack.Merge(item);
+            
             return true;
         }
 
@@ -29,12 +42,15 @@ namespace MolecularLib.InventorySystem.Inventory
         
         public bool AddItem(BasicSlot slot, ItemStack item)
         {
-            throw new System.NotImplementedException();
+            if (!slot.Stack.CanMerge(item)) return false;
+            slot.Stack.Merge(item);
+            return true;
         }
 
         public bool RemoveItem(IItem item)
         {
-            throw new System.NotImplementedException();
+            Slots.First(s => s.Stack.ItemModel.ModelItemData == item.ModelItemData).Stack = null;
+            return true;
         }
 
         public bool RemoveItem(ItemStack item)

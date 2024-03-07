@@ -2,7 +2,7 @@ using MolecularLib.InventorySystem.Items;
 
 namespace MolecularLib.InventorySystem
 {
-    public interface IInventory<TSlot, TStack> where TSlot : ISlot<TStack> where TStack : IItemStack
+    public interface IInventory<in TSlot, in TStack> where TSlot : ISlot<TStack> where TStack : IItemStack
     {
         public bool AddItem(IItem item);
         public bool AddItem(TStack item);

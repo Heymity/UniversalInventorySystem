@@ -19,17 +19,25 @@ namespace MolecularLib.InventorySystem.Items
 
         public ItemStack(IItem model, int count = 1) : this(model, count, model.ModelItemData.Clone()) { }
 
-        public bool Merge(ref IItemStack other)
+        public bool CanMerge(IItemStack other)
         {
             if (!(other is IItemStack<int> stack)) return false;
             if (!Data.Combine(stack.Data)) return false;
+
+            return true;
+        }
+
+        public (bool succes, IItemStack other) Merge( IItemStack other)
+        {
+            if (!CanMerge(other)) return (false, other);
+            var stack = (IItemStack<int>)other;
             
             var toAdd = stack.Amount + Amount > MaxStackSize() ? MaxStackSize() - Amount : stack.Amount;
             
             Add(toAdd);
             stack.Remove(toAdd);
            
-            return true;
+            return (true, other);
         }
 
         public bool IsEmpty()
