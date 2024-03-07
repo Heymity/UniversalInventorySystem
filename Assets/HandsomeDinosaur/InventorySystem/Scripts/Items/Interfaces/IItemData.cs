@@ -4,11 +4,10 @@ namespace MolecularLib.InventorySystem.Items
 {
     public interface IItemData 
     {
-        public IItem ItemModel { get; }
-        
         public string DisplayName { get; }
         
         public Optional<int> MaxStackSize { get; }
+        public Optional<int> MinStackSize { get; }
         
         public IItemData Clone();
         

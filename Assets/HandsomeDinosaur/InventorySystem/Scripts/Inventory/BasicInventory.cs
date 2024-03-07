@@ -1,21 +1,14 @@
-using System.Collections.Generic;
-using System.Linq;
 using MolecularLib.InventorySystem.Items;
 
 namespace MolecularLib.InventorySystem.Inventory
 {
     public class BasicInventory : IInventory<BasicSlot, ItemStack>
     {
-        public List<BasicSlot> Slots { get; }
-
-        public BasicInventory(int slotCount)
+        public bool AddItem(IItem item)
         {
-            Slots = new List<BasicSlot>();
-            for (var i = 0; i < slotCount; i++)
-            {
-                Slots.Add(new BasicSlot());
-            }
+            throw new System.NotImplementedException();
         }
+<<<<<<< HEAD
         //TODO Change the return type  of all the add methods to return something like (bool, ItemStack, FailReason)
         public bool AddItem(IItem item) => AddItem(new ItemStack(item));
 
@@ -36,15 +29,34 @@ namespace MolecularLib.InventorySystem.Inventory
             slot.Stack.Merge(item);
             
             return true;
+=======
+
+        public bool AddItem(ItemStack item)
+        {
+            throw new System.NotImplementedException();
+>>>>>>> f25b7a835c387b966cbc6e2e8bbdc46990081814
         }
 
-        public bool AddItem(BasicSlot slot, IItem item) => AddItem(slot, new ItemStack(item));
-        
         public bool AddItem(BasicSlot slot, ItemStack item)
         {
             if (!slot.Stack.CanMerge(item)) return false;
             slot.Stack.Merge(item);
             return true;
+        }
+
+        public bool AddItem(BasicSlot slot, IItem item)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool AddItem(int slotId, ItemStack item)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool AddItem(int slotId, IItem item)
+        {
+            throw new System.NotImplementedException();
         }
 
         public bool RemoveItem(IItem item)

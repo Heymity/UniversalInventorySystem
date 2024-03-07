@@ -1,3 +1,4 @@
+using MolecularLib.Helpers;
 using MolecularLib.InventorySystem.Items;
 
 namespace MolecularLib.InventorySystem
@@ -7,6 +8,9 @@ namespace MolecularLib.InventorySystem
         public int Id { get; }
         
         public TStack Stack { get; }
+
+        public Optional<int> MaxSlotCapacity();
+        public Optional<int> MinSlotCapacity();
         
         public bool IsEmpty();
         
