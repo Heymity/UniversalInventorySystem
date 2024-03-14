@@ -37,7 +37,7 @@ namespace MolecularLib.InventorySystem.Items
             {
                 var itemDef = itemDefinitionKp.Value;
                 if (itemDef == null) continue;
-                //TODO TODO TODO FIX THIS MERGE //itemDef.Id = itemDefinitionKp.Key;
+                itemDef.Id = itemDefinitionKp.Key;
             }
         }
 

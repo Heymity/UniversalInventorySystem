@@ -2,7 +2,7 @@ namespace MolecularLib.InventorySystem.Items
 {
     public interface IItem
     {
-        public string Id { get; }
-        public IItemData ModelItemData { get; }
+        string Id { get; set; }
+        IItemData ModelItemData { get; }
     }
 }
